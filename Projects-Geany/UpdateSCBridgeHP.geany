@@ -1,0 +1,114 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=UpdateSCBridge
+base_path=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/UpdateSCBridge/
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=29
+FILE_NAME_0=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FCreateBridgeFromSplitProp.sql;0;4
+FILE_NAME_1=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FDiffAcctsFixes.sql;0;4
+FILE_NAME_2=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FDiffsNoTerrIDs07-22.csv;0;4
+FILE_NAME_3=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FDiffsNoTerrIDs11-02.csv;0;4
+FILE_NAME_4=1666;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FDoSed.sh;0;4
+FILE_NAME_5=1493;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FDoSed1.sh;0;4
+FILE_NAME_6=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FDownloadDeltas.csv;0;4
+FILE_NAME_7=4384;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FFindAllIDinTerrs.sh;0;4
+FILE_NAME_8=11;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FFindAllIDlist.sh;0;4
+FILE_NAME_9=94;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FFixSCMenu.i;0;4
+FILE_NAME_10=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FFixSCMenu.in;0;4
+FILE_NAME_11=379;Pascal;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FFixSCMenu.inc;0;4
+FILE_NAME_12=1095;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FGetTIDList.psq;0;4
+FILE_NAME_13=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FLostIDlist.txt;0;4
+FILE_NAME_14=6187;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FMakeUpdateSCBridge.tmp;0;4
+FILE_NAME_15=3018;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FMakeUpdtSpecSCBridge.tmp;0;4
+FILE_NAME_16=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FMiscDiffQueries.sql;0;4
+FILE_NAME_17=1025;Pascal;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FpathSCdefs.inc;0;4
+FILE_NAME_18=696;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FQGetMissingPropTerrList.sql;0;4
+FILE_NAME_19=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FSearchBridges4Diff.sql;0;4
+FILE_NAME_20=129;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FTIDAllList.txt;0;4
+FILE_NAME_21=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FTIDdone.txt;0;4
+FILE_NAME_22=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FTIDList.csv;0;4
+FILE_NAME_23=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FTIDList.txt;0;4
+FILE_NAME_24=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FTIDSave.txt;0;4
+FILE_NAME_25=1963;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FUpdateSCBridge.psq;0;4
+FILE_NAME_26=480;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FTIDList0102.csv;0;4
+FILE_NAME_27=3417;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FUpdtAllSCBridge.sh;0;4
+FILE_NAME_28=1922;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FUpdtAllSCSpecials.sh;0;4
+FILE_NAME_29=332;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FDBList.txt;0;4
+FILE_NAME_30=4102;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FUpdtSpecSCBridge.psq;0;4
+FILE_NAME_31=5343;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FUpdtSpecSCBridge.sh;0;4
+FILE_NAME_32=503;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FTIDList0205.csv;0;4
+FILE_NAME_33=513;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FTIDList0319.txt;0;4
+FILE_NAME_34=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FUpdtSpecSCBridge.sql;0;4
+FILE_NAME_35=2209;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FUpdateSCBridge.sql;0;4
+FILE_NAME_36=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FDiffTerrs_03-19.txt;0;4
+FILE_NAME_37=1028;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2Finclude%2FpathSCdefs.i;0;4
+FILE_NAME_38=724;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2Finclude%2FpathRUdefs.i;0;4
+FILE_NAME_39=1734;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FMakeGetTIDList;0;4
+FILE_NAME_40=956;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FGetSCUpdateList.sql;0;4
+FILE_NAME_41=1005;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FGetSCUpdateList.psq;0;4
+FILE_NAME_42=714;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FTIDList0426.csv;0;4
+FILE_NAME_43=4935;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FUpdateSCBridge.sh;0;4
+FILE_NAME_44=0;Markdown;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FREADME.md;0;4
+FILE_NAME_45=1473;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FMakeGetUpdateList.tmp;0;4
+FILE_NAME_46=1699;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FMakeGetUpdateList;0;4
+FILE_NAME_47=1396;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FGetUpdateList.sh;0;4
+FILE_NAME_48=991;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FGetTIDList.sql;0;4
+FILE_NAME_49=851;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FTIDList0526.csv;0;4
+
+[VTE]
+last_dir=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Procs-Dev
+
+[build-menu]
+NF_00_LB=_Make
+NF_00_CM=make -f MakeUpdateSCBridge
+NF_00_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/UpdateSCBridge
+NF_03_LB=sed
+NF_03_CM=./DoSed.sh  276  04 26
+NF_03_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/UpdateSCBridge
+EX_00_LB=_Execute
+EX_00_CM=./%e
+EX_00_WD=
+EX_01_LB=Make Dry-Run
+EX_01_CM=make  -f  MakeUpdateSCBridge --dry-run
+EX_01_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/UpdateSCBridge
+NF_02_LB=Make Update Dry-run
+NF_02_CM=make--dry-run -f MakeUpdtSpecSCBridge
+NF_02_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/UpdateSCBridge
+NF_01_LB=Make Update Spec SC Bridge
+NF_01_CM=make  -f MakeUpdtSpecSCBridge
+NF_01_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/UpdateSCBridge
+NoneFT_02_LB=Batch SCBridges
+NoneFT_02_CM=./UpdtAllSCBridge.sh  05 26
+NoneFT_02_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/UpdateSCBridge
+filetypes=None;
+NoneFT_01_LB=sed1
+NoneFT_01_CM=./DoSed1.sh  CountryClubMHP   01 02
+NoneFT_01_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/UpdateSCBridge
+NoneFT_00_LB=Batch SCSpecials
+NoneFT_00_CM=./UpdtAllSCSpecials.sh  01 02
+NoneFT_00_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/UpdateSCBridge

@@ -1,0 +1,2 @@
+BEGIN{getline < "/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/MigrationRepairs/sedVeniceN.txt"
+print}

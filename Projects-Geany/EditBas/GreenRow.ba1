@@ -1,0 +1,81 @@
+&apos;// GreenRow.bas - Set green background color on specified row.
+&apos;//---------------------------------------------------------------
+&apos;// GreenRow - Set green background color on specified row.
+&apos;//		3/21/21.	wmk.	23:28
+&apos;//---------------------------------------------------------------
+
+public sub GreenRow( plRow AS Long )
+
+&apos;//	Usage.	macro call or
+&apos;//			call GreenRow( lRow )
+&apos;//
+&apos;//		lRow = row to set green background on
+&apos;//
+&apos;// Entry.	user in sheet where row is resident
+&apos;//
+&apos;//	Exit.	columns A - I will be set with a green background in the row
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	2/15/21.	wmk.	original code; cloned from macro recording
+&apos;// 3/21/21.	wmk.	color change to lighter green
+&apos;//
+&apos;//	Notes. This sub is useful when wanting to distinguish boundary
+&apos;// rows within a spreadsheet. e.g. when groups of rows have similar
+&apos;// information, this enables the user to visually group the rows.
+
+
+&apos;//	constants.
+const LT_LIME=12313405		&apos;// xbbe33d
+
+&apos;//	local variables.
+dim lThisRow 	As Long
+dim dispatcher	As Object		&apos;// uno dispatcher object
+dim document	As Object		&apos;// uno frame reference
+dim sRangeSel	As String		&apos;// string for selected range
+dim sThisRow	As String		&apos;// local copy of row parameter
+dim args1(0) as new com.sun.star.beans.PropertyValue	&apos;// Dispatch property arrays
+dim args9(3) as new com.sun.star.beans.PropertyValue
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	lThisRow = plRow
+	sThisRow = trim(str(lThisRow+1))
+	
+	&apos;// set up uno objects.
+	document   = ThisComponent.CurrentController.Frame
+	dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+	&apos;// select range Ax:Ix.
+&apos;	dim args1(0) as new com.sun.star.beans.PropertyValue
+	sThisRow = trim(str(lThisRow+1))
+	args1(0).Name = &quot;ToPoint&quot;
+	sRangeSel = &quot;$A$&quot; + sThisRow + &quot;:$I$&quot; + sThisRow
+	args1(0).Value = sRangeSel
+
+	dispatcher.executeDispatch(document, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	&apos;// now set background cell color green across selection.
+	&apos;dim args9(3) as new com.sun.star.beans.PropertyValue
+	args9(0).Name = &quot;BackgroundPattern.Transparent&quot;
+	args9(0).Value = false
+	args9(1).Name = &quot;BackgroundPattern.BackColor&quot;
+	args9(1).Value = LT_LIME
+	args9(2).Name = &quot;BackgroundPattern.Filtername&quot;
+	args9(2).Value = &quot;&quot;
+	args9(3).Name = &quot;BackgroundPattern.Position&quot;
+	args9(3).Value = com.sun.star.style.GraphicLocation.NONE
+
+	dispatcher.executeDispatch(document, &quot;.uno:BackgroundPattern&quot;, &quot;&quot;,_
+								0, args9())
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;GreenRow - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end GreenRow	3/21/21.	23:28

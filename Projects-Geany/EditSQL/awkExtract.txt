@@ -1,0 +1,4 @@
+BEGIN {inSection = 0}
+$0=="--begin FixFromSC" {inSection=1}
+{if (inSection) {print};}
+$0=="--/**/" {inSection = 0}

@@ -1,0 +1,270 @@
+&apos;// InsertRUNewHdr.bas
+&apos;//---------------------------------------------------------------
+&apos;// InsertRUNewHdr - Insert 5-row territory sheet header.
+&apos;//		10/18/20.	wmk.	19:00
+&apos;//---------------------------------------------------------------
+
+public sub InsertRUNewHdr(psTitle As String)
+
+&apos;//	Usage.	macro call or
+&apos;//			call InsertRUNewHdr(sTitle )
+&apos;//	
+&apos;//		sTitle - sheet title to set in H1-I1
+&apos;//
+&apos;// Entry.	user has RefUSA/Terrxxx.csv download sheet selected
+&apos;//			row index 0 is column headings
+&apos;//			sheet &apos;TerrxxxHdr&apos; contains 1 row of information from
+&apos;//			TerrIDData.db. [if not present, call InsertTerrHdr]
+&apos;// 	Row 1
+&apos;//			  A			B			C			   D	E		F	    G
+&apos;//			TerrID, AreaName, Street-Address(s), City, Zip, Location, Type
+&apos;//		[Row 2]..[Row n]
+&apos;//			  A		   B			C				 D			E
+&apos;//			TerrID, SubTerr, Streets-Address(s), Homestead, Parcel-LIKE, 
+&apos;//				    F		 G
+&apos;//				Unit-LIKE, DBName
+&apos;//		if 2nd row is empty, no subterritory information is present
+&apos;//
+&apos;//	Exit.	Territory sheet header inserted in 1st 4 rows with passed
+&apos;//			title in H1-J1, and empty row in row 5 for headings to set
+&apos;//
+&apos;// Calls. InsertTerrHdr
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/30/20.	wmk.	original code; adapted from InsertTerrHdr
+&apos;//	10/5/20.	wmk.	add TerrID to calling sequence; remove skip;
+&apos;//						bug fix, was checking ROW_1 for subterritory,
+&apos;//						changed to ROW_2
+&apos;// 10/12/20.	wmk.	bug fix; RefUSA download data has a heading row,
+&apos;//						so DO NOT insert 1 row prior to calling
+&apos;//						InsertTerrHdr; document check for &quot;TerrNewHdr&quot;
+&apos;//						sheet if user has presets...
+&apos;// 10/16/20.	wmk.	change to check for TerrxxxHdr sheet where xxx
+&apos;//						is TerrID (extracted from Title)
+&apos;//	Notes.
+&apos;// Method. obtain essential information from TerrNewHdr sheet;
+&apos;// if cannot find that sheet, just insert a blank row then call
+&apos;// InsertTerrHdr. If sheet found, get territory id from hdr sheet
+&apos;// and call InsertQTerrHdr.
+
+&apos;//	constants.
+const COL_PARCEL=0		&apos;// &quot;OwningParcel&quot; column index
+const COL_A=0
+const COL_B=1
+const COL_C=2	
+const COL_D=3
+const COL_E=4
+const COL_F=5
+const COL_G=6			&apos;// column G index
+const COL_H=7			&apos;// column H index
+const COL_I=8			&apos;// column I index
+const COL_J=9			&apos;// column J index
+const COL_K=10			&apos;// column K index
+const COL_L=11			&apos;// column L index 
+const COL_M=12			&apos;// column M index (DoNotCall)
+const COL_N=13			&apos;// column N index (RSO)
+const COL_O=14			&apos;// column O index (Foreign)
+const ROW_1=0
+const ROW_2=1
+const ROW_3=2
+const ROW_4=3
+const ROW_HEADING=4		&apos;// headings row index
+const LJUST=1		&apos;// left-justify HoriJustify
+const CJUST=2		&apos;// center HoriJustify		
+const RJUST=3		&apos;// right-justify HoriJustify
+const MDYY=30		&apos;// &apos;M/D/YY&apos; format value
+
+const COL_AREA=0		&apos;// &quot;Area-CommonName&quot;	A1-D1
+const ROW_AREA=0
+const COL_CITY=8		
+const COL_ZIP = 10
+const COL_ICITY=1		&apos;// &lt;city&gt;			B3
+const ROW_ICITY=2
+const COL_IZIP=2		&apos;// &lt;zipcode&gt;		C3
+const ROW_DATE=1
+const COL_DATE=2		&apos;// &lt;date&gt; 			C2
+const ROW_BASE=5
+const COL_UNITS=0		&apos;// &quot;Units shown:&quot; 	A2
+const ROW_UNITS=1
+const COL_FUNITS=1		&apos;// &quot;=COUNTA(A6:A298)&quot; B2
+
+&apos;// new header locations 9/2/20
+const COL_SUBTERR=0		&apos;// &quot;SubTerritory&quot; 	A4
+const ROW_SUBTERR=3
+const COL_TERRID=2		&apos;// &quot;CongTerrID&quot;	B4
+const ROW_TERRID=3
+const COL_PROPID=3		&apos;// &quot;Property ID&quot;	D1
+const ROW_PROPID=0
+const ROW_OWNER=1		&apos;// &quot;Owner&quot;			D2
+const ROW_STRADDR=2		&apos;// &quot;Streets/Addrs&quot;	D3
+&apos;// end new header locations 9/2/20
+
+&apos;// error codes
+const ERR_UNK=0			&apos;// unknown
+const ERR_HDRSHEET=1	&apos;// header sheet &apos;Terr.xxx.Hdr&apos; error
+
+&apos;// local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+dim oMrgRange	As Object	&apos;// merge range
+
+dim oHdrSheet	As Object	&apos;// sheet containing header information
+dim oCell	As Object		&apos;// cell working on
+dim sTitle	As String		&apos;// sheet title
+dim sTerrID	As String		&apos;// territory ID
+dim nErrCode	As Integer	&apos;// error code type 0 - unknown, 1 - sheet not found
+dim sHdrShtName	As String	&apos;// header sheet name
+dim iStatus	As Integer		&apos;// function return status
+dim sAreaName	As String	&apos;// area-commonName
+dim sCity 		As String	&apos;// city
+dim	sZip		As String	&apos;// zip code
+dim sSubTerr	As String	&apos;// subterritory
+dim sPropID		As String	&apos;// property ID
+dim sOwner		As String	&apos;// owner
+dim sStreets	As String	&apos;// streets-address(s)
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	nErrCode = ERR_UNK
+	iStatus = 0
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+
+&apos;	sHdrShtName = &quot;TerrNewHdr&quot;
+	sTerrID = Mid(oDoc.Title,5,3)
+	sHdrShtName = &quot;Terr&quot; + sTerrID + &quot;Hdr&quot;
+	sTitle = psTitle
+	
+	&apos;// see if sheet exists
+	if NOT oDoc.Sheets.hasByName(sHdrShtName) then
+		GoTo SimpleHeader
+	endif
+	
+	nErrCode = ERR_UNK
+	
+	&apos;// get essential info from sHdrShtName, then process
+	oHdrSheet = oDoc.Sheets.getByName(sHdrShtName)
+
+	&apos;// get territory id from first row
+	oCell = oHdrSheet.getCellByPosition(COL_A, ROW_2)
+	sTerrID = oCell.String
+
+	&apos;// no subterritory on new territory, set streets
+	sSubTerr = &quot;&quot;
+	&apos;// get streets information from row 1
+	oCell = oHdrSheet.getCellByPosition(COL_C, ROW_2)
+	sStreets = oCell.String
+
+	&apos;// set remaining information from row 1 (territory)
+	oCell = oHdrSheet.getCellByPosition(COL_A, ROW_2)
+	sTerrID = oCell.String
+	oCell = oHdrSheet.getCellByPosition(COL_B, ROW_2)
+	sAreaName = oCell.String
+	oCell = oHdrSheet.getCellByPosition(COL_D, ROW_2)
+	sCity = oCell.String
+	oCell = oHdrSheet.getCellByPosition(COL_E, ROW_2)
+	sZip = oCell.String
+	
+	&apos;// insert 4 rows at top of sheet
+	oSheet.Rows.insertByIndex(0, 4)	&apos;// insert header rows
+
+	&apos;// set sheet title
+	oCell = oSheet.getCellByPosition(COL_H, ROW_1)
+	oCell.String = psTitle
+	MergeSheetType()
+	
+	&apos;// set &lt;Area-CommonName&gt;
+	oCell = oSheet.getCellByPosition(COL_AREA, ROW_AREA)
+	oCell.String = sAreaName
+	MergeAreaCells()
+
+	&apos;// Date to header
+	oCell = oSheet.getCellByPosition(COL_DATE, ROW_DATE)
+	oCell.setValue(Now())					&apos;// time stamp
+	oCell.Text.NumberFormat = MDYY
+	oCell.HoriJustify = CJUST
+	
+	&apos;// set &quot;Units Shown:&quot; info
+	oCell = oSheet.getCellByPosition(COL_UNITS, ROW_UNITS)
+	oCell.String = &quot;Units Shown:&quot;
+	oCell.HoriJustify = RJUST
+	SetHdrSumFormula(&quot;COUNTA($A$6:$A$1299)&quot;)
+	
+	&apos;// set &quot;City&quot; and set City, Zip
+	oCell = oSheet.getCellByPosition(COL_A, ROW_3)
+	oCell.String = &quot;City&quot;
+	oCell.HoriJustify = RJUST
+	oCell = oSheet.getCellByPosition(COL_ICITY, ROW_ICITY)
+	oCell.String = sCity
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_IZIP, ROW_ICITY)
+	oCell.String = sZip
+	oCell.HoriJustify = CJUST
+	
+	&apos;// set &quot;SubTerr&quot; and &quot;CongTerrID&quot;
+	oCell = oSheet.getCellByPosition(COL_SUBTERR, ROW_SUBTERR)
+	oCell.String = &quot;SubTerritory&quot;
+	oCell.HoriJustify = RJUST
+	oCell = oSheet.getCellByPosition(COL_SUBTERR+1, ROW_SUBTERR)
+	oCell.String = sSubTerr
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_TERRID, ROW_TERRID)
+	oCell.String = &quot;CongTerrID&quot;
+	oCell.HoriJustify = RJUST
+	oCell = oSheet.getCellByPosition(COL_TERRID+1, ROW_TERRID)
+	oCell.String = sTerrID
+	oCell.HoriJustify = CJUST
+
+	&apos;// set &quot;Property ID&quot;, &quot;Owner&quot;, and &quot;Streets/Addrs&quot; info
+	oCell = oSheet.getCellByPosition(COL_PROPID, ROW_PROPID)
+	oCell.String = &quot;Property ID&quot;
+	oCell.HoriJustify = RJUST
+	oCell = oSheet.getCellByPosition(COL_PROPID+1, ROW_PROPID)
+	oCell.String = &quot;-&quot;
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_PROPID, ROW_OWNER)
+	oCell.String = &quot;Owner&quot;
+	oCell.HoriJustify = RJUST
+	oCell = oSheet.getCellByPosition(COL_PROPID+1, ROW_OWNER)
+	oCell.String = &quot;-&quot;
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_PROPID, ROW_STRADDR)
+	oCell.String = &quot;Streets/Addrs&quot;
+	oCell.HoriJustify = RJUST
+	oCell = oSheet.getCellByPosition(COL_PROPID+1, ROW_STRADDR)
+	oCell.String = sStreets
+	oCell.HoriJustify = CJUST
+	MergePropIDCells()
+	MergeOwnerCells()
+	MergeStreetsCells()
+	
+NormalExit:
+	exit sub
+
+SimpleHeader:
+	&apos;// something wrong with header info sheet; just use InsertTerrHdr
+	&apos;// insert 1 row, then call InsertTerrHdr
+&apos;	oSheet.Rows.insertByIndex(0, 1)	&apos;// insert 1 row
+	InsertTerrHdr(sTitle)
+	GoTo NormalExit:
+	
+ErrorHandler:
+	select case nErrCode
+	case ERR_HDRSHEET
+		msgbox(&quot;InsertRUNewHdr - error in &apos;&quot; + sHdrShtName + &quot;&apos;&quot;)
+	case else
+		msgbox(&quot;InsertRUNewHdr - unprocessed error&quot;)
+	end select
+	
+	GoTo NormalExit
+	
+end sub		&apos;// end InsertRUNewHdr	10/18/20

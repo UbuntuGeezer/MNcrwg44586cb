@@ -1,0 +1,3 @@
+2a#	5/5/22.	wmk.	(automated) mod with NOPROMPT conditional.
+/TEMP_PATH=/aif [ \"$NOPROMPT\" == \"\" ];then NOPROMPT=0;fi;if [ $NOPROMPT -ne 1 ];then
+/exit 0/afi

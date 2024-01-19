@@ -1,0 +1,66 @@
+echo "-- SCDwnldToDB.psq - Process SCPA download.csv into DB."  > SQLTemp.sql
+echo "--	4/27/22.	wmk."  >> SQLTemp.sql
+echo "--"  >> SQLTemp.sql
+echo "-- * Dependencies."  >> SQLTemp.sql
+echo "-- * -------------"  >> SQLTemp.sql
+echo "-- * DoSed.sh replaces 05 26 in this file with m2 d2 of the newest"  >> SQLTemp.sql
+echo "-- *  download data."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Environment vars - "  >> SQLTemp.sql
+echo "-- *	folderbase - host system folder base path for Territories"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * ---------------------"  >> SQLTemp.sql
+echo "-- * 3/19/22.	wmk.	original code."  >> SQLTemp.sql
+echo "-- * 4/27/22.	wmk.	*pathbase* support."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Notes. This query is in \"shell-ready\" format, where ($) environment"  >> SQLTemp.sql
+echo "-- * vars will be substituted into the query at appropriate places. The"  >> SQLTemp.sql
+echo "-- * expected environment vars are documented above in the Dependencies"  >> SQLTemp.sql
+echo "-- * list."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo " "  >> SQLTemp.sql
+echo "-- * subquery list."  >> SQLTemp.sql
+echo "-- * --------------"  >> SQLTemp.sql
+echo "-- * SCDwnldToDB - Process SCPA download.csv into DB."  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- ** SCDwnldToDB **********"  >> SQLTemp.sql
+echo "-- *	4/27/22.	wmk."  >> SQLTemp.sql
+echo "-- *--------------------------"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * SCDwnldToDB - Process SCPA download.csv into DB."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Entry DB and table dependencies."  >> SQLTemp.sql
+echo "-- *	($)folderbase/Territories/RawData/SCPA/SCPA-Downloads/Data0526.csv"  >> SQLTemp.sql
+echo "-- *	  lastest download data from SCPA-Public_05-26.xlsx"  >> SQLTemp.sql
+echo "-- *	($)folderbase = host base path for Territories"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Exit DB and table results."  >> SQLTemp.sql
+echo "-- *	SCPA_mm-dd.db AS main, full SCPA download from mm/dd"  >> SQLTemp.sql
+echo "-- *		Datammdd - table of full download records whole county"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * ---------------------"  >> SQLTemp.sql
+echo "-- * 3/19/22.	wmk.	original code."  >> SQLTemp.sql
+echo "-- * 4/27/22.	wmk.	*pathbase* support."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Notes. By not explicitly using CREATE TABLE, sqlite will import the"  >> SQLTemp.sql
+echo "-- * .csv records assuming that the 1st row is headers/field names. When"  >> SQLTemp.sql
+echo "-- * the records are imported using the sqlite browser, the"  >> SQLTemp.sql
+echo "-- * \"trim fields\" option also removes any whitespace from the table"  >> SQLTemp.sql
+echo "-- * field names. When the records are imported using the .import SQL"  >> SQLTemp.sql
+echo "-- * batch directive, whitespace is not removed. This produces a "  >> SQLTemp.sql
+echo "-- * discrepancy between the older imports (e.g.04 16) and the newer"  >> SQLTemp.sql
+echo "-- * imports (e.g. 06 19)."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- * SCPA_DB2 as main;"  >> SQLTemp.sql
+echo ".cd '$pathbase/RawData/SCPA/SCPA-Downloads'"  >> SQLTemp.sql
+echo ".open 'SCPA_05-26.db'"  >> SQLTemp.sql
+echo "DROP TABLE IF EXISTS Data0526;"  >> SQLTemp.sql
+echo ".headers ON"  >> SQLTemp.sql
+echo ".mode csv"  >> SQLTemp.sql
+echo ".import 'Data0526' Data0526 "  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- ** END SCDwnldToDB **********;"  >> SQLTemp.sql

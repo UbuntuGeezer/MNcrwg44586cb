@@ -1,0 +1,141 @@
+# MakeUpdateMHPDwnload.tmp - template for MakeUpdateMHPDownload make file.
+#	6/6/23.	wmk.
+#
+# Dependencies.
+#	MakeUpdateMHPDwnload.tmp placeholders y yy and v vvv will be edited
+#	 by DoSed.sh to be a territory ID and special database name.
+#	/Special/RidgewoodMHP.db contains the current download records for the entire
+#	 MHP.
+#	DoSed run prior to make MakeUpdateMHPDwnld setting 262 and RidgewoodMHP.
+#
+# Modification History.
+# ---------------------
+# 3/10/23.	wmk.	path vars set; comments tidied.
+# 3/23/23.	wmk.	dead lines delimited in main recipe.
+# 6/6/23.	wmk.	*pathbase corrected; OBSOLETE territory detection.
+# Legacy mods.
+# 5/4/22. 	wmk.	(automated) path corrections.
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# Legacy mods.
+# 7/4/21.	wmk.	original code.
+# 7/6/21.	wmk.	Dependencies updated with DoSed; RU<MHP-name>_mm-dd.db
+#					qualified with ($)specialpth; RU<MHP-name>_mm-dd.csv
+#					recipe fixed.
+# 9/8/21.	wmk.	Complete overhaul.
+# 9/9/21.	wmk.	bug fixes; improve directory access; force rebuild
+#					of Fix262RU.sh.
+# 9/23/21.	wmk.	bug fix altProj corrected to altproj in recipe; added
+#					SetMHPSpecTerrs to recipe to link territory records
+#					with <special-db> records.
+# 11/14/21.	wmk.	update to use MakeSpecials to regenerate RU database
+#					for MHP.
+#
+# Notes. UpdateRUDwnld is programmed to skip building any territory
+# that has SPECIAL in its folder.
+# The most straighforward way to do an MHP build is to do a 
+# RUNewTerritory to rebuild Terr262_RU.db. MakeRUMHP needs to be
+# run after this to ensure the presence of the Terr262MHP table
+# for the Diffs processes.
+# then just run Fix262RU.sh
+# to fix the records; Then sync in any records from Spec262_RU built
+# by special processing; then ExtractOldDiffs from the Previous that
+# were missed by all of the above and IntegrateOldDiffs.
+# The Spec262_RU.db is rebuilt by make RU/MakeSpecials, called by
+# the Make.MHP.Terr make in the /Special folder.
+# RidgewoodMHP e.g. BayIndiesMHP
+
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : AlwaysUpdate
+.ONESHELL : ;
+
+terrpath= $(pathbase)/$(rupath)/Terr262
+projpath = $(codebase)/Projects-Geany/UpdateMHPDwnld
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+altproj2 = $(codebase)/Projects-Geany/SpecialRUdb
+
+# $(terrpath)/Terr262_RU.db primary
+#==============================================================
+# DoSed run prior with <db-name> <terrid>.
+
+# set one or the other.
+oldway = 0
+#oldway = 1
+
+ifeq ($(oldway),1)
+#============ old build using full initialize and build.
+$(terrpath)/Terr262_RU.db : $(terrpath)/Map262_RU.csv \
+ $(terrpath)/Spec262_RU.db
+	cd $(altproj); $(altproj)/DoSed.sh 262; \
+	 $(MAKE)  -f $(altproj)/MakeRUNewTerritory
+	cd $(projpath)/; $(projpath)/DoSed1.sh 262 RidgewoodMHP \
+	 $(MAKE)  -f MakeRUMHP
+	# force rebuild of Fix262RU.sh
+	cd $(altproj;./DoSed.sh $(terrpath) Fix262RU
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	$(terrpath)/Fix262RU.sh
+	$(terrpath)/SetMHPSpecTerrs.sh
+	$(terrpath)/SyncTerrToSpec.sh
+	$(MAKE)  -f MakeExtractOldDiffs
+	$(MAKE)  -f MakeIntegrateOldDiffs
+	$(projpath)/ExtractOldDiffs.sh
+	$(projpath)/IntegrateOldDiffs.sh
+	
+$(terrpath)/Spec262_RU.db : $(specialpth)RidgewoodMHP.db
+	$(MAKE)  -f $(terrpath)/MakeSpecials
+
+$(terrpath)/Map262_RU.csv : ;
+
+$(specialpth)RidgewoodMHP.db :  
+	(warning ** MakeUpdateMHPDwnld build looking for $(specialpth)RidgewoodMHP.db **)
+
+#============ end old build using full initialize and build.
+else
+#============ new build using MakeSpecials.
+dbname = RidgewoodMHP
+
+AlwaysUpdate : $(specialpth)RidgewoodMHP.db \
+ $(terrpath)/Spec262_RU.db
+	if test -f $(terrpath)/OBSOLETE;then
+	 echo " ** Territory 262 OBSOLETE - MakeUpdateMHPDwnld exiting";exit 2;fi
+	cd $(terrpath)/
+	$(MAKE) -f $(terrpath)/MakeSpecials
+	cd $(projpath)/
+	$(MAKE)  -f $(projpath)/MakeExtractOldDiffs
+	$(MAKE)  -f $(projpath)/MakeIntegrateOldDiffs
+	$(projpath)/ExtractOldDiffs.sh
+	$(projpath)/IntegrateOldDiffs.sh
+
+$(specialpth)RidgewoodMHP.db  :  $(specialpth)RidgewoodMHP.csv
+	cd $(altproj2); ./DoSed.sh RidgewoodMHP
+	$(MAKE) -f $(altproj2)/MakeSpecialRUdb
+
+$(specialpth)RidgewoodMHP.csv  : ;
+
+#============ new build using full initialize and build.
+endif
+
+
+#==============================================================
+# end MakeUpdateMHPDwnld.tmp

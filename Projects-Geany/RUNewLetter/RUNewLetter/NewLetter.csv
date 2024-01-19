@@ -1,0 +1,1 @@
+CREATE TABLE Terr113_RUPoly ("Last Name" TEXT,"First Name" TEXT, "House Number" TEXT, "Pre-directional" TEXT,"Street" TEXT, "Street Suffix" TEXT, "Post-directional" TEXT,"Apartment Number" TEXT, "City" TEXT,"State" TEXT,"ZIP Code" TEXT, "County Name" TEXT, "Phone Number" TEXT)

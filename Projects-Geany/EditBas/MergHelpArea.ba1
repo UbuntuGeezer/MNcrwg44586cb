@@ -1,0 +1,52 @@
+&apos;// MergHelpArea.bas
+&apos;//----------------------------------------------------------------------
+&apos;// MergeHelpArea - Merge D2 - H3 cells in Territory.
+&apos;//		2/19/21.	wmk.	19:00
+&apos;//----------------------------------------------------------------------
+
+public sub MergeHelpArea()
+
+&apos;//	Usage.	macro call or
+&apos;//			call MergeHelpArea()
+&apos;//
+&apos;// Entry.	user has territory sheet selected
+&apos;//
+&apos;//	Exit.	Sheet row cells cleared and merged (D2:H3)
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	2/14/21.	wmk.	original code.
+&apos;// 2/19/21.	wmk.	changed area to D2:H3
+&apos;//
+&apos;//	Notes.
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim oDocument   as object
+dim oDispatcher as object
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDocument   = ThisComponent.CurrentController.Frame
+	oDispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+	&apos;// select range A4:I4
+	dim args1(0) as new com.sun.star.beans.PropertyValue
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$D$2:$H$3&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+	
+	dim Array(0) as new com.sun.star.beans.PropertyValue
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ToggleMergeCells&quot;, &quot;&quot;, 0, Array())
+
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;MergeHelpArea - unprocessed error.&quot;)
+	
+end sub		&apos;// end MergeHelpArea		2/19/21.	19:15

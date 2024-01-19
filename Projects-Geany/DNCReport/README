@@ -1,0 +1,37 @@
+README - DNCReport project documentation.
+	11/1/21.	wmk.
+
+Modification History.
+---------------------
+11/1/21.	wmk.	original document.
+
+Project Description.
+--------------------
+extracts territory IDs and DNC counts from TerrIDData.DoNotCalls
+and writes to DNCSummary.csv
+DNCSummary.csv may then be used to update the DNC counts in 
+the SystemTracker.ods.
+
+Results.
+--------
+DNCReport produces a DoNotCall summary in the {DoTerrsWithCalc}/Tracking folder.
+File DNCSummary.csv contains a .csv that can be imported into Calc, then
+used to update all the DNC counts in the RefUSA-Downloads sheet. (All of
+the RefUSA-Downloads DNC count fields are linked to the SCPA-Downloads
+sheet so they stay in sync.
+
+Once the user copies and pastes the DNCSummary counts into the RefUSA-Downloads
+sheet, all of the date fields for the DNC Update column should be set to
+the date of the update.
+
+Setup.
+------
+Build menu:
+	run 'Execute' from Build menu
+
+OR
+
+Terminal: /Geany-Projects/DNCReport
+	run ./DNCReport.sh
+
+/Tracking/DNCSummary.csv is ready to import into the SystemTracking workbook.

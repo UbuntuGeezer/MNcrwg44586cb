@@ -1,0 +1,105 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=BridgesToTerr
+base_path=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/BridgesToTerr/
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=46
+FILE_NAME_0=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FAddLetterZips.psq;0;4
+FILE_NAME_1=3873;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FAddLetterZips.sh;0;4
+FILE_NAME_2=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FAddLetterZips.sq;0;4
+FILE_NAME_3=1016;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FAddLetterZips.sql;0;4
+FILE_NAME_4=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FBayIndiesTIDList.txt;0;4
+FILE_NAME_5=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FBirdBayTIDList.txt;0;4
+FILE_NAME_6=126;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FBuildStreetXref.sql;0;4
+FILE_NAME_7=452;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FCopyPubNotes.sh;0;4
+FILE_NAME_8=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FDiffTerrs_03-19.txt;0;4
+FILE_NAME_9=258;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FDoSed.sh;0;4
+FILE_NAME_10=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FFixZips.psq;0;4
+FILE_NAME_11=0;ASM;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FLastChanceDNCs.s;0;4
+FILE_NAME_12=0;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FLastChanceDNCs.sh;0;4
+FILE_NAME_13=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FLastChanceDNCs.sq;0;4
+FILE_NAME_14=3201;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FLastChanceDNCs.sql;0;4
+FILE_NAME_15=6374;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FMakeBridgesToTerr;0;4
+FILE_NAME_16=2603;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FMakeBridgesToTerr.tmp;0;4
+FILE_NAME_17=3353;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FNewSortSource.sql;0;4
+FILE_NAME_18=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FREADME;0;4
+FILE_NAME_19=0;HTML;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FREADME.html;0;4
+FILE_NAME_20=0;Markdown;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FREADME.md;0;4
+FILE_NAME_21=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FRidgewoodMHPTIDList.txt;0;4
+FILE_NAME_22=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FSQLTemp.sql;0;4
+FILE_NAME_23=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FSortSource.sql;0;4
+FILE_NAME_24=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FTIDList.BayIndies.txt;0;4
+FILE_NAME_25=127;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FTIDList.BayLake.txt;0;4
+FILE_NAME_26=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FTIDList.Letters.txt;0;4
+FILE_NAME_27=131;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FTIDList.Ridgewood.txt;0;4
+FILE_NAME_28=69;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FTIDList.txt;0;4
+FILE_NAME_29=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FTIDList0205.csv;0;4
+FILE_NAME_30=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FTIDListOut-of-date.txt;0;4
+FILE_NAME_31=106;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FTIDs.txt;0;4
+FILE_NAME_32=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FTerrIDData.db;0;4
+FILE_NAME_33=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2Fpreamble.AddZips.txt;0;4
+FILE_NAME_34=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2Fpreamble.LastChance.txt;0;4
+FILE_NAME_35=0;ASM;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2Fpreamble.s;0;4
+FILE_NAME_36=0;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2Fpreamble.sh;0;4
+FILE_NAME_37=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2Fpreamble.txt;0;4
+FILE_NAME_38=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2Fsedative.txt;0;4
+FILE_NAME_39=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2Fsedatives.txt;0;4
+FILE_NAME_40=739;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FTIDList0426.csv;0;4
+FILE_NAME_41=770;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FRawData%2FRefUSA%2FRefUSA-Downloads%2FSpecial%2FMake.Bellagio.Terr;0;4
+FILE_NAME_42=238;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FCapriIslesTIDList.txt;0;4
+FILE_NAME_43=2385;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FQGetTerr.sql;0;4
+FILE_NAME_44=2;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FpreQGet.sh;0;4
+FILE_NAME_45=703;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FBridgesToTerr%2FMakeQGetTerr;0;4
+FILE_NAME_46=4076;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProcs-Dev%2FNewRUSCTerrToDBs.sql;0;4
+
+[VTE]
+last_dir=/media/ubuntu/Windows/Users/Bill/Territories/Procs-Dev
+
+[build-menu]
+NF_00_LB=_Make
+NF_00_CM=make -f MakeBridgesToTerr
+NF_00_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/BridgesToTerr
+NF_03_LB=sed
+NF_03_CM=./DoSed.sh 222
+NF_03_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/BridgesToTerr
+NF_01_LB=Make Custom _Target...
+NF_01_CM=make 
+NF_01_WD=
+NF_02_LB=Make _Object
+NF_02_CM=make %e.o
+NF_02_WD=
+EX_00_LB=_Execute
+EX_00_CM=./%e
+EX_00_WD=
+EX_01_LB=Make dry-run
+EX_01_CM=bash make --dry-run -f  MakeBridgesToTerr
+EX_01_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/BridgesToTerr
+NoneFT_02_LB=Batch Run
+NoneFT_02_CM=./AllBridgesToTerr.sh
+NoneFT_02_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Procs-Dev
+filetypes=None;

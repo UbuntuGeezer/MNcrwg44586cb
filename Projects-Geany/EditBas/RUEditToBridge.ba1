@@ -1,0 +1,291 @@
+&apos;// RUEditToBridge.bas
+&apos;//--------------------------------------------------------------------------
+&apos;// RUEditToBridge - Convert RU/Admin-Edit spreadsheet to Admin-Bridge sheet.
+&apos;//		9/30/20.	wmk.	12:00
+&apos;//--------------------------------------------------------------------------
+
+public sub RUEditToBridge()
+
+&apos;//	Usage.	macro call or
+&apos;//			call RUEditToBridge()
+&apos;//
+&apos;// Entry.	user in Admin-Edit format spreadsheet
+&apos;//	OwningParcel  UnitAddress  Resident1 Resident2 Phone1 Phone2 RUPhone
+&apos;//			A			B			C		D		  E		 F		G	
+&apos;//  
+&apos;//	truepeople	411		whitepages
+&apos;//		H		 I		   J
+&apos;//
+&apos;//	SubTerr CongTerr DoNotCall RSO Foreign  RecordDate SitusAddress
+&apos;//		K		L		   M     N    O			P			  Q		
+&apos;//  PropUse	DelPending
+&apos;//		R  			S
+&apos;//
+&apos;//	Exit.	sheet columns and header modified to match Admin-Bridge spec
+&apos;//			for updating MultiMail.db/SplitProps table
+&apos;//	OwningParcel  UnitAddress  Resident1 Resident2 Phone1 Phone2 RUPhone
+&apos;//			A			B			C		D		  E		 F		G	
+&apos;//  SubTerr CongTerr DoNotCall RSO Foreign  RecordDate SitusAddress
+&apos;//		H		I		   J     K     L		M			  N		
+&apos;//  PropUse	DelPending
+&apos;//		O  			P
+&apos;//
+&apos;//
+&apos;// Calls.	SetTerrWidths, BoldHeadings
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/4/20.		wmk.	original code
+&apos;// 9/5/20.		wmk.	misc. bug fixes to comply with OPTION EXPLICIT;
+&apos;//						fix RefUSA Phone column being deleted; column
+&apos;//						widths for SubTerritory, CongTerrID adjusted to 0.9&quot;
+&apos;//	9/6/20.		wmk.	add support for &quot;RecordDate&quot; field in SplitProps
+&apos;//						table; take date from cell C2 in edit sheet; bug fix
+&apos;//						where DoNotCall column lost; move BoldHeadings call
+&apos;//						to after RecordDate heading set
+&apos;// 9/7/20.		wmk.	code adjustments for support of &quot;Foreign&quot; and
+&apos;//						&quot;X-Pending&quot; fields
+&apos;//	9/30/20.	wmk.	documentation updated
+&apos;//
+&apos;//	Notes. This sub/utility is run on the Admin-Edit sheet coming back from
+&apos;//	either the territory sevant, or a territory administrator after being
+&apos;// updated with changes. This sheet is morphed into an Admin-Bridge
+&apos;// sheet that is then used to produce a .csv &quot;&lt;ST&gt;Update.csv&quot; where &lt;ST&gt;
+&apos;// is the SubTerritory name (e.g. ANDROS). That .csv will then be used
+&apos;// to create a &lt;ST&gt;Update.db containing 1 table &quot;PropsUpdt&quot;. That .db
+&apos;// and table will be used with SQL and a SELECT..UNION..SELECT that will
+&apos;// form the union of any new records and the entire MultiMail/SplitProps
+&apos;// records. (CREATE TEMP TABLE &lt;table-name&gt; AS SELECT..UNION..SELECT)
+&apos;//
+&apos;// MultiMail/SplitProps table fields.
+&apos;//		9/7/20.
+&apos;//0|OwningParcel|TEXT|1||0
+&apos;//1|UnitAddress|TEXT|1||0
+&apos;//2|Resident1|TEXT|0||0
+&apos;//3|Resident2|TEXT|0||0
+&apos;//4|Phone1|TEXT|0||0
+&apos;//5|Phone2|TEXT|0||0
+&apos;//6|RefUSA-Phone|TEXT|0||0
+&apos;//7|SubTerritory|TEXT|0||0
+&apos;//8|CongTerrID|TEXT|0||0
+&apos;//9|DoNotCall|INTEGER|0|0|0
+&apos;//10|RSO|INTEGER|0|0|0
+&apos;//11|Foreign|INTEGER|0|0|0
+&apos;//12|RecordDate|REAL|0|0|0
+&apos;//13|X-Pending|INTEGER|0|0|0
+&apos;//	Method. code RueditToBridge to take edit spreadsheet and move upward
+&apos;// to Bridge format:
+&apos;// Insert column 0 “OwningParcel”,
+&apos;// rename “search/truepeople column H to “SubTerritory”,
+&apos;// rename column I to CongTerrID,
+&apos;// delete column J moving DoNotCall and RSO over 1 left;
+&apos;// fill column 0 with OwningParcel from header;
+&apos;// fill SubTerritory and CongTerrID with fields from header
+
+
+&apos;//	constants.
+const COL_PARCEL=0		&apos;// &quot;OwningParcel&quot; column index
+const COL_A=0
+const COL_B=1
+const COL_C=2	
+const COL_D=3
+const COL_E=4
+const COL_G=6			&apos;// column G index
+const COL_H=7			&apos;// column H index
+const COL_I=8			&apos;// column I index
+const COL_J=9			&apos;// column J index
+const COL_K=10			&apos;// column K index (DoNotCall)
+const COL_L=11			&apos;// column L index (RSO)
+const COL_M=12			&apos;// column M index (Foreign)
+const COL_N=13			&apos;// column N index (RecordDate)
+const COL_O=14			&apos;// column O index (X-Pending)
+const ROW_1=0
+const ROW_2=1
+const ROW_3=2
+const ROW_4=3
+const ROW_HEADING=4		&apos;// headings row index
+const LJUST=1		&apos;// left-justify HoriJustify				&apos;// mod052020
+const CJUST=2		&apos;// center HoriJustify						&apos;// mod052020
+const RJUST=3		&apos;// right-justify HoriJustify				&apos;// mod052320
+const MDYY=30		&apos;// &apos;M/D/YY&apos; format value
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+dim oMrgRange	As Object	&apos;// merge range
+
+dim oCell	As Object		&apos;// cell working on
+dim i		As Integer		&apos;// loop index
+dim sPropID	As String		&apos;// property ID
+dim sSubTerr	As String	&apos;// subterritory
+dim sCongTerr	As String	&apos;// cong terr ID
+dim lRowCount	As Long		&apos;// row count of addresses
+dim dDate		As Double	&apos;// date value
+
+	&apos;// code.
+	ON ERROR GoTo ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	
+	&apos;// delete columns H, I, search columns 
+	oSheet.Columns.removeByIndex(COL_H,2)
+	
+	&apos;// insert 2 columns at H for SubTerritory and CongTerr ID
+	oSheet.Columns.insertByIndex(COL_H,2)
+	
+	&apos;// insert 1 column at A for OwningParcel
+	oSheet.Columns.insertByIndex(COL_PARCEL,1)
+	SetBridgeHeadings()
+	
+if true then
+	GoTo NewCode
+endif
+
+	&apos;// insert column at index 0 for &quot;OwningParcel&quot;
+	oSheet.Columns.insertByIndex(COL_PARCEL,1)
+	
+	&apos;// delete column J (search whitepages, index 9)
+	oSheet.Columns.removeByIndex(COL_J,1)
+
+	&apos;// remove columns I, J and replace with 2 new columns
+	oSheet.Columns.removeByIndex(COL_I,2)
+	oSheet.Columns.insertByIndex(COL_I,2)
+	SetBridgeHeadings()
+
+NewCode:	
+if true then
+	GoTo Skip1
+endif
+
+	&apos;// correct column headings
+	&apos;// set OwningParcel heading
+	oCell = oSheet.getCellByPosition(COL_PARCEL, ROW_HEADING)
+	oCell.String = &quot;OwningParcel&quot;
+	oCell.HoriJustify = CJUST
+
+	&apos;// set SubTerritory heading
+	oCell = oSheet.getCellByPosition(COL_I, ROW_HEADING)
+	oCell.String = &quot;SubTerritory&quot;
+	oCell.HoriJustify = CJUST
+	
+	&apos;// set CongTerrID heading
+	oCell = oSheet.getCellByPosition(COL_I+1, ROW_HEADING)
+	oCell.String = &quot;CongTerrID&quot;
+	oCell.HoriJustify = CJUST
+&apos;	SetColWidth(COL_I, 0.9)
+&apos;	SetColWidth(COL_J, 0.9)
+	SetTerrWidths()		&apos;// also RecordDate
+
+	&apos;// set DoNotCall heading (K)
+	
+	&apos;// set RSO heading (L)
+	
+	&apos;// set Foreign heading (M)
+	oCell = oSheet.getCellByPosition(COL_M, ROW_HEADING)
+	oCell.String = &quot;Foreign&quot;
+	oCell.HoriJustify = CJUST
+	
+	
+	&apos;// set RecordDate heading
+	oCell = oSheet.getCellByPosition(COL_N, ROW_HEADING)
+	oCell.String = &quot;RecordDate&quot;
+	oCell.HoriJustify = CJUST
+
+	&apos;// set X-Pending heading.
+	oCell = oSheet.getCellByPosition(COL_O, ROW_HEADING)
+	oCell.String = &quot;X-Pending&quot;
+	oCell.HoriJustify = CJUST
+Skip1:
+	
+	&apos;// Insure all headings Bold.
+	BoldHeadings()
+	
+	&apos;// move B1 through G3 to A1
+	oMrgRange = oRange
+	oMrgRange.StartColumn = COL_B
+	oMrgRange.EndColumn = COL_G
+	oMrgRange.StartRow = ROW_1
+	oMrgRange.EndRow = ROW_3
+dim oTarget as new com.sun.star.table.CellAddress
+	oTarget.Sheet = oRange.Sheet
+	oTarget.Column = COL_A
+	oTarget.Row = ROW_1
+	oSheet.moveRange(oTarget,oMrgRange)
+
+	&apos;// move B4 through E4 to A4
+	oMrgRange.StartColumn = COL_B
+	oMrgRange.EndColumn = COL_E
+	oMrgRange.StartRow = ROW_4
+	oMrgRange.EndRow = ROW_4
+	oTarget.Column = COL_A
+	oTarget.Row = ROW_4
+	oSheet.moveRange(oTarget,oMrgRange)
+	
+	&apos;// right-justify A2-A4
+	oCell = oSheet.getCellByPosition(COL_A, ROW_2)
+	oCell.HoriJustify = RJUST
+	oCell = oSheet.getCellByPosition(COL_A, ROW_3)
+	oCell.HoriJustify = RJUST
+	oCell = oSheet.getCellByPosition(COL_A, ROW_4)
+	oCell.HoriJustify = RJUST
+	
+	&apos;// fill column A with property id from E1
+	&apos;// B2.Value = row count
+	oCell =	oSheet.getCellByPosition(COL_E, ROW_1)
+	sPropID = oCell.String
+	oCell =	oSheet.getCellByPosition(COL_B, ROW_2)
+	lRowCount = oCell.Value
+	lThisRow = ROW_HEADING
+	for i = 0 to lRowCount-1
+		lThisRow = lThisRow + 1
+		oCell =	oSheet.getCellByPosition(COL_A, lThisRow)
+		oCell.String = sPropID
+	next i	
+
+	&apos;// fill column I with SubTerritory from B4
+	oCell =	oSheet.getCellByPosition(COL_B, ROW_4)
+	sSubTerr = oCell.String
+	lThisRow = ROW_HEADING
+	for i = 0 to lRowCount-1
+		lThisRow = lThisRow + 1
+		oCell =	oSheet.getCellByPosition(COL_I, lThisRow)
+		oCell.String = sSubTerr
+	next i	
+	
+	&apos;// fill column J with CongTerrID from D4
+	oCell =	oSheet.getCellByPosition(COL_D, ROW_4)
+	sCongTerr = oCell.String
+	lThisRow = ROW_HEADING
+	for i = 0 to lRowCount-1
+		lThisRow = lThisRow + 1
+		oCell =	oSheet.getCellByPosition(COL_J, lThisRow)
+		oCell.String = sCongTerr
+	next i	
+
+	&apos;// fill column M with RecordDate from C2
+	oCell =	oSheet.getCellByPosition(COL_C, ROW_2)
+	dDate = oCell.Value
+	lThisRow = ROW_HEADING
+	for i = 0 to lRowCount-1
+		lThisRow = lThisRow + 1
+		oCell =	oSheet.getCellByPosition(COL_M, lThisRow)
+		oCell.setValue(dDate)
+		oCell.NumberFormat = MDYY
+		oCell.HoriJustify = CJUST
+	next i	
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgBox(&quot;RUEditToBridge - unprocessed error.&quot;)
+	GoTo NormalExit
+end sub		&apos;// end RUEditToBridge		9/30/20

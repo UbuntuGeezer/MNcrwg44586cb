@@ -1,0 +1,188 @@
+README - BridgesToTerr project documentation.
+	2/8/22.	wmk.
+
+Modification History.
+---------------------
+8/12/21.	wmk.	original document.
+10/11/21.	wmk.	AddLetterZips.sh prerequisite documented.
+11/11/21.	wmk.	Setup and Batch Setup sections added.
+12/24/21.	wmk.	Significant Notes section added for multihost support.
+1/31/22.	wmk.	PUB_NOTES_xxx documented in Setup and Dependencies sections.
+2/8/22.		wmk.	TIDList note added about BuildSCDiff territory list.
+
+DocumentSections.
+-----------------
+Project Description - overall project description.
+Dependencies - build dependencies.
+Setup - step-by-step Build instructions.
+Batch Setup - batch run instructions.
+
+
+Project Description.
+--------------------
+BridgesToTerr takes the Bridge data from both the RU and SC territory
+databases, copies the records into the appropriate territory generation
+source databases PolyTerri.db and MultiMail.db, then queries those
+databases to a .csv for use by Calc in generating publisher territory.
+
+This project is a bit unconventional in that, unlike other projects, the
+primary target of the build is phony. All of the results of this build
+are side-effects, that will be used in generating territories.
+
+
+Dependencies.
+-------------
+NOTE: A .PHONY target is always considered out-of-date, regardless of the
+state of the file system. (e.g. all, install, clean, distclean, TAGS, info
+check). Generally, all targets in your makefile which to not produce an
+output file by the same name should be declared PHONY.
+A target with no dependencies will always be built.
+
+Most of the project dependencies are shell files that were invoked
+individually prior to defining the makefile for this project.
+
+MakeBridgesToTerr.tmp - template for MakeBridgesToTerr makefile to build
+   from the Bridges in databases to a territory table, then ultimately
+   to a .csv file for use by Calc in generating the publisher territory.
+
+DoSed.sh - sed preprocessor to edit territory ID into MakeBridgesToTerr.
+
+TIDList.txt - [optional] list of territory IDs for repeated calls to
+   process multiple territories from their Bridge tables to .csv files
+   to generate publisher territories.
+
+AddLetterZips.sh - shell to add zip codes to UnitAddress fields in the
+   Terrxxx_SC.db.Terrxxx_SCBridge records for letter territories (6xx)
+   invoked by MakeBridgesToTerr makefile.
+
+
+Procs-Dev Shells.
+
+ClearTerr.sh - shell to clear all territory records from PolyTerri and
+   MultiMail for fresh generation of records.
+
+CombineBridgeNames.sh - shell to combine all owner names from SCPA county
+   data into comma separated field for publisher territory.
+
+SetSCRUdncs.sh - set donotcall fields in territory records.
+
+NewRUSCTerrToDBs - move RU and SC territory records from territory Bridge
+   tables into PolyTerri and MultiMail dbs.
+
+QGetTerr.sh - extract territory records from PolyTerri and MultiMail into
+   QTerrxxx.db for publisher territory generation.
+
+SortQTerrByAddr.sh - sort QTerrxxx.db records by address, using house/bldg
+   number as integer to assure correct ordering by Calc.
+
+QGenTable.sh - generate table.csv records for import into Calc for 
+   generating territory.
+
+Project Shells.
+CopyPubNotes.sh - copy PUB_NOTES_xxx.html to TerrData/Terrxxx if exists.
+
+LastChanceDNCs.sh - redo DNC fields in QTerrxxx.db to ensure no DNCs missed.
+
+LastChanceDNCs.sq - SQL query built into .sh shell for setting DNC fields.
+
+Other Projects Dependencies.
+MakeBridgesToTerr uses other projects in processing.
+
+MakeAnySQLtoSH - project to take any SQL file and convert it to a series
+   of shell commands, generating SQLTemp.sql for sqlite.
+
+
+Setup.
+------
+Before running the Build for BridgesToTerr, ensure that the Terrxxx_SC.db
+and Terrxxx_RU.db Bridge tables are up-to-date. (See the projects UpdateSCBridge
+UpdateRUDwnld, UpdateRUSpecial,  and UpdtRULetter.)
+
+BridgesToTerr Build menu:
+
+	'sed' menu item; edit the territory ID to process into the DoSed command
+	run 'sed' from the Build menu
+	
+	[run 'Make dry-run' from the Build Menu to check Build process setup.]
+	
+	run 'Make' from the Build menu to update the PolyTerri and MultiMail
+	 territory master dbs and generate the TerrData/Working-Files used
+	 by Calc in generating the Terrxxx_PubTerr files.
+
+When the BridgesToTerr build completes, if the TerrxxxHdr.ods file has 
+not yet been generated in the TerrData/Working-Files folder, a reminder
+message is issued to run Calc to generate the header file for the territory.
+
+The territory records for territory xxx are now ready for production into
+the publisher territory files. A "one-stop-shopping" spreadsheet in the
+DoTerrsWithCalc project folder is what actually builds the publisher
+territory files. This workhorse spreadsheet is ProcessQTerrs12.ods. (See
+the DoTerrsWithCalc project README file for instructions.)
+
+**Note.**
+If a PUB_NOTES_xxx.html file exists for a territory in its RefUSA-Downloads
+folder, it will be copied to the folder TerrData/Terrxxx folder for release
+with the publisher territory.
+
+
+Batch Setup.
+------------
+BridgesToTerr has been set up to support batch runs for multiple territories.
+The shell AllBridgesToTerr.sh does the batch runs. The project file 
+TIDList.txt supplies AllBridgesToTerr with the list of territories to
+process.
+
+Note. Linux-based systems have a command-line utility 'seq' that can
+produce a list of numbers in sequence and output it to a file. The command
+is:   seq  <first> <last> [<interval>]
+where <first> = first number in sequence
+	  <last> = last number in sequence
+	  <interval> = (optional) interval between numbers; default 1
+
+BridgesToTerr Project folder:
+
+	edit the TIDList.txt file entering all of the territory IDs to
+	 be processed, one per line. A line beginning with '#' is treated
+	 as a comment, and will be ignored.
+	 (see note in BuildSCDiff/README.md about query to run to generate a TIDList
+	 specific to the territories that require updating due to a new SCPA download.) 
+	
+BridgesToTerr Build menu:
+
+	set the Geany editor focus on any text file (e.g. README, TIDList.txt).
+	 This will expose the 'Batch Run' Build menu item.
+	
+	run the 'Batch Run' Build menu item. This will process the territory
+	 Bridge files into the PolyTerri and MultiMail territory master dbs
+	 and extract the records into the TerrData/Terrxxx/Working-Files folder
+	 that will be used by Calc in territory generation.
+
+The territory records for all of the territories listed in the TIDList.txt
+file are now ready for production intothe publisher territory files. As
+with the individual territory build, use the ProcessQTerrs12.ods spreadsheet
+to build the territory files. The TIDList.txt file can be opened in the
+ProcessQTerrs12.ods spreadsheet and copied to a sheet which contains the
+list of territories to process. (See the DoTerrsWithCalc project README file
+for instructions.)
+
+
+Significant Notes.
+------------------
+Chromebook/chromeos.
+
+Chromebook/chromeos running in developer mode supports the linux infrastructure.
+For this project (and others) Territories.xba has been modified with three
+module-wide constants for correct pathing during runtime. These constants
+replace hard-coded strings within the code so that the code library can be
+migrated to different host systems.
+
+The constants for Chromebooks/chromeos are as follows:
+<pre><code>
+  csTerrBase = "/home/vncwmk3"  		'// $HOME env var value on Chromebook
+  csTerrDataPath = "/home/vncwmk3/Territories/TerrData"	'// TerrData folder path
+</code></pre>
+For the flashdrive-based ubuntu they are as follows:
+<pre><code>
+  csTerrBase = "/media/ubuntu/Windows/Users/Bill"
+  csTerrDataPath = /media/ubunut/Windows/Users/Bill/Territories/TerrData"
+</code></pre>

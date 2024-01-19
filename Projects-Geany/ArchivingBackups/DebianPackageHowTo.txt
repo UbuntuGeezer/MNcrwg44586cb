@@ -1,0 +1,145 @@
+
+Making a source package
+
+My recommendation is to make a source package. Install build-essential, debhelper, dh-make. Change to the directory where the files you want to install are (the directory name must be of the form $PACKAGE-$VERSION, e.g. myapp-4.2-1 for your first attempt at packaging Myapp V4.2), and run dh_make --createorig. Answer the questions. Debhelper will create the basic infrastructure needed to build a package by generating files in a subdirectory called debian, both some mandatory files and templates for optional files. You may need to modify some of these files:
+
+    Edit debian/rules to build what needs building and install the files in the right place. If you just need to copy some files and not to compile stuff, just edit the file debian/install to specify which files need to be installed where.
+    Edit debian/copyright to add license information about your package and information on where to get the latest version (if relevant).
+    Edit debian/changelog to remove the reference to an ITP (that's only relevant if you're working for the Debian project). Rename debian/postinst.ex to debian/postinst and add your post-installation commands there. If you later update your package, run debchange -i to add a changelog entry or edit the file in Emacs (with dpkg-dev-el installed).
+
+Run dpkg-buildpackage -rfakeroot -us -uc to build the .deb package (remove -us -uc if you want to sign the package with your PGP key).
+Making a binary package directly
+
+If you decide to make a binary package directly without building it from a source package, which is not really easier because there aren't as many tools to facilitate the process, you'll need some basic familiarity with the format of deb packages. It is described in the Debian Policy Manual, in particular ch. 3 (format of binary packages), ch. 5 (control files), ch. 6 (installation scripts) and appendix B (binary package manipulation).
+
+You make sure that your package installs the expected files /usr/share/doc/copyright (containing the license of the package contents, as well as where to find the latest version of the package) and /usr/share/doc/changelog.Debian.gz (containing the changelog of the deb package). You don't need these if you're only going to use the package in-house, but it's better to have them.
+On Debian and derivatives
+
+If you have the Debian tools available, use dpkg-deb to construct the package. In the directory containing the data to install, add a directory called DEBIAN at the top level, containing the control files and maintainer scripts.
+
+$ ls mypackage-42
+DEBIAN etc usr var
+$ dpkg-deb -b mypackage-42
+
+The hard way
+
+If you don't have the Debian tools, build an archive of the files you want to package called data.tar.gz, a separate archive of the control files called control.tar.gz (no subdirectories), and a text file called debian-binary and containing the text 2.0.
+
+cd mypackage-42
+tar czf ../data.tar.gz [a-z]*
+cd DEBIAN
+tar czf ../../control.tar.gz *
+cd ../..
+echo 2.0 > debian-binary
+ar r mypackage-42.deb debian-binary control.tar.gz data.tar.gz
+
+You need at least a control file with the fields Package, Maintainer, Priority, Architecture, Installed-Size, Version, and any necessary dependency declaration.
+
+The script to be executed after installation is called postinst. Be sure to make it executable. It goes alongside control.
+Converting a binary package from a different format
+
+If you already have a binary package from another distribution, you can use alien to convert it.
+Share
+Improve this answer
+Follow
+edited Apr 22 '15 at 12:08
+answered Jan 31 '12 at 0:45
+Gilles 'SO- stop being evil'
+698k170170 gold badges14581458 silver badges19531953 bronze badges
+
+    1
+    The answer presupposes the OP knows how to use emacs. Is emacs really necessary here? For editing changelogs, I think one can use dch -i. – Faheem Mitha Jan 31 '12 at 4:27 
+
+    What is ar doing that tar is not? – mmstick Jun 20 '16 at 17:00
+    @mmstick It's a different format. I don't know why the designers of the deb format chose to use ar here. – Gilles 'SO- stop being evil' Jun 20 '16 at 17:06
+    1
+    If you want to change the name and email that dh_make --createorig uses, you need to export DEBEMAIL="me@example.com" and export DEBFULLNAME="Firstname Lastname" beforehand. – Ryan May 28 '18 at 3:35
+    1
+    @user30747 You don't need to add anything. That's just part of the ar format produced by ar from GNU binutils, which is what you'd normally have on Linux. I think this format is the same as BSD ar. If you're using a different OS it might have a different format, but GNU binutils are usually easy to install everywhere. And the tar format likewise has to be a format understood by GNU tar, but I think it can read all the classic tar formats. – Gilles 'SO- stop being evil' Jun 15 at 8:28
+
+Show 3 more comments
+12
+
+First off you need to create a build folder and an archive of your files: tar czvf data.tar.gz files
+
+Then in the build folder you must create a control file with some wanted informations:
+
+ Package: xxxxxx
+ Version: 0.0.1
+ Section: user/hidden 
+ Priority: optional
+ Architecture: armel
+ Installed-Size: `du -ks usr|cut -f 1`
+ Maintainer: Your Name <xxx@xxx.xx>
+ Description: This is optional, but creates warnings if left out
+
+Then you can add independently preinst, postint, prerm and postrm shell scripts to control pre and post install and pre and post remove behaviour of the .deb file and then you can create the control archive with tar: tar czvf control.tar.gz control preinst postinst prerm postrm
+
+Then you need a debian-binary file: echo 2.0 > debian-binary. In your build folder you should have now these files: debian-binary control.tar.gz and data.tar.gz.
+
+Finally you need ar package to create the .deb file: ar -r xxx.deb debian-binary control.tar.gz data.tar.gz
+Share
+Improve this answer
+Follow
+edited Jan 21 '14 at 22:11
+Fredrik Wendt
+16466 bronze badges
+answered Jan 29 '12 at 18:42
+Gigamegs
+4,05144 gold badges2424 silver badges3333 bronze badges
+
+    1
+    About ar -r xxx.deb debian-binary control.tar.gz data.tar.gz it could be worth to stress the order is important: control must come before data. – Hibou57 Sep 25 '17 at 4:16
+    @Bytemain, the top voted answer looks indeed partially based on your text, but it adds details to it, and it's better readable. the sequence we can copy/paste makes it particularly more handsome. – mariotomo Mar 2 '18 at 19:50
+
+Add a comment
+3
+
+I do a lot of packages, and to do a full one is not a trivial matter. On a positive note, files and scripts are much less work. You can create such a package, very simply, with a tool known as debreate.
+
+Debreate is a really simple GUI, for just creating simple DEB packages. You can just specify which files, where they go, and if/what should execute on post/pre install/uninstall. I used to just do all my packages the standard way, but after I started using this tool, I will only go back when necessary.
+Share
+Improve this answer
+Follow
+edited Feb 16 '18 at 18:14
+Matija Nalis
+2,62111 gold badge1010 silver badges2020 bronze badges
+answered Jan 31 '12 at 1:08
+J. M. Becker
+4,33133 gold badges2222 silver badges3939 bronze badges
+Add a comment
+Report this ad
+2
+
+See the Debian Wiki on Packaging, maybe equivs (see link) already satisfies your requirements.
+
+Wikipedia's page on the deb file format also includes many useful links.
+Share
+Improve this answer
+Follow
+answered Jan 29 '12 at 10:25
+sr_
+14.5k4343 silver badges5050 bronze badges
+Add a comment
+1
+
+Ran into this with Zimbra 7 on Debian using its Ubuntu packages. (I'm stubborn, I like Debian > bUbuntu despite Zimbra releasing only for Ubuntu.) Not sure how I worked around this before, I'm certain I didn't have to do this when I installed this previously!
+
+mkdir new
+for i in *.deb
+ do echo `date`: working on $i
+ ar x $i
+ cd control
+ rm * 2> /dev/null
+ tar -xzpvf ../control.tar.gz
+ tr "_" "-" < control > control2
+ mv -v control2 control
+ tar -czpvf ../control.tar.gz .
+ cd ..
+ ar r new/$i debian-binary control.tar.gz data.tar.gz
+done
+rm -rf debian-binary control.tar.gz data.tar.gz control
+
+All your new .deb files will be in new/.
+
+Note: this was on squeeze - dpkg on wheezy has --force-bad-version now.

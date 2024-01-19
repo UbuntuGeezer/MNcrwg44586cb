@@ -1,0 +1,85 @@
+&apos;// WriteHTML.bas - write HTML file with generated phone query.
+&apos;//---------------------------------------------------------------
+&apos;// WriteHTML - Write phone query to HTML file.
+&apos;//		8/10/20.	wmk. 21:00
+&apos;//---------------------------------------------------------------
+
+public sub WriteHTML(psFilename As String, psURL As String)
+
+&apos;//	Usage.	call WriteHTML( sFilename, sURL )
+&apos;//
+&apos;//		sFileName = filename to write [.html suffix will be added]
+&apos;//		sURL = generated URL to write in HTML
+&apos;//
+&apos;// Entry.	&lt;entry conditions&gt;
+&apos;//
+&apos;// Exit. The following lines are written to the file &lt;sFileName&gt;.html
+&apos;//    &lt;!DOCTYPE html&gt; 
+&apos;//    &lt;html&gt; 
+&apos;//    &lt;head&gt; 
+&apos;//    	&lt;title&gt;Phone Query&lt;/title&gt; 
+&apos;//    	&lt;meta http-equiv=&quot;refresh&quot;
+&apos;//   content=&quot;0;url=https://www.truepeoplesearch.com/details?streetaddress=500%20The Esplanade%20307&amp;citystatezip=Venice%2C%20FL&amp;rid=0x0&quot; /&gt;
+&apos;//    &lt;/head&gt; 
+&apos;//    &lt;body&gt; 
+&apos;//    &lt;/body&gt; 
+&apos;//    &lt;/html&gt; 
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	8/9/20.		wmk.	original code
+&apos;//	8/10/20.	wmk.	calling sequence modified to accept
+&apos;//						filename and url parameters
+&apos;//
+&apos;//	Notes. The path that the file is written to is cast as
+&apos;// an internally known path. Eventually, this should be
+&apos;// contained in either an environment variable or public
+&apos;// constant in a shared header. See the initial sPath assignment
+&apos;//	statement below.
+&apos;// See function sGenPhoneURL for documentation on the URL passed
+&apos;// in to be written to the .html file.
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim sFileSpec	As String	&apos;// filespec
+dim sFile		As String	&apos;// file
+dim sURL		As String	&apos;// URL to write
+dim sPath		As String	&apos;// file path
+dim iHandle		As Integer	&apos;// file handle
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	sPath = &quot;/media/ubuntu/Windows/Users/Bill/Documents/Cong-Files/Territories/Queries-HTML/&quot;
+&apos;	sFile = &quot;FirstPhone.html&quot;
+	sFile = psFilename
+	sURL = psURL
+	sFileSpec = sPath + sFile + &quot;.html&quot;
+	iHandle = Freefile		&apos;// get free file handle
+	Open sFileSpec For Output As #iHandle
+	
+	&apos;// write HTML statements to file.
+	Print #iHandle &quot;&lt;!DOCTYPE html&gt;&quot;
+	Print #iHandle &quot;&lt;html&gt;&quot;
+	Print #iHandle &quot;&lt;head&gt;&quot;
+	Print #iHandle &quot;&lt;title&gt;Phone Query&lt;/title&gt;&quot;
+	Print #iHandle &quot;&lt;meta http-equiv=&quot;&quot;refresh&quot;&quot;&quot;
+&apos;	Print #iHandle &quot;content=&quot;&quot;0;url=https://www.truepeoplesearch.com/details?streetaddress=500%20The Esplanade%20307&amp;citystatezip=Venice%2C%20FL&amp;rid=0x0&quot;&quot; /&gt;&quot;
+    sPageLink = &quot;content=&quot;&quot;0;url=&quot; + sURL + &quot;&quot;&quot;&quot;
+    Print #iHandle sPageLink
+	Print #iHandle &quot;&lt;/head&gt;&quot;
+	Print #iHandle &quot;&lt;body&gt;&quot;
+	Print #iHandle &quot;&lt;/body&gt;&quot;
+	Print #iHandle &quot;&lt;/html&gt;&quot;
+	Close #iHandle
+msgBox(&quot; WriteHTML complete. - File = &apos;&quot; + sFile + &quot;&apos;&quot;)
+  
+NormalExit:
+  exit Sub
+  
+ErrorHandler:
+  msgBox(&quot; WriteHTML - Unprocessed error.&quot;)
+  GoTo NormalExit
+  
+end sub		&apos;// end WriteHTML   8/10/20.

@@ -1,0 +1,16 @@
+#TIDList.txt - Capri Isles territories list.
+# Territories 216, 232, 233, 234, 271, 274, 284, 285 use CapriIslesBlvd.
+# Territories 288-291 use GondolaParkDr.
+216
+232
+233
+234
+271
+274
+284
+285
+288
+289
+290
+291
+# end Capri Isles territories.

@@ -1,0 +1,49 @@
+-- * SyncNOMAPTerr.psq- Populate Terr_RU.db with new Specxxx_RU.db records.
+-- *	7/2/23.	wmk.
+-- *
+-- * Entry.	Specxxx_RU.db is records from all ru/Special databases affecting
+-- *	territory xxx
+-- *		Terrxxx_RU.db = RU database for territory xxx generation.
+-- *
+-- * Exit.	Terrxxx_RU.Terrxxx_RUBridge records populated from Specxxx_RU.db
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 7/2/23.	wmk.	original code; adapted from SyncTerrToSpec.
+-- *
+-- * 11/2/21.	wmk.	original code. (SyncTerrToSpec)
+-- * 5/8/23.	wmk.	*pathbase support added; header standardized with
+-- *			 Entry, Exit, Modification History, Notes sections added;
+-- *			 algorithm corrected for SC handling.
+-- *
+-- * Notes.
+-- *;
+
+.cd '$pathbase'
+.cd './RawData/RefUSA/RefUSA-Downloads/Terrxxx'
+-- *.trace 'Procs-Dev/SQLTrace.txt'
+-- * open Terrxxx_RU.db and attach Specxxx_RU.db;
+.open 'Terrxxx_RU.db'
+
+-- * RegenSpecDB has generated Specxxx_RU.db from all the
+-- * /Special/<specdb>.db,s for this territory;
+ATTACH 'Specxxx_RU.db' AS db29;
+--pragma db29.table_info(Spec_RUBridge;
+
+-- * RUBridge table structure;
+-- *CREATE TABLE Spec_RUBridge ( 
+-- "OwningParcel" TEXT NOT NULL, "UnitAddress" TEXT NOT NULL, "Unit" TEXT, 
+-- "Resident1" TEXT, "Phone1" TEXT, "Phone2" TEXT, "RefUSA-Phone" TEXT, 
+-- "SubTerritory" TEXT, "CongTerrID" TEXT, "DoNotCall" INTEGER DEFAULT 0, 
+-- "RSO" INTEGER DEFAULT 0, "Foreign" INTEGER DEFAULT 0, 
+-- "RecordDate" REAL DEFAULT 0, "SitusAddress" TEXT, "PropUse" TEXT, 
+-- "DelPending" INTEGER DEFAULT 0, "RecordType" TEXT);
+
+-- * Block copy all records from Spec_RUBridge to clean Terrxxx_RUBridge;
+DELETE FROM Terrxxx_RUBridge;
+INSERT INTO Terrxxx_RUBridge
+SELECT * FROM db29.Spec_RUBridge;
+.quit
+     
+-- ** END SyncNOMAPTerr;
+

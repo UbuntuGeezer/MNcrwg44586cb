@@ -1,0 +1,50 @@
+# MakeQGetTerr - QGetTerr makefile.
+#	6/26/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 10/4/22.  wmk.    (automated) fix *pathbase for CB system.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# Legacy mods.
+# 6/26/22.	wmk.	original code.
+
+ifndef folderbase
+endif
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase=/media/ubuntu/Windows/Users/Bill
+ else
+  folderbase=$(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+ bashpath = $(codebase)/Procs-Dev
+projbase = $(codebase)/Projects-Geany/
+ projpath = $(codebase)BridgesToTerr
+targpath = $(pathbase)/TerrData/Terryyy/Working-Files
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+.PHONY : Always
+.NOTPARALLEL : ;
+.ONESHELL : ;
+
+# $(projpath)/QGetTerr.sh
+#=======================================================================
+Always  : $(projpath)/QGetTerr.sql
+	cd $(altproj);./DoSed.sh $(projpath) QGetTerr $(projpath)/preQGet.sh
+	make -f $(altproj)/MakeAnySQLtoSH
+
+$(projpath)/QGetTerr.sql :;
+	if ! test -f $@;then \
+	 echo "** QGetTerr.sql not found for MakeQGetTerr **";exit 1;fi
+	 
+#=======================================================================

@@ -1,0 +1,6 @@
+# awkdeldups.txt - eliminate duplicates from list.
+#  commented - filter out duplicate lines and print those that occur exactly once.
+{k = ($1)}
+{ a[$1]++; b[$1] = k}
+#END{ for (x in a)if( a[x] == 1 )print b[x]}
+END{ for (x in a)print b[x]}

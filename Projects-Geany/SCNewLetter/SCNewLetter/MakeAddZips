@@ -1,0 +1,35 @@
+# MakeAddZips - Makefile for SC AddZips.sh.
+#	10/29/21.	wmk.
+#
+# Modification History.
+# ---------------------
+# 10/23/21.	wmk.	original code; adapted from territory 614 for yy y.
+# 10/29/21.	wmk.	bug fix basepath corrected.
+#
+# MakeAddZips makes the AddZips.sh shell to add zip codes to the UnitAddress
+# fields in the Bridge records, since letter-writing territories may cross
+# zip code boundaries.
+
+ifeq ($(USER),ubuntu)
+ folderbase = /media/ubuntu/Windows/Users/Bill
+else
+ folderbase = $(HOME)
+endif
+
+basepath = $(folderbase)/Territories/RawData/SCPA/SCPA-Downloads/
+shellpath = $(folderbase)/Territories/Procs-Dev/
+
+# Terryyy/AddZips.sh
+#=====================================================================
+$(basepath)Terryyy/AddZips.sh : $(basepath)Terryyy/AddZips.sq
+	cat $(shellpath)hdrAnySQL_1.sh $(basepath)Terryyy/AddZips.sq \
+	 $(shellpath)hdrAnySQL_2.sh > $@
+	sed -i 's?<filename>?AddZips?g' $@
+
+$(basepath)Terryyy/AddZips.sq : $(basepath)Terryyy/AddZips.sql
+	$(shellpath)AnySQLtoSQ.sh $(basepath)Terryyy AddZips	
+
+$(basepath)Terryyy/AddZips.sql : 
+
+#=====================================================================
+# end MakeAddZips

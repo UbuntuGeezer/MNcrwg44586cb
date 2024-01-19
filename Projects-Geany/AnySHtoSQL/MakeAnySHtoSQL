@@ -1,0 +1,52 @@
+# MakeAnySHtoSQL.tmp - Makefile (template) for MakeAnySHtoSQL.
+#	3/31/23.	wmk.
+#
+# MakeAnySHtoSQL takes a <file base>.sh file and move it through the
+# reverse process to de-shell it into a .sql file of straight SQL. An
+# intermediate file <file base>.sq is the SQL shell echo,s stripped out
+# of the .sh file.
+#
+# Modification History.
+# ---------------------
+# 11/19/22.	wmk.	bug fix; remove -n from first *sed* command.
+# 3/31/23.	wmk.	bug fix; restore -n to first *sed command.
+# Legacy mods.
+# 6/6/22.	wmk.	rewrite with *sed* simplified; *pathbase* support.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+# Legacy mods.
+# 12/2/21.	wmk.	original makefile.
+# 12/3/21.	wmk.	AWK var added to run *mawk*.
+# 12/26/21.	wmk.	folderbase correctedt for multihost.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+AWK = mawk
+.PHONY : Always
+ projpath = $(codebase)/Projects-Geany/AnySHtoSQL
+
+# /home/vncwmk3/Territories/FL/SARA/86777/RawData/RefUSA/RefUSA-Downloads/Terr112/Fix112RU.sql
+#=======================================================
+Always :
+	sed  -n -f $(projpath)/sedSHtoSQ.txt \
+	  /home/vncwmk3/Territories/FL/SARA/86777/RawData/RefUSA/RefUSA-Downloads/Terr112/Fix112RU.sh > /home/vncwmk3/Territories/FL/SARA/86777/RawData/RefUSA/RefUSA-Downloads/Terr112/Fix112RU.sq
+	sed  -f $(projpath)/sedSQtoSQL.txt /home/vncwmk3/Territories/FL/SARA/86777/RawData/RefUSA/RefUSA-Downloads/Terr112/Fix112RU.sq \
+	  > /home/vncwmk3/Territories/FL/SARA/86777/RawData/RefUSA/RefUSA-Downloads/Terr112/Fix112RU.sql
+	sed -i -f $(projpath)/sedSQtoSQL2.txt /home/vncwmk3/Territories/FL/SARA/86777/RawData/RefUSA/RefUSA-Downloads/Terr112/Fix112RU.sql
+	echo "AnySHtoSQL Fix112RU complete."
+
+#=======================================================

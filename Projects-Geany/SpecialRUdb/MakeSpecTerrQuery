@@ -1,0 +1,72 @@
+# MakeSpecTerrQuery - makefile to create shell SQLTemp.sql for territory 102.
+#	12/30/22.	wmk.
+#
+# MakeSpecTerrQuery takes Spec102RU.sql and converts it to shell echo
+# commands in file Spec102RU.sq to generate SQLTemp.sql
+#
+# Modification History.
+# ---------------------
+# 12/30/22.	wmk.	total rewrite to upgrade for CB.
+# Legacy mods.
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# Legacy mods.
+# 4/24/22.	wmk.	code generalized for FL/SARA/86777;*pathbase*, 
+#			 *congterr*, *conglib* env vars introduced.
+# 5/4/22.	wmk.	(automated) path corrections.
+# 5/29/22.	wmk.	"obsolete" unconditional error.
+# Legacy mods.
+# ??/??/??.	wmk.	original query.
+# 8/21/21.	wmk.	improvements.
+# 8/22/21.	wmk.	add .db created message; fix CreateSpecRU <filename>. 
+
+$(error ** MakeSpecTerrQuery obsolete **)
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : ;
+.ONESHELL : ;
+targpath = $pathbase/$rupath/Terr102
+procpath = $(codebase)/Procs-Dev
+thisproj = $(codebase)/Projects-Geany/SpecialRUdb
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# Spec102_RU.db primary target
+#==============================================================
+$(targpath)/Spec102_RU.db : $(thisproj)/ForceBuild \ 
+ $(targpath)/SQLTemp.sql $(targpath)/Spec102RU.sh  \
+ $(targpath)/Spec102RU.sql 
+	$(targpath)/Spec$102_RU.sh
+	#sqlite3 < $(targpath)/SQLTemp.sql
+	echo "Spec102_RU.db build complete."
+
+$(targpath)/Spec102RU.sh : $(targpath)/Spec102_RU.sql
+	cd $(altproj);./DoSed.sh $(targpath) Spec102_RU.sql
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+
+
+$(targpath)/Spec102RU.sql : 
+	if ! test -f $@;then \
+	 echo " ** missing Spec102RU.sql for Spec102RU.sh build. **";exit 1;fi
+
+
+#==============================================================

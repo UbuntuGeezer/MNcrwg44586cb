@@ -1,0 +1,80 @@
+# MakeSpecials - make all terr xxx  SC Special db related files and databases.
+#	5/10/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 5/10/23.	wmk.	edited by InitSpecial for territory xxx.
+# Legacy mods.
+# 5/8/23.	wmk.	*codebase, *pathbase definitions ensured; trailing '/'
+#			 removed from path definitions; comments tidied.
+# 5/10/23.	wmk.	bug fix recipe paths missing '/'
+# Legacy mods.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+# Legacy mods.
+# 9/6/21.	wmk.	original makefile; adapted from territory 274 SC MakeSpecials;
+#					LOGMSG added.
+# 9/7/21.	wmk.	"not initialized" message exit until modified for territory.
+# 9/16/21.	wmk.	bashpath var added; SetTerrDNCs.sh added to recipe.
+# 11/2/21.	wmk.	edited for territory 276.
+# 12/16/21.	wmk.	276 removed for x xx.
+#
+# MakeSpecials performs all the "makes" within the territory to constSCct
+# the databases within the territory download. It will typically be invoked
+# from a high-level source (e.g. SCPA-Downloads/Special when a database
+# from that source is a prerequisite for one or more makefiles within the
+# territory.
+# (e.g. SCPA-Downloads/SpecialCasaDelLagoWay.db is a prerequisite
+# for building territory xxx). If CasaDelLagoWay is updated,
+# all the downstream databases that use it should be rebuilt also. The
+# makefile 'Make.CasaDelLagoWay.Terr' in the SCPA-Downloads/Special
+# folder will invoke make on the makefile 'MakeSpecials' in the
+# SCPA-Downloads/Terrxxx folder for territories xxx.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+.PHONY : Always
+.ONESHELL :
+.NOPARALLEL :
+
+basepath = $(pathbase)/RawData/SCPA/SCPA-Downloads
+specpath = $(basepath)/Special
+ bashpath = $(codebase)/Procs-Dev
+dbname = <special-db>
+
+# /SCPA-Downloads/Terrxxx/Specxxx_SC.db
+#====================================================================
+$(basepath)Terrxxx/Specxxx_SC.db : $(specpath)/$(dbname).db
+	echo "in recipe for SpecxxxSC.db"
+	if ! test -f $(specpath)/$(dbname).db;then \
+	 echo "** Cannot proceed with Specxxx_SC.db recipe **" \
+	 exit 1;fi
+	echo "  after db test for existence, continuing..."
+	$(MAKE) -f $(basepath)/Terrxxx/MakeRegenSpecDB
+	$(MAKE) -f $(basepath)/Terrxxx/MakeSetSpecTerrs
+	$(MAKE) -f $(basepath)/Terrxxx/MakeSyncTerrToSpec	
+	$(basepath)/Terrxxx/RegenSpecDB.sh
+	$(basepath)/Terrxxx/SetSpecTerrs.sh
+	$(basepath)/Terrxxx/SyncTerrToSpec.sh
+	$(bashpath)/SetTerrDNCs.sh xxx
+	~/sysprocs/LOGMSG "   SC/Specxxx_SC.db rebuilt."
+	echo '  Specxxx_SC.db recipe complete.'
+
+#---
+$(specpath)$(dbname).db : ;
+
+# end MakeSpecials

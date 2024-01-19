@@ -1,0 +1,81 @@
+&apos;// QToPubTerr.bas
+&apos;//------------------------------------------------------------------
+&apos;// QToPubTerr - Take SQL Territory query .csv data to PubTerr sheet.
+&apos;//		10/14/20.	wmk.
+&apos;//------------------------------------------------------------------
+	
+public sub QToPubTerr()
+
+&apos;//	Usage.	macro call or
+&apos;//			call QToPubTerr()
+&apos;//
+&apos;// Entry.	user in workbook with sheet &quot;Terrxxx&quot; that is the query
+&apos;//			data from the SQL territory database
+&apos;//			a second sheet &quot;TerrxxxHdr should also have been loaded
+&apos;//			into the workbook, so that QGetToBridge has all the needed
+&apos;//			information for the sheet headings.
+&apos;//
+&apos;//	Exit.	2 new sheets generated; Terrxxx-Bridge and Terrxxx_PubTerr.
+&apos;//			The Terxxx_PubTerr is also copied to a new workbook, which
+&apos;//			the user can save as a &quot;ready-to-go&quot; territory.
+&apos;//
+&apos;// Calls.	CopyToEnd, UnprotectSheet, QGetToBridge, RenameSheet,
+&apos;//			BridgeToTerr, CopyToNewWork
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	10/14/20.	wmk.	original code
+&apos;// 2/13/21.	wmk.	test call to BridgeToTerr2 for moving columns around
+&apos;//
+&apos;//	Notes.
+
+&apos;//	constants.
+const COL_D=3
+const ROW_4=3
+
+
+&apos;//	local variables.
+dim oDoc		As Object
+dim oSel		As Object
+dim oRange		As Object
+dim iSheetIx	As Integer
+dim oSheet		As Object
+dim oCell		As Object
+dim sTerrID		As String
+dim sSheetName	As String
+
+&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	CopyToEnd()
+	UnprotectSheet()
+	QGetToBridge()
+
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	oCell = oSheet.getCellByPosition(COL_D, ROW_4)
+	sTerrID = trim(oCell.String)
+	sSheetName = &quot;Terr&quot; + sTerrID + &quot;_Bridge&quot;
+	RenameSheet(sSheetName)
+	ProtectSheet()								&apos;// protect sheet
+
+	CopyToEnd()
+	UnprotectSheet()
+&apos;	BridgeToTerr()
+	BridgeToTerr2()
+	
+	sSheetName = &quot;Terr&quot; + sTerrID + &quot;_PubTerr&quot;
+	RenameSheet(sSheetName)
+	ProtectSheet()
+	CopyToNewWork(sSheetName)
+
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;QToPubTerr - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub 	&apos;// end QToPubTerr

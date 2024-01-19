@@ -1,0 +1,77 @@
+# MakeIntegrateOldDiffs.tmp - (template) IntegerateOldDiffs makefile to build IntegrateOldDiffs.sh
+#	6/6/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 6/6/23.	wmk.	duplicate IntegrateOldDiffs.sql recipe moved; comments tidied.
+# Legacy mods.
+# 5/4/22.	wmk.	(automated) path corrections.
+# 6/7/22.	wmk.	main recipe simplified to use AnySQLtoSH.
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# Legacy mods.
+# 8/29/21.	wmk.	original makefile.
+# 9/8/21.	wmk.	modified to rebuild IntegrateOldDiffs.sh after DoSed run for
+#					project; y yy added so DoSed can set up this makefile for 
+#					territory xxx.
+# 9/9/21.	wmk.	cloned into UpdateMHPDwnld from UpdateRUDwnld project;
+#					projpath var edited to UpdateMHPDwnld; MakeUpdateMHPDwnld
+#					prerequisite added to force rebuild whenever DoSed changes
+#					MakeUdpateMHPDwnld
+# 1/23/22.	wmk.	multihost code updated; chmod added to allow execution
+#			 of resultant .sh.
+#
+# Notes. DoSed for the UpdateRUDwnld project edits the territory ID into the
+# IntegrateOldDiffs.psq template to produce IntegrateOldDiffs.sql. The resultant
+# .sql file is picked up by this makefile to generate IntegrateOldDiffs.sh.
+
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.ONESHELL :
+.PHONY : 
+
+
+ bashpath = $(codebase)/Procs-Dev
+ projpath = $(codebase)/Projects-Geany/UpdateMHPDwnld
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# IntegrateOldDiffs.sh
+#==========================================================
+$(projpath)/IntegrateOldDiffs.sh : $(projpath)/IntegrateOldDiffs.sql
+	cd $(altproj);./DoSed.sh $(projpath) IntegrateOldDiffs
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+
+$(projpath)/IntegrateOldDiffs.sql : $(projpath)/IntegrateOldDiffs.psq
+	if ! test -f $@;then \
+	 echo " ** run DoSed to convert IntegrateOldDiffs.psq > .sql **";exit 1;fi
+
+#	sed 's?xxx?yyy?g' $(projpath)/IntegrateOldDiffs.psq > $(projpath)/IntegrateOldDiffs.sql
+	
+
+$(projpath)/IntegrateOldDiffs.psq : ;
+	(warning ** IntegrateOldDiffs.psq missing for IntegrateOldDiffs.sq build **)
+
+AlwaysMake : ;
+
+#==========================================================
+#end MakeIntegrateOldDiffs

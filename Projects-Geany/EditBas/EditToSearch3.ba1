@@ -1,0 +1,443 @@
+&apos;// EditToSearch3.bas
+&apos;//---------------------------------------------------------------
+&apos;// EditToSearch3 - Convert Admin-Edit to Pub-Search sheet.
+&apos;//		7/13/21.		wmk.	12:56
+&apos;//---------------------------------------------------------------
+
+public sub EditToSearch3()
+
+&apos;//	Usage.	macro call or
+&apos;//			call EditToSearc3()
+&apos;//
+&apos;// Entry.	user selection is Admin-Edit formatted sheet
+&apos;//	OwningParcel  UnitAddress Unit Resident1 Phone1 H  RUPhone
+&apos;//			A			B		C		D	    E	F     G	
+&apos;// truepeople     411     whitepages SubTerr CongTerr DoNotCall RSO Foreign  RecordDate
+&apos;//		H			I			J		 K		  L			M	   N    O       P
+&apos;//	SitusAddress PropUse  DelPending
+&apos;//		Q			R		  S
+&apos;//
+&apos;//	Exit.	focus on QTerrxxx.ods.Terrxxx_Searchnn worksheet.
+&apos;//
+&apos;//	produces a &quot;Pub-Search&quot; formatted sheet with the following fields:
+&apos;//  A      B    	C      C       D      E     	F    		G		 H	  I	  J	
+&apos;//	 H    Address  Unit   Name   Phone1  RefUSA fastpeople	truepeople	411	 DNC  FL
+&apos;//  F	     B      C	  D		   E	  F	                       			  M   O
+&apos;//
+&apos;//	Personal/Notes
+&apos;//
+&apos;// Calls.	BoldHeadings, ForceRecalc, SetTerrWidths,
+&apos;//			SetSelection, MergeOwnerCells, MergeStreetsCells,
+&apos;//			MergeSheetType, SetHdrSumFormula4
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	2/6/21.		wmk.	original code
+&apos;// 2/15/21.	wmk.	mod to move column H to A; change to simplify
+&apos;// 					header with same code as BridgeToTerr.
+&apos;// 2/27/21.	wmk.	bug fixes sTerrID, sSheet, sCity not explcitly
+&apos;//						declared; dim oCols inside loop moved outside;
+&apos;//						name change to EditToSearch3 for version clarity
+&apos;//						SetHdrSumFormula3 to fix Record Count in B2;
+&apos;//						documentation updated; columns widths array
+&apos;//						expanded to 10 to include DNC and FL columns.
+&apos;// 3/3/21.		wmk.	bug fix; &quot;search&quot; lingering over column I; change
+&apos;//						to call SetHdrSumFormula4
+&apos;//	3/14/21.	wmk.	verify sheet is type Edit before proceeding.
+&apos;// 7/13/21.	wmk.	non-error msgboxes commented to facilitate batch
+&apos;//						processing.
+&apos;//
+&apos;// Admin-Edit sheet fields.
+&apos;//		9/7/20. (lines preceded by #s are SplitTable fields)
+&apos;//								source-column	target-column
+&apos;//0|OwningParcel|TEXT|1||0			A				-
+&apos;//1|UnitAddress|TEXT|1||0			B				D
+&apos;//2|Resident1|TEXT|0||0			C				B
+&apos;//3|Resident2|TEXT|0||0			D				C
+&apos;//4|Phone1|TEXT|0||0				E				D
+&apos;//5|Phone2|TEXT|0||0				F				E
+&apos;//6|RefUSA-Phone|TEXT|0||0			G				F
+&apos;//7|truepeople hyperlink			H				-
+&apos;//8|411 hyperlink					I				-
+&apos;//9|whitepages hyperlink			J				-
+&apos;//10|SubTerritory|TEXT|0||0		K				-
+&apos;//11|CongTerrID|TEXT|0||0			L				-
+&apos;//12|DoNotCall|INTEGER|0|0|0		M				G
+&apos;//13|RSO|INTEGER|0|0|0				N				-
+&apos;//14|Foreign|INTEGER|0|0|0			O				H
+&apos;//15|RecordDate|REAL|0|0|0			P
+&apos;//16|X-Pending|INTEGER|0|0|0		R
+&apos;//
+&apos;// Method.
+&apos;//		remove columns K-R
+
+&apos;//	constants.
+const COL_NAME1=3		&apos;// column D is Name1 column
+const COL_A=0			&apos;// H
+const COL_B=1			&apos;// Address
+const COL_C=2			&apos;// Unit
+const COL_D=3			&apos;// Name
+const COL_E=4
+const COL_F=5
+const COL_G=6			&apos;// column G index
+const COL_H=7			&apos;// column H index
+const COL_I=8			&apos;// column I index
+const COL_J=9			&apos;// column J index
+const COL_K=10			&apos;// column K index
+const COL_L=11			&apos;// column L index 
+const COL_M=12			&apos;// column M index (DoNotCall)
+const COL_N=13			&apos;// column N index (RSO)
+const COL_O=14			&apos;// column O index (Foreign)
+const ROW_1=0
+const ROW_2=1
+const ROW_3=2
+const ROW_4=3
+const ROW_HEADING=4		&apos;// headings row index
+const LJUST=1		&apos;// left-justify HoriJustify				&apos;// mod052020
+const CJUST=2		&apos;// center HoriJustify						&apos;// mod052020
+const RJUST=3		&apos;// right-justify HoriJustify				&apos;// mod052320
+const MDYY=30		&apos;// &apos;M/D/YY&apos; format value
+const INCH = 2540	&apos;// millimeters in 1 inch
+const ONEP75 = INCH*1.75
+const PT35 = INCH*.35
+const ONEP35 = INCH*1.35
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+dim oMrgRange	As Object	&apos;// merge range
+
+dim oCell	As Object		&apos;// cell working on
+dim oCell2	As Object		&apos;// cell related cell to oCell
+dim i		As Integer		&apos;// loop index
+dim sPropID	As String		&apos;// property ID
+dim sSubTerr	As String	&apos;// subterritory
+dim sCongTerr	As String	&apos;// cong terr ID
+dim lRowCount	As Long		&apos;// row count of addresses
+dim dDate		As Double	&apos;// date value
+dim sCityStZip	As String	&apos;// concatenated City, State, Zip
+dim sNotes		As String	&apos;// notes field
+dim	nCols		As Integer	&apos;// column count to remove
+dim sFormula	As String	&apos;// COUNTA formula from B2
+dim bForeign	As Boolean
+dim bDoNotCall	As Boolean
+dim sTerrID		As String	&apos;// territory ID
+dim sSheetName	As String	&apos;// new sheet name
+dim sCity		As String	&apos;// city
+
+dim nSearchColWidths(10) AS Integer
+
+	&apos;// code.
+	ON ERROR GoTo ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	
+	&apos;// verify that is Edit sheet before proceeding.
+dim sCurrName		As String	&apos;// sheet current name
+dim bIsEdit			As Boolean	&apos;// is Edit sheet flag
+	sCurrName = oSheet.getName()
+	bIsEdit = InStr(sCurrName, &quot;Edit&quot;) &gt; 0
+	
+	if bIsEdit then
+&apos;		msgbox(&quot;Sheet is type Edit... proceeding&quot;)
+	else
+		msgbox(&quot;Sheet not recogonized as Edit.. no conversion&quot;)
+		GoTo NormalExit
+	endif
+
+	oCell =	oSheet.getCellByPosition(COL_B, ROW_2)
+	lRowCount = oCell.Value
+
+if true then
+	GoTo Skip1
+endif
+&apos;//	Remove column A after moving header.
+&apos;//		Move header A1-H4 to B1
+	oCell = oSheet.getCellByPosition(COL_B, ROW_2)
+	sFormula = oCell.getFormula()					&apos;// save B2 formula
+	oMrgRange = oRange
+	oMrgRange.StartColumn = COL_A
+	oMrgRange.EndColumn = COL_H
+	oMrgRange.StartRow = ROW_1
+	oMrgRange.EndRow = ROW_4
+dim oTarget as new com.sun.star.table.CellAddress
+	oTarget.Sheet = oRange.Sheet
+	oTarget.Column = COL_B
+	oTarget.Row = ROW_1
+	oSheet.moveRange(oTarget,oMrgRange)
+
+&apos;//		Remove column A, then restore formula in B2
+	oSheet.Columns.removeByIndex(COL_A, 1) 
+	oCell = oSheet.getCellByPosition(COL_B, ROW_2)
+	oCell.setFormula(sFormula)
+	
+Skip1:
+	&apos;// Rename column A &quot;H&quot;.
+	oCell = oSheet.getCellByPosition(COL_A, ROW_HEADING)
+	oCell.String = &quot;H&quot;
+	
+	&apos;// copy all information from column F to column A.
+	&apos;// all information from column G to column F.
+	lThisRow = ROW_HEADING
+	for i = 0 to lRowCount
+		lThisRow = lThisRow + 1
+		oCell = oSheet.getCellByPosition(COL_F, lThisRow)
+		oCell2 = oSheet.getCellByPosition(COL_A, LThisRow)
+		oCell2.String = oCell.String
+		oCell2 = oSheet.getCellByPosition(COL_G, lThisRow)
+		oCell.String = oCell2.String
+	next i
+
+	&apos;// set G search prompt to &apos;fastpeople&apos;.
+	oCell = oSheet.getCellByPosition(COL_G, ROW_HEADING)
+	oCell.String = &quot;fastpeople&quot;
+	
+&apos;//		Remove column J - L.
+	oSheet.Columns.removeByIndex(COL_J, 3)
+	
+	&apos;// now remove column K (RSO).
+	oSheet.Columns.removeByIndex(COL_K, 1)
+	
+	&apos;// now remove columns L - P.
+	oSheet.Columns.removeByIndex(COL_L,4)
+	 
+
+&apos;//		Center &quot;H&quot; column A, and Unit column C.
+
+	oSheet.Columns(COL_C).HoriJustify = CJUST
+	oSheet.Columns(COL_A).HoriJustify = CJUST
+
+&apos;//	set up column widths array.
+	nSearchColWidths(0) = 0.35*INCH
+	nSearchColWidths(1) = 1.75*INCH
+	nSearchColWidths(2) = 1.0*INCH
+	nSearchColWidths(3) = 1.75*INCH
+	nSearchColWidths(4) = 1.0*INCH
+&apos;	nSearchColWidths(4) = 0.35*INCH
+	nSearchColWidths(5) = 1.0*INCH
+	nSearchColWidths(6) = 1.35*INCH
+	nSearchColWidths(7) = 1.35*INCH
+	nSearchColWidths(8) = 1.35*INCH
+	nSearchColWidths(9) = 0.35*INCH
+	nSearchColWidths(10) = 0.35*INCH
+	SetColWidths(nSearchColWidths())
+
+&apos;//		Change B heading to &quot;Address&quot;
+&apos;//		col C heading to &quot;Unit&quot;
+&apos;//		col D heading to &quot;Name&quot;
+	oCell = oSheet.getCellByPosition(COL_B, ROW_HEADING)
+	oCell.String = &quot;Address&quot;
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_C, ROW_HEADING)
+	oCell.String = &quot;Unit&quot;
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_D, ROW_HEADING)
+	oCell.String = &quot;Name&quot;
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_G, ROW_HEADING-1)
+	oCell.String = &quot;search&quot;
+	oCell.HoriJustify = CJUST
+
+	
+&apos;//		set H1 = &quot;Pub-Search formatted sheet&quot;
+	&apos;// merge H1-J1 SheetType
+	MergeSheetType()
+	
+	oCell = oSheet.getCellByPosition(COL_H, ROW_1)
+	oCell.String = &quot;Pub-Search formatted sheet&quot;
+	oCell.HoriJustify = CJUST
+
+	oCell = oSheet.getCellByPosition(COL_D, ROW_4)
+	sTerrID = trim(oCell.String)
+	sSheetName = &quot;Terr&quot; + sTerrID + &quot;_Search&quot;
+	RenameSheet(sSheetName)
+&apos;	SaveQSearchTerr()			&apos;// save workbook as SearchTerr
+
+
+
+	oCell = oSheet.getCellByPosition(COL_F, ROW_HEADING)
+	oCell.String = &quot;RefUSA&quot;
+	oCell.HoriJustify = CJUST
+
+&apos;//		set J column heading to &quot;DNC&quot;, K heading to &quot;FL&quot;
+	oCell = oSheet.getCellByPosition(COL_J, ROW_HEADING)
+	oCell.String = &quot;DNC&quot;
+	oCell.HoriJustify = CJUST
+	SetColWidth(COL_J, 0.35)
+	oCell = oSheet.getCellByPosition(COL_K, ROW_HEADING)
+	oCell.String = &quot;FL&quot;
+	oCell.HoriJustify = CJUST
+	SetColWidth(COL_K, 0.35)
+if true then GoTo CheckDNC
+	
+	&apos;// set column widths
+	SetTerrWidths()
+
+	&apos;// merge owner name cells back together
+	MergeOwnerCells()
+	
+	&apos;// merge Streets/Addrs cells back together
+&apos;	MergeStreetsCells()
+
+CheckDNC:
+	&apos;// for all rows, check DoNotCall/Foriegn and change Resident1 name to &quot;DO NOT CALL&quot;
+dim oCols As Object
+	lThisRow = ROW_HEADING
+	for i = 0 to lRowCount-1
+		lThisRow = lThisRow + 1
+		oCell = oSheet.getCellByPosition(COL_J, lThisRow)
+		oCell2 = oSheet.getCellByPosition(COL_K, lThisRow)
+		bForeign = (len(trim(oCell2.String)) &gt; 0)
+		bDoNotCall = (len(trim(oCell.String)) &gt; 0)
+		if bForeign then
+			oCell = oSheet.getCellByPosition(COL_NAME1, lThisRow)
+			oCell.String = &quot;Foreign Language - Do not call&quot;
+			oCols = oSheet.Columns
+			oCols(COL_NAME1).setPropertyValue(&quot;Width&quot;, 2540*2)
+		elseif bDoNotCall then
+			oCell = oSheet.getCellByPosition(COL_NAME1, lThisRow)
+			oCell.String = &quot;DO NOT CALL&quot;
+		endif
+		
+	next i
+
+if false then
+   GoTo Cleanup
+endif
+	&apos;// tidy up header information
+	oCell = oSheet.getCellByPosition(COL_A, 1)
+	oCell.String = &quot;&quot;
+	SetHdrSumFormula4()		&apos;//  this has to be the COUNTA($B formula
+	
+	&apos;// merge City and State at B3.
+	oCell = oSheet.getCellByPosition(COL_A, 2)
+	oCell.String = &quot;&quot;
+	oCell = oSheet.getCellByPosition(COL_B, 2)
+	sCity = oCell.String
+	oCell.String = &quot;City: &quot; &amp; sCity	
+
+    &apos;// merge Territory/Subterritory at D1.
+    oCell = oSheet.getCellByPosition(COL_D, 3)
+    sCongTerr = oCell.String
+    oCell = oSheet.getCellByPosition(COL_B, 3)
+    sSubTerr =trim( oCell.String)
+    oCell = oSheet.getCellByPosition(COL_D, 0)
+    oCell.String = &quot;Territory: &quot; &amp; sCongTerr
+    oCell.HoriJustify = LJUST
+    if len(sSubTerr) &gt; 0 then
+    	oCell.String = oCell.String &amp; &quot;/&quot; &amp; sSubTerr
+    endif
+    
+    &apos;// empty A4-I4 and merge for blank row.
+    &apos;// clear A4, C4, D4.
+    oCell = oSheet.getCellByPosition(COL_A,ROW_4)
+	oCell.String = &quot;&quot;
+    oCell = oSheet.getCellByPosition(COL_C,ROW_4)
+	oCell.String = &quot;&quot;
+    oCell = oSheet.getCellByPosition(COL_D,ROW_4)
+	oCell.String = &quot;&quot;
+	
+dim document   as object
+dim dispatcher as object
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+	&apos;// select range A4:I4
+	dim args1(0) as new com.sun.star.beans.PropertyValue
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$A$4:$I$4&quot;
+dim Array(0)  as new com.sun.star.beans.PropertyValue
+
+	dispatcher.executeDispatch(document, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+    dispatcher.executeDispatch(document, &quot;.uno:ClearContents&quot;, &quot;&quot;, 0, Array())
+
+    MergeRow4()
+
+	&apos;// select range A4:I4
+	dim args2(0) as new com.sun.star.beans.PropertyValue
+	args2(0).Name = &quot;ToPoint&quot;
+	args2(0).Value = &quot;$D$2:$I$3&quot;
+	dispatcher.executeDispatch(document, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args2())
+    dispatcher.executeDispatch(document, &quot;.uno:ClearContents&quot;, &quot;&quot;, 0, Array())
+
+	MergeHelpArea()		&apos;// there are merged cells, split them
+	MergeHelpArea()		&apos;// now merge the cells
+	oCell = oSheet.getCellByPosition(COL_D,ROW_2)
+	oCell.String = &quot;H = homestead     DNC = do not call     FL = foreign language&quot; _
+	   + CHR(13) + CHR(10) + &quot;ALL CAPS = SC county data     Mixed Case = RefUSA data&quot;
+
+	&apos;// clear sheet type area.
+	dim args3(0) as new com.sun.star.beans.PropertyValue
+	args3(0).Name = &quot;ToPoint&quot;
+	args3(0).Value = &quot;$E$1:$G$1&quot;
+	dispatcher.executeDispatch(document, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args3())
+    dispatcher.executeDispatch(document, &quot;.uno:ClearContents&quot;, &quot;&quot;, 0, Array())
+	dispatcher.executeDispatch(document, &quot;.uno:ToggleMergeCells&quot;, &quot;&quot;, 0, Array())
+    
+	args3(0).Name = &quot;ToPoint&quot;
+	args3(0).Value = &quot;$H$1:$I$1&quot;
+	dispatcher.executeDispatch(document, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args3())
+    dispatcher.executeDispatch(document, &quot;.uno:ClearContents&quot;, &quot;&quot;, 0, Array())
+	dispatcher.executeDispatch(document, &quot;.uno:ToggleMergeCells&quot;, &quot;&quot;, 0, Array())
+
+	args3(0).Name = &quot;ToPoint&quot;
+	args3(0).Value = &quot;$E$1:$I$1&quot;
+	dispatcher.executeDispatch(document, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args3())
+	dispatcher.executeDispatch(document, &quot;.uno:ToggleMergeCells&quot;, &quot;&quot;, 0, Array())
+	dim args18(0) as new com.sun.star.beans.PropertyValue
+	args18(0).Name = &quot;Bold&quot;
+	args18(0).Value = true
+	dispatcher.executeDispatch(document, &quot;.uno:Bold&quot;, &quot;&quot;, 0, args18())
+
+	oCell = oSheet.getCellByPosition(COL_E, ROW_1)
+	oCell.String = &quot;PubSearch&quot;
+	
+	args18(0).Name = &quot;Bold&quot;
+	args18(0).Value = true
+	dispatcher.executeDispatch(document, &quot;.uno:Bold&quot;, &quot;&quot;, 0, args18())
+
+&apos;	args(0).Name = &quot;ToPoint&quot;
+&apos;	args(0).Value = &quot;$D$1:$D$1&quot;
+	dispatcher.executeDispatch(document, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args3())
+	args18(0).Name = &quot;Bold&quot;
+	args18(0).Value = true
+	dispatcher.executeDispatch(document, &quot;.uno:Bold&quot;, &quot;&quot;, 0, args18())
+	
+	&apos;// clear I4 of &quot;search&quot; again...
+	oCell = oSheet.getCellByPosition(COL_I, ROW_HEADING-1)
+	oCell.String = &quot;&quot;
+	
+	&apos;// generate hyperlinks.
+	GenFLinkM()
+&apos;	SetGridLand()
+
+	&apos;// save QTerrxxx.ods.
+dim args19()
+	dispatcher.executeDispatch(document, &quot;.uno:Save&quot;, &quot;&quot;, 0, args19())
+	
+
+Cleanup:		
+	&apos;// force recalculation
+	ForceRecalc()
+	
+	&apos;// restore selection to entry place
+	SetSelection(oRange)
+	&apos;// save QTerrxxx.ods.
+dim args20()
+	dispatcher.executeDispatch(document, &quot;.uno:Save&quot;, &quot;&quot;, 0, args20())
+	
+NormalExit:
+	exit sub
+
+ErrorHandler:
+	msgbox(&quot;EditToSearch3 - unprocessed error.&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end EditToSearch3		7/13/21.	12:56

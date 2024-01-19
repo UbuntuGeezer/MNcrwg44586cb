@@ -1,0 +1,286 @@
+README.md - DNCMgr Project documentation.<br>
+6/14/23.	wmk.
+###Modification History.
+<pre><code>5/31/23.    wmk.   original document.
+6/2/23.     wmk.  	command details added.
+6/7/23.		wmk.	Capture operation added/started.
+6/8/23.		wmk.	Login/Logout added to Description section.
+6/12/23.	wmk.	Registered Sex Offenders section added.
+6/13/23.	wmk.	Add section completed for RSOs.
+6/14/23.	wmk.	Utility Shells documentation.
+</code></pre>
+<h3 id="IX">Documentation Sections.</h3>
+<pre><code><a href="#1.0">link</a> 1.0 Project Description - overall project description.
+<a href="#2.0">link</a> 2.0 Capturing DoNotCalls. - capturing DoNotCalls from Territory Servant.
+<a href="#3.0">link</a> 3.0 Adding New DoNotCalls. - adding new DoNotCalls.
+<a href="#4.0">link</a> 4.0 Deleting DoNotCalls - deleting out-of-date DoNotCalls.
+<a href="#5.0">link</a> 5.0 Archiving DoNotCalls - archiving DoNotCalls.
+<a href="#6.0">link</a> 6.0 Recovering DoNotCalls - recovering archived DoNotCalls.
+<a href="#7.0">link</a> 7.0 Registered Sex Offenders - handling registered sex offenders.
+<a href="#n.0">link</a> n.0 Significant Notes - important stuff not documented elsewhere.
+</code></pre>
+<h3 id="1.0">1.0 Project Description.</h3>
+DoNotCalls (DNCs) are closely managed for the congregation territory. They fall into
+three categories: householder requested, registered sex offender, or foreign language.
+Householder requested DNCs are addresses where the householder has requested not
+to be visited. Registered sex offender DNCs are addresses where a registered sex
+offender is domiciled. Foreign language DNCs are addresses that are being worked by
+a foreign language congregation.
+
+The DNCMgr manages adding, deleting, and archiving DoNotCalls. Whenever
+the TerrIDData.DoNotCalls table has a record deleted or changed (including add),
+the DNCUpdt trigger is activated. This trigger adds a log message to the DNCLog
+table with the timestamp of when the table was changed. Brief descriptions of each
+operation follow:
+<pre><code>
+	Capture - captures the DNCs from /Territory-PDFs/all_dncs_report.pdf
+	Add - adds a new record to the TerrIDData.DoNotCalls table.
+	Delete - deletes a record from the TerrIDData.DoNotCalls table and adds it to
+		the DeletedDNCs table.
+	Archive - copies a record from the TerriData.DoNotCalls table and adds it to
+		the ArchivedDNCs table; then it deletes the record from the DoNotCalls table.
+	(Move - moves a DNC record from one territory to another; this is a combination
+		of Archive, Delete, and Recover operations.)
+	Recover - recover a DNC record from the ArchivedDNCs table back into the DoNotCalls
+		table, resetting the territory id from the old id to the recovery ID.
+</code></pre>
+Operations by the DNCMgr are secured and tracked by Login and Logout shells within the
+DNC. Before embarking on any DNCMgr operations use Login.sh to set the initials of the
+administrator that is using the DNCMgr. When operations are complete, use Logout.sh to
+log the adminitrator out. If there is no active administrator logged in, DNCMgr
+operations will exit with an error message.
+<pre><code>
+change to the DNCMgr project folder then:
+	. ./Login.sh	< initials >
+	. ./Logout.sh	< initials >
+where < initials > are the admiinistrator's initials.
+</code></pre>Note: It is important to use the leading "." before invoking the
+Login/Logout shells. These shells leave behind the environment variable \*adminwho
+that has the initials of the current logged-in administrator.
+<br><a href="#IX">Index</a>
+<h3 id="2.0">2.0 Capturing DoNotCalls.</h3>
+Capturing DoNotCalls takes the all\_donotcalls\_report.pdf and migrates it through
+a series of conversions into a .csv which may then be used as input to other operations.
+<br><a href="#IX">Index</a>
+<h3 id="3.0">3.0 Adding New DoNotCalls.</h3>
+DoNotCalls are added by creating one or more records in the file AddDNC.csv.
+Each record in the AddDNC.csv file will be imported as a new record into the
+DoNotCalls table in TerrIDData.db. One may either use a spreadsheet and save
+the sheet as AddDNC.csv, or use a text editor to enter the new DNC record(s).
+A template file NewDNC.tmp within the project provides the field names for
+each record. The NewDNC.csv file is assumed to have no header row.
+
+Adding DoNotCalls that are registered sex offenders requires special handling.
+The DoNotCall records within TerrIDData have an RSO field which is a registered
+sex offender id field linked to the RSOAddress table. See the section
+[Registered Sex Offenders]
+below for details on adding registered sex offenders.
+
+To Add new DoNotCalls run \*make on MakeAddDNC. This will build the AddDNC.sh
+shell. Then run the AddDNC.sh shell. This fires up LibreOffice/Calc on the template
+NewDNC.tmp.csv which serves as a template for adding new DoNotCalls.
+<pre><code>
+	make -f MakeAddDNC
+	./AddDNC.sh
+</code></pre>
+Following are brief descriptions of the columns to be entered in the NewDNC
+spreadsheet: (*'d fields are mandatory)
+<pre><code>
+	TerrID* - territory ID (3-digit number)
+	Name - householder name
+	UnitAddress* - street address
+	Unit - unit (must be specified if address has units)
+	Phone - phone number
+	Notes - publisher/service overseer notes
+	RecDate - date of DoNotCall yyyy-mm-dd format (e.g. 2023-06-01)
+	RSO - = 1 if registered sex offender, 0 or empty otherwise
+	Foreign = 1 if foreign language, 0 or empty otherwise (also set LangID below)
+	PropID* - 10-digit property ID (obtained from county records) <a href="#GetAddrPID">(see GetAddrPID below)</a>
+	ZipCode - zip code of address
+	DelPending - deletion pending flag, leave empty (set by system)
+	DelDate - deletion date, leave empty (set by system)
+	Initials* - initials of person authorizing/making entry
+	LangID - foreign language ID, 1=Spanish, 2=Polish, 3=Russian, 4=ASL
+</code></pre>
+Edit rows into the NewDNC.tmp.csv, then save it to file NewDNC.csv. As a
+final step, delete the first two rows (instructions and header) and re-save the
+file. The makefile will continue by running the AddDNC.sh shell which imports
+the .csv records into the TerrIDData.DoNotCalls table.
+
+<a id="GetAddrPID"></a>**GetAddrPID**<br>
+The new DoNotCall records should contain the property IDs of the addresses which
+are being added. A utility shell, GetAddrPID.sh, facilitates getting the
+property ID of any address/unit.
+<pre><code>
+	./GetAddrPID.sh < unitaddress > < unit> 
+	where < unitaddress > and < unit > may be SQL "LIKE" matching strings
+	(e.g. "130 %VENICE ave%")
+</code></pre>
+<br><a href="#IX">Index</a>
+<h3 id="4.0">4.0 Deleting DoNotCalls.</h3>
+Deleting DoNotCalls is intended only for cases where due to a new tenant or
+owner, the current DoNotCall for that address is no longer valid. Whenver a
+DoNotCall is deleted, a log message is recorded and the record deleted is
+copied to the DeletedDNCs table within TerrIDData. The initials of the person
+deleting the DoNotCall are included in the record for auditing purposes.
+<pre><code>
+	./DoSedDelete.sh  < propid > < unit > < initials>
+	make -f MakeDeleteDNC
+	./DeleteDNC.sh
+</code></pre>
+<br><a href="#IX">Index</a>
+<h3 id="5.0">5.0 Archiving DoNotCalls.</h3>
+If a terrritory is deleted because of no longer being used, its DoNotCalls must
+be preserved in the system. Whatever territory(ies) have absorbed the addresses
+in the deleted territory must be able to pick up the DoNotCalls from the deleted
+territory. The archiving process takes all of the DoNotCalls for a given territory
+ID and places them in the ArchivedDNCs table.
+<pre><code>
+	DoSedArchive.sh < terrid > <initials>
+	make -f MakeArchiveDNCs
+	./ArchiveDNCs.sh
+</code></pre>
+Once stored in the ArchivedDNCs table, the Recover operation can access the
+records within the ArchivedDNCs table and recover the DoNotCalls for the
+addresses within the target territory that were formerly in the deleted territory.
+<br><a href="#IX">Index</a>
+<h3 id="6.0">6.0 Recovering DoNotCalls.</h3>
+When a new territory is created that absorbs some, or all, of a former territory
+it must be able to also absorb the DoNotCalls that were in the former territory.
+The Recover operation allows a territory to recover the DoNotCalls from the
+ArchivedDoNotCalls table using the former territory's territory ID.
+<pre><code>
+	DoSedRecover.sh  < propertyid > < unit > < initials >
+	make -f MakeRecover.sh
+	./RecoverDNC.sh
+
+ < propertyid > = 10-digit property ID
+ < unit > = unit or " " if no unit (must be specified)
+ < initials > = initials of person authorizing or doing recovery
+</code></pre>
+To ensure absolute accuracy, the property ID and unit must be an exact match
+when recovering a DoNotCall. The current territory records are used
+record-by-record to search the ArchivedDNCs table. If a match is found (regardless
+of which territory the DoNotCall originally belonged to), the DoNotCall is
+recovered by adding it back into the DoNotCalls table with the current territory
+ID. The Archived record is then flagged for deletion.
+
+The Recover operation requires the user to enter their initials to provide
+an audit trail in the ArchLog table of log entries.
+<br><a href="#IX">Index</a><h3 id="7.0">7.0 Registered Sex Offenders.</h3>
+Registered sex offenders (RSO) are a special case DoNotCall. A list of
+registered sex offenders can be obained by using the following website:
+[Registered Sex Offenders](https://www.offenderradar.com/offender/state-florida-county-sarasota)
+
+All operations involving RSOs are tracked in a separate audit trail, the RSOLog
+table. The three operations performed on RSOs are Add, Delete, and Move.
+
+The Add operation adds a new RSO into the RSO tables and the DoNotCalls table.
+The Delete operation removes an RSO from the RSO tables. A full Delete will
+also remove the address from the DoNotCalls table. A partial delete will leave
+the DoNotCalls address active, but without the RSO link. The Move operation
+is used when an RSO changes addresses, but remains within the congregation
+territory.
+
+**Adding RSOs**<br>
+Adding an RSO is a three-step process. A new DoNotCall entry is created, then
+the RSO data is stored in two additional tables within the TerrIDData.db The
+information needed to add a new RSO is:
+<pre><code>
+	Name (full name of the RSO from county/state data)
+	Address (street address, unit, zip code)
+	Date entered into Territory system
+	Notes (usually "SOSC")
+</code></pre>
+The RSOAddress table provides a master list of property IDs and units where 
+registered sex offenders reside within the congregation territory. New entries
+in both the RSOAddress and DoNotCalls tables are made by the Add RSO operation.
+
+All RSOInfo table entries are referenced back to the RSOAddress table. When a
+new sex offender is added into the RSOAddress table, they are assigned a unique
+ID (RSOid). This RSOid is then entered into the new DoNotCalls record in the
+RSO field. As long as that sex offender resides within the congregation
+territory, they are referenced by that RSOid.
+
+A second table, RSOInfo, contains the details about the sex offender.  The
+RSOAddress table is a parent table for both the RSOInfo and DoNotCalls
+tables. The RSOid is the FOREIGN key referenced by these two tables. If an
+RSOid is changed, the changed ID cascades into both child tables. If an
+RSOid is deleted, the child tables set 0 as the RSO value.
+
+The new DoNotCall entry is referenced back to the RSOAddress table by storing
+the new RSOid in the RSO field of the DNC entry. In this way, if the sex offender
+moves out of the territory, the DoNotCall entry may be deleted.
+
+To create a new RSO in the territory system perform the following steps:
+<pre><code>
+	Using the NewRSO.tmp template in the project, enter the information for
+	 the new RSO into the fields and save the file as NewRSO.csv. Not that
+	 the field delimiters are "|".
+	 
+	Run AddRSO.sh from within the DNCMgr project. This will make the new RSO
+	 and DoNotCall entries. 
+</code></pre>
+**Deleting RSOs**<br>
+An RSO is deleted when they move out of the congregation territory. This is
+determined by regularly checking the list of Registered Sex Offenders (link
+above). The Delete operation removes the entries from the RSOAddress and
+RSOInfo tables. If a "full" delete is performed, the DoNotCall record is also
+removed. Otherwise the RSO link is set to 0 in the DoNotCall record and it
+remains. The RSOid that was assigned is deactivated and will not be re-used.
+
+In most cases, a full delete is what is desired so that is default. If only
+a paritial delete is desired, the "-p" parameter on the Delete operation will
+preserve the DoNotCall, but not as a registered sex offender.
+
+**Moving RSOs**<br>
+The Move operation handles change-of-address for an RSO within the congregation
+territory. The RSO retains their RSOid, but the RSOAddress and RSOInfo table
+information is udpated with the new address. The existing DoNotCall record for
+the old address is deleted, and a new DoNotCall record for the new address is
+created.
+
+Whenever an RSO is moved, its territory ID is set to '000' in its record. Also,
+if the new address and unit do not have an exact match in the county data, the
+property ID will be set to '9999999999'. The database administrator will have
+to set these fields to their proper values. The GetAddrPID shell may be used
+to find the property ID for the address. The WhichTerr? shell may be used to
+find the territory ID for the address.
+
+**RSO Log Entries**<br>
+The RSOLog table entries are the "log" of RSO operations. Each entry consists of
+a timestamp, description of the operation, and the initials of the administrator
+that performed the operation. The DumpRSOLog shell lists all the RSOLog entries.
+<br><a href="#IX">Index</a>
+<h3 id="8.0">8.0 Utility Shells.</h3>
+Several utility shells provide tools for managing DoNotCalls.
+<pre><code>
+ArhiveDNCs.sh - Archive territory xxx DNCs.
+BuildDNCCounts.sh - Build DNCCounts table in TerrIDData.
+CleanupDNCs.sh - Remove DoNotCalls with DelPending flag set.
+DoSedArchive.sh - *sed edit files for MakeArchiveDNCs.
+DoSedBuild.sh - *sed edit files for MakeBuildDNC, MakeCleanupDNCs.
+DoSedDelete.sh - *sed edit files for MakeDeleteDNC.
+DoSedDelRSO.sh - *sed edit files for MakeDeleteRSO.
+DoSedMove.sh - *sed edit files for MakeMoveDNC.
+DoSedRecover.sh - *sed edit files for MakeRecoverDNCs.
+DumpDNCLog.sh - Dump DNCLog table to DNCLog.csv for spreadsheet.
+DumpRSOLog.sh - Dump RSOLog table to RSOLog.csv for spreadsheet.
+DumpTerrLog.sh - Dump TerrLog table to TerrLog.csv for spreadsheet.
+GetAddrPID.sh - Get DNC Property ID given unitaddress, unit.
+GetArchList.sh - Get list of archived DNCs on *TEMP_PATH/ArchList.csv.
+GetArchLog.sh - List DNC archive log to *TEMP_PATH/ArchLog.txt.
+GetDelList.sh - List all deleted DoNotCalls to *TEMP_PATH/DeletedList.csv.
+GetDNCList.sh - List all DoNotCalls to *TEMP_PATH/DNCList.txt.
+GetDNCLog.sh - Copy DNCLog to *TEMP_PATH/DNCLog.txt.
+GetDNCpid.sh - Get DNC Property ID given unitaddress, unit.
+GetDNCLog.sh - Get DNC Property ID given terric.
+Login.sh - Log in Administrator.
+Logout.sh - Log out Administrator.
+RecoverDNCs.sh - Recover archived DoNotCalls.
+ReportDiffs.sh - DNCDiffs table entries to DNCDiffs.csv for spreadsheet.
+WhosLoggedIn.sh - Set *adminwho env var to initials of logged in administrator.
+</code></pre>
+<br><a href="#IX">Index</a>
+<h3 id="n.0">n.0 Significant Notes.</h3>
+<br><a href="#IX">Index</a>

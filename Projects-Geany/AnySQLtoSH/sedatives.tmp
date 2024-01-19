@@ -1,0 +1,3 @@
+s/<filename>/SetSCRUdncs/g
+s/\"/\\\"/g
+{s/^/echo "/g;s/$/" >> SQLTemp.sql/g;1 s/>>/>/;}

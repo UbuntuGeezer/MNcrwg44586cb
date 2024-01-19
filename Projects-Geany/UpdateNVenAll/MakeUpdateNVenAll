@@ -1,0 +1,211 @@
+#MakeUpdateNVenAll.tmp - template for make MakeUpdateNVenAll.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	1/8/22.	wmk.
+#
+# Dependencies.
+# -------------
+# DoSed run to set 03 19 in this template for MakeUpdateNVenAll
+#	XDiffsToNVenAll.sh generated from DiffsToNVenAll.sh
+#
+# Modification History.
+# ---------------------
+# 2/28/21.	wmk.	original code.
+# 6/25/21.	wmk.	multihost support.
+# 6/26/21.	wmk.	vpath for .db excess trailing " removed; targpath
+#			 var defined; DiffsToNVenAll recipe a19ed.
+# 7/22/21.	wmk.	sqlite3 for BuildDiffAcctsTbl a19ed.
+# 8/25/21.	wmk.	a19ed error messages for SCPA-Public_03-19.csv, .xlsx
+# 9/30/21.	wmk.	prerequisites qualified with paths for clarification;
+#			 CP-DBsToMirror path corrected to mainpath.
+# 11/3/21.	wmk.	projpath var replaces targpath for clarity; header
+#			 corrected; recipe for CreateNewSCPA.sql a19ed;
+# 12/2/21.	wmk.	bug fix; dependency SCPA-Public_03-19.csv changed to
+#			 Datam2d2.csv.
+# 12/3/21.	wmk.	bug fix; QSCPADiff.sh reactivated in SCPADiff_03-19.db
+#			 recipe; mainpath replaced with mainbase, projpath replaced
+#			 with thisbase, shellpath replaced with shellbase, scpapath
+#			 replaced with scpabase.
+# 1/2/22.	wmk.	use USER instead of HOME for host test.
+# 1/8/22.	wmk.	a19 chmod to .sh recipes to ensure executable.
+#
+# IMPORTANT NOTE ON VARS:
+# vars which substitute for *path* names will have a string that does NOT end
+# with '/'; vars which substituet for *base* names WILL have a string that
+# ends with '/'.
+#
+# updating VeniceNTerritory.db[NVenAll]
+# VeniceNTerritory.db will be considered out-of-date if either SCPA_03-19.db
+#	or SCPADiff_03-19.db is newer
+# SCPA_03-19.db will be considered out-of-date if SCPA Public_03-19.csv or
+#	SCPA Public_03-19.xlsx is newer; the .csv file is what is used to 
+#	build the SCPA_03-19.db [Data0319] table
+# SCPADiff_03-19.db will be considered out-of-date if SCPA Public_03-19.csv
+#	or SCPA_03-19.db is newer
+#
+# sed should set 03 and 19 in this recipe to the month and day of SCPA full download
+# recipe should ensure that ~/SCPA-Downloads/SCPADiff_03-19.db is up-to-date.
+#   if not, generate it by running QSCPADiff.sh against old/new dbs
+#		using sed to set 02 05 to older SCPA download month/day
+#		 and m2 d2 to the newest SCPA full download
+# if VeniceNTerritory.db is out-of-date (by looking at SCPADiff_03-19)
+#	run the shell version of DiffsToNVenAll.sql (DiffsToNVenAll.sh)
+
+ifeq ($(USER),ubuntu)
+ folderbase = /media/ubuntu/Windows/Users/Bill
+else
+ folderbase = $(HOME)
+endif
+
+vpath %.db $(folderbase)/Territories/RawData/SCPA/SCPA-Downloads/
+vpath %.csv
+vpath %.xlsx
+mainbase = $(folderbase)/Territories/DB-Dev/
+#mainpath = $(folderbase)/Territories/DB-Dev/
+ procpath = $(codebase)/Territories/Procs-Dev
+shellbase = $(folderbase)/Territories/Projects-Geany/ShellFiles/
+#shellpath = $(folderbase)/Territories/Projects-Geany/ShellFiles/
+projbase = $(folderbase)/Territories/Projects-Geany/
+thisbase = $(folderbase)/Territories/Projects-Geany/UpdateNVenAll/
+ #projpath = $(codebase)/Territories/Projects-Geany/UpdateNVenAll/
+scpabase = $(folderbase)/Territories/RawData/SCPA/SCPA-Downloads/
+#scpapath = $(folderbase)/Territories/RawData/SCPA/SCPA-Downloads/
+
+.ONESHELL :
+
+# primary target: (mainbase)VeniceNTerritory.db
+#====================================================================
+#VeniceNTerritory
+$(mainbase)VeniceNTerritory.db  : $(scpabase)SCPA_03-19.db \
+ $(scpabase)SCPADiff_03-19.db  $(thisbase)DiffsToNVenAll.sh
+	echo "shellbase = '$(shellbase)'"
+	$(mainbase)CP-DBsToMirror.sh
+	$(thisbase)DiffsToNVenAll.sh
+
+#---  SCPA_03-19.db target.
+$(scpabase)SCPA_03-19.db   :   $(scpabase)Data0319.csv \
+ $(scpabase)SCPA-Public_03-19.xlsx \
+ $(thisbase)CreateNewSCPA.sh $(thisbase)CreateNewSCPA.sq  \
+ $(thisbase)CreateNewSCPA.sql
+	bash $(thisbase)CreateNewSCPA.sh
+	echo "SCPA_03-19.db created."
+
+#---
+
+#--- SCPADiff_03-19.db target.
+$(scpabase)SCPADiff_03-19.db	:  $(scpabase)SCPA_03-19.db \
+ $(thisbase)SCNewVsNVenall.sh  $(procpath)/QSCPADiff.sh \
+ $(thisbase)BuildDiffAcctsTbl.sql
+	$(thisbase)SCNewVsNVenall.sh
+#	$(error ** THERE IS A BUG IN THE SCPADiff_03-19.db RECIPE - IT SHOULD NOT EXECUTE **)
+	echo "HOME = '$(HOME)'"
+ echo "procpath =(codebase)
+	bash $(procpath)/QSCPADiff.sh	02 05	03 19
+	sqlite3 < $(thisbase)BuildDiffAcctsTbl.sql
+
+$(scpabase)Data0319.csv : $(scpabase)SCPA-Public_03-19.xlsx;
+	if ! test -f $(scpabase)Data0319.csv;then \
+	echo "** Use Calc to convert SCPA-Public_03-19.xlsx to .csv..**"; \
+	exit 1;fi
+
+$(scpabase)SCPA-Public_03-19.xlsx : ;
+	echo "** Download SCPA-Public-03-19.xlsx..**"
+#---
+#===================================================================
+
+
+
+#SCNewVsNVenall.sh
+#===================================================================
+$(thisbase)SCNewVsNVenall.sh  : $(thisbase)SCNewVsNVenall.sq
+	cat $(procpath)/hdrAnySQL_1.sh  $(thisbase)SCNewVsNVenall.sq \
+	  $(procpath)/hdrAnySQL_2.sh > $@
+	sed -i 's?<filename>?SCNewVsNVenall?g' $@
+	chmod 700 $@
+
+$(thisbase)SCNewVsNVenall.sq  : $(thisbase)SCNewVsNVenall.sql
+	$(procpath)/AnySQLtoSQ.sh $(thisbase) SCNewVsNVenall
+	
+$(thisbase)SCNewVsNVenall.sql : $(thisbase)SCNewVsNVenall.psq
+	echo "** run DoSed to process SCNewVsNVenall.psq > .sql"
+	exit 1
+
+$(thisbase)SCNewVsNVenall.psq : ;
+
+#===================================================================
+
+
+#(procpath)/QSCPADiff.sh
+#===================================================================
+$(procpath)/QSCPADiff.sh  : $(procpath)/QSCPADiff.psq \
+ $(procpath)/QSCPADiff.sql  $(procpath)/QSCPADiff.sq
+	cd $(projbase)AnySQLtoSH; ./DoSed.sh $(procpath) QSCPADiff
+	$(MAKE) -f $(projbase)AnySQLtoSH/MakeAnySQLtoSH
+
+$(procpath)/QSCPADiff.sq : ;
+
+$(procpath)/QSCPADiff.sql : ;
+
+$(procpath)/QSCPADiff.psq : ;
+
+#===================================================================
+
+
+#(thisbase)BuildDiffAcctsTbl.sql
+#===================================================================
+$(thisbase)BuildDiffAcctsTbl.sql : $(thisbase)BuildDiffAcctsTbl.psq
+	echo "** Run DoSed.sh to generate $@ from BuildDiffAcctsTbl.psq **"
+
+$(thisbase)BuildDiffAcctsTbl.psq : ;
+
+
+#===================================================================
+
+
+#DiffsToNVenAll.sh
+#===================================================================
+$(thisbase)DiffsToNVenAll.sh  : $(thisbase)DiffsToNVenAll.sq
+	cat $(procpath)/hdrAnySQL_1.sh  $(thisbase)DiffsToNVenAll.sq \
+	  $(procpath)/hdrAnySQL_2.sh > $@
+	sed -i 's?<filename>?DiffsToNVenAll?g' $@
+	chmod 700 $@
+
+$(thisbase)DiffsToNVenAll.sq  : $(thisbase)DiffsToNVenAll.sql
+	$(procpath)/AnySQLtoSQ.sh $(thisbase) DiffsToNVenAll
+
+$(thisbase)DiffsToNVenAll.sql : $(thisbase)DiffsToNVenAll.psq
+	echo "** run DoSed to fix DiffsToNVenAll.psq > .sql **"
+	exit 1
+	
+$(thisbase)DiffsToNVenAll.psq : ;
+
+
+#===================================================================
+
+
+#CreateNewSCPA.sh
+#===================================================================
+$(thisbase)CreateNewSCPA.sh : $(thisbase)CreateNewSCPA.sql
+	$(MAKE) -f $(thisbase)MakeCreateNewSCPA
+	cat $(procpath)/hdrAnySQL_1.sh $(thisbase)CreateNewSCPA.sq  \
+	 $(procpath)/hdrAnySQL_2.sh > $@
+	sed  -i 's?<filename>?CreateNewSCPA?g' $@
+	chmod 700 $@
+
+$(thisbase)CreateNewSCPA.sql : ;
+	
+#===================================================================
+
+
+#XDiffsToNVenAll.sh (via sed)
+#===================================================================
+#$(thisbase)XDiffsToNVenAll.sh : $(thisbase)DiffsToNVenAll.sh
+#	$(error, ** Run DoSed to update XDiffsToNVenAll)
+#
+#$(thisbase)DiffsToNVenAll.sh : $(thisbase)DiffsToNVenAll.sql
+#	cd $(thisbase) && ./DoSed.sh 02 05  03 19
+#	cd $(thisbase) && $(MAKE) MakeUpdateNVenAll
+#
+#===================================================================
+
+# end MakeUpdateNVenAll

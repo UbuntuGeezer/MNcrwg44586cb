@@ -1,0 +1,11 @@
+# awkspeclist.txt - cherry pick matching lines from DBList.txt/speclist.txt.
+#	6/29/23.	wmk.
+BEGIN{i=0;while (getline  newline < linesfile){dbarray[i]=newline;i++}}
+{ 
+# print
+ for(j=0;j<i;j++){
+  #print dbarray[j]
+  if(index($8,dbarray[j]) > 0)print;;
+  }
+}
+#END{for( j=0;j<i;j++)print dbarray[j]}

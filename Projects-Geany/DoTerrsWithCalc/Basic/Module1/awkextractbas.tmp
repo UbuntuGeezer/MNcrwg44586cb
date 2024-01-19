@@ -1,0 +1,6 @@
+# awkextractbas.tmp - extract basmodule from Module1.bas
+BEGIN {p =0 }
+ /<basmodule>.bas/{print $0;p = 1;next} 
+ /\/\*\*\//{if (p){print ;p = 0;next}}
+{ if(p) print;;
+}  

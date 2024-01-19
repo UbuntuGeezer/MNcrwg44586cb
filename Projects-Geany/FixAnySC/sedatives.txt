@@ -1,0 +1,4 @@
+s?%folderbase?/media/ubuntu/Windows/Users/Bill?g
+s/^/echo "/g
+s/$/"  >> SQLTemp.sql/g
+1 s/>>/>/

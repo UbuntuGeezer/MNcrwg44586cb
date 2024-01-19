@@ -1,0 +1,13 @@
+# awkjoindncs.txt -join lines from all_dncs_report.csv
+#	6/1/23.	wmk.
+BEGIN{cnt=0;lcnt=0}
+END{print "DNC Record count " cnt;for (i=0;i<=lcnt;i++)print lnacc[i]}
+{if($1 == "\"\"")
+  {lnacc[lcnt] = lnacc[lcnt] "\;"
+   cnt++
+   lcnt++}
+ else
+  {$0=$0
+  lnacc[lcnt] = lnacc[lcnt] ","  $0
+  }
+}

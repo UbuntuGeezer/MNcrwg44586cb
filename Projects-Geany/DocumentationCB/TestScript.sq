@@ -1,0 +1,6 @@
+echo "ATTACH  '$pathbase/DB-Dev/GoobleDeeDook.db'"  > SQLTemp.sql
+echo " as db2;"  >> SQLTemp.sql
+echo "UPDATE db2.BogusTable"  >> SQLTemp.sql
+echo "SET ANything=0"  >> SQLTemp.sql
+echo "END;"  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql

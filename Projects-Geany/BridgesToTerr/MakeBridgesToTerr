@@ -1,0 +1,189 @@
+# MakeBridgesToTerr.tmp - template for MakeBridgesToTerr make file.
+#	7/10/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 6/5/23.	wmk.	OBSOLETE test added at recipe start.
+# 7/10/23.	wmk.	use project CombineBridgeNames.sh instead of /Procs-Dev.
+# Legacy mods.
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# 10/4/22.  wmk.    (automated) fix *pathbase for CB system.
+# 10/5/22.	wmk.	comments tidied; Projects-Geany and Procs-Dev references made
+#			 consistent to always use *codebase.
+# Legacy mods.
+# 4/24/22.	wmk.	*pathbase* env var included.
+# 5/2/22.	wmk.	*..path* vars trailing '/'s removed; *pathbase* definition
+#			 corrected from self-reference.
+# 6/7/22.	wmk.	make AddLetterZips conditional in recipe.
+# 6/10/22.	wmk.	substring reference :-: corrected to :0:; string reference fixed.
+# Legacy code.
+# 3/8/21.	wmk.	original recipe.
+# 3/24/21.	wmk.	SetSCRUdncs call added to ensure DNCs set in Bridges.
+# 4/7/21.	wmk.	Added SortTerrByAddress call to force proper sorting
+#					and QGenTable to generate .csv at very end.
+# 4/10/21.	wmk.	Replaced SortTerrByAddress call with SortQTerrByAddr
+#					then changed it back since there is a Make for SortTerr..
+# 5/27/21.	wmk.		modified for use with either home or Kay's system;
+#					whichsystem, folderbase vars added.
+# 6/6/21.	wmk.	whichsystem set for "home"
+# 6/17/21.	wmk.	multihost code improvements; ($)HOME env var used.
+# 7/3/21.	wmk.	SortQTerrByAddr replaced SortTerrByAddr in make recipe.
+# 7/7/21.	wmk.	dead code removed; remove excess "s.
+# 7/8/21.	wmk.	added prerequisite LastChanceDNCs.sh to build; var
+#					projbase added.
+# 9/15/21.	wmk.	changed from .sq -> .sql to .sql -> .sq.
+# 10/5/21.	wmk.	AddLetterZips.sh prerequisite.
+# 10/22/21.	wmk.	code consistency improved.
+# 10/29/21.	wmk.	Working-Files/Terr275Hdr.ods prerequisite added.
+# 10/30/21.	wmk.	add warning message at end if Terr275Hdr.ods not present.
+# 12/22/21.	wmk.	switch to $ USER env var for host check.
+# 1/31/22.	wmk.	CopyPubNotes added to recipe.
+#
+# Notes. CopyBridges is PHONY, so always considered out-of-date regardless
+# of prerequisite files.
+# SortQTerrByAddr rewritten for better sorting using
+# CAST(Number AS INT) so addresses like 1024 sort after addresses 999.
+# LastChanceDNCs.sql has been modified to only pick up DNC records where
+# DelPending <> 1.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase=/media/ubuntu/Windows/Users/Bill
+ else
+  folderbase=$(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+vpath %_SC.db $(pathbase)/RawData/SCPA/SCPA-Downloads/Terr275
+vpath %_RU.db $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terr275
+vpath %.db $(pathbase)/DB-Dev
+vpath %.sh $(codebase)/Procs-Dev
+vpath %.csv $(pathbase)/TerrData/Terr275/Working-Files
+ bashpath = $(codebase)/Procs-Dev
+projbase = $(codebase)/Projects-Geany
+ projpath = $(codebase)/Projects-Geany/BridgesToTerr
+targpath = $(pathbase)/TerrData/Terr275/Working-Files
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+.PHONY : CopyBridges
+.NOTPARALLEL : ;
+.ONESHELL : ;
+
+
+#==============================================================
+CopyBridges : $(projbase)/BridgesToTerr/LastChanceDNCs.sh \
+ $(projpath)/AddLetterZips.sh  $(targpath)/Terr275Hdr.ods
+	if test -f $(pathbase)/$$rupath/Terr275/OBSOLETE \
+	 || test -f $(pathbase)/$$scpath/Terr275/OBSOLETE;then \
+	  echo "** Territory 275 is OBSOLETE - BridgesToTerr abandoned. **";exit 2;fi
+	bash $(bashpath)/ClearTerr.sh 275
+	$(projpath)/CombineBridgeNames.sh 275
+	if [ 1 -eq 0 ];then\
+	 cat SQLTemp.sql;exit 1;fi
+	bash $(bashpath)/SetSCRUdncs.sh 275
+	tidstr=275
+	if [ $$tidstr -ge 600 ] && [ $$tidstr -le 699 ];then \
+	 $(projpath)/AddLetterZips.sh 275;fi
+	$(bashpath)/NewRUSCTerrToDBs.sh 275
+	$(projpath)/QGetTerr.sh 275
+	$(bashpath)/SortQTerrByAddr.sh 275
+	if [ 275 -ge 235 ] && [ 275 -le 251 ] || [ 275 -ge 261 ] && [ 275 -le 264 ] \
+	  || [ 275 -ge 318 ] && [ 275 -le 321 ] || [ 275 -eq 268 ] || [ 275 -eq 269 ];then
+	 echo "MHP territory - skipping LastChanceDNCs."
+	else
+	 $(projpath)/LastChanceDNCs.sh 275
+	fi
+	$(projpath)/QGenTable.sh 275
+	$(projbase)/BridgesToTerr/CopyPubNotes.sh 275
+	if ! test -f $(targpath)/Terr275Hdr.ods;then 
+	  echo "** Run Calc to create /Working-Files/Terr275Hdr.ods **";fi
+
+#=============================================================
+
+# LastChanceDNCs.sh
+#=============================================================
+$(projbase)/BridgesToTerr/LastChanceDNCs.sh : \
+ $(projbase)/BridgesToTerr/LastChanceDNCs.sql \
+ $(projbase)/BridgesToTerr/LastChanceDNCs.sq
+	cat $(bashpath)/hdrAnySQL_1.sh   \
+	  $(projbase)/BridgesToTerr/preamble.LastChance.txt \
+	  LastChanceDNCs.sq $(bashpath)/hdrAnySQL_2.sh > $@
+	  sed -i 's?<filename>?LastChanceDNCs?g' $@
+	  
+#	cd $(projbase)/AnySQLtoSH
+#	cp ../BridgesToTerr/preamble.LastChance.txt ../BridgesToTerr/preamble.txt
+#	./DoSed.sh Projects-Geany/BridgesToTerr LastChanceDNCs
+#	$(MAKE) -f MakeAnySQLtoSH
+
+$(projbase)/BridgesToTerr/LastChanceDNCs.sq : $(projbase)/BridgesToTerr/LastChanceDNCs.sql
+	$(bashpath)/AnySQLtoSQ.sh $(projbase)/BridgesToTerr LastChanceDNCs
+
+#	echo "s?\"?\\\"?g" > sedatives.txt
+#	echo "s?^?echo \"?g" >> sedatives.txt
+#	echo "s?\$?\"  >> SQLTemp.sql?g" >> sedatives.txt
+#	echo "s/>>/s?>>?>?" >> sedatives.txt
+#	sed -f sedatives.txt LastchanceDNCs.sq > $@
+
+# if this prerequisite not met above, error
+$(projbase)/BridgesToTerr/LastChanceDNCs.sql : ;
+	$(error ** LastChanceDNCs.sql not found! **)
+
+#===========================================================
+
+
+# AddLetterZips.sh
+#=============================================================
+$(projbase)/BridgesToTerr/AddLetterZips.sh : \
+ $(projbase)/BridgesToTerr/AddLetterZips.sql 
+	cat $(projbase)/BridgesToTerr/preamble.LastChance.txt \
+	 $(projbase)/BridgesToTerr/preamble.AddZips.txt \
+	  > $(projbase)/BridgesToTerr/preamble.full.txt
+	cd $(altproj);./DoSed.sh $(projbase)/BridgesToTerr AddLetterZips preamble.full.txt
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+ 	
+#	cat $(bashpath)/hdrAnySQL_1.sh   \
+#	  $(projbase)/BridgesToTerr/preamble.LastChance.txt \
+#	  $(projbase)/BridgesToTerr/preamble.AddZips.txt \
+#	  $(projbase)/BridgesToTerr/AddLetterZips.sq $(bashpath)/hdrAnySQL_2.sh > $@
+#	  sed -i 's?<filename>?AddLetterZips?g' $@
+	  
+#	cd $(projbase)/AnySQLtoSH
+#	cp ../BridgesToTerr/preamble.LastChance.txt ../BridgesToTerr/preamble.txt
+#	./DoSed.sh Projects-Geany/BridgesToTerr AddLetterZips
+#	$(MAKE) -f MakeAnySQLtoSH
+
+# if this prerequisite not met above, error
+$(projbase)/BridgesToTerr/AddLetterZips.sql : ;
+	if ! test -f $@;then \
+	 echo " ** AddLetterZips.sql missing for AddLetterZips build **";exit 1;fi 
+
+#	$(error ** AddLetterZips.sq not found! **)
+
+#===========================================================
+
+
+# $(targpath)/Terr275Hdr.ods
+#===========================================================
+$(targpath)/Terr275Hdr.ods : $(targpath)/Terr275Hdr.csv
+	if test -f $(pathbase)/TerrData/Terr275/OBSOLETE;then \
+	 echo "** Territory 275 is OBSOLETE - BridgesToTerr abandoned. **";exit 2;fi
+	if ! test -f $@;then \
+	 echo "** $@ missing for BridgesToTerr build - aborted.**";exit 1;fi
+
+$(targpath)/Terr275Hdr.csv : 
+	if test -f $(pathbase)/TerrData/Terr275/OBSOLETE;then \
+	 echo "** Territory 275 is OBSOLETE - BridgesToTerr abandoned. **";exit 2;fi
+	if ! test -f $@;then \
+	 echo "** $@ missing for BridgesToTerr build - aborted.**";exit 1;fi
+
+
+#===========================================================

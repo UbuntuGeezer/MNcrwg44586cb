@@ -1,0 +1,14 @@
+BEGIN{skip=0}
+{
+ if( NR == 1 ){
+  print "-- * 5/11/23.\twmk.\t(automated) stub SC/SetSpecTerrs."
+  }
+  
+ if( index($0,"** END AttachDBs") > 0 ){
+  print
+  print ".quit"
+  }
+ else 
+  print
+ 
+}

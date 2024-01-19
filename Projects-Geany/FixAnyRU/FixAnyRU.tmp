@@ -1,0 +1,37 @@
+#MakeFixAnyRU.tmp - template for make MakeFixAnyRU.
+#	3/15/21.	wmk.
+#
+# Modification History.
+# ---------------------
+# 3/15/21.	wmk.	original code.
+#
+#	Dependencies.
+#		hdrFixXXXRU.sh in folder ~/Procs-Dev
+#		FixyyyRU.sql in folder ~/RefUSA-Downloads/Terryyy
+#
+#	Build results.
+#		FixyyyRU.sh in folder ~/RefUSA-Downloads/Terryyy
+#
+# Note. 
+# update happens if RefUSA-Downloads/Terryyy/Mapyyy_RU.csv newer than Terryyy_RU.db
+
+vpath %.sql /media/ubuntu/Windows/Users/Bill/Territories/RawData/RefUsa/RefUSA-Downloads/Terryyy
+vpath %.sh /media/ubuntu/Windows/Users/Bill/Territories/RawData/RefUsa/RefUSA-Downloads/Terryyy
+vpath %.tmp /media/ubuntu/Windows/Users/Bill/Territories/RawData/RefUsa/RefUSA-Downloads/Terryyy
+bashpath = "/media/ubuntu/Windows/Users/Bill/Territories/Procs-Dev/"
+postpath = "/media/ubuntu/Windows/Users/Bill/Territories/RawData/RefUSA/RefUSA-Downloads/Terryyy/"
+targpath = "/media/ubuntu/Windows/Users/Bill/Territories/RawData/RefUSA/RefUSA-Downloads/Terryyy/"
+# new definition - suppports FixyyyRU.sh if provided.
+
+TerryyyRU.sh   :  TerryyyRU.sql
+	touch $(targpath)Fixyyy.tmp
+	rm $(targpath)Fixyyy.tmp
+	bash $(bashpath)SQLtoSH.sh yyy
+	mv $(targpath)FixyyyRU.sh Fixyyy.tmp
+	touch $(targpath)TerryyyRU.sh
+	rm $(targpath)TerryyyRU.sh
+	awk 'NR>=1 && NR<=32' $(bashpath)hdrFixXXXRU.sh > $(targpath)FixyyyRU.sh
+	awk 'printf' $(targpath)Fixyyy.tmp >> $(targpath)FixyyyRU.sh
+	awk 'NR>=33' $(bashpath)hdrFixXXXRU.sh >> $(targpath)FixyyyRU.sh
+	
+Terryyy_RU.sql :

@@ -1,0 +1,95 @@
+# MakeSpecials - make all terr $P1  RU Special db related files and databases.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	9/10/21.	wmk.
+#
+# Modification History.
+# ---------------------
+# 9/5/21.	wmk.	original makefile; adapted from territory 274.
+# 9/7/21.	wmk.	add "not initialized" error until edited for territory.
+# 9/10/21.	wmk.	edited for territory $P1
+#
+# MakeSpecials performs all the "makes" within the territory to construct
+# the databases within the territory download. It will typically be invoked
+# from a high-level source (e.g. RefUSA-Downloads/Special when a database
+# from that source is a prerequisite for one or more makefiles within the
+# territory.
+# (e.g. RefUSA-Downloads/SpecialCasaDelLagoWay.db is a prerequisite
+# for building territory 274). If CasaDelLagoWay is updated,
+# all the downstream databases that use it should be rebuilt also. The
+# makefile 'Make.CasaDelLagoWay.Terr' in the RefUSA-Downloads/Special
+# folder will invoke make on the makefile 'MakeSpecials' in the
+# RefUSA-Downloads/Terr$P1 folder for territories 274.
+
+ifeq ($(USER),ubuntu)
+ folderbase = /media/ubuntu/Windows/Users/Bill
+else
+ folderbase = $(HOME)
+endif
+
+basepath = $(folderbase)/Territories/RawData/RefUSA/RefUSA-Downloads/
+specpath = $(basepath)Special/
+dbname = BayIndiesMHP
+
+# edit this in the territory.
+$(error ** set MHP to one or the other **)
+MHP = 1
+MHP = 0
+
+#*** REMOVE THIS WHEN EDITED TO TERRITORY XXX. ***
+.PHONY : $(basepath)Terr$P1/Spec$P1_RU.db
+
+# conditional recipe based on MHP var.
+ifeq ($(MHP),1)
+
+ projpath = $(codebase)/Territories/Projects-Geany/UpdateMHPDwnld
+
+# /RefUSA-Downloads/Terr$P1/Spec$P1_RU.db
+#====================================================================
+$(basepath)Terr$P1/Spec$P1_RU.db : $(specpath)$(dbname).db
+	$(error ** MakeSpecials not initialized for territory $P1 **)
+	echo "in recipe for Spec$P1RU.db"
+	if ! test -f $(specpath)$(dbname).db;then \
+	 echo "** Cannot proceed with Spec$P1_RU.db recipe **" \
+	 exit 1;fi
+	echo "  after db test for existence, continuing..."
+	$(MAKE) -f $(basepath)Terr$P1/MakeRegenSpecDB
+	$(MAKE) -f $(basepath)Terr$P1/MakeSetMHPSpecTerrs
+	$(MAKE) -f $(basepath)Terr$P1/MakeSyncTerrToSpec	
+	$(basepath)Terr$P1/RegenSpecDB.sh
+	$(basepath)Terr$P1/SetMHPSpecTerrs.sh
+	$(basepath)Terr$P1/SyncTerrToSpec.sh
+	cd $(projpath);./DoSed.sh <special-db> $P1
+	$(MAKE) -f $(projpath)/MakeExtractOldDiffs
+	$(MAKE) -f $(projpath)/MakeIntegrateOldDiffs
+	$(projpath)/ExtractOldDiffs.sh
+	$(projpath)/IntegrateOldDiffs.sh
+	
+	~/sysprocs/LOGMSG "   $(basepath)Terr$P1/Spec$P1_RU.db build complete."
+	echo '  Spec$P1_RU.db recipe complete.'
+else
+# non-MHP recipe.
+# /RefUSA-Downloads/Terr$P1/Spec$P1_RU.db
+#====================================================================
+$(basepath)Terr$P1/Spec$P1_RU.db : $(specpath)$(dbname).db
+	$(error ** MakeSpecials not initialized for territory...**)
+	echo "in recipe for Spec$P1RU.db"
+	if ! test -f $(specpath)$(dbname).db;then \
+	 echo "** Cannot proceed with Spec$P1_RU.db recipe **" \
+	 exit 1;fi
+	echo "  after db test for existence, continuing..."
+	$(MAKE) -f $(basepath)Terr$P1/MakeRegenSpecDB
+	$(MAKE) -f $(basepath)Terr$P1/MakeSetSpecTerrs
+	$(MAKE) -f $(basepath)Terr$P1/MakeSyncTerrToSpec	
+	$(basepath)Terr$P1/RegenSpecDB.sh
+	$(basepath)Terr$P1/SetSpecTerrs.sh
+	$(basepath)Terr$P1/SyncTerrToSpec.sh
+	~/sysprocs/LOGMSG "   $(basepath)Terr$P1/Spec$P1_RU.db build complete."
+	echo '  Spec$P1_RU.db recipe complete.'
+endif
+# end conditional recipe for MHP.
+
+#---
+$(specpath)$(dbname).db : ;
+
+

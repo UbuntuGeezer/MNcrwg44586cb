@@ -1,0 +1,64 @@
+README - FlagSCUpdates project documentation.
+	11/3/21.	wmk.
+
+Modification History.
+---------------------
+11/3/21.	wmk.	original document.
+1/3/22.		wmk.	sections divided; accuracy checked.
+
+Project Description.
+--------------------
+	
+FlagSCUpdates is the first in a sequence of projects to be "built" when
+managing territory updates.
+
+Setup.
+------
+Before running the build for FlagSCUpdates:
+	Download the latest SC data to /SCPA-Downloads/SCPA_mm-dd.db
+		(e.g. SCPA_02027.db is the download from 2/27/21.)
+
+Overall Sequence.
+When updating a territory with new download data, the folllwing is the
+sequence to follow:
+	Download the latest SC data to /SCPA-Downloads/SCPA_mm-dd.db
+		(e.g. SCPA_02027.db is the download from 2/27/21.)
+	(run whatever query generates SCPADiff_mm-dd.db differences database)
+	Build FlagSCUpdates (this build) for territory yyy
+	Build UpdateSCBridge for territory yyy
+	[Terryyy_SC.db/Terryyy_SCBridge is now up-to-date]
+	Download the latest RU data for territory yyy to /RefUSA-Downloads/Terryyy
+	Build UpdateRUDwnld for territory yyy
+	[Terryyy_RU.db/Terryyy_RUBridge is now up-to-date]
+	Build BridgesToTerr for territory yyy
+	[PolyTerri/MultiMail.dbs now up-to-date for territory yyy]
+	[TerrData/Terryyy/Working-Files now has QTerryyy.csv base]
+	To generate the updated PubTerr...
+	Run Calc and open QTerryyy.csv
+	 save as workbook QTerryyy.ods
+	 open the TerryyyHdr.csv or .ods for the header
+	 [save TerryyyHdr.csv as .ods for future use]
+	 use alt-e to export the header to the QTerryyy.ods
+	 use ctrl-w to close the header sheet
+	 use ctrl-s to save the two-sheet QTerryyy.ods
+	 change the tab color on QTerrxxx to dk-lime and protect
+	 change the tab color on TerrxxHdr to dk-lime and protect
+	 use ctrl-s to save the workbook
+	 from the QTerrxxx sheet use ctrl-4 to generate the PubTerr
+	 use ctrl-s in the new "untitled" sheet to save as Terrxxx_PubTerr.ods
+	  in the /TerrData/Terryyy folder
+	 Unprotect the Terrxxx_PubTerr sheet
+	 Change the View to freeze rows and columns at 6A
+	 Highlight all the data cells and use ctrl-F10 to align top and wrap text
+	 Use ctrl-h to highlight the all the address groupings
+	 Use ctrl-6 to set Landscape format and turn on grid lines
+	 use ctrl-s to ensure the whole mess is saved
+	 use ctrl-7 to save an .xlsx copy
+	 use ctrl-8 to save a .pdf copy
+	 use ctrl-w to close the PubTerr workbook
+	 use ctrl-s and ctrl-w to close the QTerryyy.ods workbook
+
+The SystemTracker.ods in the RawData/Tracking folder is used to track
+all changes. At each stage of the above process, the SystemTracker
+should be updated. (That is a whole separate topic...).
+

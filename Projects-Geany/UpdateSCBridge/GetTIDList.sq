@@ -1,0 +1,50 @@
+echo "-- GetTIDList.psq/sql - Get list of territories affected by SC download."  > SQLTemp.sql
+echo "--	11/22/22.	wmk."  >> SQLTemp.sql
+echo "--"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * ----------------------"  >> SQLTemp.sql
+echo "-- * 11/22/22.	wmk.	*codebase support."  >> SQLTemp.sql
+echo "-- * Legacy mods."  >> SQLTemp.sql
+echo "-- * 4/25/22.	wmk.	edited for FL/SARA/86777;*pathbase* support."  >> SQLTemp.sql
+echo "-- * 5/1/22.	wmk.	modified to output list to TIDList0404.csv"  >> SQLTemp.sql
+echo "-- * 7/1/22.	wmk.	documentation/comments updated."  >> SQLTemp.sql
+echo "-- * Legacy mods."  >> SQLTemp.sql
+echo "-- * 6/26/21.	wmk.	original code."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Notes. This .psq is modified by DoSed1, changing @ @   z z to the month"  >> SQLTemp.sql
+echo "-- * and day of the new download. Since this is not linked to any specific"  >> SQLTemp.sql
+echo "-- * territory, DoSed1 is used to make the changes. The *make* file"  >> SQLTemp.sql
+echo "-- * MakeGetTIDList needs no modification, since the SQL code does all the work."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- * subquery list."  >> SQLTemp.sql
+echo "-- * --------------"  >> SQLTemp.sql
+echo "-- * GetSCUpdateList - Get list of territories affected by SC download."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- ** GetSCUpdateList ********"  >> SQLTemp.sql
+echo "-- *	11/22/22.	wmk."  >> SQLTemp.sql
+echo "-- *--------------------------"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * GetSCUpdateList - Get list of territories affected by SC download."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Entry DB and table dependencies."  >> SQLTemp.sql
+echo "-- *   <list main DB and ATTACHed DBs and tables>"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Exit DB and table results."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Notes. DoSed substitutes the month and day of the SCPADiff_mm-dd.db"  >> SQLTemp.sql
+echo "-- * into @ @ and z z fields."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ".open '$pathbase/DB-Dev/junk.db'"  >> SQLTemp.sql
+echo "ATTACH '$pathbase'"  >> SQLTemp.sql
+echo " || '/RawData/SCPA/SCPA-Downloads/SCPADiff_04-04.db'"  >> SQLTemp.sql
+echo "  AS db16;"  >> SQLTemp.sql
+echo ".mode csv"  >> SQLTemp.sql
+echo ".headers on"  >> SQLTemp.sql
+echo ".output '$codebase/Projects-Geany/UpdateSCBridge/TIDList0404.csv'"  >> SQLTemp.sql
+echo "SELECT distinct TerrID FROM db16.DiffAccts"  >> SQLTemp.sql
+echo "where length(TerrID) > 0"  >> SQLTemp.sql
+echo " ORDER BY TerrID;"  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo "-- ** END GetSCUpdateList **********"  >> SQLTemp.sql

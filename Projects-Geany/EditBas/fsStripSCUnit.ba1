@@ -1,0 +1,52 @@
+&apos;// fsStripSCUnit.bas
+&apos;//---------------------------------------------------------------
+&apos;// fsStripSCUnit - Strip unit field from SC Situs Address.
+&apos;//		9/22/20.	wmk.	12:15
+&apos;//---------------------------------------------------------------
+
+public function fsStripSCUnit(psSitusAddr As String) As String
+
+&apos;//	Usage.	sSrchAddr = fsStripSCUnit(SitusAddr)
+&apos;//
+&apos;//		sSitusAddr = SCPA formatted Situs address
+&apos;//
+&apos;// Entry.
+&apos;//
+&apos;//	Exit.	sSrchAddr = situs address with unit field removed and trimmed
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/22/20.		wmk.	original code
+&apos;//
+&apos;//	Notes. SCPA Situs Address fields contain exactly 17 spaces between the
+&apos;// unit and the rest of the address information
+&apos;//
+
+&apos;//	constants.
+const SPACE_17=&quot;                 &quot;	&apos;// EXACTLY 17 spaces
+
+&apos;//	local variables.
+dim sRetValue	As String	&apos;// returned value
+dim n17BlanksPos	As Integer	&apos;// location of first of 17 spaces
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	sRetValue = &quot;&quot;
+	n17BlanksPos = InStr(psSitusAddr, SPACE_17)
+	if n17BlanksPos &gt; 0 then
+		sRetValue = trim(Left(psSitusAddr, n17BlanksPos-1))
+	else
+		sRetValue = psSitusAddr
+	endif
+	
+NormalExit:
+	fsStripSCUnit = sRetValue
+	exit function
+	
+ErrorHandler:
+	msgbox(&quot;fsStripSCUnit - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end function		&apos;// end fsStripSCUnit	9/22/20

@@ -1,0 +1,57 @@
+# MakeCheckMaster - makefile for CheckMaster.sh.
+#	6/5/23.	wmk.
+#
+# Dependencies.
+#		*pathbase/DB-Dev/Terr86777.db - master county data for cong territory
+#		*pathbase/*scpath/SCPADiff_05-28.db - differences from latest download 05 28.
+#
+# Modification History.
+# ---------------------
+# 2/4/23.	wmk.	original code.
+# 2/18/23.	wmk.	main target path corrected to use *projpath.
+# 5/14/23.	wmk.	BLDMSG used to accumulate errors.
+# 6/5/23.	wmk.	*pathbase corrected.
+#
+# Notes. DoSed sets the month (m m) and (d d) fields in this makefile.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/SyncAllData
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+
+.PHONY  : Always
+.ONESHELL : ;
+
+# primary target $(projpath)/CheckMaster.sh
+#==================================================================
+$(projpath)/CheckMaster.sh : ;
+	oops=0
+	remake=0
+	if [ $$pathbase/DB-Dev/Terr86777.db -nt $$pathbase/$$scpath/SCPADiff_05-28.db ];then \
+	 echo " Terr86777.db up to date.";else echo "** Terr86777.db out-of-date **"; \
+	 ~/sysprocs/BLDMSG "** Terr86777.db out-of-date **";oops=1;fi
+	if [ $$oops -ne 0 ];then echo "  Terr86777.db out-of-date." > $(projpath)/KillSync;\
+	 read -p "  Do you wish to update Terr86777 using SCPADiffs_05-28 (y/n)? "; \
+	 yn={REPLY^^};if [ "$$yn" == "Y" ];then remake=1;fi;fi
+	if [ $$remake -eq 1 ];then \
+	 echo " ** Use UpdateCongTerr project to update Terr86777.db **";fi
+	 
+#==================================================================
+# end MakeCheckMaster

@@ -1,0 +1,43 @@
+-- * Purgatory.psq/sql - module description.
+-- * 6/3/23.	wmk.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 6/3/23.	wmk.	original code.
+-- *
+-- * Notes. This query removes all records from PolyTerri and MultiMail
+-- * that have territory ID yyy.
+-- * It leaves the TerrIDData.Territory definition intact, since the territory
+-- * should have been deactivated (which set its TerrID field to '000') prior
+-- * to the purge call.
+-- *;
+
+-- * attach databases;
+.open '$pathbase/DB-Dev/junk.db'
+
+ATTACH '$pathbase'
+||		'/DB-Dev/MultiMail.db'
+ AS db3;
+--pragma db3.table_info(SplitProps);
+--pragma db3.table_info(SplitOwners);
+
+ATTACH '$pathbase'
+ ||		'/DB-Dev/PolyTerri.db'
+  AS db5;
+--pragma db5.table_info(TerrProps);
+--pragma db5.table_info(PropsOwners);
+
+-- * clear records from TerrProps, PropOwners;
+DELETE FROM db3.SplitProps
+WHERE CongTerrID IS 'yyy';
+DELETE FROM db3.SplitOwners
+WHERE TerrID is 'yyy';
+
+-- * clear records from SplitProps, SplitOwners;
+DELETE FROM db5.TerrProps
+WHERE CongTerrID IS 'yyy';
+DELETE FROM db5.PropOwners
+WHERE TerrID is 'yyy';
+
+.quit
+-- * END Purgatory.sql;

@@ -1,0 +1,28 @@
+README - BuildDates project documentation.
+	10/30/21.	wmk.
+
+Modification History.
+---------------------
+10/28/21.	wmk.	original document.
+10/30/21.	wmk.	minor text adjustments.
+11/16/21.	wmk.	Setup results comment corrected to indicate BuildDates.csv
+			 as file being built.
+
+Project Description.
+--------------------
+BuildDates does a full listing of the TerrData/Terrxxx/Terrxxx_PubTerr.xlsx
+subdirectories and files, then uses awk/mawk to extract the filenames and
+dates to TerrData/BuildDates.csv. The BuildDates.csv file, or BuildDates.xlsx 
+(created by Calc) should accompany any territory tarballs sent to various
+locations so that the files do not need to be extracted in order to see the
+various territory generation dates.
+
+Setup.
+------
+BuildDates is stand-alone.
+
+BuildDates Build Menu:
+
+	run 'Make' to create/update the TerrData/BuildDates.csv file for export.
+	
+

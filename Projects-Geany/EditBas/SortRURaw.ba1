@@ -1,0 +1,98 @@
+&apos;// SortRURaw.bas
+&apos;//---------------------------------------------------------------
+&apos;// SortRURaw - Sort RefUSA Import sheet on FullAddress field.
+&apos;//		9/15/20.	wmk.	09:50
+&apos;//---------------------------------------------------------------
+
+public sub SortRURaw()
+
+&apos;//	Usage.	macro call or
+&apos;//			call SortRURaw()
+&apos;//
+&apos;// Entry.	user has selected row(s) of import data to be
+&apos;//			sorted in ascending order by FullAddress column
+&apos;//
+&apos;//	Exit.	selected rows sorted; selection extended to column Z,
+&apos;//			then restored
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/15/20.	wmk.	original code; adapted from SortOnAddress
+&apos;//
+&apos;//	Notes. Either the user will have selected all active rows, or
+&apos;// SelectActiveRows() will have been called prior to entry.
+
+&apos;//	constants.
+const COL_STREET=4			&apos;// street name
+const COL_FULLADDR=13		&apos;// full concatenated address
+
+&apos;//	local variables.
+
+dim oDocument   as object
+dim oDispatcher as object
+dim oDoc 		As Object
+dim oSel		As Object
+dim oRange		As Object
+dim oNewRange	As Object
+dim nActiveColumns	As Integer
+
+&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	oNewRange = oRange				&apos;// capture current range
+	oNewRange.EndColumn = 25		&apos;// set out to column Z for sort
+	nActiveColumns = 25
+	
+	&apos;// set up for sort - select out to column Z
+oDocument   = ThisComponent.CurrentController.Frame
+oDispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+	dim args2(0) as new com.sun.star.beans.PropertyValue
+	args2(0).Name = &quot;By&quot;
+	args2(0).Value = nActiveColumns
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoRightSel&quot;, &quot;&quot;, 0, args2())
+
+	&apos;// set up for Sort call to sort all entries by address
+	rem ----------------------------------------------------------------------
+dim args55(11) as new com.sun.star.beans.PropertyValue
+	args55(0).Name = &quot;ByRows&quot;
+	args55(0).Value = true
+	args55(1).Name = &quot;HasHeader&quot;
+	args55(1).Value = false
+	args55(2).Name = &quot;CaseSensitive&quot;
+	args55(2).Value = false
+	args55(3).Name = &quot;NaturalSort&quot;
+&apos;	args55(3).Value = false
+	args55(3).Value = true				&apos;// set true so 1,11,15 do not appear together
+	args55(4).Name = &quot;IncludeAttribs&quot;
+	args55(4).Value = true
+	args55(5).Name = &quot;UserDefIndex&quot;
+	args55(5).Value = 0
+	args55(6).Name = &quot;Col1&quot;
+	args55(6).Value = COL_STREET + 1		&apos;// plus 1 for $&lt;Lletter&gt;..
+	args55(7).Name = &quot;Ascending1&quot;
+	args55(7).Value = true
+	args55(8).Name = &quot;Col2&quot;
+	args55(8).Value = COL_FULLADDR + 1		&apos;// plus 1 for $&lt;letter?..
+	args55(9).Name = &quot;Ascending2&quot;
+	args55(9).Value = true
+	args55(10).Name = &quot;IncludeComments&quot;
+	args55(10).Value = false
+	args55(11).Name = &quot;IncludeImages&quot;
+	args55(11).Value = true
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:DataSort&quot;, &quot;&quot;, 0, args55())
+	SetSelection(oRange)
+	
+NormalExit:
+&apos;	msgbox(&quot;SortRURaw complete. &quot;)
+	exit sub
+	
+ErrorHandler:	
+	msgbox(&quot;SortRURaw - unprocessed error.&quot;)
+	GoTo NormalExit
+
+end sub		&apos;// end SortRURaw	9/15/20

@@ -1,0 +1,41 @@
+README - README file for AnySQLtoSH project.
+	10/16/21.	wmk.
+
+Modification History.
+---------------------
+4/17/21.	wmk.	original document.
+10/12/21.	wmk.	change to .sq intermediate file from .s.
+10/16/21.	wmk.	Setup section added.
+
+Documentation Sections.
+-----------------------
+Project Description - overall project description.
+Setup - step-by-step build instructions.
+
+
+Project Description.
+--------------------
+AnySQLtoSH will take any .sql file and transform it into a shell file
+.sh by the same filename. To do this 2 transformations take place: the
+original .sql file is converted to a sequence of "echo" commands that
+will produce a file SQLTemp.sql containing all the SQL from the original
+file. This first transformation ends up on target file 'filename.ss'.
+Then a second transformation takes the .sq file and adds bash header and
+trailing commands to make the .sq file into a complete shell file with
+name 'filename.sh'.
+
+The transforms are all performed in a base folder name provided to the
+make Build. The Build must be supplied with both the base folder name
+and the base filename before it can proceed.
+
+Setup.
+------
+To convert any SQL to a shell, do the following:
+
+Build Menu: edit the "sed" command line with the path and the .sql
+ filename (without the .sql suffix)
+ run "sed" from the Build menu to set up the makefile
+ run "Make" from the Build menu to create the <filename>.sh
+
+The <filename>.sh is now ready to either run from a command line or
+from another shell.

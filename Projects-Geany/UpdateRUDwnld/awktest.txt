@@ -1,0 +1,3 @@
+OwningParcel,UnitAddress,Unit,Resident1,Phone1,Phone2,RefUSA-Phone,SubTerritory,CongTerrID,DoNotCall,RSO,Foreign,RecordDate,SitusAddress,PropUse,DelPending,RecordType
+0403130002,"903   Freeport W","","Carol Donnelly","","","Not Available","",238,"","","",2021-06-12,"950   RIDGEWOOD AVE",2860,,M
+0403130002,"903   Freeport W","","Arthur Donnelly","","","Not Available","",238,"","","",2021-06-12,"950   RIDGEWOOD AVE",2860,,M

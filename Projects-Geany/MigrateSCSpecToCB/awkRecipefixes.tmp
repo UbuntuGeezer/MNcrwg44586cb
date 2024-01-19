@@ -1,0 +1,16 @@
+# awkRecipefixes.txt - Fix SPECIAL makefile ".sh" generation recipe.
+#	11/25/22.	wmk.
+#
+# awkRecipefixes contains the *mawk* directives to correct the main build menu
+# recipe for creating a ".sh" file from a ".sql" file. *mawk* searches for the
+# comment "*P1.sh primary" which starts the recipe block. (Standardized code
+# used within SPECIAL makefiles). It then replaces all following lines in the
+# makefile with the content of "MakeRecipe.txt" from the MigrateSCSpecial
+# project folder.
+BEGIN {
+ print "# 11/25/22.   wmk.   (automated) main .sh recipe fix."
+ ;p=1}
+{if ($1 == "#" && $2 == "<shell-name>.sh" && $3 == "primary"){print;p=0};
+ if (p)print;;}
+ END {while(getline < "/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/MigrateSCSpecToCB/MakeRecipe.txt"){print $0}}
+

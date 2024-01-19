@@ -1,0 +1,17 @@
+06/02/22,284-286,"Terrs 284, 285, 286 Village Cir SC/RefUSA issues with some addresses having units not getting picked up; SC inconsistencies ‘E’ and ‘EAST’; postal does not use street direction",06/08/22,Release_06-16-22
+06/15/22,141,BOGIE and TURF not matching up with RefUSA Bogie St and Turf St; fix will be in Special/CountryClubMHPTidy,06/15/22,Release_06-16-22
+06/15/22,642,dups in RefUSA data when generating territory; fix probably in SyncTerrToSpec,06/15/22,Release_06-16-22
+04/08/22,302,BUG: several addresses not getting picked up from exceptions list; missing 506 Dona Dr E,05/27/22,Release_06-16-22
+05/14/22,640,duplicate names in territory,05/14/22,Release_06-16-22
+06/03/22,all special,basepath var in all MakeSpecials incorrectly set by automated FixMakeSpecials edit; need to run FixMakeSpecials1 on all special territories,-,
+06/03/22,special Bird Bay Cir,640 Bird Bay Dr W missing parcel (may be Tidy issue?); resolved – there are 640 Bird Bay Cir and 640 Bird Bay Dr W both in the RU data; 640 Bird Bay Dr W is in Terr202!,06/11/22,Release_06-16-22
+06/03/22,special Bird Bay Dr,BirdBayDr.db (RU) multiple addresses not picking up OwningParcel where addresses have units,06/11/22,Release_06-16-22
+06/05/22,128,InletCir missing parcel IDs; needed InletCirTidy.sql updated,06/12/22,Release_06-16-22
+09/01/21,"235-251, 268,269. 261-264, 317-321",ExtractOldDiffs and IntegrateOldDiffs both fail when running make MakeSpecials; (broken DoSed in UpdateMHPDwnld project),06/08/22,Release_06-16-22
+05/14/22,610,set zip to 34292,06/05/22,Release_06-16-22
+05/14/22,621,two zip codes in sheets; header demands 1,06/05/22,Release_06-16-22
+06/03/22,TarponCenterDr special,808 bytes missing parcel IDs,06/05/22,Release_06-16-22
+06/03/22,AuburnLakesCir special,1.4k missing parcel IDs,06/05/22,Release_06-16-22
+06/03/22,WhitePineTreeRd special,NOT NULL constraint violation SetSpecTerrs 209; SCUnit not being used when picking up units OwningParcel,06/05/22,Release_06-16-22
+06/03/22,"216,232-234.271,274,284",18k missing parcel IDs Capri Isles Blvd;  CapriIslesBlvdTidy.sql fixed in both SC and RU,06/04/22,Release_06-16-22
+06/02/22,all special,"RegenSpecDB and other .sqls referencing VeniceNTerritory and NvenAll, NvenAccts tables",06/02/22,Release_06-16-22

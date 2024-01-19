@@ -1,0 +1,3 @@
+s?/home/vncwmk3?/media/ubuntu/Windows/Users/Bill?g
+s?%2Fhome%2Fvncwmk3?/media/ubuntu/Windows/Users/Bill?g
+/FILE_NAME/ s?/?%2F?g

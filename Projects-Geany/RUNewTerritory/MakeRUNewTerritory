@@ -1,0 +1,89 @@
+# MakeRUNewTerritory.tmp - MakeRUNewTerritory template.
+#	6/4/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# 2/9/23.	wmk.	comments tidied.
+# 6/4/23.	wmk.	MakeEmptyRUMap.sh included in .csv recipe.
+# Legacy mods.
+# 4/25/22.	wmk.	modified to use *pathbase* env var; *..path* vars
+#			 trailing / dropped.
+# 5/7/22.	wmk.	InitialRUFix.sh prerequisite changed to .psq from .sql
+# Legacy mods.
+# 5/8/21.	wmk.	original makefile.
+# 8/27/21.	wmk.	documentation and blocking added.
+# 8/30/21.	wmk.	MakeInitialRUFix segment added; folderbase def added.
+# 9/10/21.	wmk.	code added to abandon make if Ter947_RU already exists.
+# 10/27/21.	wmk.	InitialRUFix recipe corrections.
+# 2/26/22.	wmk.	multihost path corrections for chromeos; chmod to ensure
+#			 .sh executable.
+#
+# The primary target of MakeRUNewTerritory is Terr947_RU.db in the
+# RU download folder for the territory. If InitialRUFix.sh is not
+# present or out-of-date, it also will be built in the territory's folder.
+
+.ONESHELL : ;
+
+.NOTPARALLEL : ;
+
+.PHONY : Dummy ;
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+incroot = $(codebase)/include
+vpath %.i $(codebase)/include
+targpath = $(pathbase)/RefUSA/RefUSA-Downloads/Terr947
+thisproj = $(codebase)/Projects-Geany/RUNewTerritory
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# Note. include file is dependent upon prior folderbase definition.
+include pathRUdefs.inc
+# postpath var defined in above .inc
+
+# [vpath.db]Terr947_RU.db primary target
+# [vpath.csv]Map947_RU.csv prerequisite
+#=================================================
+Terr947_RU.db : Map947_RU.csv $(targpath)/InitialRUFix.sh
+	if test -f $(postpath)/Terr947_RU.db;then  \
+	 echo "** Terr947_RU.db exists - MakeRUNewTerritory abandoned **"; \
+	 exit 1;fi
+	$(bashpath)/RUNewTerr_db.sh 947
+	if test -f $(targpath)/InitialRUFix.sh;then $(targpath)/InitialRUFix.sh;fi
+	if test -f $(bashpath)/RUTidyTerr_db.sh;then $(bashpath)/RUTidyTerr_db.sh 947;fi
+	bash $(bashpath)/MissingIDs.sh 947
+	
+Map947_RU.csv : ;
+	$(bashpath)/MakeEmptyRUMap.sh 947
+
+#--- InitialRUFix.sh target.
+#===========================
+$(targpath)/InitialRUFix.sh : $(targpath)/InitialRUFix.sql
+	if test -f $(targpath)/InitialRUFix.sql;then \
+	cd $(altproj);./DoSed.sh $(targpath) InitialRUFix; \
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH; \
+	echo "Terr947/InitialRUFix.sh built";fi
+
+$(targpath)/InitialRUFix.sql : ; 
+	
+
+#==========================
+
+Dummy : ;
+
+#=================================================

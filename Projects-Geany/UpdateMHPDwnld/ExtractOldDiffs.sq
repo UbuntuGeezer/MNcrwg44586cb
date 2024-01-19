@@ -1,0 +1,63 @@
+echo "-- ExtractOldDiffs.psq - Extract older RU records not in newer download."  > SQLTemp.sql
+echo "--	6/7/22.	wmk."  >> SQLTemp.sql
+echo "--"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * ---------------------"  >> SQLTemp.sql
+echo "-- * 5/28/22.	wmk.	(automated) *pathbase* integration."  >> SQLTemp.sql
+echo "-- * 5/30/22.	wmk.	(automated) VeniceNTerritory > Terr86777."  >> SQLTemp.sql
+echo "-- * 6/7/22.	wmk.	code checked migrating to FL/SARA/86777."  >> SQLTemp.sql
+echo "-- * Legacy mods."  >> SQLTemp.sql
+echo "-- * 9/9/21.	wmk.	cloned into UpdateMHPDwnld from UpdateRUDwnld project."  >> SQLTemp.sql
+echo "-- * 7/6/21.	wmk.	original code."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- * subquery list."  >> SQLTemp.sql
+echo "-- * --------------"  >> SQLTemp.sql
+echo "-- * ExtractOldDiffs - Extract older RU records not in newer download."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- ** ExtractOldDiffs **********"  >> SQLTemp.sql
+echo "-- *	6/7/22.	wmk."  >> SQLTemp.sql
+echo "-- *----------------------------"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * ExtractOldDiffs - Extract older RU records not in newer download."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Entry DB and table dependencies."  >> SQLTemp.sql
+echo "-- *	junk.db"  >> SQLTemp.sql
+echo "-- *	Terr262_RU.db - as db12,"  >> SQLTemp.sql
+echo "-- *	./Previous/Terr262_RU.db - as db32,"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Exit DB and table results."  >> SQLTemp.sql
+echo "-- *	Terr262OldDiffs.csv - extracted _RUBridge records from ./Previous"  >> SQLTemp.sql
+echo "-- *	  .db where UnitAddress not in current .db"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Notes."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo ".open '$pathbase/DB-Dev/junk.db'"  >> SQLTemp.sql
+echo ".cd '$pathbase/RawData/RefUSA/RefUSA-Downloads'"  >> SQLTemp.sql
+echo "ATTACH './Terr262/Terr262_RU.db'"  >> SQLTemp.sql
+echo " AS db12;"  >> SQLTemp.sql
+echo "-- pragma db12.table_info(Terr262_RUBridge);"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "ATTACH './Terr262/Previous/Terr262_RU.db'"  >> SQLTemp.sql
+echo " AS db32;"  >> SQLTemp.sql
+echo "-- pragma db32.table_info(Terr262_RUBridge);"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo ".headers OFF"  >> SQLTemp.sql
+echo ".separator ,"  >> SQLTemp.sql
+echo ".mode csv"  >> SQLTemp.sql
+echo ".output './Terr262/Terr262OldDiffs.csv'"  >> SQLTemp.sql
+echo "UPDATE db12.Terr262_RUBridge"  >> SQLTemp.sql
+echo "SET UnitAddress = trim(UnitAddress);"  >> SQLTemp.sql
+echo "UPDATE db32.Terr262_RUBridge"  >> SQLTemp.sql
+echo "SET UnitAddress = trim(UnitAddress);"  >> SQLTemp.sql
+echo "WITH a AS (SELECT UnitAddress FROM db12.Terr262_RUBridge)"  >> SQLTemp.sql
+echo "SELECT * FROM db32.Terr262_RUBridge"  >> SQLTemp.sql
+echo " WHERE UnitAddress NOT IN (SELECT UnitAddress FROM a);"  >> SQLTemp.sql
+echo "--DETACH db12;"  >> SQLTemp.sql
+echo "--DETACH db32;"  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- ** END ExtractOldDiffs **********;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql

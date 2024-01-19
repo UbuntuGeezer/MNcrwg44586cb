@@ -1,0 +1,180 @@
+  System log entry made. 
+  LoopAnyShell beginning processing.
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+#hdrAnySQL.sh - Any .sql to .sh shell source.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+#hdrAnySQL.sh - Any .sql to .sh shell source.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+#	6/8/23.	wmk.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+#hdrAnySQL.sh - Any .sql to .sh shell source.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# BuildDNCCounts.sh - Build DNCCounts table in TerrIDData.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# CleanupDNCs.sh - Remove DoNotCalls with DelPending flag set.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+#hdrAnySQL.sh - Any .sql to .sh shell source.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+#hdrAnySQL.sh - Any .sql to .sh shell source.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+#hdrAnySQL.sh - Any .sql to .sh shell source.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# DoSedArchive.sh - *sed edit files for MakeArchiveDNCs.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# DoSedBuild.sh - *sed edit files for MakeBuildDNC, MakeCleanupDNCs.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# DoSedDelete.sh - *sed edit files for MakeDeleteDNC.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# DoSedDelRSO.sh - *sed edit files for MakeDeleteRSO.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# DoSedMove.sh - *sed edit files for MakeMoveDNC.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# DoSedRecover.sh - *sed edit files for MakeRecoverDNCs.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# DumpDNCLog.sh - Dump DNCLog table to DNCLog.csv for spreadsheet.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# DumpRSOLog.sh - Dump RSOLog table to RSOLog.csv for spreadsheet.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# DumpTerrLog.sh - Dump TerrLog table to TerrLog.csv for spreadsheet.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# GetAddrPID.sh - Get DNC Property ID given unitaddress, unit.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# GetArchList.sh - Get list of archived DNCs on *TEMP_PATH/ArchList.csv.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# GetArchLog.sh - List DNC archive log to *TEMP_PATH/ArchLog.txt.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# GetDelList.sh - List all deleted DoNotCalls to *TEMP_PATH/DeletedList.csv.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# GetDNCList.sh - List all DoNotCalls to *TEMP_PATH/DNCList.txt.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# GetDNCLog.sh - Copy DNCLog to *TEMP_PATH/DNCLog.txt.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# GetDNCpid.sh - Get DNC Property ID given unitaddress, unit.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+#	6/8/23.	wmk.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# GetDNCLog.sh - Get DNC Property ID given terric.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# Login.sh - Log in Administrator.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# Logout.sh - Log out Administrator.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+#hdrAnySQL.sh - Any .sql to .sh shell source.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+#	6/14/23.	wmk.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+#	6/13/23.	wmk.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# RecoverDNCs.sh - Recover archived DoNotCalls.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+#hdrAnySQL.sh - Any .sql to .sh shell source.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# WhosLoggedIn.sh - Set *adminwho env var to initials of logged in administrator.
+  ShellDesc complete.
+  System log entry made. 
+ 35 ShellList.txt lines processed.
+  System log entry made. 
+ 	LoopAnyShell complete.

@@ -1,0 +1,6 @@
+echo "-- ClearRUBridge.psq - Clear RUBridge table in territory 612."  > SQLTemp.sql
+echo "--		10/20/21.	wmk."  >> SQLTemp.sql
+echo ".open '$folderbase/Territories/RawData/RefUSA/RefUSA-Downloads/Terr612/Terr612_RU.db'"  >> SQLTemp.sql
+echo "DELETE FROM Terr612_RUBridge;"  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo "-- end ClearRUBridge.sql"  >> SQLTemp.sql

@@ -1,0 +1,2 @@
+s?<sqlmodule>?FixFromSC?g
+s?<sqlfile>?Fix226RU?g

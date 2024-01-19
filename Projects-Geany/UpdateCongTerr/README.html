@@ -1,0 +1,343 @@
+<p>README - documentation for UpdateCongTerr Build.<br>
+5/3/23. wmk.</p>
+
+<h3>Modification History.</h3>
+
+<pre><code>
+4/27/22.    wmk.    modified for general use; FL/SARA/86777; .md adjusted
+             for use with *pandoc* utility.
+5/26/22.    wmk.    .md adjusted back to *markdown* utility; internal links
+             added.
+4/4/23.     wmk.   misc .md formatting improvements.
+4/26/23.    wmk.    BuildDiffAcctsTbl documented in "Significant Notes".
+             ImportSCPA/README.html hyperlink added.
+5/3/23.     wmk.    Post-Build Operations section added.
+Legacy mods.
+4/19/21.    wmk.   original code.
+6/25/21.    wmk.   documentation update.
+7/22/21.    wmk.   documentation added.
+7/23/21.    wmk.   Significant Notes added.
+9/30/21.    wmk.   Build Process section added.
+12/2/21.    wmk.   revise 'Manual NVenAll Update' section.
+1/2/22.     wmk.   formatted as .md file for html conversion;
+             preamble.CreateNewSCPA.sh documented.
+1/10/22.    wmk.   BuildSCDiff included in project description; SystemTracker
+             note included.
+2/5/22.     wmk.   SCPA Public.xlsx download documentation added.
+3/19/22.    wmk.   SCPA Public.xlsx download documentation updated.
+</code></pre>
+
+<h3 id="IX">Document Sections.</h3>
+
+<pre><code>
+<a href="#1.0">link</a> 1.0 Project Description - overall project description.
+<a href="#2.0">link</a> 2.0 Build Sequence - steps to follow in the build.
+<a href="#2.0.1">link</a>  2.0.1 Building SCPA_mm-dd.db.
+<a href="#2.0.2">link</a>  2.0.2 Building SCPADiff\_mm-dd.db.
+<a href="#2.0.3">link</a>  2.0.3 Building the UpdateCongTerr Project.
+<a href="#3.0">link</a> Build Process.</a>
+<a href="#4.0">link</a> 4.0 Post-Build Operations - (MakeDiffAcctsTbl, Orphans..).
+Manual Terr86777 Update - manual steps to follow in place of 'make'.
+<a href="#8.0">link</a> Significant Notes - significant build notes not found elsewhere.
+</code></pre>
+
+<h3 id="1.0">1.0 Project Description.</h3>
+
+<p>The UpdateCongTerr project takes a given SCPA_mm-dd.db and uses it to update
+the Terr86777 table within the Terr86777.db. This process will bring
+the master SCPA territory records up-to-date with the SCPA_mm-dd.db download.</p>
+
+<p>The sequence for going from SC county data to updating the Terr86777 table
+within the Terr86777.db is as follows:</p>
+
+<pre><code>
+    Download the data from the Sarasota County Property Appraiser's website.
+    The data will reside in 'SCPA Public.xlsx'
+
+    Use spreadsheet app to convert 'SCPA Public.xlsx' to the .csv file
+        Datammdd.csv where mmdd is the month and day of the download
+
+    Use the ImportSCPA project to import the data to the database
+        SCPA_mm-dd.db
+
+    Use the BuildSCDiff project to create the differences database
+        SCPADiff_mm-dd.db
+    containing the new records from the download compared to Terr86777 data
+
+    Run SCNewVsCongTerr.sh to incorporate the "differences" records into
+        SCPADiff_mm-dd.db
+
+    Terr86777.db
+
+<pre><code>
+Web Browser:
+
+    get into the county property appraiser's site and download the data
+     for the entire county; the data should reside in a .csv file
+
+UpdateCongTerr Project:
+
+--- ImportSCPA Project...
+</code></pre>
+
+<p><a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/ImportSCPA/README.html">ImportSCPA</a></p>
+
+<pre><code>
+    create a new SCPA_mm-dd.db from the .csv data where mm, dd are the
+     month and day of the download; add a DownloadDate field at the end
+     of each record
+
+    if this is the initial download of county data, create a database
+     that only consists of records from the county that are actually
+     within the congregation territory boundaries
+
+    add a new table to the congregation territory db containing the county
+     parcel numbers that are within the congregation territory boundaries
+--- end ImportSCPA Project steps
+
+    if this is not the very first download of data from the county,
+     produce a "differences" database that contains the county records
+     for any properties that have changed since the last download; criteria
+     may be any of the columns "LastSaleDate", "HomesteadExemption"...
+     This database will be named SCPADiffs_mm-dd.db with table named
+     Diffsmmdd.
+
+    insert/replace all records within the congregation territory db taken
+     from the Diffsmmdd table 
+</code></pre>
+
+<h3 id="2.0">Build Sequence.</h3>
+
+<p>The build sequence for updating the system-wide congregation territory
+involves several steps. Each of these steps is discussed below.</p>
+
+<pre><code>
+    Download current county SCPA data
+    Create a new SCPA_mm-dd.db
+    Create a new differences database SCPADiff_mm-dd.db
+    Update the territory master db Terr86777.db
+</code></pre>
+
+<p>Once the Terr86777.db database has been updated, all of the affected
+territories in the SCPA-Downloads portion of the data segment should be
+updated to incorporate the changed records. See the <a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/UpdateSCBridge/README.html">UpdateSCBridge</a> and <a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/FlagSCUpdates/README.html">FlagSCUpdates</a> project documentation for details on that process.
+<p>When all of the territories in the SCPA-Downloads portion of the data
+segment have been updated, the affected territories in the RefUSA-Downloads
+portion of the data segment should be updated with fresh RefUSA download
+data. See the <a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/UpdateRUDwnld/README.html">UpdateRUDwnld</a> project documentation for details on that process.
+<p>Once all of the above processes have been completed, the congregation territory
+has been fully updated. However, the affected publisher territories still need
+to be regenerated. See the <a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/SyncAllData/README.html">SyncAllData</a> project documentation for generating
+publisher territories.
+<br><a href="#IX">Index</a></p>
+
+<h3 id="2.0.1">Building SCPA\_mm-dd.db.</h3>
+
+<p>A separate project <em>ImportSCPA</em> handles the creation of a new SCPA_mm-dd.db
+from a new SCPA download. This should be the first step before proceeding
+with the <em>UpdateCongTerr</em> project builds. Refer to the
+ <a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/ImportSCPA/README.html">ImportSCPA Project</a> documentation.<br>
+<a href="#IX">Index</a></p>
+
+<h3 id="2.0.2">Building SCPADiff\_mm-dd.db.</h3>
+
+<p>The <em>BuildSCDiff</em> project builds the SCPADiffs_mm-dd.db. This project build also be
+completed create the SCPADiffs_mm-dd.db before proceeding with the <em>UpdateCongTerr</em>
+project builds. Refer to that project documentation for details.
+<a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/BuildSCDiff/README.html">BuildSCDiff Project README</a><br>
+Once SCPADiffs_mm-dd.db is built /TerrData/OrphansIDs.csv has the Diffs table
+entries for new records that do not have an associated territory ID. The
+/TerrData/BuildPIDList.sh shell will build a list of these "orphaned" property
+IDs in the file PIDList.txt. Running <br>
+*bp/LoopAnyShell.sh ./idWhichTerr?.sh PIDList.txt<br>
+will produce the file *TEMP_PATH/MatchedIDList.txt that contains a list of
+property IDs and territories that have a close match to each property ID. This
+list may then be used to manually enter territory IDs into the DiffAccts table
+for property IDs not previously matched to territories.</p>
+
+<p>AddSCBridgeRecord (and possibly AddTerr86777Record) may then be used to add the
+record for the property into the appropriate Terrxxx_SC.db.Terrxxx_SCBridge
+table and Terr86777.db/Terr86777 table.</p>
+
+<p><a href="#IX">Index</a></p>
+
+<h3 id="2.0.3">Building the UpdateCongTerr Project.</h3>
+
+<p>Once the SCPADiffs_mm-dd.db is in place, the UpdateCongTerr project can be started to finish
+the task of integrating the differences into the congregation territory database. Since the
+table containing the congregation territory records was initially named Terr86777, this project
+inherited that name. The Terr86777 table is assumed to reside in the Terr86777.db.</p>
+
+<p><strong>Note.</strong> See the 
+ <a href="file:///home/vncwmk3/GitHub/NewTerritories/Documentation/Database Naming Conventions.html">Database Naming Conventions</a>
+ section in the <em>Documentation</em> project for
+documentation on the database naming conventions used throughout the Territories system.</p>
+
+<h3 id="3.0">3.0 Build Process.</h3>
+
+<p>Note: The Build process incorporates an embedded CP-DBsToMirror shell call to back up the exiting primary databases (DB-Dev) to a mirror drive for recovery in case the build process hoses things up. The user may also wish to execute IncDumpMainDBs.sh from the ArchivingBackups project folder as a second-level line of defense for recovery prior to initiating the build.</p>
+
+<p>The SCPA_mm-dd.db along with the differences database SCPADiff_mm-dd.db
+are used to update the Terr86777 table in Terr86777.db.
+The main target of this build is Terr86777.db.  SCPA_mm-dd.db is the full SCPA download and SCPADiff_mm-dd is the "differences" collection of records that have changed since the previous full SCPA download. Terr86777.db will be considered to be out-of-date if either of the prerequisite files is newer.</p>
+
+<p>The XDiffsToCongTerr.sh shell performs the update. It is built off DiffsToCongTerr.sh by stream editing m2 and d2 to produce XDiffsToCongTerr.sh. It takes the SCPADiff_m2-d2.db table Diffm2d2 and updates the Terr86777 table by Inserting/Deleting entire records that have changed. This is more accurate than just doing an UPDATE of the Terr86777 records, since
+multiple fields may have changed that are not being tested for.</p>
+
+<p>The SCNewVsCongTerr.sql query differences the SC download with Terr86777. It is provided for reference to inspect what records will be changed. It may be run from the SQL user interface
+or from the sqlite Database Browser. The utility shell DiffsPendingList.sh has been provided on the (bashpath) that produces a list of territories affected to ~/Documents/DiffTerrs.txt. <strong>NOTE: ON NON-PERSISTENT SYSTEMS THIS IS A TEMPORARY FILE ON VOLATILE STORAGE...</strong></p>
+
+<p>To simplify usage, most menu items have been removed, but are documented below in case they need to be restored. To do the Build, all that is necessary is to edit the "sed" Build command in the Independent commands placing the month and day of the Diff file and prior downoad to use in the DoSed command. Then the <em>make</em> utility is run using the MakeUpdateCongTerr makefile.</p>
+
+<p><strong>MakeUpdateCongTerr.</strong><br>
+To update the Terr86777 table in Terr86777.db perform the following
+steps:</p>
+
+<pre><code>UpdateCongTerr project:
+    Build Menu: edit the 'sed' command line 
+     ./DoSed.sh m1 d1 m2 d2
+        where m1 = month of previous download
+        d1 = day of previous download
+        m2 = month of current download
+        d2 = day of current download
+
+    run "sed" from the Build menu to set up MakeUpdateCongTerr,
+      DiffsToCongTerr.sh, SCNewCongTerr.sql, BuildDiffAcctsTbl.sql
+      Note: BuildDiffAcctsTbl is a leftover from previous build recipe
+
+Terminal session:
+    cdj UpdateCongTerr
+    ensure environment vars *pathbase* and others are set
+
+    [run "Make Dry Run" to check out the build prerequisites]
+
+    run "Make" to update Terr86777 in Terr86777.db
+     make -f MakeUpdateCongTerr
+</code></pre>
+
+<p>Once the Terr86777 table has been updated, log the update in the <em>Terr86777.db Updated</em> column of the SystemTracker."SCPA Main Downloads" sheet for recordkeeping purposes.<br></p>
+
+<p>============= Build menu items for .sql file selection ===================
+Following are the Build menu items. Note that these items are only visible if a file with suffix .sql is the current selection in the Geany editor.</p>
+
+<h2>--- SQL commands -----------------------------------------------------</h2>
+
+<p><strong>GenSQLTemp Build...</strong><pre><code>  sed '{s/mm-dd/02-27/g;s/mmdd/0227/g}' SCNewVsCongTerr.sql > SQLTemp.sql
+</code></pre></p>
+
+<p><strong>CreateDiffs Build...</strong><pre><code> sqlite3  &lt; SQLTemp.sql
+</code></pre></p>
+
+<p><strong>UpdateNVenAll Build...(obsolete)</strong><pre><code> sed '{s/m2-d2/02-28/g;s/mmdd/0227/g}' DiffsToCongTerr.sql > SQLTemp.sql \
+      | sqlite3 &lt; SQLTemp.sql
+</code></pre></p>
+
+<h2>--- Independent commands ----------------------------------------------</h2>
+
+<p><strong>Make Build...</strong><pre><code>    make -f MakeUpdateCongTerr
+</code></pre></p>
+
+<p><strong>Make Dry Run...</strong><pre><code>  make --dry-run -f MakeUpdateCongTerr
+</code></pre>
+<a href="#IX">Index</a></p>
+
+<h2>--- Execute commands --------------------------------------------------</h2>
+
+<p><strong>sed Build...</strong><pre><code> sed -f seddirs.txt MakeUpdateCongTerr.tmp > MakeUpdateCongTerr
+</code></pre></p>
+
+<h3>=========== Build menu items for .sh file selection ===================</h3>
+
+<h3>--- sh commands -------------------------------------------------------</h3>
+
+<p><strong>sed Build...</strong><pre><code> sed '{s/m2/02/g;s/d2/27/g;s/mmdd/0227/g}' DiffsToCongTerr.sh > XDiffsToCongTerr.sh
+</code></pre></p>
+
+<h3>Manual Terr86777 Update.</h3>
+
+<p>To manually update Terr86777 from a given download and prior download
+perform the following steps:</p>
+
+<p>-- create and populate new SCPA_mm-dd.db</p>
+
+<pre><code> Web Browser: SCPA Property Search.
+
+    download the current SCPA data using the SCPA site "Downloads" to
+     download today's SCPA data to file 'SCPA Public.xlsx', and change
+     the filename to SCPA-Public_mm-dd.xlsx where mm and dd are the
+     current month and date
+
+    Calc: - folder SCPA/SCPA-Downloads open SCPA-Public_mm-dd-yy.xlsx
+    use Calc to save the file as 'SCPA-Public_mm-dd.csv as a text .csv
+     file that can be used by SQL to import all the data into a new .db
+
+    SQL Browser:
+    use SQL browser to create new database SCPA-mm_dd.db in SCPA-Downloads
+     folder, empty with no table defined
+
+    use Import from the File menu in SQL browser to import from csv file
+     created by calc above; select 'header in first row' option; select 
+     trim fields option; this trims blanks out of all the column names
+     as well; name the table 'Datammdd' for the month and date of the
+     download
+</code></pre>
+
+<p>-- create and populate a differences database SCPADiff_mm-dd.db</p>
+
+<pre><code> run the QSCPADiff query to create a new empty database SCPADiff_mm-dd.db,
+     extract a Diffm2d2.csv of difference records comparing SCPA_m1-d1.db against
+     SCPA_m2-d2.db by recording records from the newer m2-d2 where the
+     LastSaleDate or HomesteadExemption(YESorNO) field has changed from m1-d1,
+     then importing those records into table Diffm2d2 in the new database
+</code></pre>
+
+<p>-- backup the exiting key databases to the mirror folder</p>
+
+<pre><code> execute *procpath*/CP-DBsToMirror.sh
+</code></pre>
+
+<p>-- run the XDiffsToCongTerr shell to integrate the changed records into
+    the Terr86777 table</p>
+
+<pre><code>     ensure that the m1 d1 m2 d2 are properly set in XDiffsToCongTerr.sh by
+     using DoSed from the UpdateCongTerr project to edit DiffsToCongTerr.sh
+
+    execute XDiffsToCongTerr.sh from the project
+
+    run sqlite on BuildDiffAcctsTbl.sql to update the DiffAccts table in
+     SCPADiff_m2-d2.db with all territory IDs affected by this difference
+     table; that list is obtained by grabbing CongTerrID fields from
+     PolyTerri and MultiMail TerrProps and SplitProps tables where the
+     OwningParcel is in the TerrID table.
+</code></pre>
+
+<p><a href="#IX">Index</a></p>
+
+<h3 id="8.0">Significant Notes.</h3>
+
+<p><strong>NOTE:</strong> As of 9/30/21 there is a bug in the build recipe that keeps running
+QSCPADiff from the (bashpath), when the SCPADiff_mm-dd.db has already been
+created/updated. The makefile has been modified to throw a fatal error when
+this occurs. If everything else has beeen set up properly, enter the Terminal
+and run DiffsToCongTerr.sh to force the update of Terr86777.Terr86777 records
+around the makefile.
+<strong>END NOTE.</strong></p>
+
+<p>BuildDiffAcctsTbl.sh builds a DiffAccts table within SCPADiff_mm-dd.db that contains
+all of the account #s and territory IDs for records in the Diffmmdd table. Any
+records that are residential use, but not found in the main publisher territory
+dbs (PolyTerri.db, MultiMail.db) have territory IDs >= 800 assigned. This allows
+reporting and reviewing properties that should be assigned to publisher territories
+but are not being picked up when publisher territories are run through BridgeToTerr.</p>
+
+<p>BugFixes.sql contains queries that fix database bugs introduced by various updates.</p>
+
+<p>As of 8/26/21 spaces in field names for Diffm2d2 table have been removed.
+SCPA-mm_dd.db download fields, SCPADiff_mm-dd.db fields are now consistent with no
+spaces in the field names. This is because downloads are now imported with
+the "trim fields" option.</p>
+
+<p>The Terr86777.db database still has the original space-filled field names,
+so this is taken into consideration when the Terr86777 tables are updated.
+This also helps differentiate field names when both Terr86777 and SCAPDiff_mm-dd
+are open concurrently.</p>

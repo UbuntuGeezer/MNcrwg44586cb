@@ -1,0 +1,26 @@
+echo "-- * PurgeTerrSpec2.psq/sql - module description."  > SQLTemp.sql
+echo "-- * 6/3/23.	wmk."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * ---------------------"  >> SQLTemp.sql
+echo "-- * 6/3/23.	wmk.	original code."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Notes. This query removes all records from the special territory"  >> SQLTemp.sql
+echo "-- * Woodlands.db.db in both SCPA-Downloads and RefUSA-Downloads/Special"  >> SQLTemp.sql
+echo "-- * that have territory ID 964."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- * attach databases;"  >> SQLTemp.sql
+echo ".open '$pathbase/DB-Dev/junk.db'"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "ATTACH '$pathbase/$scpath/Special/Woodlands.db'"  >> SQLTemp.sql
+echo " AS db29;"  >> SQLTemp.sql
+echo "--pragma db29.table_info(Spec_SCBridge);"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- * clear records from SC/Special db;"  >> SQLTemp.sql
+echo "DELETE FROM db29.Spec_SCBridge"  >> SQLTemp.sql
+echo "WHERE CongTerrID IS '964';"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo "-- * END PurgeTerrSpec2.sql;"  >> SQLTemp.sql

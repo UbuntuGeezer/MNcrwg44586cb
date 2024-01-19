@@ -1,0 +1,235 @@
+# MakeUpdateCongTerr.tmp - template for make MakeUpdateCongTerr.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	4/27/22.	wmk.
+#
+# Dependencies.
+# -------------
+# DoSed run to set mm dd in this template for MakeUpdateCongTerr
+#	XDiffsToCongTerr.sh generated from DiffsToCongTerr.sh
+#	< congno > replaced with congregation number by DoSed.
+#
+# Modification History.
+# ---------------------
+# 4/27/22.	wmk.	original code; cloned from MakeUpdateNVenAll.
+# Legacy mods.
+# 2/28/21.	wmk.	original code.
+# 6/25/21.	wmk.	multihost support.
+# 6/26/21.	wmk.	vpath for .db excess trailing " removed; targpath
+#			 var defined; DiffsToNVenAll recipe added.
+# 7/22/21.	wmk.	sqlite3 for BuildDiffAcctsTbl added.
+# 8/25/21.	wmk.	added error messages for SCPA-Public_mm-dd.csv, .xlsx
+# 9/30/21.	wmk.	prerequisites qualified with paths for clarification;
+#			 CP-DBsToMirror path corrected to mainpath.
+# 11/3/21.	wmk.	projpath var replaces targpath for clarity; header
+#			 corrected; recipe for CreateNewSCPA.sql added;
+# 12/2/21.	wmk.	bug fix; dependency SCPA-Public_mm-dd.csv changed to
+#			 Datam2d2.csv.
+# 12/3/21.	wmk.	bug fix; QSCPADiff.sh reactivated in SCPADiff_mm-dd.db
+#			 recipe; mainpath replaced with mainbase, projpath replaced
+#			 with thisbase, shellpath replaced with shellbase, scpapath
+#			 replaced with scpabase.
+# 1/2/22.	wmk.	use USER instead of HOME for host test.
+# 1/8/22.	wmk.	add chmod to .sh recipes to ensure executable.
+#
+# IMPORTANT NOTE ON VARS:
+# vars which substitute for *path* names will have a string that does NOT end
+# with '/'; vars which substituet for *base* names WILL have a string that
+# ends with '/'.
+#
+# The environment var *pathbase* contains the path of the current <state>
+# <county> <congno> Territory system.
+#
+# updating Terr<congno>.db[Terr<congno>]
+# Terr<congno>.db will be considered out-of-date if either SCPA_mm-dd.db
+#	or SCPADiff_mm-dd.db is newer
+# SCPA_mm-dd.db will be considered out-of-date if SCPA Public_mm-dd.csv or
+#	SCPA Public_mm-dd.xlsx is newer; the .csv file is what is used to 
+#	build the SCPA_mm-dd.db [Datammdd] table
+# SCPADiff_mm-dd.db will be considered out-of-date if SCPA Public_mm-dd.csv
+#	or SCPA_mm-dd.db is newer
+#
+# sed should set mm and dd in this recipe to the month and day of SCPA full download
+# recipe should ensure that ~/SCPA-Downloads/SCPADiff_mm-dd.db is up-to-date.
+#   if not, generate it by running QSCPADiff.sh against old/new dbs
+#		using sed to set m1 d1 to older SCPA download month/day
+#		 and m2 d2 to the newest SCPA full download
+# if Terr<congno>.db is out-of-date (by looking at SCPADiff_mm-dd)
+#	run the shell version of DiffsToCongTerr.sql (DiffsToCongTerr.sh)
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef terrdflt
+ $(error ** *terrdflt* environment var not set **)
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(terrdflt)
+else
+ ifneq ($(pathbase),$(terrdflt))
+  $(error ** *pathbase* and *terrdflt* differ - MakeUpdateCongTerr aborted **)
+ endif
+endif
+
+vpath %.db $(pathbase)/RawData/SCPA/SCPA-Downloads/
+vpath %.csv
+vpath %.xlsx
+mainbase = $(pathbase)/DB-Dev/
+#mainpath = $(pathbase)/DB-Dev/
+ procpath = $(codebase)/Procs-Dev
+shellbase = $(pathbase)/Projects-Geany/ShellFiles/
+#shellpath = $(pathbase)/Projects-Geany/ShellFiles/
+projbase = $(pathbase)/Projects-Geany/
+thisbase = $(pathbase)/Projects-Geany/UpdateCongTerr/
+ projpath = $(codebase)/Projects-Geany/UpdateCongTerr
+scpabase = $(pathbase)/RawData/SCPA/SCPA-Downloads/
+#scpapath = $(pathbase)/RawData/SCPA/SCPA-Downloads
+
+.ONESHELL :
+
+# primary target: (mainbase)Terr<congno>.db
+#====================================================================
+# Terr<congno>
+$(mainbase)Terr<congno>.db  : $(scpabase)SCPA_mm-dd.db \
+ $(scpabase)SCPADiff_mm-dd.db  $(thisbase)DiffsToCongTerr.sh
+	echo "shellbase = '$(shellbase)'"
+	$(mainbase)CP-DBsToMirror.sh
+	$(thisbase)DiffsToCongTerr.sh
+
+#---  SCPA_mm-dd.db target.
+$(scpabase)SCPA_mm-dd.db   :   $(scpabase)Datammdd.csv \
+ $(scpabase)SCPA-Public_mm-dd.xlsx \
+ $(thisbase)CreateNewSCPA.sh $(thisbase)CreateNewSCPA.sq  \
+ $(thisbase)CreateNewSCPA.sql
+	bash $(thisbase)CreateNewSCPA.sh
+	echo "SCPA_mm-dd.db created."
+
+#---
+
+#--- SCPADiff_mm-dd.db target.
+$(scpabase)SCPADiff_mm-dd.db	:  $(scpabase)SCPA_mm-dd.db \
+ $(thisbase)SCNewVsCongTerr.sh  $(procpath)/QSCPADiff.sh \
+ $(thisbase)BuildDiffAcctsTbl.sql
+	$(thisbase)SCNewVsCongTerr.sh
+#	$(error ** THERE IS A BUG IN THE SCPADiff_mm-dd.db RECIPE - IT SHOULD NOT EXECUTE **)
+	echo "HOME = '$(HOME)'"
+ echo "procpath =(codebase)
+	bash $(procpath)/QSCPADiff.sh	m1 d1	mm dd
+	sqlite3 < $(thisbase)BuildDiffAcctsTbl.sql
+
+$(scpabase)Datammdd.csv : $(scpabase)SCPA-Public_mm-dd.xlsx;
+	if ! test -f $(scpabase)Datammdd.csv;then \
+	echo "** Use Calc to convert SCPA-Public_mm-dd.xlsx to .csv..**"; \
+	exit 1;fi
+
+$(scpabase)SCPA-Public_mm-dd.xlsx : ;
+	echo "** Download SCPA-Public-mm-dd.xlsx..**"
+#---
+#===================================================================
+
+
+
+#SCNewVsCongTerr.sh
+#===================================================================
+$(thisbase)SCNewVsCongTerr.sh  : $(thisbase)SCNewVsCongTerr.sq
+	cat $(procpath)/hdrAnySQL_1.sh  $(thisbase)SCNewVsCongTerr.sq \
+	  $(procpath)/hdrAnySQL_2.sh > $@
+	sed -i 's?<filename>?SCNewVsCongTerr?g' $@
+	chmod +x $@
+
+$(thisbase)SCNewVsCongTerr.sq  : $(thisbase)SCNewVsCongTerr.sql
+	$(procpath)/AnySQLtoSQ.sh $(thisbase) SCNewVsCongTerr
+	
+$(thisbase)SCNewVsCongTerr.sql : $(thisbase)SCNewVsCongTerr.psq
+	echo "** run DoSed to process SCNewVsCongTerr.psq > .sql"
+	exit 1
+
+$(thisbase)SCNewVsCongTerr.psq : ;
+
+#===================================================================
+
+
+#(procpath)/QSCPADiff.sh
+#===================================================================
+$(procpath)/QSCPADiff.sh  : $(procpath)/QSCPADiff.psq \
+ $(procpath)/QSCPADiff.sql  $(procpath)/QSCPADiff.sq
+	cd $(projbase)AnySQLtoSH; ./DoSed.sh $(procpath) QSCPADiff
+	$(MAKE) -f $(projbase)AnySQLtoSH/MakeAnySQLtoSH
+
+$(procpath)/QSCPADiff.sq : ;
+
+$(procpath)/QSCPADiff.sql : ;
+
+$(procpath)/QSCPADiff.psq : ;
+
+#===================================================================
+
+
+#(thisbase)BuildDiffAcctsTbl.sql
+#===================================================================
+$(thisbase)BuildDiffAcctsTbl.sql : $(thisbase)BuildDiffAcctsTbl.psq
+	echo "** Run DoSed.sh to generate $@ from BuildDiffAcctsTbl.psq **"
+
+$(thisbase)BuildDiffAcctsTbl.psq : ;
+
+
+#===================================================================
+
+
+#DiffsToCongTerr.sh
+#===================================================================
+$(thisbase)DiffsToCongTerr.sh  : $(thisbase)DiffsToCongTerr.sq
+	cat $(procpath)/hdrAnySQL_1.sh  $(thisbase)DiffsToCongTerr.sq \
+	  $(procpath)/hdrAnySQL_2.sh > $@
+	sed -i 's?<filename>?DiffsToCongTerr?g' $@
+	chmod +x $@
+
+$(thisbase)DiffsToCongTerr.sq  : $(thisbase)DiffsToCongTerr.sql
+	$(procpath)/AnySQLtoSQ.sh $(thisbase) DiffsToCongTerr
+
+$(thisbase)DiffsToCongTerr.sql : $(thisbase)DiffsToCongTerr.psq
+	echo "** run DoSed to fix DiffsToCongTerr.psq > .sql **"
+	exit 1
+	
+$(thisbase)DiffsToCongTerr.psq : ;
+
+
+#===================================================================
+
+
+#CreateNewSCPA.sh
+#===================================================================
+$(thisbase)CreateNewSCPA.sh : $(thisbase)CreateNewSCPA.sql
+	$(MAKE) -f $(thisbase)MakeCreateNewSCPA
+	cat $(procpath)/hdrAnySQL_1.sh $(thisbase)CreateNewSCPA.sq  \
+	 $(procpath)/hdrAnySQL_2.sh > $@
+	sed  -i 's?<filename>?CreateNewSCPA?g' $@
+	chmod 700 $@
+
+$(thisbase)CreateNewSCPA.sql : ;
+	
+#===================================================================
+
+
+#XDiffsToCongTerr.sh (via sed)
+#===================================================================
+#$(thisbase)XDiffsToCongTerr.sh : $(thisbase)DiffsToCongTerr.sh
+#	$(error, ** Run DoSed to update XDiffsToCongTerr)
+#
+#$(thisbase)DiffsToCongTerr.sh : $(thisbase)DiffsToCongTerr.sql
+#	cd $(thisbase) && ./DoSed.sh m1 d1  mm dd
+#	cd $(thisbase) && $(MAKE) MakeUpdateCongTerr
+#
+#===================================================================
+
+# end MakeUpdateCongTerr

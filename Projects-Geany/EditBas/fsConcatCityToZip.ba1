@@ -1,0 +1,70 @@
+&apos;// fsConcatCityToZip.bas
+&apos;//---------------------------------------------------------------
+&apos;// fsConcatCityToZip - Concatenate City, State, Zip.
+&apos;//		9/7/20.	wmk.	17:15
+&apos;//---------------------------------------------------------------
+
+public function fsConcatCityToZip() as String
+
+&apos;//	Usage.	sCity_Zip = fsConcatCityToZip()
+&apos;//
+&apos;// Entry.	B3 = City
+&apos;//			C3 = Zip
+&apos;//
+&apos;//	Exit.	sCity_Zip = B3$ + &quot;FL&quot; + C3$
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/7/20.		wmk.	original code
+&apos;//
+&apos;//	Notes.
+&apos;//
+
+&apos;//	constants.
+const COL_CITY=1		&apos;// B
+const COL_ZIP=2			&apos;// C
+const ROW_CITYZIP=2		&apos;// 3
+
+&apos;//	local variables.
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+dim oMrgRange	As Object	&apos;// merge range
+
+dim oCell	As Object		&apos;// cell working on
+dim sRetValue As String
+dim sCityZip As String		&apos;// concatenation strin
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler	
+	sRetValue = &quot;&quot;
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+
+	sCityZip = &quot;&quot;
+	oCell = oSheet.getCellByPosition(COL_CITY, ROW_CITYZIP)
+	sCityZip = trim(oCell.String) + &quot; FL &quot;
+	oCell = oSheet.getCellByPosition(COL_ZIP, ROW_CITYZIP)
+	sCityZip = sCityZip + trim(oCell.String)
+	
+	sRetValue = sCityZip
+	
+NormalExit:	
+	fsConcatCityToZip = sRetValue
+	exit function
+
+ErrorHandler:
+   msgbox(&quot;fsConcatCityToZip - unprocessed error.&quot;)
+   GoTo NormalExit
+   
+end function 	&apos;// end fsConcatCityToZip		9/7/20

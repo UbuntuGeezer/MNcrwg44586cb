@@ -1,0 +1,32 @@
+-- * DeactivateTerrID.psq/sql - Deactivate records in TerrIDData for terr.
+-- *	6/4/23.	wmk.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 6/4/23.	wmk.	original code.
+-- *
+-- * Notes. DeactivateTerrID sets the StatusCode = TerrID'D' and the
+-- * TerrID = '000' for the territory xxx.
+-- *
+-- * This prevents any Territory processes from accessing the Territory
+-- * information, while preserving the information for archiving. A second layer of
+-- * protection is at the folder level; the file OBSOLETE, if present, indicates
+-- * that a territory is out of circulation.
+-- *;
+
+-- * open/attach db,s;
+
+.open '$pathbase/DB-Dev/junk.db'
+
+ATTACH '$pathbase/DB-Dev/TerrIDData.db'
+ AS db6;
+--pragma db6.table_info(Territory);
+
+-- * deactivate territory in TerrIDData;
+UPDATE db6.Territory
+SET StatusCode = TerrID,
+TerrID = TerrID || 'D'
+WHERE TerrID IS '965';
+
+.quit
+-- * END DeactivateTerr.sql;

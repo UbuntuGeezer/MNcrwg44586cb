@@ -1,0 +1,188 @@
+--Fix223RU.sql - Fix RU parcels in territory 223.
+-- * 5/7/22.	wmk.	(automated) *pathbase* integration.
+-- * .   wmk.   (automated) udpate FixFromSC (Terr124 template).
+-- * 6/2/22.     wmk.   (automated) NVenAll > Terr86777.
+--	9/23/21.	wmk.
+--
+-- * Modification History.
+-- * ---------------------
+-- * 5/9/21.	wmk.	original code (compatible with make).
+-- * 6/12/21.	wmk.	(automated) ($)folderbase support.
+-- * 9/23/21.	wmk.	revert $ to % in strings.
+-- *
+-- * Notes. whatever relevant for this RU download..
+-- *;
+
+-- * subquery list.
+-- * --------------
+-- * AttachDBs - Attach required databases.
+-- * DelStrays - Delete stray records from RU download.
+-- * FixWhatever - Fix whatever for territory 223.
+-- *;
+
+-- ** AttachDBs **********
+-- *	5/9/21.	wmk.
+-- *---------------------
+-- *
+-- * AttachDBs - Attach required databases.
+-- *
+-- * Entry DB and table dependencies.
+-- *	junk.db - as main, junk database so can use dbxx ATTACHes
+-- *	Terr86777.db - as db2, SCPA data for NV territory
+-- *		Terr86777 - SCPA property records
+-- *	AuxSCPAData - as db8, auxiliary data for SCPA records
+-- *		SitusDups - table of ambiguous situs addresses with account #s
+-- *		SitusConv - situs conversion table unitaddress <-> scpa situs
+-- *		AddrXcpt - address exceptions
+-- *	Terr223_SC.db - as db11, new territory records from SCPA polygon
+-- *		Terr223_SCBridge - Bridge formatted records extracted from SCPA
+-- *			for territory 223
+-- *	Terr223_RU.db - as db12, new territory records from RefUSA polygon
+-- *		Terr223_RUBridge - sorted Bridge formatted records extracted 
+-- *			from RefUSA polygon (see Terr223_RUPoly)
+-- *
+-- * Exit DB and table results.
+-- *
+-- * Notes.
+-- *;
+
+-- * junk as main;
+.open '$pathbase/DB-Dev/junk.db'
+
+ATTACH '$pathbase'
+||		'/DB-Dev/Terr86777.db' 
+ AS db2;
+--SELECT tbl_name FROM db2.sqlite_master 
+-- WHERE type is "table";
+--pragma db2.table_info(Terr86777);
+ 
+ATTACH '$pathbase'
+ ||		'/DB-Dev/AuxSCPAData.db'
+  AS db8;
+--SELECT tbl_name FROM db8.sqlite_master;
+--pragma db8.table_info(AddrXcpt); 
+
+ATTACH '$pathbase'
+ ||		'/RawData/SCPA/SCPA-Downloads/Terr223/Terr223_SC.db'
+  AS db11;
+--  PRAGMA db11.table_info(Terr223_SCBridge);
+
+ATTACH '$pathbase'
+ ||		'/RawData/RefUSA/RefUSA-Downloads/Terr223/Terr223_RU.db'
+  AS db12;
+--  PRAGMA db12.table_info(Terr223_RUBridge);
+
+-- ** END AttachDBs **********;
+
+-- ** DelStrays **********
+-- *	5/9/21.	wmk.
+-- *--------------------------
+-- *
+-- * DelStrays - Delete stray records from RU download.
+-- *
+-- * Entry DB and table dependencies.
+-- *   <list main DB and ATTACHed DBs and tables>
+-- *
+-- * Exit DB and table results.
+-- *
+-- * Notes.
+-- *;
+
+-- * DBs attached above;
+
+-- * eliminate BAINE RD, MEYERS RD, PALM DR,
+-- *  FIRST DIRT RD, 1ST DIRT RD, ELLIOTT ST
+DELETE FROM Terr223_RUBridge 
+WHERE  UNITADDRESS LIKE "%Baine%" 
+  OR UNITADDRESS LIKE "%Meyers%"
+  OR UNITADDRESS LIKE "%Palm Dr%"
+  OR UNITADDRESS LIKE "%FIRST DIRT%"
+  OR UNITADDRESS LIKE "%1ST DIRT%"
+  OR UNITADDRESS LIKE "%ELLIOTT%";
+
+-- * eliminate KENNEDY DR >= 3313
+DELETE FROM Terr223_RUBridge
+WHERE CAST(SUBSTR(UNITADDRESS,1,4) AS INT) >= 3313
+ AND UNITADDRESS LIKE "%KENNEDY RD%";
+
+UPDATE Terr223_RUBridge
+set DelPending = 
+CASE
+WHEN INSTR(UNITADDRESS, " ") = 4
+ AND (SUBSTR(UNITADDRESS,3,1) IS "1"
+	OR SUBSTR(UNITADDRESS,3,1) IS  "3"
+	OR SUBSTR(UNITADDRESS,3,1) IS  "5"
+	OR SUBSTR(UNITADDRESS,3,1) IS  "7"
+	OR SUBSTR(UNITADDRESS,3,1) IS  "9")
+   THEN ""
+WHEN INSTR(UNITADDRESS, " ") = 5
+   THEN 1
+WHEN INSTR(UNITADDRESS, " ") = 4 
+ AND CAST(SUBSTR(UNITADDRESS,1,3) AS INT) >= 980
+   THEN 1
+ELSE DelPending
+END
+WHERE UNITADDRESS LIKE "%JACKSON%"
+;
+
+DELETE FROM Terr223_RUBridge
+WHERE DelPending IS 1;
+
+-- ** END DelStrays **********;
+
+-- ** FixWhatever **********
+-- *	5/9/21.	wmk.
+-- *--------------------------
+-- *
+-- * FixWhatever - Fix whatever for territory 223.
+-- *
+-- * Entry DB and table dependencies.
+-- *	Terr86777.db - as db2, SCPA data for NV territory
+-- *		Terr86777 - SCPA property records
+-- *	Terr223_RU.db - as db12, new territory records from RefUSA polygon
+-- *		Terr223_RUBridge - sorted Bridge formatted records extracted 
+-- *			from RefUSA polygon (see Terr223_RUPoly)
+-- *			imported from Map122_RU.csv in folder RefUSA-Downloads
+-- *
+-- * Exit DB and table results.
+-- *	Terr223_RU.db - as db12, new territory records from RefUSA polygon
+-- *		Terr223_RUBridge - Bridge records fixed where..
+-- *
+-- * Notes. Whatever
+-- *;
+
+-- * DBs attached above;
+
+-- * remove 'N ' prefix Jackson, Havana Rd;
+UPDATE Terr223_RUBridge
+SET UnitAddress = 
+CASE 
+WHEN substr(trim(SUBSTR(UnitAddress,INSTR(UnitAddress,' '))),1,2) IS 'N ' 
+ THEN SUBSTR(UnitAddress,1,6) || TRIM(SUBSTR(UnitAddress,9))
+ELSE UnitAddress
+END
+WHERE UnitAddress LIKE "%Havana%" 
+   OR UnitAddress LIKE "%Jackson%";
+
+-- * add "N" suffix to Havana, Jackson records;
+UPDATE Terr223_RUBridge
+SET UnitAddress = 
+CASE 
+WHEN SUBSTR(UnitAddress,LENGTH(UnitAddress)-1,2) IS NOT " N" 
+ THEN TRIM(UnitAddress) || " N"
+ELSE UnitAddress
+END
+WHERE UnitAddress LIKE "%Havana%" 
+   OR UnitAddress LIKE "%Jackson%";
+
+-- * fix 506B   Havana Rd to 506... B;
+UPDATE Terr223_RUBridge
+SET Unit = "B",
+ UnitAddress = SUBSTR(UnitAddress,1,3)
+ || ' ' || SUBSTR(UnitAddress,5)
+WHERE UnitAddress LIKE "506B  HAVANA%";
+
+ 
+-- ** END FixWhatever **********;
+
+

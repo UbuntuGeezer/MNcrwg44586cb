@@ -1,0 +1,48 @@
+# 5/6/23.     wmk.   (automated) move previous history comments.
+# MakeFillGaps86777.tmp - *make* file for MakeFillGaps86777 build.
+#	5/6/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 5/6/23.     wmk.   (automated) move previous history comments.
+# Legacy mods.
+# 2/19/23.	wmk.	original code.
+# 5/6/23.	wmk.	header standardized.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/MigrationRepairs
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	cd $(altproj);./DoSed.sh $(projpath) FillGaps86777
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/FillGaps86777.sh;then \
+	 echo "** FillGaps86777.sh generation failed **";exit 1;fi
+	echo "** FillGaps86777.sh to fill in propertyID gaps **"
+	
+#==================================================================
+# end MakeFile.tmp

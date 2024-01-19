@@ -1,0 +1,45 @@
+# MakeAddDNCs.tmp - *make* file for AddDNC.sh build.
+#	6/1/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 6/1/23.	wmk.	original code.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/DNCMgr
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	/lib/libreoffice/program/soffice.bin $(projpath)/NewDNC.tmp.csv
+	cd $(altproj);./DoSed.sh $(projpath) AddDNC
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/AddDNC.sh;then \
+	 echo "** AddDNC.sh generation failed **";exit 1;fi
+	echo "** AddDNC.sh to add DoNotCalls **"
+	
+#==================================================================
+# end MakeAddDNC.tmp

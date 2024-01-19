@@ -1,0 +1,68 @@
+# MakePopulateCongTerr.tmp - makefile for PopulateCongTerr.sh
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	4/29/22.	wmk.
+#
+# Exit. PopulateCongTerr.sql > PopulateCongTerr.sh
+#
+# Modification History.
+# ---------------------
+# 4/27/22.	wmk.	original code.
+# 4/29/22.	wmk.	*altproj* misspelling corrected; .ONESHELL recipe
+#			 added (see Notes).
+#
+# Notes. PopulateCongTerr.sh will be considered out-of-date if
+# PopulateCongTerr.sql is newer. PopulateCongTerr.sq will be rebuilt
+# in the process.
+# m2 and d2 were chosen for the month/day for compatibility with the
+# PopulateCongTerr.sh proc (see DoSed.sh). DoSed edits them to the
+# month/day of the current download.
+#
+# .ONESHELL is necessary for the cd *altproj* ./DoSed sequence to work
+# properly; without it, the *cd* and *./DoSed* would need to be on the
+# same command line separated by ';'.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+.ONESHELL : ;
+
+ procpath = $(codebase)/Procs-Dev
+scpafolder = $(pathbase)/RawData/SCPA/SCPA-Downloads
+thisproj = $(pathbase)/Projects-Geany/ImportSCPA
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+#PopulateCongTerr.sh primary target
+#====================================================================
+$(thisproj)/PopulateCongTerr.sh : $(thisproj)/PopulateCongTerr.sql
+	cd $(altproj)
+	./DoSed.sh $(thisproj) PopulateCongTerr
+	make -f $(altproj)/MakeAnySQLtoSH
+	#cat $(procpath)/hdrAnySQL_1.sh  PopulateCongTerr.sq  \
+	# $(procpath)/hdrAnySQL_2.sh > $@
+	#sed  -i 's?<filename>?PopulateCongTerr?g' $@
+	#chmod +x $@
+	#cd $(thisproj)
+	#$@
+	echo "PopulateCongTerr complete."
+	echo "** Now run $(thisproj)/PopulateCongTerr.sh"
+
+$(thisproj)/PopulateCongTerr.sql :$(thisproj)/PopulateCongTerr.psq;
+	echo "** run DoSed to make PopulateCongTerr.sql **"
+
+$(thisproj)/PopulateCongTerr.psq : ;
+
+# end MakePopulateCongTerr.

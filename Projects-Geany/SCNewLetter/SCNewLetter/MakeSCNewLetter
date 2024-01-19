@@ -1,0 +1,99 @@
+# MakeSCNewLetter.tmp - Makefile for SCNewLetter build (template).
+#	10/23/21.	wmk.
+#
+# Modification History.
+# ---------------------
+# 9/20/21.	wmk.	original makefile (MakeRUNewLetter).
+# 9/21/21.	wmk.	adapted to MakeSCNewLetter.
+# 10/11/21.	wmk.	modified to eliminate headers row in .csv.
+# 10/23/21. wmk.	code added to define TerrData folders and header .ods;
+#					DefineNewLetter PHONY added.
+#
+# Notes. This makefile is edited by DoSed substituting <terrid> for y yy.
+
+
+ifeq ($(USER),ubuntu)
+ folderbase = /media/ubuntu/Windows/Users/Bill
+else
+ folderbase = $(HOME)
+endif
+
+.PHONY : DefineSCFolder  DefineTerrData  DefineRUNewLetter  InitSCLetter
+
+# Note. Because DefineTerrData is PHONY, it will always be built, hence
+# make will spin off a bash child to process it. This, in turn, can cause
+# Working-Files folder to not be found. ONESHELL forces DefineTerrData to
+# run before the NewLetter.sql query gets fired up.
+.ONESHELL :
+
+targbase = $(folderbase)/Territories/RawData/SCPA/SCPA-Downloads
+targpath = $(targbase)/Terr641
+bashpath = $(folderbase)/Territories/Procs-Dev
+projbase = $(folderbase)/Territories/Projects-Geany
+projpath = $(folderbase)/Territories/Projects-Geany/SCNewLetter
+
+# (targpath)/Terr641_SC.db - primary target
+# ====================================================================
+$(targpath)/Terr641_SC.db : DefineSCFolder  $(targpath)/Lett641_TS.csv \
+ DefineTerrData   DefineRUNewLetter
+	sed -i '{:a;/AreaName/ d;ta}' $(targpath)/Lett641_TS.csv
+	sqlite3 < $(projpath)/NewLetter.sql
+	$(bashpath)/MakeEmptyRUMap.sh 641
+	cd $(projbase)/RUNewTerritory
+	./DoSed.sh 641
+	$(MAKE) -f MakeRUNewTerritory
+	echo "REMINDER: edit SPECIAL files in RefUSA-Downloads/Terr641..."
+
+$(targpath)/Lett641_TS.csv :
+	$(error ** Run Calc to generate Lett641_TS.csv **)
+
+#---
+$(projpath)/NewLetter.sql : ;
+
+
+
+#=====================================================================
+
+
+# DefineSCFolder - define SCPA-Downloads/Terrxxx folder.
+#=====================================================================
+DefineSCFolder :
+	if ! test -d $(targpath);then  cd $(targbase) ; mkdir Terr641
+	 $(bashpath)/MvDwnPDF.sh 641;cd ./Terr641;mkdir Previous;fi
+
+#=====================================================================
+
+
+# DefineTerrData - define TerrData folders and initialize header .csv 
+#  and .ods files.
+#=====================================================================
+DefineTerrData :
+	cd $(folderbase)/Territories/TerrData
+	if ! test -d "./Terr641";then \
+	mkdir Terr641;fi
+	cd ./Terr641
+	if ! test -d "./Working-Files";then \
+	mkdir Working-Files;fi
+	echo "** RUN GenTerrHdr.sh on TIDData.db to create Terr641Hdr.ods **"
+	#sleep 120
+
+#=====================================================================
+
+
+#InitSCLetter - initialize auxiliary files in SC-Downloads/Terrxxx folder.
+#=========================================================================
+InitSCLetter : 
+	$(projpath)/InitLetter.sh 641
+
+#=========================================================================
+
+
+#DefineRUNewLetter - define RU-Downloads/Terrxxx folder and empty
+# Terrxxx_RU.db with all associated SPECIAL files for letter territory.
+#=====================================================================
+DefineRUNewLetter :
+	cd $(projbase)/RUNewLetter;	./DoSed.sh 641
+	$(MAKE) -f $(projbase)/RUNewLetter/MakeRUNewLetter
+	cd $(projbase)/SpecialRUdb; ./InitSpecial.sh 641
+
+#=====================================================================

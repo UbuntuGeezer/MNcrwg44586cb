@@ -1,0 +1,8 @@
+# awkfixShell3.txt
+# output the remaining file from TEMP_PATH= onward
+BEGIN {FS="=";p=0}
+{if( $1 == "TEMP_PATH" )
+ p=1
+ if( p )
+  {print}
+}

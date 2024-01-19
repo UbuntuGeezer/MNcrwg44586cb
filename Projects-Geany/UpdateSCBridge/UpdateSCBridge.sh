@@ -1,0 +1,267 @@
+#!/bin/bash
+echo " ** UpdateSCBridge.sh out-of-date **";exit 1
+#hdrAnySQL.sh - Any .sql to .sh shell source.
+# 12/12/22.	wmk.
+#	Usage. bash UpdateSCBridge.sh
+#		
+# Dependencies.
+#	(leave line count the same)
+#
+#
+# Modification History.
+# ---------------------
+# 10/4/22.    wmk.   (automated) fix *pathbase for CB system.
+# 12/11/22.	wmk.	run SetToday.sh to export TODAY env var.
+# 12/12/22.	wmk.	SetTody.sh path corrected.
+# Legacy mods.
+# 4/23/22.	wmk.	modified for FL/SARA/86777.
+# 4/22/22.	wmk.	HOME changed to USER in host check.
+# Legacy mods.
+# 4/6/21.	wmk.	original shell (template)
+# 6/17/21.	wmk.	multihost support.
+# 9/6/21.	wmk.	jumpto function and references removed.
+# 11/9/21.	wmk.	add echo when initiated from make; add $ TODAY definition.
+# 12/3/21.	wmk.	'procbodyhere' replaces proc body here for awk reversal.
+# 4/8/22.	wmk.	HOME changed to USER in host test.	
+P1=$1
+TID=$P1
+TN="Terr"
+if [ -z "$folderbase" ];then
+ if [ "$USER" == "ubuntu" ]; then
+  folderbase=/media/ubuntu/Windows/Users/Bill
+ else
+  folderbase=$HOME
+ fi
+fi
+if [ -z "$pathbase" ];then
+ export pathbase=$folderbase/Territories/FL/SARA/86777
+fi
+if [ -z "$system_log" ]; then
+  system_log=$folderbase/ubuntu/SystemLog.txt
+  ~/sysprocs/LOGMSG "  UpdateSCBridge - initiated from Make"
+  echo "  UpdateSCBridge - initiated from Make"
+else
+  ~/sysprocs/LOGMSG "  UpdateSCBridge - initiated from Terminal"
+  echo "  UpdateSCBridge - initiated from Terminal"
+fi 
+TEMP_PATH=$HOME/temp
+#	Environment vars:
+if [ -z "$TODAY" ];then
+ . ~/GitHub/TerritoriesCB/Procs-Dev/SetToday.sh
+#TODAY=2022-04-22
+fi
+NAME_BASE="Terr"
+SC_DB="_SC.db"
+RU_DB="_RU.db"
+SC_SUFFX="_SCBridge"
+RU_SUFFX="_RUBridge"
+
+#procbodyhere
+
+# Preamble.sh - preamble for UpdateSCBridge.
+#	5/12/23.	wmk.
+#jumpto function definition
+function jumpto
+{
+    label=$1
+    cmd=$(sed -n "/$label:/{:a;n;p;ba};" $0 | grep -v ':$')
+    eval "$cmd"
+    exit
+}
+export thisid=$$
+if [ -z "$build_log" ];then
+ export build_log=$TEMP_PATH/BuildLog.txt
+fi
+echo "-- * UpdateSCBridge.psq/sql - Update SC Bridge table for territory 141."  > SQLTemp.sql
+echo "-- *	12/26/22.	wmk."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * ---------------------"  >> SQLTemp.sql
+echo "-- * 12/26/22.	wmk.	bug fix; comments tidied."  >> SQLTemp.sql
+echo "-- * Legacy mods."  >> SQLTemp.sql
+echo "-- * 4/25/22.	wmk.	modified for general use;*pathbase* support."  >> SQLTemp.sql
+echo "-- * 5/28/22.	wmk.	added code to build Diff0528 within Terr141_SCdb"  >> SQLTemp.sql
+echo "-- *			 since it was missing in 0426 and 0526 builds."  >> SQLTemp.sql
+echo "-- * Legacy mods."  >> SQLTemp.sql
+echo "-- * 11/3/21.	Total rewrite; change to use Diffsmmd within Terr141_SC.db"  >> SQLTemp.sql
+echo "-- *			containing change records; Integrate change records fields"  >> SQLTemp.sql
+echo "-- *			into Terr141_SCBridge;"  >> SQLTemp.sql
+echo "-- * Legacy mods."  >> SQLTemp.sql
+echo "-- * 3/1/21.	Original code."  >> SQLTemp.sql
+echo "-- * 3/11/21.	Documentation; bug fix where populating query for diff"  >> SQLTemp.sql
+echo "-- *			using \"property use code\" for \"propertyusecode\" field."  >> SQLTemp.sql
+echo "-- * 5/27/21.	modified for use with Kay's system."  >> SQLTemp.sql
+echo "-- * 6/18/21.	multihost code generalized."  >> SQLTemp.sql
+echo "-- * 6/19/21.	Notes updated with terrbase placeholder."  >> SQLTemp.sql
+echo "-- * 6/20/21.	revert to full field names."  >> SQLTemp.sql
+echo "-- * 6/27/21.	bug fix where INSERT did not have \"Download Date\" field;"  >> SQLTemp.sql
+echo "-- *			P records not updating \"Record Date\" field."  >> SQLTemp.sql
+echo "-- * 9/6/21.	use $ folderbase in place of terrbase."  >> SQLTemp.sql
+echo "-- * 9/30/21.	use \" in place of reverse single quote for fields."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Notes. t errbase is used as a placeholder in file paths to"  >> SQLTemp.sql
+echo "-- * facilitate sed stream editing, substituting ($)folderbase for the"  >> SQLTemp.sql
+echo "-- * shell script to pick up."  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- * subquery list."  >> SQLTemp.sql
+echo "-- * --------------"  >> SQLTemp.sql
+echo "-- * UpdateSCBridge - Update SC Bridge table for territory 141."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- ** UpdateSCBridge **********"  >> SQLTemp.sql
+echo "-- *	4/25/22.	wmk."  >> SQLTemp.sql
+echo "-- *--------------------------"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * UpdateSCBridge - Update SC Bridge table for territory 141."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Entry DB and table dependencies."  >> SQLTemp.sql
+echo "-- *	junk.db - as main, scratch db"  >> SQLTemp.sql
+echo "-- *	Terr141_SC.db - as db11, new territory records from SCPA polygon"  >> SQLTemp.sql
+echo "-- *		Terr141_SCBridge - Bridge formatted records extracted from SCPA"  >> SQLTemp.sql
+echo "-- *			for territory 141"  >> SQLTemp.sql
+echo "-- *	folderbase = environment var set before this query is executed from"  >> SQLTemp.sql
+echo "-- *	  a shell by being written via echo statements"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Exit DB and table results."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * ---------------------"  >> SQLTemp.sql
+echo "-- * 3/1/21.	Original code."  >> SQLTemp.sql
+echo "-- * 3/11/21.	Documentation; bug fix where populating query for diff"  >> SQLTemp.sql
+echo "-- *			using \"property use code\" for \"propertyusecode\" field."  >> SQLTemp.sql
+echo "-- * 5/27/21.	modified for use with Kay's system."  >> SQLTemp.sql
+echo "-- * 6/27/21.	bug fix where INSERT did not have \"Download Date\" field."  >> SQLTemp.sql
+echo "-- * 9/30/21.	use \" in place of reverse single quote for fields."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Notes. UpdateSCBridge takes both the UpdtP.csv and UpdtM.csv file"  >> SQLTemp.sql
+echo "-- * data, places the records into temp tables, then uses the temp tables"  >> SQLTemp.sql
+echo "-- * to update the Resident1, Phone2 (Homestead), and PropUse fields"  >> SQLTemp.sql
+echo "-- * in the SC Bridge table for the territory where the OwningParcel"  >> SQLTemp.sql
+echo "-- * matches the Account # field on the temp table(s)."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo ".open \"$pathbase/DB-Dev/junk.db\""  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "ATTACH '$pathbase'"  >> SQLTemp.sql
+echo " ||		'/RawData/SCPA/SCPA-Downloads/SCPADiff_05-28.db'"  >> SQLTemp.sql
+echo "  AS db19;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "ATTACH '$pathbase'"  >> SQLTemp.sql
+echo " ||		'/RawData/SCPA/SCPA-Downloads/Terr141/Terr141_SC.db'"  >> SQLTemp.sql
+echo "  AS db11;"  >> SQLTemp.sql
+echo "--  PRAGMA db11.table_info(Terr141_SCBridge);"  >> SQLTemp.sql
+echo "--  PRAGMA db11.table_info(Diffs0528);"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- * create and populate Diffs0528 from SCPADiff_05-DD.db.Diffs05DD for"  >> SQLTemp.sql
+echo "-- * this territory;"  >> SQLTemp.sql
+echo "DROP TABLE IF EXISTS db11.Diffs0528;"  >> SQLTemp.sql
+echo "CREATE TABLE db11.Diffs0528"  >> SQLTemp.sql
+echo "( \"Account#\" TEXT, Owner1 TEXT, Owner2 TEXT, Owner3 TEXT,"  >> SQLTemp.sql
+echo "MailingAddress1 TEXT, MailingAddress2 TEXT, MailingCity TEXT, "  >> SQLTemp.sql
+echo "MailingState TEXT, MailingZipCode TEXT, MailingCountry TEXT, "  >> SQLTemp.sql
+echo "\"SitusAddress(PropertyAddress)\" TEXT, SitusCity TEXT, SitusState TEXT, "  >> SQLTemp.sql
+echo "SitusZipCode TEXT, PropertyUseCode TEXT, Neighborhood TEXT, "  >> SQLTemp.sql
+echo "Subdivision TEXT, TaxingDistrict TEXT, Municipality TEXT, "  >> SQLTemp.sql
+echo "WaterfrontCode TEXT, \"HomesteadExemption(YESorNO)\" TEXT, "  >> SQLTemp.sql
+echo "HomesteadExemptionGrantYear TEXT, Zoning TEXT, ParcelDesc1 TEXT, "  >> SQLTemp.sql
+echo "ParcelDesc2 TEXT, ParcelDesc3 TEXT, ParcelDesc4 TEXT, "  >> SQLTemp.sql
+echo "\"Pool(YESorNO)\" TEXT, TotalLivingUnits TEXT, \"LandAreaS.F.\" TEXT, "  >> SQLTemp.sql
+echo "GrossBldgArea TEXT, LivingArea TEXT, Bedrooms TEXT, Baths TEXT, "  >> SQLTemp.sql
+echo "HalfBaths TEXT, YearBuilt TEXT, LastSaleAmount TEXT, LastSaleDate TEXT, "  >> SQLTemp.sql
+echo "LastSaleQualCode TEXT, PriorSaleAmount TEXT, PriorSaleDate TEXT, "  >> SQLTemp.sql
+echo "PriorSaleQualCode TEXT, JustValue TEXT, AssessedValue TEXT, "  >> SQLTemp.sql
+echo "TaxableValue TEXT, LinktoPropertyDetailPage TEXT, ValueDataSource TEXT, "  >> SQLTemp.sql
+echo "ParcelCharacteristicsData TEXT, Status TEXT, DownloadDate TEXT, "  >> SQLTemp.sql
+echo "PRIMARY KEY (\"Account#\") );"  >> SQLTemp.sql
+echo "WITH a AS (SELECT OwningParcel AS PropID"  >> SQLTemp.sql
+echo " FROM db11.Terr141_SCBridge)"  >> SQLTemp.sql
+echo "INSERT OR REPLACE INTO db11.Diffs0528"  >> SQLTemp.sql
+echo "SELECT * FROM db19.Diff0528"  >> SQLTemp.sql
+echo " WHERE \"ACCOUNT#\" IN (SELECT PropID FROM a);"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- * Now Update records using information from each table; start with PDiff.;"  >> SQLTemp.sql
+echo "WITH a AS (SELECT \"Account#\" AS Acct,"  >> SQLTemp.sql
+echo " CASE "  >> SQLTemp.sql
+echo " WHEN \"HomesteadExemption(YesorNo)\" IS \"YES\""  >> SQLTemp.sql
+echo "  THEN \"*\" "  >> SQLTemp.sql
+echo " ELSE \" \""  >> SQLTemp.sql
+echo " END AS Hstead,"  >> SQLTemp.sql
+echo " \"propertyusecode\" AS UseType, "  >> SQLTemp.sql
+echo "  CASE"  >> SQLTemp.sql
+echo "  WHEN LENGTH(\"Owner3\") > 0"  >> SQLTemp.sql
+echo "   THEN TRIM(SUBSTR(\"Owner1\",1,25)) || \", \""  >> SQLTemp.sql
+echo "     || TRIM(\"Owner2\") || \", \" "  >> SQLTemp.sql
+echo "     || TRIM(\"Owner3\")"  >> SQLTemp.sql
+echo "  WHEN LENGTH(\"Owner2\") > 0 "  >> SQLTemp.sql
+echo "   THEN TRIM(SUBSTR(\"Owner1\",1,25)) || \", \""  >> SQLTemp.sql
+echo "     || TRIM(\"Owner2\")"  >> SQLTemp.sql
+echo "  ELSE TRIM(SUBSTR(\"Owner1\",1,25))"  >> SQLTemp.sql
+echo "  END AS Owners,"  >> SQLTemp.sql
+echo "  DownloadDate AS DownDate"  >> SQLTemp.sql
+echo "  FROM db11.Diffs0528 )"  >> SQLTemp.sql
+echo "UPDATE db11.Terr141_SCBridge"  >> SQLTemp.sql
+echo "SET Resident1 ="  >> SQLTemp.sql
+echo "CASE "  >> SQLTemp.sql
+echo "WHEN OwningParcel IN (SELECT Acct FROM a)"  >> SQLTemp.sql
+echo " THEN (SELECT Owners from a "  >> SQLTemp.sql
+echo "  WHERE Acct IS OwningParcel"  >> SQLTemp.sql
+echo " )"  >> SQLTemp.sql
+echo "ELSE Resident1 "  >> SQLTemp.sql
+echo "END,"  >> SQLTemp.sql
+echo " Phone2 = "  >> SQLTemp.sql
+echo "CASE "  >> SQLTemp.sql
+echo "WHEN OwningParcel IN (SELECT Acct FROM a)"  >> SQLTemp.sql
+echo " THEN (SELECT Hstead from a "  >> SQLTemp.sql
+echo "  WHERE Acct IS OwningParcel"  >> SQLTemp.sql
+echo " )"  >> SQLTemp.sql
+echo "ELSE Phone2"  >> SQLTemp.sql
+echo "END,"  >> SQLTemp.sql
+echo " PropUse = "  >> SQLTemp.sql
+echo "CASE "  >> SQLTemp.sql
+echo "WHEN OwningParcel IN (SELECT Acct FROM a)"  >> SQLTemp.sql
+echo " THEN (SELECT UseType from a "  >> SQLTemp.sql
+echo "  WHERE Acct IS OwningParcel"  >> SQLTemp.sql
+echo " )"  >> SQLTemp.sql
+echo "ELSE PropUse"  >> SQLTemp.sql
+echo "END,"  >> SQLTemp.sql
+echo "RecordDate = "  >> SQLTemp.sql
+echo "CASE "  >> SQLTemp.sql
+echo "WHEN OwningParcel IN (SELECT Acct FROM a)"  >> SQLTemp.sql
+echo " THEN (SELECT DownDate from a"  >> SQLTemp.sql
+echo "  WHERE Acct IS OwningParcel"  >> SQLTemp.sql
+echo " )"  >> SQLTemp.sql
+echo "ELSE RecordDate"  >> SQLTemp.sql
+echo "END;"  >> SQLTemp.sql
+echo "--WHERE OwningParcel IN (SELECT Acct FROM a);"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo "-- ** END UpdateSCBridge **********;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+
+#endprocbody - changed from end proc body 12/3/21 for awk reversal.
+# jumpto references removed 9/6/21.
+sqlite3 < SQLTemp.sql
+if [ $? -eq 0 ];then
+ jumpto NormalExit
+# PostScript.sh - test postscript for UpdateSCBridge.sh
+#   5/12/23. wmk
+# end test postscript
+else
+ # error handling.
+ ~/sysprocs/BLDMSG "  ** $MYPROJ $P1 - sqlite3 FAILED **"
+  grep PPid /proc/$$/task/$$/status | \
+ mawk \
+ '{print "#!/bin/bash";print "export idtext="$2;print "echo \"this process id=$thisid\"";print "echo \"parent process id=$idtext\""}' > temp.sh
+ chmod +x temp.sh
+ sed -i '1,4d' temp.sh
+ . ./temp.sh
+# at this point *idtext env var contains process ID that
+# can be passed to child processes.
+ ps $idtext >> $build_log
+ exit 1
+fi
+jumpto NormalExit
+NormalExit:
+echo "  UpdateSCBridge complete."
+~/sysprocs/LOGMSG "  UpdateSCBridge complete."
+#end proc

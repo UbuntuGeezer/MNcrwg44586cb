@@ -1,0 +1,45 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=BuildDates
+base_path=/home/vncwmk3/Territories/FL/SARA/86777/Projects-Geany/BuildDates/
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=2
+FILE_NAME_0=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FTerritories%2FProjects-Geany%2FBuildDates%2Fawkward.txt;0;4
+FILE_NAME_1=1255;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FTerritories%2FProjects-Geany%2FBuildDates%2FMakeBuildDates;0;4
+FILE_NAME_2=255;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FTerritories%2FProjects-Geany%2FBuildDates%2FREADME;0;4
+
+[VTE]
+last_dir=/home/vncwmk3/Territories/FL/SARA/86777/Projects-Geany/BridgesToTerr
+
+[build-menu]
+NF_00_LB=_Make
+NF_00_CM=make -f MakeBuildDates
+NF_00_WD=/home/vncwmk3/Territories/FL/SARA/86777/Projects-Geany/BuildDates
+EX_01_LB=Make Dry-run
+EX_01_CM=make --dry-run -f MakeBuildDates
+EX_01_WD=/home/vncwmk3/Territories/FL/SARA/86777/Projects-Geany/BuildDates

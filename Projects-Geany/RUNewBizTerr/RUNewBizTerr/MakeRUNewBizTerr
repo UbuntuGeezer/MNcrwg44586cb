@@ -1,0 +1,63 @@
+#MakeRUNewBizTerr.tmp - MakeRUNewBizTerr template.
+#	9/24/21.	wmk.
+#
+# Modification History.
+# ---------------------
+# 9/24/21.	wmk.	original makefile; adapted from MakeRUNewTerritory
+#
+# The primary target of MakeRUNewTerritory is Terr503_RU.db in the
+# RU download folder for the business territory. If InitialRUFix.sh is not
+# present or out-of-date, it also will be built in the territory's folder.
+
+.ONESHELL : ;
+
+.NOTPARALLEL : ;
+
+.PHONY : Dummy ;
+
+ifeq ($(HOME),/home/ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+else
+  folderbase = $(HOME)
+endif
+
+incroot = /media/ubuntu/Windows/Users/Bill/Territories/include/
+vpath %.i /media/ubuntu/Windows/Users/Bill/Territories/include
+targpath = $(folderbase)/Territories/BRawData/BRefUSA/BRefUSA-Downloads/Terr503/
+bashpath = $(folderbase)/Territories/Procs-Dev/
+
+#include pathRUdefs.inc
+# postpath var defined in above .inc
+
+# [vpath.db]Terr503_RU.db primary target
+# [vpath.csv]Map503_RU.csv prerequisite
+#=================================================
+$(targpath)Terr503_RU.db : $(targpath)Map503_RU.csv
+	if test -f $(postpath)Terr503_RU.db;then  \
+	 echo "** Terr503_RU.db exists - MakeRUNewBTerritory abandoned **"; \
+	 exit 1;fi
+	bash $(bashpath)RUNewBTerr_db.sh 503
+#	$(targpath)InitialRUFix.sh
+#	bash $(bashpath)RUTidyTerr_db.sh 503
+#	bash $(bashpath)MissingIDs.sh 503
+	
+Map503_RU.csv : ;
+
+#--- InitialRUFix.sh primary target.
+$(targpath)InitialRUFix.sh : $(targpath)InitialRUFix.sql
+	$(bashpath)AnySQLtoSQ.sh $(targpath) InitialRUFix
+	cat $(bashpath)hdrAnySQL_1.sh $(targpath)/InitialRUFix.sq \
+	 $(bashpath)hdrAnySQL_2.sh > $@
+	sed -i 's?<filename>?InitialRUFix?g' $@
+	echo "Terr503/InitialRUFix.sh built"
+
+
+$(targpath)InitialRUFix.sql : InitialRUFix.psq
+	sed 's?xxx?503?g' InitialRUFix.psq > $@
+	echo "InitialRUFix.sql copied to $(targpath)"
+	
+InitialRUFix.psq : ;
+
+Dummy : ;
+
+#=================================================

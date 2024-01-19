@@ -1,0 +1,65 @@
+# MakeAddSCBridgeRecord.tmp - Makefile for AddSCBridgeRecord build.
+# 6/5/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 6/5/23.	wmk.	check for OBSOLETE territory.
+# Legacy mods.
+# 6/18/22.	wmk.	*pathbase support; misc code improvements.
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# Legacy mods.
+# 9/22/21.	wmk.	original makefile.
+# 2/3/22.	wmk.	add prompt at end of recipe to run resultant .sh;
+#			 add chmod to recipe to ensure .sh is executable.
+# 2/7/22.	wmk.	change Execute to Run It in user message.
+#
+# MakeAddSCBridgeRecord adds a new record to Terrxxx_SCBridge from the
+# NVenAll table of VeniceNTerritory.db.
+# The 'Execute' Build command does the actual adding of the record.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+projbase = $(codebase)/Projects-Geany/AddSCBridgeRecord
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# $(projbase)/AddSCBridgeRec.sh
+#============================================================
+$(projbase)/AddSCBridgeRec.sh : $(projbase)/AddSCBridgeRec.sql
+	if test -f $(pathbase)/$$scpath/Terryyy/OBSOLETE;then \
+	 echo " ** Territory yyy OBSOLETE - MakeAddSCBridgeRecord exiting...";exit 2;fi
+	cd $(altproj);./DoSed.sh $(projbase) AddSCBridgeRec
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $@;then \
+	 echo "** MakeAddSCBridgeRec.sh failed - check parameters **";exit 1;fi
+	$(projbase)/AddSCBridgeRec.sh
+	echo "** Terryyy_SC.db wwww property ID added **"
+
+#	echo "#!/bin/bash" >$@
+#	echo 'echo ""  AddSCBridgeRec wwww  yyy initiated."" ' >> $@
+#	echo "~/sysprocs/LOGMSG '  AddSCBridgeRec wwww  yyy initiated.'" >> $@
+#	echo "sqlite3 < $(projbase)/AddSCBridgeRec.sql" >> $@
+#	echo 'echo ""  AddSCBridgeRec wwww  yyy complete."" ' >> $@
+#	echo "~/sysprocs/LOGMSG '  AddSCBridgeRec wwww  yyy complete.'" >> $@
+#	chmod +x $@
+#	echo "** Run *Run It* from the Build menu to complete adding record to Terryyy_SCBridge."
+
+$(projbase)/AddSCBridgeRec.sql : ;
+	if ! test -f $@;then \
+	 echo "** missing AddSCBridgeRec.sql for MakeAddSCBridgeRecord **";exit 1;fi
+
+#============================================================

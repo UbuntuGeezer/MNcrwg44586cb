@@ -1,0 +1,4 @@
+s?%folderbase?/home/bill?g
+s/^/echo "/g
+s/$/"  >> SQLTemp.sql/g
+1 s/>>/>/

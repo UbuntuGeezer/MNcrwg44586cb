@@ -1,0 +1,46 @@
+# MakeLatestDwnldDate - *make* file for LastDwnldDate.sh
+#	2/18/23.	wmk.
+#
+# Entry.  *projpath/preamble1.sh is preamble for LastDwnldDate.sh
+#
+# Modification History.
+# ---------------------
+# 2/6/23.	wmk.	original code.
+# 2/18/23.	wmk.	end message spacing improved.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/SyncAllData
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	cd $(altproj);./DoSed.sh $(projpath) LatestDwnldDate
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/LatestDwnldDate.sh;then \
+	 echo "** LatestDwnldDate.sh generation failed **";exit 1;fi
+	echo "  ** run LatestDwnldDate.sh to get last download date **"
+	
+#==================================================================
+# end MakeLatestDwnldDate.tmp

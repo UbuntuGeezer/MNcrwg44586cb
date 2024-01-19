@@ -1,0 +1,91 @@
+echo "-- * PatchSpecTerrDBs.psq/sql - Patch SC Special territory databases ."  > SQLTemp.sql
+echo "-- * 5/10/23.	wmk."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * ---------------------"  >> SQLTemp.sql
+echo "-- * 5/10/23.	wmk.	original code."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Notes. PatchSpecTerrDBs fills in the Resident1, Phone2 and RecordDate"  >> SQLTemp.sql
+echo "-- * fields in Terr139_SC.db and Spec139_SC.db.a"  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ".open '$pathbase/DB-Dev/junk.txt'"  >> SQLTemp.sql
+echo "ATTACH '$pathbase/DB-Dev/Terr86777.db'"  >> SQLTemp.sql
+echo " AS db2;"  >> SQLTemp.sql
+echo "ATTACH '$pathbase/$scpath/Terr139/Terr139_SC.db'"  >> SQLTemp.sql
+echo " AS db11;"  >> SQLTemp.sql
+echo "ATTACH '$pathbase/$scpath/Terr139/Spec139_SC.db'"  >> SQLTemp.sql
+echo " AS db21;"  >> SQLTemp.sql
+echo " "  >> SQLTemp.sql
+echo "-- * fill in Terr139_SC.db records;"  >> SQLTemp.sql
+echo "WITH a AS (SELECT OwningParcel PropID FROM db11.Terr139_SCBridge),"  >> SQLTemp.sql
+echo "b AS (SELECT \"Account #\" Acct, DownloadDate DwnldDt,"  >> SQLTemp.sql
+echo " CASE WHEN \"Homestead Exemption\" IS 'YES'"  >> SQLTemp.sql
+echo "  THEN '*'"  >> SQLTemp.sql
+echo " ELSE ''"  >> SQLTemp.sql
+echo " END Hstead,"  >> SQLTemp.sql
+echo " CASE WHEN LENGTH(\"Owner 3\") > 0"  >> SQLTemp.sql
+echo "  THEN \"Owner 1\" || \", \" || \"Owner 2\" || \"Owner 3\""  >> SQLTemp.sql
+echo " WHEN LENGTH(\"Owner 2\") > 0"  >> SQLTemp.sql
+echo "  THEN \"Owner 1\" || \", \" || \"Owner 2\""  >> SQLTemp.sql
+echo " ELSE \"Owner 1\""  >> SQLTemp.sql
+echo " END WhosThere"  >> SQLTemp.sql
+echo " FROM db2.Terr86777"  >> SQLTemp.sql
+echo " WHERE Acct IN (SELECT PropID FROM a))"  >> SQLTemp.sql
+echo "UPDATE Terr139_SCBridge"  >> SQLTemp.sql
+echo "SET Resident1 ="  >> SQLTemp.sql
+echo "CASE WHEN OwningParcel IN (SELECT Acct FROM b)"  >> SQLTemp.sql
+echo " THEN (SELECT WhosThere FROM b"  >> SQLTemp.sql
+echo "  WHERE Acct IS OwningParcel)"  >> SQLTemp.sql
+echo "ELSE Resident1"  >> SQLTemp.sql
+echo "END,"  >> SQLTemp.sql
+echo "Phone2 ="  >> SQLTemp.sql
+echo "CASE WHEN OwningParcel IN (SELECT Acct FROM b)"  >> SQLTemp.sql
+echo " THEN (SELECT Hstead FROM b"  >> SQLTemp.sql
+echo "  WHERE Acct IS OwningParcel)"  >> SQLTemp.sql
+echo "ELSE Phone2"  >> SQLTemp.sql
+echo "END,"  >> SQLTemp.sql
+echo "RecordDate ="  >> SQLTemp.sql
+echo "CASE WHEN OwningParcel IN (SELECT Acct FROM b)"  >> SQLTemp.sql
+echo " THEN (SELECT DwnldDt FROM b"  >> SQLTemp.sql
+echo "  WHERE Acct IS OwningParcel)"  >> SQLTemp.sql
+echo "ELSE RecordDate"  >> SQLTemp.sql
+echo "END"  >> SQLTemp.sql
+echo ";"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- * now fill in Spec139_DB records;"  >> SQLTemp.sql
+echo "WITH a AS (SELECT OwningParcel PropID FROM db21.Spec_SCBridge),"  >> SQLTemp.sql
+echo "b AS (SELECT \"Account #\" Acct, DownloadDate DwnldDt,"  >> SQLTemp.sql
+echo " CASE WHEN \"Homestead Exemption\" IS 'YES'"  >> SQLTemp.sql
+echo "  THEN '*'"  >> SQLTemp.sql
+echo " ELSE ''"  >> SQLTemp.sql
+echo " END Hstead,"  >> SQLTemp.sql
+echo " CASE WHEN LENGTH(\"Owner 3\") > 0"  >> SQLTemp.sql
+echo "  THEN \"Owner 1\" || \", \" || \"Owner 2\" || \"Owner 3\""  >> SQLTemp.sql
+echo " WHEN LENGTH(\"Owner 2\") > 0"  >> SQLTemp.sql
+echo "  THEN \"Owner 1\" || \", \" || \"Owner 2\""  >> SQLTemp.sql
+echo " ELSE \"Owner 1\""  >> SQLTemp.sql
+echo " END WhosThere"  >> SQLTemp.sql
+echo " FROM db2.Terr86777"  >> SQLTemp.sql
+echo " WHERE Acct IN (SELECT PropID FROM a))"  >> SQLTemp.sql
+echo "UPDATE db21.Spec_SCBridge"  >> SQLTemp.sql
+echo "SET Resident1 ="  >> SQLTemp.sql
+echo "CASE WHEN OwningParcel IN (SELECT Acct FROM b)"  >> SQLTemp.sql
+echo " THEN (SELECT WhosThere FROM b"  >> SQLTemp.sql
+echo "  WHERE Acct IS OwningParcel)"  >> SQLTemp.sql
+echo "ELSE Resident1"  >> SQLTemp.sql
+echo "END,"  >> SQLTemp.sql
+echo "Phone2 ="  >> SQLTemp.sql
+echo "CASE WHEN OwningParcel IN (SELECT Acct FROM b)"  >> SQLTemp.sql
+echo " THEN (SELECT Hstead FROM b"  >> SQLTemp.sql
+echo "  WHERE Acct IS OwningParcel)"  >> SQLTemp.sql
+echo "ELSE Phone2"  >> SQLTemp.sql
+echo "END,"  >> SQLTemp.sql
+echo "RecordDate ="  >> SQLTemp.sql
+echo "CASE WHEN OwningParcel IN (SELECT Acct FROM b)"  >> SQLTemp.sql
+echo " THEN (SELECT DwnldDt FROM b"  >> SQLTemp.sql
+echo "  WHERE Acct IS OwningParcel)"  >> SQLTemp.sql
+echo "ELSE RecordDate"  >> SQLTemp.sql
+echo "END"  >> SQLTemp.sql
+echo ";"  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo "-- * END PatchSpecTerrDBs.sql;"  >> SQLTemp.sql

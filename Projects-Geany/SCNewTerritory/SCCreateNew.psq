@@ -1,0 +1,47 @@
+-- *SCCreateNew.psq/sql - Create initial Terrxxx_SC.db from current SC download.
+-- *	2/14/23.	wmk.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 2/14/23.	wmk.	original code; adapted from UpdateSCBridge.
+-- *
+-- * Notes. SCCreateNew.psq extracts the data for the streets within territory
+-- * xxx and places them in a new Terrxxx_SC.db. It uses the "segmented"
+-- * territories method with the definition taken from TerrIDData.SegDefs.
+-- *;
+
+.open '$pathbase'/$scpath/Terryyy/Terryyy_SC.db'
+--  PRAGMA table_info(Terryyy_SCBridge);
+--  PRAGMA table_info(Diffsm2d2);
+
+ATTACH '$pathbase/$scpath/SCPA_m2-d2.db'
+ AS db19;
+--  PRAGMA table_info(Datam2d2);
+
+-- * create and populate Diffsm2d2 from SCPA_m2-d2.db.Datammdd for
+-- * this territory;
+DROP TABLE IF EXISTS Diffsm2d2;
+CREATE TABLE db11.Diffsm2d2
+( "Account#" TEXT, Owner1 TEXT, Owner2 TEXT, Owner3 TEXT,
+MailingAddress1 TEXT, MailingAddress2 TEXT, MailingCity TEXT, 
+MailingState TEXT, MailingZipCode TEXT, MailingCountry TEXT, 
+"SitusAddress(PropertyAddress)" TEXT, SitusCity TEXT, SitusState TEXT, 
+SitusZipCode TEXT, PropertyUseCode TEXT, Neighborhood TEXT, 
+Subdivision TEXT, TaxingDistrict TEXT, Municipality TEXT, 
+WaterfrontCode TEXT, "HomesteadExemption(YESorNO)" TEXT, 
+HomesteadExemptionGrantYear TEXT, Zoning TEXT, ParcelDesc1 TEXT, 
+ParcelDesc2 TEXT, ParcelDesc3 TEXT, ParcelDesc4 TEXT, 
+"Pool(YESorNO)" TEXT, TotalLivingUnits TEXT, "LandAreaS.F." TEXT, 
+GrossBldgArea TEXT, LivingArea TEXT, Bedrooms TEXT, Baths TEXT, 
+HalfBaths TEXT, YearBuilt TEXT, LastSaleAmount TEXT, LastSaleDate TEXT, 
+LastSaleQualCode TEXT, PriorSaleAmount TEXT, PriorSaleDate TEXT, 
+PriorSaleQualCode TEXT, JustValue TEXT, AssessedValue TEXT, 
+TaxableValue TEXT, LinktoPropertyDetailPage TEXT, ValueDataSource TEXT, 
+ParcelCharacteristicsData TEXT, Status TEXT, DownloadDate TEXT, 
+PRIMARY KEY ("Account#") );
+
+SELECT * FROM db19.Datam2d2
+--inserthere
+--endwhere
+;
+-- ** END SCCreateNew.psq/sql

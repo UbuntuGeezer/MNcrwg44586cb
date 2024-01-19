@@ -1,0 +1,5 @@
+#!/bash/bin
+#nantotest.txt - nano batch editor test
+. open justtest
+^\justtest\justtest
+

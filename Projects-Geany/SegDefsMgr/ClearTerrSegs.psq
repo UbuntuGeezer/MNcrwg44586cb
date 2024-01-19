@@ -1,0 +1,45 @@
+-- * ClearTerrSegs.psq/sql - export territory segments to Terr264Streetstxt.
+-- * 2/10/23.	wmk.
+-- *
+-- * Entry.	/DB-Dev/TerrIDData.db = territory definitions db
+-- *		Jumpto.sql set up to display EndMessage table messages
+-- *		preambleClear.sh = bash user prompts verifying clear operation
+-- *
+-- * Exit.	/DB-Dev/TerrIDData.db.SegDefs entries cleared for territory 'yyy'.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 2/15/23.	wmk.	original code; adapted from ListTerrSegs.
+-- *
+-- * Notes. ClearSegs leaves the Terryyy/segdefs.csv intact, since it may already
+-- * contain new definitions.
+-- *;
+.open '$pathbase/DB-Dev/TerrIDData.db'
+
+-- * clear EndMessage table messages;
+DELETE FROM EndMessage;
+
+-- * now delete SegDefs for territory yyy;
+DELETE FROM SegDefs
+ WHERE TerrID IS 'yyy';
+ 
+-- * issue end messages;
+CREATE TEMP TABLE Countsyyy(
+ Count INTEGER)
+ ;
+
+WITH a AS (SELECT COUNT() sqldef FROM SegDefs
+ WHERE TerrID IS 'yyy')
+INSERT INTO Countsyyy
+ SELECT Count FROM a);
+
+WITH a AS (SELECT Count FROM Countsyyy)
+INSERT INTO EndMessage(msg)
+SELECT CASE WHEN a.Count > 0
+THEN "  ** CLearTerrSegs FAILED - SegDefs still remaining for territory yyy **"
+ELSE "  ClearTerrSegs complete."
+END
+FROM a;
+
+.quit
+-- * END ClearTerrSegss.sql;

@@ -1,0 +1,4 @@
+# sedPre.txt - (modified by DoSed > sedPreDir.txt
+/\-\- \*\* <mod>/i\-\-begin SPLIT
+/\-\- \*\* <mod>/i\-\-begin <mod>
+/\*\* END <mod>/a--/**/

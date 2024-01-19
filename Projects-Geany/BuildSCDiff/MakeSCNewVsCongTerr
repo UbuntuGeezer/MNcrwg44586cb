@@ -1,0 +1,63 @@
+# MakeSCNewVsCongTerr.tmp - makefile for SCNewVsCongTerr.sh
+#	11/27/22.	wmk.
+#
+# Entry. preamble.SCNewVsCongTerr.sh contains code to check for the TODAY
+#		 environment variable not set.
+#
+# Exit. SCNewVsCongTerr.psq > SCNewVsCongTerr.sh
+#
+# Modification History.
+# ---------------------
+# 11/27/22.	wmk.	comments tidied.
+# Legacy mods.
+# 9/22/22.  wmk.   (automated) *codebase env var support.
+# 9/22/22.  wmk.   (automated) CB *codebase env var support.
+# Legacy mods.
+# 5/27/22.	wmk.	original code; (old preamble eliminated).
+#
+# Notes. SCNewVsCongTerr.sh will always be made. MakeSCNewVsCongTerr
+# assumes DoSed edited SCNewVsCongTerr.psq > SCNewVsCongTerr.sql
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+.PHONY : Always ;
+.ONESHELL : ;
+
+ procpath = $(codebase)/Procs-Dev
+scpafolder = $(pathbase)/RawData/SCPA/SCPA-Downloads
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+ projpath = $(codebase)/Projects-Geany/UpdateCongTerr
+
+#SCNewVsCongTerr.sh primary target
+#====================================================================
+#SCNewVsCongTerr.sh :   SCNewVsCongTerr.sq  SCNewVsCongTerr.sql \
+# SCNewVsCongTerr.psq
+Always : $(projpath)/SCNewVsCongTerr.sql $(projpath)/SCNewVsCongTerr.psq
+	cd $(altproj); ./DoSed.sh $(projpath) SCNewVsCongTerr
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	echo "** Now run $@ from Terminal to integrate Diffs0528 into Terr86777 **"
+
+$(projpath)/SCNewVsCongTerr.sql : $(projpath)/SCNewVsCongTerr.psq
+	echo "** Run DoSed to update SCNewVsCongTerr.sql from SCNewVsCongTerr.psq **"
+	exit 1
+
+$(projpath)/SCNewVsCongTerr.psq :;
+	if ! test -f $@;then \
+	 echo "  ** SCNewVsCongTerr.psq missing for SCNewVsCongTerr.sh build **";exit 1;fi
+	 
+#====================================================================
+# end MakeSCNewVsCongTerr

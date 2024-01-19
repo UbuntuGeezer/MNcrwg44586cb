@@ -1,0 +1,330 @@
+&apos;// SetEditColWidths.bas
+&apos;//----------------------------------------------------------------------
+&apos;// SetEditColWidths - Set column widths on Edit formatted sheet columns.
+&apos;//		9/12/20.	wmk.	08:30
+&apos;//----------------------------------------------------------------------
+
+public sub SetEditColWidths()
+
+&apos;//	Usage.	macro call or
+&apos;//			call SetEditColWidths()
+&apos;//
+&apos;// Entry.	User in Edit formatted territory sheet
+&apos;//
+&apos;//	Exit.	A = 1.0&quot;, B = 1.75, C = 1.75&quot;, D = 1.75, E = 1.0, F = 1.0&quot;
+&apos;//			G = 1.1&quot;, H = 1.34, I = 1.34, J = 1.34, K = 1.34, L = 0.9&quot;
+&apos;//			M = 0.9&quot;, N = 0.9&quot;, O = 0.9&quot;, P = 0.9&quot;
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/9/20.		wmk.	original code
+&apos;//	9/12/20.	wmk.	code simplification
+&apos;//
+&apos;//	Notes. UNO Dispatcher exits this module, corrupting any module-wide
+&apos;//	vars. Only way to preserve user cell selection on entry is in local
+&apos;//	vars this sub.
+
+&apos;//	constants.
+const ONE_INCH=2540
+
+&apos;// columns and other definitions
+const COL_PARCEL=0		&apos;// &quot;OwningParcel&quot; column index
+const COL_A=0
+const COL_B=1
+const COL_C=2	
+const COL_D=3
+const COL_E=4
+const COL_F=5
+const COL_G=6			&apos;// column G index
+const COL_H=7			&apos;// column H index
+const COL_I=8			&apos;// column I index
+const COL_J=9			&apos;// column J index
+const COL_K=10			&apos;// column K index
+const COL_L=11			&apos;// column L index 
+const COL_M=12			&apos;// column M index (DoNotCall)
+const COL_N=13			&apos;// column N index (RSO)
+const COL_O=14			&apos;// column O index (Foreign)
+const COL_P=15			&apos;// column P index (RecordDate)
+const ROW_1=0
+const ROW_2=1
+const ROW_3=2
+const ROW_4=3
+const ROW_HEADING=4		&apos;// headings row index
+const LJUST=1		&apos;// left-justify HoriJustify				&apos;// mod052020
+const CJUST=2		&apos;// center HoriJustify						&apos;// mod052020
+const RJUST=3		&apos;// right-justify HoriJustify				&apos;// mod052320
+const MDYY=30		&apos;// &apos;M/D/YY&apos; format value
+
+&apos;// column widths
+const A_WIDTH=1.0
+const B_WIDTH=1.75
+const C_WIDTH=1.75
+const D_WIDTH=1.75
+const E_WIDTH=1.0
+const F_WIDTH=1.0
+const G_WIDTH=1.1
+const H_WIDTH=1.34
+const I_WIDTH=1.34
+const J_WIDTH=1.34
+const K_WIDTH=1.34
+const L_WIDTH=0.9
+const M_WIDTH=0.9
+const N_WIDTH=0.9
+const O_WIDTH=0.9
+const P_WIDTH=0.9
+
+&apos;//	local variables.
+dim oDocument   as object
+dim oDispatcher as object
+dim oDoc	As Object	&apos;// ThisComponent
+dim oSel	As Object	&apos;// current cell selection on entry
+dim oRange	As Object	&apos;// RangeAddress selected
+dim iSheetIx	As Integer	&apos;// this sheet index
+dim oSheet	As Object	&apos;// this sheet
+dim oCols	As Object	&apos;// .Columns this sheet
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	
+	&apos;// preserve user cell selection
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	oCols = oSheets.Columns
+
+	&apos;// set A-G widths
+	oCols(COL_A).setPropertyValue(&quot;Width&quot;, A_WIDTH*ONE_INCH)
+	oCols(COL_B).setPropertyValue(&quot;Width&quot;, B_WIDTH*ONE_INCH)
+	oCols(COL_C).setPropertyValue(&quot;Width&quot;, C_WIDTH*ONE_INCH)
+	oCols(COL_D).setPropertyValue(&quot;Width&quot;, D_WIDTH*ONE_INCH)
+	oCols(COL_E).setPropertyValue(&quot;Width&quot;, E_WIDTH*ONE_INCH)
+	oCols(COL_F).setPropertyValue(&quot;Width&quot;, F_WIDTH*ONE_INCH)
+	oCols(COL_G).setPropertyValue(&quot;Width&quot;, G_WIDTH*ONE_INCH)
+	
+	&apos;// set H, I, J widths
+	SetSearchWidths()
+	
+	&apos;// set K-P widths
+	oCols(COL_K).setPropertyValue(&quot;Width&quot;, K_WIDTH*ONE_INCH)
+	oCols(COL_L).setPropertyValue(&quot;Width&quot;, L_WIDTH*ONE_INCH)
+	oCols(COL_M).setPropertyValue(&quot;Width&quot;, M_WIDTH*ONE_INCH)
+	oCols(COL_N).setPropertyValue(&quot;Width&quot;, N_WIDTH*ONE_INCH)
+	oCols(COL_O).setPropertyValue(&quot;Width&quot;, O_WIDTH*ONE_INCH)
+	oCols(COL_P).setPropertyValue(&quot;Width&quot;, P_WIDTH*ONE_INCH)
+	
+	
+if true then
+	GoTo EndOldCode
+endif
+&apos;//--------------------------------------------------------------------	
+	oDocument   = ThisComponent.CurrentController.Frame
+	oDispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+	&apos;// set column widths to width constants
+&apos;//--------
+	&apos;// set up arguments for uno:GoToCell interface
+dim args1(0) as new com.sun.star.beans.PropertyValue
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$A$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+
+dim args2(0) as new com.sun.star.beans.PropertyValue
+	args2(0).Name = &quot;ColumnWidth&quot;
+	args2(0).Value = A_WIDTH * ONE_INCH
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args2())
+
+&apos;//----------
+	&apos;// set up arguments for uno:GoToCell interface
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$B$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	args2(0).Name = &quot;ColumnWidth&quot;
+	args2(0).Value = B_WIDTH * ONE_INCH
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args2())
+
+&apos;//----------
+	&apos;// set up arguments for uno:GoToCell interface
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$C$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	args2(0).Name = &quot;ColumnWidth&quot;
+	args2(0).Value = C_WIDTH * ONE_INCH
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args2())
+
+&apos;//----------
+	&apos;// set up arguments for uno:GoToCell interface
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$D$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	args2(0).Name = &quot;ColumnWidth&quot;
+	args2(0).Value = D_WIDTH * ONE_INCH
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args2())
+
+&apos;//----------
+	&apos;// set up arguments for uno:GoToCell interface
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$E$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	args2(0).Name = &quot;ColumnWidth&quot;
+	args2(0).Value = E_WIDTH * ONE_INCH
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args2())
+
+&apos;//----------f
+	&apos;// set up arguments for uno:GoToCell interface
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$F$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	args2(0).Name = &quot;ColumnWidth&quot;
+	args2(0).Value = F_WIDTH * ONE_INCH
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args2())
+
+&apos;//----------G
+	&apos;// set up arguments for uno:GoToCell interface
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$G$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	args2(0).Name = &quot;ColumnWidth&quot;
+	args2(0).Value = G_WIDTH * ONE_INCH
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args2())
+
+&apos;//----------H
+	&apos;// set up arguments for uno:GoToCell interface
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$H$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	args2(0).Name = &quot;ColumnWidth&quot;
+	args2(0).Value = H_WIDTH * ONE_INCH
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args2())
+
+&apos;//----------I
+	&apos;// set up arguments for uno:GoToCell interface
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$I$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	args2(0).Name = &quot;ColumnWidth&quot;
+	args2(0).Value = I_WIDTH * ONE_INCH
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args2())
+
+&apos;//----------J
+	&apos;// set up arguments for uno:GoToCell interface
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$J$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	args2(0).Name = &quot;ColumnWidth&quot;
+	args2(0).Value = J_WIDTH * ONE_INCH
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args2())
+
+&apos;//----------K
+	&apos;// set up arguments for uno:GoToCell interface
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$K$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	args2(0).Name = &quot;ColumnWidth&quot;
+	args2(0).Value = K_WIDTH * ONE_INCH
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args2())
+
+&apos;//----------L
+	&apos;// set up arguments for uno:GoToCell interface
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$L$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	args2(0).Name = &quot;ColumnWidth&quot;
+	args2(0).Value = L_WIDTH * ONE_INCH
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args2())
+
+&apos;//----------M
+	&apos;// set up arguments for uno:GoToCell interface
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$M$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	args2(0).Name = &quot;ColumnWidth&quot;
+	args2(0).Value = M_WIDTH * ONE_INCH
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args2())
+
+&apos;//----------N
+	&apos;// set up arguments for uno:GoToCell interface
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$N$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	args2(0).Name = &quot;ColumnWidth&quot;
+	args2(0).Value = N_WIDTH * ONE_INCH
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args2())
+
+&apos;//----------O
+	&apos;// set up arguments for uno:GoToCell interface
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$O$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	args2(0).Name = &quot;ColumnWidth&quot;
+	args2(0).Value = O_WIDTH * ONE_INCH
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args2())
+
+&apos;//----------P
+	&apos;// set up arguments for uno:GoToCell interface
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$P$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	args2(0).Name = &quot;ColumnWidth&quot;
+	args2(0).Value = P_WIDTH * ONE_INCH
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args2())
+&apos;//--------------------------------------------------------------------------------
+EndOldCode:
+NormalExit:
+	SetSelection(oRange)	&apos;// restore user cell selection
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SetEditColWidths - unprocessed error.&quot;)
+	
+end sub		&apos;// end SetEditColWidths	9/12/20

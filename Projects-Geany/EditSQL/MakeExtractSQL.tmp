@@ -1,0 +1,66 @@
+# MakeExtractSQL.tmp - Makefile (template) for MakeExtractSQL.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+#   5/4/22. wmk.	(automated) path corrections.
+#
+# MakeAnySHtoSQL takes a <file base>.sh file and move it through the
+# reverse process to de-shell it into a .sql file of straight SQL. An
+# intermediate file <file base>.sq is the SQL shell echo,s stripped out
+# of the .sh file.
+#
+# Modification History.
+# ---------------------
+# 3/7/22.	wmk.	original makefile; adapted from MakeAnySHtoSQL.
+# 3/8/22.	wmk.	completion message added; add conversion for &amp; to
+#			 ampersand (&).
+# 4/24/22.	wmk.	*pathbase* env var included.
+# 5/4/22. wmk.	(automated) path corrections.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+
+ifndef AWK
+ AWK = nawk
+endif
+
+.PHONY : Always JustDoIt
+.ONESHELL : ;
+
+ projpath = $(codebase)/Projects-Geany/AnySHtoSQL
+
+# <filepath>/<filebase>.sql
+#=======================================================
+Always : JustDoIt
+#	sed -n '/-- \* <sqlmodule>.sql/,/--\/\*\*\// p' <sqlfile>.sql > <sqlmodule>.sql{
+ifeq (1,1)
+	export awkdate=
+	export awktime=
+	$(AWK) -v awkdate=  -v awktime=  \
+	 -f awkExtract.txt \
+	   <sqlfile>.sql > <sqlmodule>.sql
+	 #echo "end sub     &apos;// end <sqlmodule>.sql   $$awkdate   $$awktime" >> <sqlmodule>.a
+	 #exit 1
+endif
+	 echo "<sqlmodule>.sql available for editing"
+
+#=======================================================
+JustDoIt: ;

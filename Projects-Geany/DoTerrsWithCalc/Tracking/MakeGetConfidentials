@@ -1,0 +1,56 @@
+# MakeGetRSOLIst.tmp - MakeGetConfidentials makefile.
+# 6/9/22.	wmk.
+#
+# Modification History.
+# --------------------
+# 6/9/22.	wmk.	original.
+# Legacy mods.
+# 5/4/22. 	wmk.	(automated) path corrections.
+# 12/28/21.	wmk.
+# 7/19/21.	wmk.	original code.
+# 7/20/21.	wmk.	bug fix where HOME environment var not being
+#					evaluated; missing $s corrected in path refs.
+# 8/22/21.	wmk.	sed added to fix <filename> in GetRSOLIst.sh
+# 10/12/21.	wmk.	MAJOR change; sql > sq > sh instead of sq > sql > sh.
+# 12/28/21.	wmk.	chmod 700 added to .sh permissions.
+
+#============================================================================
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : Always;
+.ONESHELL : ;
+
+prepath = $(pathbase)/Projects-Geany/DoTerrsWithCalc/Tracking
+procpath = $(pathbase)/Procs-Dev/
+projpath = $(pathbase)/Projects-Geany/
+altproj = $(pathbase)/Projects-Geany/AnySQLtoSH
+
+# GetRSOLIst.sh primary target.
+#============================================================================
+$(prepath)/GetConfidentials.sh : $(prepath)/GetConfidentials.sql
+	cd $(altproj);./DoSed.sh $(prepath) GetConfidentials
+	$(MAKE) -f $(projpath)/AnySQLtoSH/MakeAnySQLtoSH
+	echo " ** Now run /Tracking/GetConfidentials.sh to get CONFIDENTIAL record list. **"	
+
+
+$(prepath)/GetConfidentials.sql : ;
+	if ! test -f $@;then \
+	 echo " ** Missing GetConfidentials.sql for MakeGetConfidentials build. **";exit 1;fi
+	
+
+#============================================================================

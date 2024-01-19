@@ -1,0 +1,73 @@
+README - RUNewTerritory project documentation.<br>
+	1/15/23.	wmk.
+
+###Modification History.
+<pre><code>8/11/21.	wmk.	original document.
+9/10/21.	wmk.	Significant Notes section added.
+9/16/21.	wmk.	WARNING added about running SCNewTerritory first.
+10/16/21.	wmk.	Project Desciption creating empty Terrxxx_RU.db.
+1/15/23.    wmk.    .md formatting; hyperlinks added.
+</code></pre>
+<h3 id="IX">Documentation Sections.</h3>
+<pre><code><a href="#1.0">link</a> 1.0 Project Description - overall project description.
+<a href="#2.0">link</a> 2.0 Setup - step-by-step build instructions.
+<a href="#3.0">link</a> 3.0 Raw Data Structure - data structure of RU territory database.
+<a href="#4.0">link</a> 4.0 Significant Notes - important stuff not documented elsewhere.
+</code></pre>
+<h3 id="1.0">1.0 Project Description.</h3>
+RUNewTerritory takes download data from the RefUSA records and creates a
+database with the download records and Bridge table for territory generation.
+The download records are assumed to be "map" download records from a
+RefUSA database in polygon record format.
+
+RUNewTerritory may be run on an empty Terrxxx_RU.csv. This is done where
+either there is no RU download data available for the territory, or where
+the RU data is obtained using Special territory processing.<br><a href="#IX">Index</a>
+<h3 id="2.0">2.0 Setup.</h3>
+Perform the following steps from within the RUNewTerritory project:
+<pre><code>
+	Terryyy_RU.csv should have been downloaded with the territory RU raw data
+
+	WARNING: do the SCNewTerritory project first, since this project
+	 depends upon the Terrxxx_SCBridge table when running InitialRUFix!
+
+	edit the "sed" Build menu item with the territory ID of the new territory
+	run the "sed" Build menu item
+	
+	run the "Make Dry Run" Build menu item to check for desired results
+	
+	run the "Make" Build menu item to generate the territory database
+</code></pre>
+<a href="#IX">Index</a>	
+<h3 id="3.0">3.0 Raw Data Structure.</h3>
+Following is the table structure of the map polygon data. In the first
+pass at generating territories, the "by shape" feature was used to draw
+polygons on the RefUSA street map to obtain the addresses. The resulting
+.csv download records all have the following SQL fields present:
+
+CREATE TABLE Terrxxx_RURaw 
+("Last Name" TEXT,"First Name" TEXT, "House Number" TEXT, 
+"Pre-directional" TEXT,"Street" TEXT, "Street Suffix" TEXT, 
+"Post-directional" TEXT,"Apartment Number" TEXT, "City" TEXT,
+"State" TEXT,"ZIP Code" TEXT, "County Name" TEXT, "Phone Number" TEXT)
+
+As can be seen from the table definition, the .csv fields are imported
+directly into table Terrxxx_RURaw where xxx is the territory ID.
+
+A provision has been made to take download data from RefUSA using entire
+streets instead of polygons. This provision covers cases where entire
+streets are necessary to have in a database, where the street spans two
+or more territories. The SpecialRUdb project handles these databases.
+Where a territory makes use of this provision, its raw data will contain
+documentation in file SPECIAL, and a secondary database Specxxx_RU.db of
+Special records in Bridge format for inclusion in the generated territory.
+(See the SpecialRUdb project documentation README for further information.)
+<br><a href="#IX">Index</a>
+<h3 id="4.0">4.0 Significant Notes.</h3>
+SCNewTerritory should be run to build the SC territory prior to building
+the RUNewTerritory. RUNewTerritory depends upon the Terrxxx_SC.db, even
+if there are no records (e.g. mobile home park).
+
+If this territory is a mobile home park (MHP), the SpecialRUdb project
+needs to be run to set up the special processing that will be used 
+whenever the MHP download data is updated.<br><a href="#IX">Index</a>

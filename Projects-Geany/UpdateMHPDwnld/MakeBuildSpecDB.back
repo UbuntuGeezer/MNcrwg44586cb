@@ -1,0 +1,49 @@
+# MakeBuildSpecDB.tmp - template for MakeBuildSpecDB make file.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	7/4/21.wmk.
+#
+# Dependencies.
+#	MakeBuildSpecDB.tmp placeholders BayIndies, 07 and 04 will be edited
+#	 by DoSed.sh to be a special database name and month, date.
+#	RUBayIndies_mm-dd.csv contains the download records for the entire MHP
+#	  as of month mm and day dd.
+#
+# Modification History.
+# ---------------------
+# 7/4/21.	wmk.	original code.
+
+ifeq ($(HOME),/home/ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+else
+  folderbase = $(HOME)
+endif
+
+specialpth = $(folderbase)/Territories/RawData/RefUSA/RefUSA-Downloads/Special/
+.PHONY : $(specialpth)BayIndies.csv
+
+# RUBayIndies_mm-dd.db recipe
+#============================================================
+# DoSed run prior with params BayIndies 07 04.
+
+$(specialpth)RuBayIndies_07-04.db : $(specialpth)RUBayIndies_07-04.csv
+	sqlite3 < BuildSpclDB.sql
+
+
+#============================================================
+
+
+#RUBayIndies_mm-dd.csv recipe
+#============================================================
+
+$(specialpth)RUBayIndies_07-04.csv : $(specialpth)BayIndies.csv
+	cp $(specialpth)BayIndies.csv $(specialpth)RUBayIndies_07-04.csv
+	
+#============================================================
+
+
+#BayIndies.csv recipe - if invoked is error...
+#============================================================
+
+$(specialpth)BayIndies.csv : ;
+#	$(error ** BayIndies.csv missing for MakeUpdateMHPDwnld !**)

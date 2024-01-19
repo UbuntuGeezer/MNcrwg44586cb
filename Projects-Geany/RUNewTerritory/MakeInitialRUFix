@@ -1,0 +1,55 @@
+# MakeInitialRUFix.tmp - MakeInitialRUFix template for RU territory zzz.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	8/30/21.	wmk.
+#
+# MakeSyncTerrToSpec integrates the special territory records with the
+# standard territory records  in /SCPA-Downloads/Terr$P1 so none will be
+# missing when the territory is generated.
+# Note: InitSpecial.sh  edits $P1 to fields with ($) p1 when this is placed
+# into	SCPA-Downloads/Terr$P1 folder.
+#
+# Modification History.
+# ---------------------
+# 7/25/21.	wmk.	original code; adapted from RU version.
+# 8/12/21.	wmk.	documentation updated.
+# 8/13/21.	wmk.	general description added.
+# 8/24/21.	wmk.	647 corrected to $ P1; sed added to correct <filename>.
+# 8/29/21.	wmk.	update use of .sc, .sql extensions for use with AnySQLtoSQ
+#					shell.		
+# legacy history.
+# 7/19/21.	wmk.	original code; (RU version).
+
+ifeq ($(HOME),/home/ubuntu) 
+ folderbase=/media/ubuntu/Windows/Users/Bill
+else
+ folderbase=$(HOME)
+endif
+
+prepath = $(folderbase)/Territories/RawData/SCPA/SCPA-Downloads/Terrzzz
+ procpath = $(codebase)/Territories/Procs-Dev/
+
+# SyncTerrToSpec.sh primary target.
+#=====================================================================================
+$(prepath)/SyncTerrToSpec.sh : $(prepath)/SyncTerrToSpec.sql $(prepath)/SyncTerrToSpec.sq \
+ $(prepath)/SyncTerrToSpec.psq
+	cat $(procpath)hdrAnySQL_1.sh $(prepath)/SyncTerrToSpec.sq \
+	 $(procpath)hdrAnySQL_2.sh > $@
+	sed -i 's?<filename>?SyncTerrToSpec?g' $@
+
+$(prepath)/SyncTerrToSpec.sq : $(prepath)/SyncTerrToSpec.sql
+	$(procpath)AnySQLtoSQ.sh $(prepath) SyncTerrToSpec
+
+# .psq file has xxx for territory ID; P1 fields already replaced
+# when InitSpecial.sh copies file to Terr$P1 folder, has env vars
+# like folderbase in code.	
+$(prepath)/SyncTerrToSpec.sql : $(prepath)/SyncTerrToSpec.psq
+	sed "s?xxx?zzz?g" $(prepath)/SyncTerrToSpec.psq > $(prepath)/SyncTerrToSpec.sql
+
+$(prepath)/SyncTerrToSpec.psq : ;
+	$(error ** missing $(prepath)/SyncTerrToSpec.psq to build SyncTerrToSpec.sql **)
+	
+
+
+#====================================================================================
+#end MakeInitialRUFix

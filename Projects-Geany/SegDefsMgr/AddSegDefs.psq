@@ -1,0 +1,233 @@
+-- * AddSegDefs.psq/sql - Add content of TerrIDData.Defsyyy table into TerriDData.SegDefs table.
+-- * 2/12/23.	wmk.
+-- *
+-- * Entry. table TerriDData.Defsyyy created by loading /Terryyy/segdefs.csv
+-- *	    table TerrIDData.yyyCounts created by querying SegDefs table for terr yyy.
+-- *
+-- * Exit. table TerrIDData.SegDefs has new records added from Defsyyy table.
+-- *       tables Defsyyy and yyyCounts removed from TerrIDData.
+-- *	   "Segmented" field set to 1 in Territory table for Terrxxx.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 2/11/23.	wmk.	original code.
+-- * 2/12/23.	wmk.	.open statement added to Jumpto.sql; PrevCounts references
+-- * 			 removed; bug fix Defxxx corrected to Defsxxx; exit conditions
+-- *			 documented.
+-- *
+-- * Notes. segdefs contains a set of WHERE clauses with the following pattern:
+-- *	WHERE UnitAddress LIKE '%street1%'
+-- *       OR UnitAddress LIKE '%street2%'
+-- *	   OR (UnitAddress LIKE '%street3%'
+-- *	     AND CAST(SUBSTR(UnitAddress,1,INSTR(UnitAddress,' ')) AS INT) >= n1
+-- *	     AND CAST(SUBSTR(UnitAddress,1,INSTR(UnitAddress,' ')) AS INT) >= n2
+-- *         AND CAST(SUBSTR(UnitAddress,1,INSTR(UnitAddress,' ')) AS INT)%2 = 1)
+-- *
+-- * if TerrIDData.SegDefs already has entries for Territoryxxx, this query will do nothing.
+-- * test code... this query stops just short, creating Jumpto.sql in /Special.
+-- *
+-- * This query is the last in the sequence; it uses the table EndMessage to write
+-- * a script to Jumpto.sql that issues the "complete" or "abandoned" message..
+-- *
+-- * tables.
+-- *	EndMessage - ending message table; messages written by Jumpto.sql
+-- *	yyyCounts = .status, DefLines, status=0 if Defyyy
+-- *	DefExists,status = 0 if Defsyyy table exists
+-- *
+-- *;
+.open '$pathbase/DB-Dev/TerrIDData.db'
+
+--DROP TABLE IF EXISTS EndMessage;
+--CREATE TABLE EndMessage(
+-- msg TEXT);
+ 
+DROP TABLE IF EXISTS "yyyCounts";
+CREATE TEMP TABLE "yyyCounts"(
+ DefLines INTEGER )
+ ;
+
+INSERT INTO EndMessage(msg)
+VALUES("  ** AddSegDefs FAILED - Check TerrIDData database for territory yyy **");
+
+CREATE TEMP TABLE DefExists(
+ status INTEGER)
+ ;
+INSERT INTO DefExists(status)
+SELECT EXISTS(
+SELECT name FROM sqlite_schema
+ WHERE type is 'table'
+   AND name is 'Defsyyy');
+   
+-- -------------- insert records here ---------------------------;
+-- * unconditionally insert new records;
+INSERT INTO SegDefs(TerriD, dbName, sqldef)
+SELECT 'yyy', '<spec-db>', newsql
+FROM Defsyyy;
+
+-- set ending message;
+DELETE FROM EndMessage;
+
+INSERT INTO EndMessage(msg)
+VALUES('  AddSegDefs for yyy complete.');
+
+DROP TABLE IF EXISTS Defsyyy;
+
+-- * ensure Segmented flag set if there are defs for this territory;
+UPDATE Territory
+SET Segmented =
+CASE WHEN (SELECT COUNT() TerrID FROM SegDefs
+ WHERE TerrID IS 'yyy') > 0
+ THEN 1
+ELSE 0
+END 
+WHERE TerrID IS 'yyy';
+
+
+-- ---------- write completion message --------------;
+-- do this in all cases; write to EndMessage code to Jumpto.sql;
+-- entry. yyyCounts.DefLines = line count
+.mode csv
+.headers OFF
+.separator "|"
+.output '$pathbase/$rupath/Special/Jumpto.sql'
+DROP TABLE IF EXISTS JumptoSQL;
+CREATE TEMP TABLE JumptoSQL(
+ sqlsrc TEXT);
+-- * write SQL source code to table then export;
+
+-- .open database line;
+INSERT INTO JumptoSQL
+VALUES(".open '/home/vncwmk3/Territories/FL/SARA/86777/DB-Dev/TerrIDData.db'");
+
+
+-- line 1;
+INSERT INTO JumptoSQL
+VALUES('SELECT * FROM EndMessage;');
+
+-- line 3;
+INSERT INTO JumptoSQL
+VALUES('.quit');
+
+SELECT * FROM JumptoSQL;
+--========== end block which writes to Jumpto.sql =============;
+
+.quit
+-- ==============================================================;
+-- more experimental code...;
+
+
+DROP TABLE IF EXISTS "yyyCounts";
+CREATE TEMP TABLE "yyyCounts"(
+ status INTEGER,
+ DefLines INTEGER )
+ ;
+WITH a AS (SELECT status FROM DefExists)
+INSERT INTO "yyyCounts"(status)
+SELECT a.status
+FROM SegDefs
+INNER JOIN a
+ON a.status IS NOT NULL
+LIMIT 1;
+
+UPDATE "yyyCounts"
+SET DefLines =
+CASE WHEN status > 0 THEN
+ (SELECT COUNT() sqldef FROM SegDefs 
+  WHERE TerrID is 'yyy')
+ ELSE 0
+ END;
+
+
+--===================================================================;
+--CREATE TEMP TABLE "yyyDefs"(;
+CREATE TEMP TABLE "yyyDefs"(
+ newsql TEXT)
+;
+.mode csv
+.headers OFF
+.import '$pathbase/$rupath/Terryyy/sqldefs.csv' "yyyDefs"
+DROP TABLE IF EXISTS NewDefs;
+CREATE TABLE NewDefs(
+ newsql TEXT)
+ ;
+
+.import '$pathbase/$rupath/Terryyy/segdefs.csv' NewDefs
+INSERT INTO 
+
+.mode csv
+.headers OFF
+.separator |
+.output '$pathbase/$rupath/Special/Jumpto.sql'
+WITH a AS (SELECT DefLines dl FROM "yyyCounts")
+SELECT CASE WHEN a.dl > 0
+THEN 'select '** '
+END FROM "yyyCounts"
+INNER JOIN a
+ON a.dl > 0;
+
+.read '$pathbase/$rupath/Special/Jumpto.sql'
+.quit
+
+
+
+--################################################
+WITH a AS (SELECT DefLines dl FROM "yyyCounts"),
+ b AS (SELECT newsql newdef FROM "yyyDefs")
+INSERT INTO SegDefs(TerrID,dbName,sqldef)
+SELECT CASE WHEN a.dl > 0
+THEN '.quit'
+END FROM yyyCounts;
+
+WITH a AS (SELECT DefLines dl FROM "yyyCounts")
+SELECT CASE WHEN a.dl > 0
+THEN sqldef
+END sqldef FROM SegDefs
+INNER JOIN a
+ON a.dl > 0;
+-- * END AddSegDefs.sql;
+--========================================================
+all the code from EXECUTE SQL..
+WITH a AS (SELECT DefLines dl FROM "yyyCounts"),
+ b AS (SELECT newsql newdef FROM "yyyDefs")
+INSERT INTO SegDefs(TerrID,dbName,sqldef)
+SELECT CASE WHEN a.dl = 0
+'371','BayLakeMHP',b.newdef
+FROM "yyyDefs"
+UNION a,b;
+
+WITH a AS (SELECT DefLines dl FROM "yyyCounts"),
+ b AS (SELECT sqldef newdef FROM "yyyDefs")
+INSERT INTO SegDefs(TerrID,dbName,sqldef)
+SELECT CASE WHEN a.dl = 0
+'371','BayLakeMHP',b.newdef
+FROM "yyyDefs"
+UNION a,b;
+
+
+clear;
+
+--this code only selects records if yyyCounts.dl=0;
+WITH a AS (SELECT DefLines dl FROM "yyyCounts"),
+ b AS (SELECT newsql newdef FROM "yyyDefs")
+SELECT CASE WHEN a.dl = 0
+THEN '371' END terrid,
+CASE WHEN a.dl = 0 THEN 'BayLakeMHP' END dname,
+CASE WHEN a.dl = 0 THEN b.newdef END segsql
+FROM "yyyDefs"
+INNER JOIN a
+ON a.dl = 0
+INNER JOIN b
+ON b.newdef NOT NULL;
+
+WITH a AS (SELECT DefLines dl FROM "yyyCounts"),
+ b AS (SELECT newsql newdef FROM "yyyDefs")
+SELECT CASE WHEN a.dl = 0
+THEN '371' END,
+CASE WHEN a.dl = 0 THEN 'BayLakeMHP' END,
+CASE WHEN a.dl = 0 THEN b.newdef END
+FROM "yyyDefs"
+INNER JOIN a
+ON a.dl = 0
+INNER JOIN b
+ON b.newdef NOT NULL;
+

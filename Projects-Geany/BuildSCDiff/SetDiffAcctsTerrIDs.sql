@@ -1,0 +1,74 @@
+-- * SetDiffAcctsTerrIDs.psq.sql - Set TerrID fields in DiffAccts table.
+-- *	6/15/23.	wmk.
+-- *
+-- * Entry.  SCPA-Downloads/SCPADiff_05-28.db is differences database.
+-- *		 /DB-Dev/MultiMail.db is multiunit territory records.
+-- *		 /DB-Dev/PolyTerri.db is single unit territory records.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 5/27/22.	wmk.	original code.
+-- * 6/15/23.	wmk.	create DiffAccts table anew; DiffAccts table has 7
+-- * 			 fields; set TerrID in records where currently is '0';
+-- *;
+.open '$pathbase/RawData/SCPA/SCPA-Downloads/SCPADiff_05-28.db'
+attach '$pathbase'
+ || '/DB-Dev/MultiMail.db'
+ AS db3;
+attach '$pathbase'
+ || '/DB-Dev/PolyTerri.db'
+ AS db5;
+
+DROP TABLE IF EXISTS DiffAccts;
+CREATE TABLE DiffAccts(
+ PropID TEXT, 
+ HStead TEXT,
+ BoughtYear TEXT,
+ BoughtMonth TEXT,
+ BoughtDay TEXT,
+ TerrID TEXT DEFAULT '', 
+ DelFlag INTEGER DEFAULT 0)
+;
+
+-- * populate DiffAccts table DiffAcct entries.
+WITH a AS (SELECT "Account#" AS PropID, "LastSaleDate" AS WhenBought,
+ HomesteadExemption AS Hstead
+ from Diff0528)
+INSERT INTO DiffAccts
+SELECT PropID, HStead, SUBSTR(WhenBought,7,4), SUBSTR(WhenBought,1,2),
+ SUBSTR(WhenBought,4,2),0,''
+FROM a;
+ 
+-- * grab territory IDs from MultiMail.SplitProps;
+WITH a AS (SELECT DISTINCT OwningParcel AS Acct,
+CONGTERRID FROM db3.SplitProps
+ WHERE Acct
+ IN (SELECT "Account#" FROM Diff0528))
+UPDATE DiffAccts
+SET TerrID =
+CASE 
+WHEN PropID IN (SELECT Acct FROM a)
+ THEN (SELECT CongTerrID FROM a 
+  WHERE Acct IS PropID)
+ELSE TerrID
+END
+WHERE TerrID IS '0';
+--;
+-- * grab territory IDs from PolyTerri.TerrProps;
+WITH a AS (SELECT DISTINCT OwningParcel AS Acct,
+CONGTERRID FROM db5.TerrProps
+ WHERE Acct
+ IN (SELECT "Account#" FROM Diff0528))
+UPDATE DiffAccts
+SET terrid =
+CASE 
+WHEN PropID IN (SELECT Acct FROM a)
+ THEN (SELECT CongTerrID FROM a 
+  WHERE Acct IS PropID)
+ELSE TerrID
+END
+WHERE TerrID IS '0'
+;
+
+.quit
+-- * end SetDiffAcctsTerrIDs

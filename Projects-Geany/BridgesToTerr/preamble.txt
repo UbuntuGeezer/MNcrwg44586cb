@@ -1,0 +1,10 @@
+#begin preamble.LastChance.txt
+TID=$P1
+NAME_BASE=Terr
+Q_NAME=Q$NAME_BASE
+DB_SUFFX=.db
+RU_SUFFX=_RUBridge
+SC_SUFFX_SCBridge
+RU_DB=_RU.db
+SC_DB=_SC.db
+#end preamble.LastChance.txt

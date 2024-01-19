@@ -1,0 +1,4 @@
+# sedfixtidy1.txt - read SetRecType.sql into <db-nname>Tidy.sql file.
+# 3/2/23.	wmk.
+#1a-- * 3/2/23.     wmk.    (automated) Fix RecordDates to set *csvdate.
+/* set RecordDate and RecordType fields/ r SetRecType.sql

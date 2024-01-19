@@ -1,0 +1,76 @@
+###Method.
+-------
+The project SpecialSCdb contains the necessary support objects when setting
+up a special SC database. The database will be named after the principal
+street or area covered (e.g. TheEsplanade.db). The special database will
+reside in folder SCPA-Downloads/Special.
+
+The following steps should be performed in order when setting up a special
+SC database: (Method 1 - records extracted from VeniceNTerritory.db)
+Method 2 - records downloaded via SC Polygon)
+
+####Method 1:
+<pre><code>Extract records from DB-Dev/Terr<< congno >>.db:
+
+Create the query << special-db >>.sql in the /Special folder to extract the
+  correct records from DB-Dev/Terr<< congno >> folder (<< special-db >>.sql
+  is the template). The extracted records are in file << special-db >>.csv.
+  The query also contains the SQL to take the extracted records and
+  build the << special-db >>, PropList, TerrList, and Spec_SCBridge tables
+  from full SCPA download records. {SpecialSCdb}/Method1.sql is the
+  template for this type of query.
+</code></pre>
+####Method 2:
+<pre><code>Populate records using the download .csv file:
+
+  Create the query << special-db >>.sql in the /Special folder to take
+   downloaded records from the Special download << special-db >>.csv
+   and build the << special-db >>_SCPoly, PropTerr, TerrList, and Spec_SCBridge
+   tables from the map download data. {SpecialSCdb}/Method2.sql is the
+   template for this type of query.
+</code></pre>
+####Method 3:
+
+####Method 1 and 2:
+<pre><code>
+  In the SpecialSCdb Build>>SetBuildCommands edit "sed">./DoSed.sh and
+   set < special-db > mm dd [terrid] parameters
+  Build>sed to update the makefile
+
+  [Build>Make Dry-run] to verify accuracy
+
+  Build>>Make to generate the database < special-db >.db
+
+  use SQL db browser to verify
+  [Since territory will be set in all records, if not all are in
+   same territory, run SQL and clear the Special_SCBridge.CongTerrID
+   fields]
+
+  [this step is new as of 10/6/21.]
+  Implement SQL < special-db >Tidy.sql for territories which are almost
+  totally dependent upon the Special database (like
+  letter-writing territories with random addresses). This SQL will
+  "tidy up" the <special-db>.db, setting the RecordDate and 
+  RecordType fields in the Special_SCBridge table. This will only
+  leave the "DoNotCall" fields unset. They will need to be be set by
+  theMakeSpecials make for each territory.
+  Use EaglePointTidy.sql as a template, as this alleviates most
+   problems with polygon downloaded records.
+   After the < special-db >Tidy.sql has been coded, it should be
+   processed by (bashpath)AnySQLtoSQ and (bashpath)AnySQtoSH.
+   run through the AnySQLtoSH project to generate its .sq shell
+   statements, then it should be made into a .sh file for running
+   the actual fixes into the <special-db>.db.
+  The Make.AnyTidy makefile in the Special folder will perform
+   the above operations after running DoSedAnyTidy.sh.
+ 
+After the special database has been created in SCPA-Downloads/Special,
+each territory using records extracted from that db will have to be set
+up to process it. The processes and files for integrating the special db
+data with the "regular" territory SC data will all be defined in the
+territory's SCPA-Downloads/Terrxxx folder.
+
+[Territory Setup](file:///media/ubuntu/Windows/Users/Bill/Territories/Projects-Geany/SpecialSCdb/README.TerrSetup.html)
+
+     <p
+     create parent special database using SpecialSCdb build procedures (see above)</p>

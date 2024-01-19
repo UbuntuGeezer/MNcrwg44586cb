@@ -1,0 +1,51 @@
+-- * GetMHPTerrSegs.sql - module description.
+-- * 2/9/23.	wmk.
+-- *
+-- * Entry.	/DB-Dev/TerrIDData.SegDefs table has segment definitions for
+-- *		 territories (usually Special) whose databases have street
+-- *		 segments defined
+-- *
+-- * Exit.	/Terrxxx/segdefs.csv file constructed:
+-- *	line 1		<special-db>
+-- *	line 2		SELECT * FROM Spec_RUBridge
+-- *	line 3		WHERE (first line from SegDefs.sqldef for territory)
+-- *	lines 4..n	   OR (next n lines from SegDefs.sqldef fields for territory)
+-- *	line n+1	';' (terminates SELECT)
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 2/9/23.	wmk.	original code.
+-- *
+-- * Notes.
+-- *;
+.open '$pathbase/DB-Dev/TerrIDData.db'
+WITH a AS (SELECT TerrID TID, Segmented FROM Territory
+  WHERE TerrID IS '<terrid>')
+SELECT CASE WHEN a.Segmented = 1
+ THEN (SELECT DISTINCT dbName FROM SegDefs
+        WHERE TerrID IS '<terrid>')
+END
+FROM SegDefs
+INNER JOIN a ON
+ a.TID IS TerrID
+WHERE TerrID IS '<terrid>';
+--=======================================================
+-- TerIDData.db is main;
+-- get list of databases this territory uses...;
+CREATE TEMP TABLE IF NOT EXISTS ScratchDBs(DBName TEXT);
+WITH a AS (SELECT TerrID TID, Segmented FROM Territory
+  WHERE TerrID IS '251')
+INSERT INTO ScratchDBs
+SELECT CASE WHEN a.Segmented = 1
+ THEN (SELECT DISTINCT dbName FROM SegDefs
+        WHERE TerrID IS '251')
+END DatabaseName
+FROM SegDefs
+INNER JOIN a ON
+ a.TID IS TerrID
+WHERE TerrID IS '251';
+DELETE FROM ScratchDBs
+ WHERE rowid NOT IN (SELECT MAX(rowid) FROM ScratchDBs
+  Group BY DBName);
+SELECT * FROM ScratchDBs;
+-- * END GetMHPTerrSegs.sql;

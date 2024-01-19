@@ -1,0 +1,149 @@
+&apos;// CopyBizToNewWork.bas
+&apos;//---------------------------------------------------------------
+&apos;// CopyBizToNewWork - Copy selected sheet to new workbook.
+&apos;//		12/23/21.	wmk.	21:19
+&apos;//---------------------------------------------------------------
+
+public sub CopyBizToNewWork(psDocName As String)
+
+&apos;//	Usage.	macro call or
+&apos;//			call CopyBizToNewWork(sDocName)
+&apos;//
+&apos;//		sDocName = name of new workbook
+&apos;//
+&apos;// Entry.	user has sheet selected that will be copied to new workbook
+&apos;//
+&apos;//	Exit.	selected sheet copied into new workbook
+&apos;//			goNewWorkdoc = document pointer
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	10/14/20.	wmk.	original code.
+&apos;// 7/10/21.	wmk.	record new workbook selection.
+&apos;// 7/12/21.	wmk.	add inline code to save with sheet name, add
+&apos;//						inlilne code to save as .xlsx and export to pdf.
+&apos;// 7/14/21.	wmk.	save path corrected to add in missing TerrData;
+&apos;//				 remove superfluous &quot;.&quot; when saving to xlsx and pdf.
+&apos;// 12/23/21.	wmk.	modified to use csTerrBase, csTerrDataPath module-wide
+&apos;//				 variables for multihost support.
+&apos;//
+&apos;//	Notes.
+&apos;//
+
+&apos;//	constants.
+&apos;const csTerrBase = &quot;defined above&quot;&quot;
+&apos;const csTerrDataPath = &quot;defined above&quot;
+&apos;const csBTerrDataPath = &quot;defined above&quot;
+
+&apos;//	local variables.
+rem ----------------------------------------------------------------------
+rem define variables
+dim document   as object
+dim dispatcher as object
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dim args1(2) as new com.sun.star.beans.PropertyValue
+args1(0).Name = &quot;DocName&quot;
+args1(0).Value = &quot;&quot;
+args1(1).Name = &quot;Index&quot;
+args1(1).Value = 32767
+args1(2).Name = &quot;Copy&quot;
+args1(2).Value = true
+
+dispatcher.executeDispatch(document, &quot;.uno:Move&quot;, &quot;&quot;, 0, args1())
+dim oDoc	As Object
+dim oSel	As Object
+oDoc = ThisComponent.CurrentController.Frame
+goNewWorkDoc = oDoc
+
+&apos;// include SaveAs code here.
+&apos;// now focus is on Untitled x.ods new workbook; save it
+&apos;// there is no URL for it, so will have to generate a SaveAs
+&apos;// uno request...
+dim sPubTerrURL		As String
+dim sPubTargPath	As String
+dim sPubTerrBase	As String
+dim sPubTargURL		As String
+dim oPubTerrDoc		As Object
+dim sTerrID			As String
+dim sBasePath		As String
+	sBasePath = &quot;/Terr&quot;
+	sTerrID = mid(psDocName,5,3)
+	oPubTerrDoc = ThisComponent.CurrentController.Frame
+	sPubTerrBase = &quot;_PubTerr&quot;
+    sPubTargPath = csBTerrDataPath &amp; sBasePath + sTerrID _ 
+		+ sBasePath + sTerrID + sPubTerrBase + &quot;.ods&quot;
+	sPubTargURL = convertToURL(sPubTargPath)
+	
+	&apos;// inline SaveAs to save Terrxxx_PubTerr.ods
+
+rem ----------------------------------------------------------------------
+rem get access to the document
+&apos;dim document   as object
+&apos;dim dispatcher as object
+
+&apos;document   = ThisComponent.CurrentController.Frame
+&apos;dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dim args2(1) as new com.sun.star.beans.PropertyValue
+args2(0).Name = &quot;URL&quot;
+&apos;args1(0).Value = &quot;file:///media/ubuntu/Windows/Users/Bill/Documents/Cong-Files/Territories
+&apos;                    /BTerrData/Terrxxx/TerrData/Terrxxx_PubTerr.ods&quot;
+args2(0).Value = sPubTargURL
+args2(1).Name = &quot;FilterName&quot;
+args2(1).Value = &quot;calc8&quot;
+
+dispatcher.executeDispatch(oPubTerrDoc, &quot;.uno:SaveAs&quot;, &quot;&quot;, 0, args2())
+oPubTerrDoc = ThisComponent.CurrentController.Frame
+
+&apos;// now save it as .xlsx...
+dim sXlsxURL	As String
+	sXlsxURL = left(sPubTargURL, len(sPubTargURL)-3) + &quot;xlsx&quot;
+dim args3(1) as new com.sun.star.beans.PropertyValue
+args3(0).Name = &quot;URL&quot;
+&apos;// args2(0).Value = &quot;file:///media/ubuntu/Windows/Users/Bill/Territories&quot; _
+&apos;//   || &quot;/BTerrData/Terr241/Terr241_PubTerr.xlsx&quot;
+args3(0).Value = sXlsxURL
+args3(1).Name = &quot;FilterName&quot;
+args3(1).Value = &quot;Calc MS Excel 2007 XML&quot;
+
+dispatcher.executeDispatch(oPubTerrDoc, &quot;.uno:SaveAs&quot;, &quot;&quot;, 0, args3())
+
+&apos;// now export it as .pdf...
+
+dim sPDFurl		As String
+	sPDFurl = left(sPubTargURL,len(sPubTargURL)-3) + &quot;pdf&quot;
+dim args4(2) as new com.sun.star.beans.PropertyValue
+args4(0).Name = &quot;URL&quot;
+args4(0).Value = sPDFurl
+args4(1).Name = &quot;FilterName&quot;
+args4(1).Value = &quot;calc_pdf_Export&quot;
+args4(2).Name = &quot;FilterData&quot;
+args4(2).Value = Array(Array(&quot;UseLosslessCompression&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;Quality&quot;,0,90,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;ReduceImageResolution&quot;,0,true,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;MaxImageResolution&quot;,0,300,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;UseTaggedPDF&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;SelectPdfVersion&quot;,0,0,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;ExportNotes&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;ViewPDFAfterExport&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;ExportBookmarks&quot;,0,true,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;SinglePageSheets&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;OpenBookmarkLevels&quot;,0,-1,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;UseTransitionEffects&quot;,0,true,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;IsSkipEmptyPages&quot;,0,true,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;ExportPlaceholders&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;IsAddStream&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;ExportFormFields&quot;,0,true,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;FormsType&quot;,0,0,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;AllowDuplicateFieldNames&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;HideViewerToolbar&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;HideViewerMenubar&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;HideViewerWindowControls&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;ResizeWindowToInitialPage&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;CenterWindow&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;OpenInFullScreenMode&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;DisplayPDFDocumentTitle&quot;,0,true,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;InitialView&quot;,0,0,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;Magnification&quot;,0,0,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;Zoom&quot;,0,100,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;PageLayout&quot;,0,0,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;FirstPageOnLeft&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;InitialPage&quot;,0,1,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;Printing&quot;,0,2,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;Changes&quot;,0,4,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;EnableCopyingOfContent&quot;,0,true,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;EnableTextAccessForAccessibilityTools&quot;,0,true,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;ExportLinksRelativeFsys&quot;,0,true,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;PDFViewSelection&quot;,0,0,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;ConvertOOoTargetToPDFTarget&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;ExportBookmarksToPDFDestination&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;SignPDF&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;_OkButtonString&quot;,0,&quot;&quot;,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;Watermark&quot;,0,&quot;&quot;,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;EncryptFile&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;PreparedPasswords&quot;,0,,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;RestrictPermissions&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;PreparedPermissionPassword&quot;,0,Array(),com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;Selection&quot;,0,,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;SignatureLocation&quot;,0,&quot;&quot;,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;SignatureReason&quot;,0,&quot;&quot;,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;SignatureContactInfo&quot;,0,&quot;&quot;,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;SignaturePassword&quot;,0,&quot;&quot;,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;SignatureCertificate&quot;,0,,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;SignatureTSA&quot;,0,&quot;&quot;,com.sun.star.beans.PropertyState.DIRECT_VALUE),Array(&quot;UseReferenceXObject&quot;,0,false,com.sun.star.beans.PropertyState.DIRECT_VALUE))
+
+dispatcher.executeDispatch(oPubTerrDoc, &quot;.uno:ExportToPDF&quot;, &quot;&quot;, 0, args4())
+
+&apos;dim args5
+&apos;dispatcher.executeDispatch(oPubTerrDoc, &quot;.uno:Close&quot;, &quot;&quot;, 0, args5())
+
+&apos;oPubTerrDoc = ThisComponent.CurrentController.Frame
+oPubTerrDoc.Close(1)
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;CopyBizToNewWork - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end CopyBizToNewWork	11/23/21.	21:19

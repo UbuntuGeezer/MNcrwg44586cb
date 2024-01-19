@@ -1,0 +1,19 @@
+rawpath = $(pathbase)/RawData
+#   5/4/22. wmk.	(automated) path corrections.
+anothere line
+jbase = $(pathbase)/
+diffpath = $(folderbase)/Procs-Dev
+$(rawpath)/somefile : $(jbase)anotherfile
+$(diffpath)/somefile $(anypath)/diffile
+
+ifndef folderbase
+ifeq ($(USER),ubuntu)
+ folderbase = /media/ubuntu/Windows/Users/Bill
+else
+ folderbase = $(HOME)
+endif
+endif	# folderbase
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif	# pathbase

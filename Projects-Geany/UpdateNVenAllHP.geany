@@ -1,0 +1,103 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=UpdateNVenAll
+base_path=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/UpdateNVenAll/
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=33
+FILE_NAME_0=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2F.critical;0;4
+FILE_NAME_1=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2F.devDBs;0;4
+FILE_NAME_2=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FBugFixes.sql;0;4
+FILE_NAME_3=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FBuildDiffAccts0619.sql;0;4
+FILE_NAME_4=205;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FBuildDiffAcctsTbl.psq;0;4
+FILE_NAME_5=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FBuildDiffAcctsTbl.sq;0;4
+FILE_NAME_6=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FBuildDiffAcctsTbl.sql;0;4
+FILE_NAME_7=1701;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FCreateNewSCPA.psq;0;4
+FILE_NAME_8=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FCreateNewSCPA.sq;0;4
+FILE_NAME_9=1918;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FCreateNewSCPA.sql;0;4
+FILE_NAME_10=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FDiffqueries.sql;0;4
+FILE_NAME_11=2877;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FDiffsToNVenAll.psq;0;4
+FILE_NAME_12=1028;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FDiffsToNVenAll%28save%29.sh;0;4
+FILE_NAME_13=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FDiffsToNVenAll.sq;0;4
+FILE_NAME_14=2662;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FDiffsToNVenAll.sql;0;4
+FILE_NAME_15=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FGetDiffTerrIDs.sql;0;4
+FILE_NAME_16=785;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FMakeCreateNewSCPA;0;4
+FILE_NAME_17=1225;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FMakeCreateNewSCPA.tmp;0;4
+FILE_NAME_18=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FMakeUpdateNVenAll;0;4
+FILE_NAME_19=71;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FMakeUpdateNVenAll.tmp;0;4
+FILE_NAME_20=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FMiscQueries.sql;0;4
+FILE_NAME_21=5318;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FSCNewVsNVenall.psq;0;4
+FILE_NAME_22=0;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FSCNewVsNVenall.sh;0;4
+FILE_NAME_23=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FSCNewVsNVenall.sq;0;4
+FILE_NAME_24=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FSCNewVsNVenall.sql;0;4
+FILE_NAME_25=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FTIDList.txt;0;4
+FILE_NAME_26=0;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FXDiffsToNVenAll.sh;0;4
+FILE_NAME_27=1162;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FREADME;0;4
+FILE_NAME_28=1314;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FCreateNewSCPA.sh;0;4
+FILE_NAME_29=241;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2Fpreamble.CreateNewSCPA.sh;0;4
+FILE_NAME_30=2344;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FDoSed.sh;0;4
+FILE_NAME_31=2494;Markdown;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FREADME.md;0;4
+FILE_NAME_32=859;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FMakeDiffsToNVenAll.tmp;0;4
+FILE_NAME_33=0;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2Fpreamble.DiffsToNVenall.sh;0;4
+FILE_NAME_34=1562;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FMvSCDwnld.sh;0;4
+FILE_NAME_35=1743;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateNVenAll%2FMakeDiffsToNVenAll;0;4
+
+[VTE]
+last_dir=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Procs-Dev
+
+[build-menu]
+NF_00_LB=_Make
+NF_00_CM=make -f MakeUpdateNVenAll
+NF_00_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/UpdateNVenAll
+EX_01_LB=Make Dry Run
+EX_01_CM=make --dry-run -f MakeUpdateNVenAll
+EX_01_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/UpdateNVenAll
+SQLFT_00_LB=GenSQLTemp
+SQLFT_00_CM=sed '{s/mm-dd/02-27/g;s/mmdd/0227/g}' SCNewVsNVenall.sql >SQLTemp.sql
+SQLFT_00_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/UpdateNVenAll
+filetypes=SQL;Sh;
+SQLFT_01_LB=CreateDiffs
+SQLFT_01_CM=sqlite3  < SQLTemp.sql
+SQLFT_01_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/UpdateNVenAll
+SQLFT_02_LB=UpdateNVenAll
+SQLFT_02_CM=sed '{s/m2-d2/02-28/g;s/mmdd/0227/g}' DiffsToNVenAll.sql  > SQLTemp.sql | sqlite3 < SQLTemp.sql
+SQLFT_02_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/UpdateNVenAll
+ShFT_00_LB=sed
+ShFT_00_CM=sed '{s/m2/02/g;s/d2/27/g;s/mmdd/0227/g}' DiffsToNVenAll.sh > XDiffsToNVenAll.sh
+ShFT_00_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/UpdateNVenAll
+ShFT_01_LB=
+ShFT_01_CM=
+ShFT_01_WD=
+NF_01_LB=Make Custom _Target...
+NF_01_CM=make -f  MakeCreateNewSCPA
+NF_01_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/UpdateNVenAll
+NF_02_LB=Make _Object
+NF_02_CM=make %e.o
+NF_02_WD=
+NF_03_LB=sed
+NF_03_CM=./DoSed.sh      02 05  03 19
+NF_03_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/UpdateNVenAll

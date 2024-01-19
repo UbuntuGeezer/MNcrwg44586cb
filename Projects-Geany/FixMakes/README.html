@@ -1,0 +1,73 @@
+<p>README.md - FixMakes project documentation.<br>
+5/4/22. wmk.</p>
+
+<h2>Modification History.</h2>
+
+<pre><code>
+5/4/22.    wmk.   original document.
+</code></pre>
+
+<h2>Document Sections.</h2>
+
+<pre><code>
+Project Description - overall project description.
+Setup - step-by-step build instructions.
+</code></pre>
+
+<h2>Project Description.</h2>
+
+<p>FixMakes is a "reliability" mod project that goes through a folder's
+<em>Make</em> files and tidies up <em>path</em> variable definitions. The single build
+uses <em>sed</em>, <em>awk</em> and <em>cat</em> to modify the <em>Make</em> file in the specified
+folder (typically a Geany project folder). </p>
+
+<p>The project will also be used when creating new congregation Territory
+systems. There are over 1,000 makefiles within a Territory system, many
+of which have path dependencies on the <em>folderbase</em>, <em>basepath</em> and
+<em>congterr</em> environment variables. Whenever these system-wide environment
+variables are changed, the downstream makefiles and shell files will be
+affected. FixMakes, especially the FixAllMakes shell, facilitates rapidly
+editing all affected makefiles.</p>
+
+<p>The <em>Make</em> file header is modified with the automated revision date. The
+makefile body is modified to ensure that the vars <em>folderbase</em>, <em>pathbase</em>,
+and <em>AWK</em> are defined for the makefile. All of the vars of the pattern
+"..path" are modified to ensure that they have no trailing '/'. All path
+references "\$(folderbase)/Territories" are changed to reference <em>pathbase</em>
+in place of "\$(folderbase)/Territories". All path references (..path) are
+guaranteed to be followed by '/'.</p>
+
+<p><strong>sed operations</strong><br>
+The header of the <em>Make</em> file has a new line inserted from the file
+<em>sedfixMake1.txt</em> file. This contains the automated modification date. To
+avoid modifying the same file twice (and ruining the previous mods) the
+file header is checked for the automated modification date being present.</p>
+
+<p>All makefile path var definitions  of the form "..path =" that are ended
+with '/' are modified to drop the trailing '/'. Then all path vars that
+are referenced with "..path)" have a '/' appended to the reference.
+This edits the makefile definitions and references of ..path vars to
+be consistent.</p>
+
+<p>In addition, at line 2 of the makefile a "date modified" line is added
+for future reference.</p>
+
+<p>After the first <em>awk</em> operation, <em>sed</em> is used to remove the "ifndef"
+and "ifeq" conditionals in the last 2 lines of the extraction file.</p>
+
+<p><strong>awk operations</strong><br>
+The <em>awk</em> (mawk) utility is used to break the <em>Make</em> file into two segments
+for rebuilding into the final makefile. The first segment contains all of 
+the lines up to the beginning of the "if" conditional defining <em>folderbase</em>.
+(It assumes that a <em>folderbase</em> definition is present). The second segment
+contains all of the lines from the .PHONY directive to the end of the file.
+(It depends upon ".PHONY" being present in the <em>Make</em> file). If the .PHONY
+directive is not in the file when FixMake begins, it inserts it so that the
+utility may continue.</p>
+
+<p><strong>cat operations</strong><br>
+After the <em>Make</em> file has been split and modified by <em>sed</em> and <em>awk</em>, the
+pieces are rejoined using the <em>cat</em> utility. The original file is preserved
+as <em>makefile</em>.back with the modified file assuming the name <em>makefile</em>.</p>
+
+<h2>Setup.</h2>

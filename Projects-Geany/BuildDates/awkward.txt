@@ -1,0 +1,1 @@
+{print (substr($8,9,7), substr($8,9,20), $6)}

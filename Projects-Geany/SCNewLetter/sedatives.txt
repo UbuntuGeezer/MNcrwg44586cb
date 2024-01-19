@@ -1,0 +1,2 @@
+s/yyy/220/g
+s?$folderbase?/home/vncwmk3?g

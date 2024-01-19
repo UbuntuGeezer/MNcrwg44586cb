@@ -1,0 +1,7 @@
+s?VeniceNTerritory?Terr86777?g
+s?NVenAll?Terr86777?g
+s?NVENALL?Terr86777?g
+s?<special-db>?RidgewoodMHP?g
+/SELECT DISTINCT/,/DETACH db29/ d
+/update Terr/ r RebuildTerrList.sql
+2a-- * 2/24/23.   wmk.    (automated) replace TerrList update with rebuild.

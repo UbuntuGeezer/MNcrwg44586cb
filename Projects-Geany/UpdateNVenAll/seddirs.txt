@@ -1,0 +1,8 @@
+s/mm-dd/03-19/g
+s/mmdd/0319/g
+s/m1d1/0205/g
+s?m1?02?g
+s?d1?05?g
+s?mm?03?g
+s?dd?19?g
+s/YYYY-MM-DD/2021-03-19/g

@@ -1,0 +1,64 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=RUNewLetter
+base_path=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/RUNewLetter/
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=2
+FILE_NAME_0=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FRUNewLetter%2FAddZips.sql;0;4
+FILE_NAME_1=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FRUNewLetter%2FDoSed.sh;0;4
+FILE_NAME_2=2600;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FRUNewLetter%2FInitLetter.sh;0;4
+FILE_NAME_3=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FRUNewLetter%2Fjunk.txt;0;4
+FILE_NAME_4=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FRUNewLetter%2FLETTER;0;4
+FILE_NAME_5=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FRUNewLetter%2FMakeAddZips;0;4
+FILE_NAME_6=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FRUNewLetter%2FMakeRUNewLetter;0;4
+FILE_NAME_7=2010;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FRUNewLetter%2FMakeRUNewLetter.tmp;0;4
+FILE_NAME_8=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FRUNewLetter%2FMakeRUNewLetter.tmp.back;0;4
+FILE_NAME_9=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FRUNewLetter%2FNewLetter.csv;0;4
+FILE_NAME_10=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FRUNewLetter%2FNewLetter.psq;0;4
+FILE_NAME_11=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FRUNewLetter%2FNewLetter.sql;0;4
+FILE_NAME_12=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FRUNewLetter%2FREADME;0;4
+FILE_NAME_13=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FRUNewLetter%2Fsedative.txt;0;4
+FILE_NAME_14=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FRUNewLetter%2Fsedatives.txt;0;4
+FILE_NAME_15=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FRUNewLetter%2FSPECIAL;0;4
+
+[VTE]
+last_dir=/home
+
+[build-menu]
+NF_03_LB=sed
+NF_03_CM=./DoSed.sh  632
+NF_03_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/RUNewLetter
+NF_00_LB=_Make
+NF_00_CM=make -f MakeRUNewLetter
+NF_00_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/RUNewLetter
+EX_00_LB=_Execute
+EX_00_CM=./%e
+EX_00_WD=
+EX_01_LB=Make Dry Run
+EX_01_CM=make --dry-run -f MakeRUNewLetter
+EX_01_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/RUNewLetter

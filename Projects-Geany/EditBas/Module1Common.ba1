@@ -1,0 +1,36 @@
+&amp;amp;apos;// Module1Common.bas
+&apos;//	3/8/22.	wmk.
+&apos;// Module-wide vars and constants.
+&apos;// See SearchToUntitled, SetCurrSheet (future), GetCurrSheet(future),
+&apos;//  SetPrevSheet (future), GetPrevSheet (future).
+&apos;// Modification History.
+&apos;// ---------------------
+&apos;// ??			wmk.	original code.
+&apos;// 7/10/21.	wmk.	goTerrODSdoc, goNewWorkdoc added.
+&apos;// 12/23/21.	wmk.	csTerrBase, csTerrDataPath added for multihost
+&apos;//				 support when base path changes.
+&apos;// 3/8/22.		wmk.	csCounty and csState constants added.
+
+&apos;//	constants.
+&apos;// Note. for county/state support set csCounty = &quot;/<two-char county>&quot;
+&apos;//                                set csState = &quot;/<two-char state>&quot;
+&apos;// if state is FL and county is SC, set both to empty strings.
+&apos;//
+&apos;const csTerrBase = &quot;/media/ubuntu/Windows/Users/Bill/Territories/TerrData/&quot;
+const csTerrBase = &quot;/home/vncwmk3&quot;
+const csCounty = &quot;&quot;
+const csState = &quot;&quot;
+const csTerrDataPath = &quot;/home/vncwmk3/Territories&quot;&amp;csCounty&amp;csState&amp;&quot;/TerrData&quot;
+const csBTerrDataPath = &quot;/home/vncwmk3/Territories&quot;&amp;csCounty&amp;csState&amp;&quot;/BTerrData&quot;
+
+&apos;// variables.
+
+public gbKillProcess	As Boolean	&apos;// kill process flag
+public gsNewSheet	As String		&apos;// name of new sheet
+public gsCurrSheet	As String		&apos;// name of current sheet (future)
+public gsPrevSheet	As String		&apos;// name of last sheet (future)
+public gsPubTerrSheet	As String	&apos;// name of _PubTerr sheet
+public gsSearchSheet	As String	&apos;// name of _Search sheet
+public goCurrDocument	As Object	&apos;// current Document prior to SaveAs
+public goTerrODSdoc		As Object	&apos;// territory ODS workbook document
+public goNewWorkdoc		As Object	&apos;// new workbook document (CopyToNewWork)

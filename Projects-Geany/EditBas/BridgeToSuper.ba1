@@ -1,0 +1,251 @@
+&apos;// BridgeToSuper.bas - Bridge sheet to Super territory sheets.
+&apos;//---------------------------------------------------------------
+&apos;// BridgeToSuper- Bridge sheet to Super territory sheets.
+&apos;//		12/23/21.	wmk.	21:09
+&apos;//---------------------------------------------------------------
+
+public sub BridgeToSuper()
+
+&apos;//	Usage.	macro call or
+&apos;//			call BridgeToSuper()
+&apos;//
+&apos;// Entry.	Bridge sheet exists in workbook for territory
+&apos;//
+&apos;//	Exit.	gsNewSheet = new Search sheet name	
+&apos;//
+&apos;// Calls.	CopyToEnd, UnProtectSheet, BridgeToEdit2, RenameSheet,
+&apos;//			EditToSearch
+&apos;//&apos;// Search sheet, dropping the nn suffix.
+&apos;//			fsSetSrchSheetName, SelectSrchSheetArea,
+&apos;//			WrapLong, HltAddrBlocks4, PickACell, FreezeView,
+&apos;//			SuperToUntitled
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	3/14/21.	wmk.	original code
+&apos;//	3/16/21.	wmk.	new Search sheet name stored in public
+&apos;//						var gsNewSheet; SuperToUntitled call added.
+&apos;//	3/17/21.	wmk.	fsGetSrchSheetName, MoveToSheet calls added
+&apos;//						code added to move to Bridge sheet if not 
+&apos;//						already there.
+&apos;//	7/12/21.	wmk.	mods to push code ahead to closing QTerrxxx.ods
+&apos;//						and copy Searchnn sheet to Untitled workbook;
+&apos;//						eliminate non-error msgbox&apos;s to avoid Frame
+&apos;//						management issues; sheet protection eliminated
+&apos;//						to avoid Frame management issues.
+&apos;//	7/13/21.	wmk.	documentation brought up-to-date;_PubTerr.ods 
+&apos;//				 correction; oDoc double-defined; bug fixes to
+&apos;//				 untitled through final save; save as .xlsx
+&apos;// 10/4/21.	wmk.	error message &apos;recogonized&apos; corrected.
+&apos;// 12/23/21.	wmk.	modified to use module-wide constants csTerrBase, csTerrDataPath for
+&apos;//				 multihost support.
+&apos;//
+&apos;//	Notes. Executes the following sequence:
+&apos;// move to Bridge sheet
+&apos;// copy sheet to end
+&apos;// BridgeToEdit()
+&apos;// copy sheet to end
+&apos;// EditToSearch3
+&apos;// rename sheet &quot;Terrxxx_Search&quot;
+&apos;// moveto sheet TerrxxxPub_Terr
+&apos;// copy to &quot;untitled1&quot;
+&apos;// move back to sheet &quot;TerrxxxSearch&quot;
+&apos;// copy to &quot;untitled2&quot;
+
+
+&apos;//	constants.
+&apos;const csTerrBase = &quot;set above&quot;
+
+&apos;//	local variables.
+dim oDoc		As Object		&apos;// current component
+dim oSel		As Object		&apos;// current selection
+dim oSheet		As Object		&apos;// sheet selected
+dim sCurrName	As String		&apos;// current sheet name
+dim bIsBridge	As String		&apos;// sheet is Bridge type
+dim oRange		As Object		&apos;// RangeSelection 
+dim iSheetIx	As Integer		&apos;// current sheet index
+dim iBridgePos	As Integer		&apos;// &quot;Bridge&quot; string index
+dim sNewName	As String		&apos;// new sheet name
+dim sTerrID		As String		&apos;// territory ID
+dim sBridgeName	As String		&apos;// Bridge sheet name
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	sCurrName = oSheet.getName()
+	
+	if InStr(sCurrName, &quot;Bridge&quot;) = 0 then
+		&apos;// move to Bridge sheet.
+		sTerrId = fsGetTerrID()
+		sBridgeName = &quot;Terr&quot; + sTerrID + &quot;_Bridge&quot;
+		MoveToSheet(sBridgeName)
+		oSel = oDoc.getCurrentSelection()
+		oRange = oSel.RangeAddress
+		iSheetIx = oRange.Sheet
+		oSheet = oDoc.Sheets(iSheetIx)
+	endif 		&apos;// end not in Bridge sheet
+
+	sTerrID = fsGetTerrID()	
+	&apos;// verify sheet type by sheet name
+	sCurrName = oSheet.getName()
+	bIsBridge = InStr(sCurrName, &quot;Bridge&quot;) &gt; 0
+	
+	if bIsBridge then
+&apos;		msgbox(&quot;Sheet is type Bridge... proceeding&quot;)
+	else
+		msgbox(&quot;Sheet not recognized as Bridge..&quot;)
+		GoTo ErrorHandler
+	endif
+	
+if not true then
+  GoTo NormalExit
+endif
+
+	&apos;// copy sheet to end and run BridgeToEdit
+	CopyToEnd()
+	UnprotectSheet()
+	BridgeToEdit2()
+
+	&apos;// rename &quot;Bridge&quot; portion to &quot;Edit&quot; with random number to avoid conflicts.
+	iBridgePos = InStr(sCurrName,&quot;Bridge&quot;)
+	sNewName = left(sCurrName,iBridgePos-1) + &quot;Edit&quot; + INT(100*RND())
+	RenameSheet(sNewName)
+
+	&apos;// copy Edit sheet to end and convert to Search sheet.
+&apos;	ProtectSheet()
+	CopyToEnd()
+&apos;	UnprotectSheet()
+	EditToSearch3()
+	&apos;// focus on Terrxxx_Searchnn sheet
+dim iEditPos As Integer		&apos;// &quot;Edit&quot; position
+	iEditPos = Instr(sNewName,&quot;Edit&quot;)
+	sNewName = left(sNewName, iEditPos-1) + &quot;Search&quot; + INT(100*RND())
+	RenameSheet(sNewName)
+	gsNewSheet = sNewName	&apos;// preserve name
+	fsSetSrchSheetName(sNewName)
+	
+if not true then
+  msgbox(&quot;gsNewSheet = &apos;&quot; + gsNewSheet + &quot;&apos;&quot;)
+endif
+
+	SelectSrchSheetArea()
+	WrapLong()
+	HltAddrBlocks4()
+	
+	&apos;// New code. 7/12/21.
+	PickACell				&apos;// move to $A$6
+	FreezeView				&apos;// freeze rows/columns at $A$6
+
+&apos;	oSuperSheetDoc.Store	&apos;// save work to this point
+dim oSuperSheetDoc	As Object
+	oSuperSheetDoc = ThisComponent.CurrentController.Frame
+	&apos;// use uno:Save to save again..
+dim dispatcher	As Object
+dim Array()
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+dispatcher.executeDispatch(oSuperSheetDoc, &quot;.uno:Save&quot;, &quot;&quot;, 0, Array())
+	
+	SuperToUntitled			&apos;// copy sheet to untitled sheets
+
+	&apos;// now have Terrxxx_Searchnn sheet in QTerrxxx.ods
+	oSuperSheetDoc.close(1)
+
+	&apos;// now ready to append Untitled to _PubTerr to produce SuperTerr.
+dim oDocUntitled	As Object
+	oDocUntitled = ThisComponent.CurrentController.Frame
+
+dim sBaseName		As String
+dim sBasePath		As String
+dim sTargPath		As String
+dim sFullTargPath	As String
+dim sTargetURL		As String
+dim oTestDoc2		As Object
+&apos;	sTerrID = {set above}	
+	sBaseName = &quot;QTerr&quot;
+	sBasePath = &quot;/Terr&quot;
+	sTargPath = sBasePath &amp; sTerrID
+
+	&apos;// open Terrxxx_PubTerr.ods - publisher territory
+	sFullTargPath =  csTerrDataPath  &amp; sTargPath _ 
+		&amp; sTargPath &amp; &quot;_PubTerr.ods&quot;
+		
+dim Args1(1)	As new com.sun.star.beans.PropertyValue 
+	sTargetURL = convertToURL(sFullTargPath)
+	Args1(1).name = &quot;FilterName&quot;
+	Args1(1).Value = &quot;calc8&quot;
+	Args1(0).name = &quot;Hidden&quot;
+	Args1(0).value = False
+	oTestDoc2 = StarDesktop.loadComponentFromURL(sTargetURL, &quot;_blank&quot;, 0, Args1())
+
+
+	
+	&apos;// use uno:Move to copy Untitled.Searchnn sheet to end of _PubTerr.
+&apos;dim document	As Object
+&apos;dim dispatcher	As Object
+rem ----------------------------------------------------------------------
+rem get access to the document
+&apos;document   = ThisComponent.CurrentController.Frame
+&apos;dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dim args2(2) as new com.sun.star.beans.PropertyValue
+args2(0).Name = &quot;DocName&quot;
+args2(0).Value = &quot;Terr&quot; &amp; sTerrID &amp; &quot;_PubTerr&quot;
+args2(1).Name = &quot;Index&quot;
+args2(1).Value = 32767
+args2(2).Name = &quot;Copy&quot;
+args2(2).Value = true
+
+dispatcher.executeDispatch(oDocUntitled, &quot;.uno:Move&quot;, &quot;&quot;, 0, args2())
+&apos;dim oDoc	As Object
+&apos;dim oSel	As Object
+
+
+oDoc = ThisComponent.CurrentController.Frame
+oDocUntitled.Close(1)	
+
+	&apos;// use uno:Save As to save resultant _PubTerr as _SuperTerr.
+dim sSuperTargURL	As String
+dim sSuperTargPath	As String
+	sSuperTargPath =  csTerrDataPath &amp; sTargPath _ 
+		&amp; sBasePath &amp; sTerrID &amp; &quot;_SuperTerr.ods&quot;
+	sSuperTargURL = convertToURL(sSuperTargPath)
+
+dim args3(1) as new com.sun.star.beans.PropertyValue
+args3(0).Name = &quot;URL&quot;
+&apos;args1(0).Value = &quot;file:///media/ubuntu/Windows/Users/Bill/Documents/Cong-Files/Territories
+&apos;                    /TerrData/Terrxxx/TerrData/Terrxxx_PubTerr.ods&quot;
+args3(0).Value = sSuperTargURL
+args3(1).Name = &quot;FilterName&quot;
+args3(1).Value = &quot;calc8&quot;
+
+dispatcher.executeDispatch(oDoc, &quot;.uno:SaveAs&quot;, &quot;&quot;, 0, args3())
+
+&apos;// now repeat Save As to .xlsx.
+sSuperTargURL = left(sSuperTargURL, len(sSuperTargURL)-3) &amp; &quot;xlsx&quot;
+dim args4(1) as new com.sun.star.beans.PropertyValue
+args4(0).Name = &quot;URL&quot;
+&apos;args1(0).Value = &quot;file:///media/ubuntu/Windows/Users/Bill/Documents/Cong-Files/Territories
+&apos;                    /TerrData/Terrxxx/TerrData/Terrxxx_PubTerr.ods&quot;
+args4(0).Value = sSuperTargURL
+args4(1).Name = &quot;FilterName&quot;
+args4(1).Value = &quot;Calc MS Excel 2007 XML&quot;
+
+dispatcher.executeDispatch(oDoc, &quot;.uno:SaveAs&quot;, &quot;&quot;, 0, args4())
+
+oDoc.Close(1)
+
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	ON ERROR GOTO
+	msgbox(&quot;In BridgeToSuper - unprocessed error.&quot;)
+	GOTO NormalExit
+	
+end sub		&apos;// BridgeToSuper	&apos;// 12/23/21.	21:09

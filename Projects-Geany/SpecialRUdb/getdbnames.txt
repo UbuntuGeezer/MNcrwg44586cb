@@ -1,0 +1,2 @@
+/dbname.=/{print "/.ONESHELL/ a"$0}
+/dbname..=/{print "/.ONESHELL/ a"$0}

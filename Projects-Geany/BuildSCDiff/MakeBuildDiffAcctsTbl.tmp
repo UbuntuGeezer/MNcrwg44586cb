@@ -1,0 +1,55 @@
+# MakeBuildDiffAcctsTbl.tmp - makefile for BuildDiffAcctsTbl.sh
+#	4/25/23.	wmk.
+#
+# Exit. BuildDiffAcctsTbl.sql > BuildDiffAcctsTbl.sh
+#
+# Modification History.
+# ---------------------
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# 4/25/23.	wmk.	*pathbase corrected.
+# Legacy mods.
+# 5/27/22.	wmk.	original code; (old preamble eliminated).
+#
+# Notes. BuildDiffAcctsTbl.sh will always be made. MakeBuildDiffAcctsTbl
+# assumes DoSed edited BuildDiffAcctsTbl.psq > BuildDiffAccts.sql
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+.PHONY : Always ;
+.ONESHELL : ;
+
+ procpath = $(codebase)/Procs-Dev
+scpafolder = $(pathbase)/RawData/SCPA/SCPA-Downloads
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+ projpath = $(codebase)/Projects-Geany/BuildSCDiff
+
+#BuildDiffAcctsTbl.sh primary target
+#====================================================================
+#BuildDiffAcctsTbl.sh :  BuildDiffAcctsTbl.sql \
+# BuildDiffAcctsTbl.psq
+Always :	$(projpath)/BuildDiffAcctsTbl.sql
+	cd $(altproj); ./DoSed.sh $(projpath) BuildDiffAcctsTbl
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	echo "** Now run BuildDiffAcctsTbl.sh to set territory IDs in DiffAccts table **"
+
+$(projpath)/BuildDiffAcctsTbl.sql
+	if ! test $@;then \
+	 echo " ** Missing BuildDiffAcctsTbl.sql for BuildDiffAcctsTbl.sh **";exit 1;fi
+
+#====================================================================
+# end MakeBuildDiffAcctsTbl

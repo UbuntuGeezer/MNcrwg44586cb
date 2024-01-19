@@ -1,0 +1,16 @@
+How To Create Debian USB-BOOT.
+
+find out the name of the target USB drive:
+lsblk
+
+unmount the target drive:
+sudo umount /dev/sdx1
+UNLOAD $SANDISK2
+
+flash the debian ISO image to the drive:
+(replace /dev/sdx with the name of the drive, sans partition #)
+sudo dd bs=4M if=/path/to/debian-10.0.0-amd64-netinst.iso of=/dev/sdx status=progress oflag=sync
+
+sudo dd bs=4M if=/media/ubuntu/Windows/Users/Bill/ubuntu/Downloads debian-10.10.0-amd64-netinst.iso \
+ of=$SANDISK2 status=progress oflag=sync
+

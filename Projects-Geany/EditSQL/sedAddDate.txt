@@ -1,0 +1,2 @@
+#sedAddDate.tx
+3i-- * .   wmk.   (automated) udpate FixFromSC (Terr124 template).

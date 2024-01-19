@@ -1,0 +1,4 @@
+s/xxx/101/g
+s/mm-dd/04-26/g
+s/mmdd/0426/g
+s?Xfolderbase?/media/ubuntu/Windows/Users/Bill?g

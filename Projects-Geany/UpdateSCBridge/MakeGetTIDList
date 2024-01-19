@@ -1,0 +1,70 @@
+# MakeGetTIDList - *make* file for GetTIDList.
+$(error out-of-date)
+#	7/1/22.	wmk.
+#
+# Notes. This *make* file runs unmodified. It uses GetTIDList.sql which was
+# generated from GetTIDList.psq by DoSed2.
+# 
+# Modification History.
+# ---------------------
+# 11/22/22.   wmk.   incroot, vpath redirects eommented out; pathbase corrected.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+# Legacy mods.
+# 5/1/22.	wmk.	original makefile.
+# 7/1/22.	wmk.	*pathbase support.
+#
+# GetTIDList.sh unconditionally built and executed.
+# Notes.! prior to running "make" on this project
+#    edit the "sed" command in the Build menu, set an empty territory number in
+#	   1st s command, enter mm and dd of the download in the 2nd and 3rd s commands
+# following definitions now in pathSCDefs.inc:
+# dirbase = /media/ubuntu/Windows/Users/Bill/Territories/RawData/SCPA/SCPA-Downloads/Terryyy/
+# vpath %.db /media/ubuntu/Windows/Users/Bill/Territories/RawData/SCPA/SCPA-Downloads/Terryyy
+# vpath %.csv /media/ubuntu/Windows/Users/Bill/Territories/RawData/SCPA/SCPA-Downloads/Terryyy
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+#incroot = $(pathbase)/include
+#vpath %.i $(pathbase)/include
+
+#var folderbase set above for pathSCdefs.inc.
+include pathSCdefs.inc
+
+# phony targets are always considered to be out-of-date.
+.PHONY  : JustDoIt NeverMake AlwaysMakeIt
+
+.ONESHELL : ;
+.NOTPARALLEL : ;
+
+ifndef AWK
+   AWK = mawk
+endif
+
+ projpath = $(codebase)/Projects-Geany/UpdateSCBridge
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# *projpath*/MakeGetUpdateList.sh recipe.
+#========================================================
+JustDoIt :
+	cd $(altproj);./DoSed.sh $(projpath) GetTIDList ' ' PostScript.sh
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if test -f $(projpath)/GetTIDList.sh;then \
+	  $(projpath)/GetTIDList.sh;fi
+	echo "TIDList generated."
+
+#========================================================

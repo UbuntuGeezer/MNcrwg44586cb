@@ -1,0 +1,123 @@
+&apos;// fsConcatRawAddress.bas
+&apos;//---------------------------------------------------------------
+&apos;// fsConcatRawAddress - Concatenate Number, Predirectional, Street,
+&apos;//	  Street Suffix, Unit into single address field.
+&apos;//		9/18/20.	wmk.	12:00
+&apos;//---------------------------------------------------------------
+
+public function fsConcatRawAddress(plRow As long) As String
+
+&apos;//	Usage.	macro call or
+&apos;//			sFullAddr = fsConcatRawAddress( lRow )
+&apos;//
+&apos;//		lRow = row containing address information to concatenate
+&apos;//				in RefUSA raw data columns C - H
+&apos;//
+&apos;// Entry.	user has selected row(s) in which to concatenate address fields
+&apos;//			each row should have an empty column to its right in which
+&apos;//			to place the concatenated address information
+&apos;//
+&apos;//	Exit.	concatenated address is in form:
+&apos;//			&lt;Number&gt;&lt;b*3&gt;&lt;Street&gt;&lt;b&gt;&lt;Street Suffix&gt;&lt;b*17&gt;&lt;Unit&gt;
+&apos;//			where &lt;b&gt; is a single space
+&apos;//			also trim all source fields to eliminate house numbers
+&apos;//			which were imported as 10-character, right-justified,
+&apos;//			space-filled fields
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/13//20.	wmk.	original code; adapted from ConcatAddressM
+&apos;//	9/15/20.	wmk.	modified to insert 3 spaces between number token
+&apos;//						and street token for SCPA address compatibility
+&apos;//						also move pre-direction to post-direction space
+&apos;//	9/18/20.	wmk.	constants added for spacing fields
+&apos;//
+&apos;//	Notes. Column indexes for the address fields are for raw .csv spreadsheet
+&apos;// taken from ReferenceUSA download.
+
+&apos;//	constants.
+const COL_NUMBER=2			&apos;// house number
+const COL_PREDIR=3			&apos;// street pre-direction
+const COL_STREET=4			&apos;// street name
+const COL_SUFFIX=5			&apos;// street suffix (e.g. Ave)
+const COL_POSTDIR=6			&apos;// street post direction
+const COL_UNIT=7			&apos;// unit/apt #
+const YELLOW=16776960		&apos;// decimal value of YELLOW color
+const BLANKS_17=&quot;                 &quot;	&apos;// exactly 17 spaces
+const BLANKS_3=&quot;   &quot;				&apos;// exactly 3 spaces
+const BLANKS_2=&quot;  &quot;					&apos;// exactly 2 spaces
+
+&apos;//	local variables.
+dim sRetValue	As String	&apos;// returned value
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+
+&apos;// processing variables.
+dim sAddress As String		&apos;// address field from current row
+dim sPrefix	As String		&apos;// url generated from sAddress
+dim sStreet	As String		&apos;// HYPERTEXT link to store
+dim sSuffix As String		&apos;// 
+dim sUnit	As String
+dim sPreDir	As String		&apos;// pre-direction letter
+
+&apos;// XCell sheet objects
+dim oCellAddr as object		&apos;// address field
+dim oCity 	As object		&apos;// city for sheet
+dim sCity	As String		&apos;// city from sheet
+
+&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	sRetValue = &quot;&quot;
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	lThisRow = plRow
+
+	&apos;// Concatenate address
+	oCellAddr = oSheet.getCellByPosition(COL_NUMBER, lThisRow)
+	oCellAddr.String = trim(oCellAddr.String)		
+	sAddress = oCellAddr.String						&apos;// set number token text
+	oCellAddr.String = trim(oCellAddr.String)		&apos;// set cell address text
+	oCellAddr = oSheet.getCellByPosition(COL_PREDIR, lThisRow)
+	sPreDir = oCellAddr.String				&apos;// save pre-direction for post..
+	oCellAddr = oSheet.getCellByPosition(COL_STREET, lThisRow)
+	oCellAddr.String = trim(oCellAddr.String)		&apos;// set street token
+	sAddress = sAddress + BLANKS_3 + oCellAddr.String	&apos;// 3 spaces past number
+	oCellAddr = oSheet.getCellByPosition(COL_SUFFIX, lThisRow)
+	oCellAddr.String = trim(oCellAddr.String)
+	sAddress = sAddress + &quot; &quot; + oCellAddr.String	&apos;// set Ave, St, etc
+	oCellAddr = oSheet.getCellByPosition(COL_POSTDIR, lThisRow)
+	oCellAddr.String = trim(oCellAddr.String)		&apos;// get post-direction
+	if len(sPreDir) &gt; 0 then
+		sAddress = sAddress + &quot; &quot; + sPreDir			&apos;// set non-empty pre-direction
+	endif
+	if len(oCellAddr.String) &gt; 0 then
+		sAddress = sAddress + &quot; &quot; + oCellAddr.String	&apos;// set post-direction
+	endif
+	oCellAddr = oSheet.getCellByPosition(COL_UNIT, lThisRow)
+	oCellAddr.String = trim(oCellAddr.String)
+	if len(oCellAddr.String) &gt; 0 then
+		sAddress = sAddress + BLANKS_17 + oCellAddr.String	&apos;// add unit text
+	endif
+
+	sRetValue = trim(sAddress)
+
+NormalExit:
+	fsConcatRawAddress = sRetValue
+&apos;	msgbox(&quot;fsConcatRawAddress complete. &quot; + nRowsProcessed + &quot; rows processed.&quot;)
+	exit function
+	
+ErrorHandler:	
+	msgbox(&quot;fsConcatRawAddress - unprocessed error.&quot;)
+	GoTo NormalExit
+
+end function	&apos;// end fsConcatRawAddress	9/18/20.

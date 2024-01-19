@@ -1,0 +1,46 @@
+# MakeRegenSpecDB.tmp - MakeRegenSpecDB template for territory 611.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	12/28/21.	wmk.
+#
+# Modification History.
+# --------------------
+# 7/19/21.	wmk.	original code.
+# 7/20/21.	wmk.	bug fix where HOME environment var not being
+#					evaluated; missing $s corrected in path refs.
+# 8/22/21.	wmk.	sed added to fix <filename> in RegenSpecDB.sh
+# 10/12/21.	wmk.	MAJOR change; sql > sq > sh instead of sq > sql > sh.
+# 12/28/21.	wmk.	chmod 700 added to .sh permissions.
+
+ifeq ($(HOME),/home/ubuntu) 
+ folderbase=/media/ubuntu/Windows/Users/Bill
+else
+ folderbase=$(HOME)
+endif
+
+prepath = $(folderbase)/Territories/RawData/RefUSA/RefUSA-Downloads/Terr611/
+ procpath = $(codebase)/Territories/Procs-Dev/
+ projpath = $(codebase)/Territories/Projects-Geany/
+
+# RegenSpecDB.sh primary target.
+#============================================================================
+$(prepath)RegenSpecDB.sh : $(prepath)RegenSpecDB.sq
+	cat $(procpath)hdrAnySQL_1.sh $(prepath)RegenSpecDB.sq \
+	 $(procpath)hdrAnySQL_2.sh > $@
+	sed -i 's?<filename>?RegenSpecDB?'g $@
+	chmod 700 $@
+
+$(prepath)RegenSpecDB.sq : $(prepath)RegenSpecDB.sql
+	cd $(projpath)/AnySQLtoSH; ./DoSed.sh $(prepath) RegenSpecDB
+	$(MAKE) -f $(projpath)AnySQLtoSH/MakeAnySQLtoSH	
+
+#	echo 's?\"?\\\\"?g' > sedatives.txt
+#	echo "s?^?echo \"?g" >> sedatives.txt
+#	echo "s?\$$?\" >> SQLTemp.sql?g" >> sedatives.txt
+#	echo "1s?>>?>?g" >> sedatives.txt
+#	sed -f sedatives.txt $(prepath)RegenSpecDB.sq > $@
+
+$(prepath)RegenSpecDB.sql : ;
+	
+
+#============================================================================

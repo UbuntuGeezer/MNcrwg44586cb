@@ -1,0 +1,6 @@
+.open '/home/vncwmk3/Territories/FL/SARA/86777/DB-Dev/TerrIDData.db'
+.mode list
+.headers off
+.output '/home/vncwmk3/temp/adminwho.txt'
+SELECT initials FROM Admin LIMIT 1;
+.quit

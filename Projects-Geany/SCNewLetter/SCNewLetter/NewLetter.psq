@@ -1,0 +1,243 @@
+-- NewLetter.sql - Create new letter territory SQL.
+--	10/22/21.	wmk.
+-- *
+
+-- * Modification History.
+-- * ---------------------
+-- * 9/20/21.	original  code (for RUNewLetter).
+-- * 9/21/21.	modified for use with SCNewLetter.
+-- * 10/4/21.	bug fix in output path for Mapxxx_SC.csv; 632 hardwired
+-- *			in some code replaced with y yy.
+-- * 10/11/21.	documentation added; Unit field added by name into
+-- *			table Lettyyy_TS replacing unnamed field before City.
+-- * 10/22/21.	bug fix DROP TABLE Lettyyy_TS was incorrect.
+-- *
+-- * Notes. NewLetter.psq is transformed into NewLetter.sql by DoSed.sh
+-- * NewLetter.sql performs the following operations:
+-- *	open a new database SCPA-Downloads/Terryyy/Terryyy_SC.db
+-- *	create table Terryyy_SCPoly with fields matching SCPA polygon download
+-- *	import raw download into table Terrxxx_TSRaw
+-- *	copy TSRaw records into SCPoly table
+-- *	create table Terrxxx_SCBridge and populate from SCPoly records
+-- *	set OwningParcel, Resident1, SitusAddress, PropUse, and RecordType
+-- *	 from NVenAll SCPA records
+-- *	set RecordType fields to correct record type for PropUse
+-- * The Terrxxx_SC.db now has the basic SC download data.
+-- * AddZips needs to run to add in the zip codes to the UnitAddress,s
+-- * the "TIDY" utility needs to run to tidy up the records just added.
+
+.open '$folderbase/Territories/RawData/SCPA/SCPA-Downloads/Terryyy/Terryyy_SC.db'
+DROP TABLE IF EXISTS Terryyy_SCPoly;
+CREATE TABLE Terryyy_SCPoly 
+( Account TEXT, Name TEXT, Name2 TEXT, ADDRESS TEXT, CITY TEXT, 
+STATE TEXT, ZIP TEXT, COUNTRY TEXT, LOCATIONNAME TEXT, 
+LOCATIONSTREET TEXT, LOCATIONDIRECTION TEXT, UNIT TEXT, 
+LOCATIONCITY TEXT, LOCATIONZIP TEXT);
+ -- import Lettyyy_TS.csv into Terryyy_SC.db.Terryyy_TSRaw;
+DROP TABLE IF EXISTS Lettyyy_TS;
+CREATE TABLE Lettyyy_TS
+(AreaName TEXT, HouseNumber TEXT, Street1 TEXT, Street2 TEXT,
+ Street3 TEXT, Unit TEXT, City TEXT, Empty TEXT, State TEXT, Zip TEXT );
+.headers ON
+.mode csv
+.separator ,
+.import '$folderbase/Territories/RawData/SCPA/SCPA-Downloads/Terryyy/Lettyyy_TS.csv' Lettyyy_TS
+DROP TABLE IF EXISTS Terryyy_TSRaw;
+ALTER TABLE Lettyyy_TS RENAME TO Terryyy_TSRaw;
+-- now populate Terryyy_SCPoly with data from Terryyy_TSRaw;
+INSERT INTO Terryyy_SCPoly
+SELECT '', '', '', '', '',
+ '', '', '',HouseNumber, 
+ Street1 || ' ' || Street2 || ' ' || Street3, ' ', Unit,
+ City, Zip
+ FROM Terryyy_TSRaw;
+
+ -- now populate TerrSCBridge from Terr_SCPoly;
+ DROP TABLE IF EXISTS Terryyy_SCBridge;
+CREATE TABLE Terryyy_SCBridge
+( "OwningParcel" TEXT NOT NULL,
+ "UnitAddress" TEXT NOT NULL,
+ "Unit" TEXT, "Resident1" TEXT, 
+ "Phone1" TEXT,  "Phone2" TEXT,
+ "RefUSA-Phone" TEXT, "SubTerritory" TEXT,
+ "CongTerrID" TEXT, "DoNotCall" INTEGER DEFAULT 0,
+ "RSO" INTEGER DEFAULT 0, "Foreign" INTEGER DEFAULT 0,
+ "RecordDate" REAL DEFAULT 0,
+ "SitusAddress" TEXT, "PropUse" TEXT,
+  "DelPending" INTEGER DEFAULT 0,
+ "RecordType" TEXT);
+-- now populate the SCBridge table;
+WITH a AS (SELECT '', LocationName || '   ' || LocationStreet
+ || LocationDirection AS StreetAddr, Unit AS PUnit, '', '', '',
+ '', '', 'yyy' AS CongTerr, '',
+ '', '', Date('now') AS RecDate, '',
+ '', '', ''
+FROM Terryyy_SCPoly) 
+INSERT INTO Terryyy_SCBridge
+( "OwningParcel", "UnitAddress",
+ "Unit", "Resident1", "Phone1", "Phone2",
+ "RefUSA-Phone", "SubTerritory", "CongTerrID", "DoNotCall",
+  "RSO", "Foreign", "RecordDate", "SitusAddress",
+  "PropUse", "DelPending", "RecordType")
+SELECT '-', StreetAddr,
+  PUnit,  '', '', '',
+  '', '' ,'yyy', '',
+  '', '', DATE('now'), '',
+  '', '', ''
+FROM a;
+-- now select all the records just created and make a pseudo Mapyyy_SC.csv;
+-- this .csv will be used in the unlikely event that SCNewTerritory gets run
+-- so there is a .csv file to pick up..;
+.headers ON
+.mode csv
+.separator ,
+.output '$folderbase/Territories/RawData/SCPA/SCPA-Downloads/Terryyy/Mapyyy_SC.csv'
+select * from Terryyy_SCPoly;
+
+-- now set OwningParcel, Resident1, SitusAddress, PropUse, and RecordType from
+-- TerritoryNVenice. NVenAll and SCPropUse tables;
+ATTACH '$folderbase/Territories/DB-Dev/VeniceNTerritory.db'
+ AS db2;
+
+WITH a AS (SELECT "Account #" AS Acct,
+ CASE 
+ WHEN LENGTH("Owner 3") > 0
+  THEN "Owner 1" || ', ' || "Owner 2" || ', ' || "Owner 3"
+ WHEN LENGTH("Owner 2") > 0
+  THEN "Owner 1" || ', ' || "Owner 2"
+ ELSE "Owner 1"
+ END As WhoIsThere,
+ "situs address (property address)" AS Situs,
+ TRIM(SUBSTR("situs address (property address)",1,35)) AS StreetAddr,
+ "property use code" AS SCPropUse,
+ CASE 
+ WHEN "Homestead Exemption" IS 'YES'
+  THEN '*'
+ ELSE ''
+ END AS Hstead
+ FROM NVenAll
+ WHERE StreetAddr IN (SELECT UPPER(TRIM(UnitAddress))
+  FROM Terryyy_SCBridge) )
+UPDATE Terryyy_SCBridge
+SET OwningParcel =
+CASE 
+WHEN UPPER(TRIM(UnitAddress)) IN (SELECT StreetAddr FROM a)
+ THEN (SELECT Acct FROM a
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) )
+ELSE OwningParcel
+END,
+ Resident1 =
+CASE 
+WHEN UPPER(TRIM(UnitAddress)) IN (SELECT StreetAddr FROM a)
+ THEN (SELECT WhoIsThere FROM a
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) )
+ELSE Resident1
+END, 
+ SitusAddress = 
+CASE 
+WHEN UPPER(TRIM(UnitAddress)) IN (SELECT StreetAddr FROM a)
+ THEN (SELECT Situs FROM a
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) )
+ELSE SitusAddress
+END,
+ Phone2 = 
+CASE 
+WHEN UPPER(TRIM(UnitAddress)) IN (SELECT StreetAddr FROM a)
+ THEN (SELECT Hstead FROM a
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) )
+ELSE Phone2
+END, 
+ PropUse =
+CASE 
+WHEN UPPER(TRIM(UnitAddress)) IN (SELECT StreetAddr FROM a)
+ THEN (SELECT SCPropUse FROM a
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) )
+ELSE PropUse
+END
+WHERE OwningParcel IS '-';
+
+-- set record types;
+UPDATE Terryyy_SCBridge
+SET RecordType = 
+CASE 
+WHEN PropUse IN (SELECT Code FROM db2.SCPropUse)
+ THEN (SELECT RType FROM db2.SCPropUse
+  WHERE Code IS PropUse)
+ELSE RecordType
+END
+;
+-- *;
+-- Attach TerrIDData.db and extract TerryyyHdr.csv, saving into folder
+--  TerrData/Terryyy/Working-Files;
+ATTACH '$folderbase/Territories'
+	||		'/DB-Dev/TerrIDData.db'
+	AS db4;
+-- pragma db4.table_info(Territories);
+.headers ON
+.mode csv
+.separator ,
+.output '$folderbase/Territories/TerrData/Terryyy/Working-Files/TerryyyHdr.csv'
+SELECT * FROM db4.Territory
+WHERE TerrID is 'yyy';	
+.quit
+
+--**************************************************************************;
+.open $folderbase/Territories/RefUSA/RefUSA-Downloads/Terryyy/Terryyy_RU.db'
+CREATE TABLE Terryyy_RUPoly ("Last Name" TEXT,"First Name" TEXT,
+ "House Number" TEXT, "Pre-directional" TEXT,"Street" TEXT, 
+ "Street Suffix" TEXT, "Post-directional" TEXT,"Apartment Number" TEXT, 
+ "City" TEXT,"State" TEXT,"ZIP Code" TEXT, "County Name" TEXT, 
+ "Phone Number" TEXT);
+ -- import Lettyyy_TS.csv into Terryyy.db.Terryyy_TSRaw;
+.import '$folderbase/Territories/RefUSA/RefUSA-Downloads/Terryyy/Lettyyy_TS.csv' Terryyy_TSRaw
+-- now populate Terryyy_RUPoly with data from Terryyy_TSRaw;
+INSERT INTO Terryyy_RUPoly
+SELECT '', '', HouseNumber, '', Street1 || ' ' || Street2,
+ Street3, ' ',' ',City,"State",Zip,'', ''
+ FROM Terryyy_TSRaw;
+
+#
+#   CASE
+#   WHEN LENGTH("Street Suffix") > 0 
+#		AND LENGTH("Pre-Directional") = 0 
+#   THEN
+#		House || "   " || "Street" || " "
+#		|| TRIM("Street Suffix") || " " || "Post-Directional"
+#   ELSE
+#		House || "   " || "Street" || " "
+#		|| "Post-Directional"
+#   END,
+#
+'
+ Resident1 =
+CASE
+WHEN UPPER(TRIM(UnitAddress)) IN (SELECT StreetAddr FROM a)
+ THEN
+ 
+ CASE 
+ WHEN LENGTH("Owner 3") > 0
+  THEN "Owner 1" || ', ' || "Owner 2" || ', ' || "Owner 3"
+ WHEN LENGTH("Owner 2") > 0
+  THEN "Owner 1" || ', ' || "Owner 2"
+ ELSE "Owner 1"
+ END As WhoIsThere
+
+END, 
+
+CASE
+WHEN UPPER(TRIM(UnitAddress)) IN (SELECT StreetAddr FROM a)
+ THEN
+ CASE 
+ WHEN LENGTH(SELECT Own3 FROM a 
+   WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) ) > 0
+  THEN (SELECT Own1 || ', ' || Own2 || ', ' || Own3 FROM a
+   WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) ) 
+ WHEN LENGTH(SELECT Own2 FROM a 
+   WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) ) > 0
+  THEN (SELECT Own1 || ', ' || Own2  FROM a
+   WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) ) 
+ ELSE (SELECT Own1 FROM a
+   WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) ) 
+ END
+ELSE Resident1
+END, 

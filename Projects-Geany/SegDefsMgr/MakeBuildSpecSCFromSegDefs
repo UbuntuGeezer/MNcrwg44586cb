@@ -1,0 +1,80 @@
+# MakeBuildSpecSCFromSegDefs.tmp - Make BuildSpecSCFromSegDefsDB.sh from BuildSpecSCFromSegDefsDB.sql.
+#	3/23/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 3/22/23.	wmk.	original makefile; adapted from MakeBuildSCFromSegDefs.tmp.
+# 3/23/23.	wmk.	cp corrected prior to XSMawk in main recipe.
+# Legacy mods.
+# 2/25/23.	wmk.	modified for use with SegDefsMgr.
+# 3/5/23.	wmk.	ability to generate or copy segdefs; bug fix for mawk
+#			 (see Notes).
+# Legacy mods.
+# 2/10/23.	wmk.	original code; adapted from MakeListTerrStreets.
+#
+# Notes. BuildSpecSCFromSegDefs.psq should already have been edited to BuildSpecSCFromSegDefs.sql
+# prior to running this makefile (DoSedListTerrStreets.sh)
+#
+# There is a bug in running *mawk with redirect that is some sort of unknown
+# anomaly. The main recipe has been altered to call XMawk.sh to run *mawk
+# stripping the first two fields from the segdefs.csv. (3/5/23.)
+#
+# use *USER to determine host system.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase=$(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : AlwaysBuild
+.ONESHELL : ;
+
+projpath = $(codebase)/Projects-Geany/SpecialRUdb
+scpath = RawData/SCPA/SCPA-Downloads
+thisproj = $(codebase)/Projects-Geany/SegDefsMgr
+bashpath = $(codebase)/Procs-Dev
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+targpath = $(pathbase)/RawData/SCPA/SCPA-Downloads/Terryyy
+
+# get list of terr segs (MakeListTerrSegs) > *TEMP_PATH/Terryyy.segdefs.csv
+# insert contents of *TEMP_PATH/Terryyy.segdefs.csv into BuildSCFromSegDefs.psq
+#  and save file as BuildSCFromSegDefs.sql
+# *make BuildSCFromSegDefs.sql -> BuildSCFromSegDefs.sh
+# execute BuildSCFromSegDefs.sh
+# BuildSCFromSegDefsDB.sh primary target.
+# $(specpath)/preambleBldSt.sh
+#=======================================================================
+AlwaysBuild  :
+	if ! test -f $(pathbase)/$(scpath)/Special/SummerGreen.segdefs.csv;then \
+	 echo " ** missing SummerGreen.segdefs.csv - cannot build <spec-db>.db from segdefs **";exit 1; \
+	 else cp $(pathbase)/$(scpath)/Special/SummerGreen.segdefs.csv $$TEMP_PATH/Special.segdefs.cs; \
+	  $(thisproj)/XSMawk.sh;sed -i 's?""?"?g' $$TEMP_PATH/Special.segdefs.csv;fi
+	#mawk -F "|" '{print $3}' $$TEMP_PATH/Special.segdefs.cs 1> $$TEMP_PATH/Special.segdefs.csv;fi
+	cat $$TEMP_PATH/Special.segdefs.csv
+	#exit 1
+	sed -i "/inserthere/ r $$TEMP_PATH/Special.segdefs.csv" $(thisproj)/BuildSpecSCFromSegDefs.sql
+	#cat $(thisproj)/BuildSCFromSegDefs.sq > 
+	cd $(altproj);./DoSed.sh $(thisproj) BuildSpecSCFromSegDefs
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(thisproj)/BuildSpecSCFromSegDefs.sh;then \
+	 echo "  ** *make BuildSpecSCFromSegDefs.sh FAILED - aborting **";exit 1;fi
+	echo " ** run BuildSpecSCFromSegDefs.sh to build Terryyy_SC.db **"
+	
+#=======================================================================
+

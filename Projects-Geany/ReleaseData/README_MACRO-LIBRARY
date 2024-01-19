@@ -1,0 +1,118 @@
+README_MACRO-LIBRARY - Documentation of Macro library for Territories.
+	11/18/21.	wmk.
+
+Modification History.
+---------------------
+11/17/21.	wmk.	original document.
+11/18/21.	wmk.	Installation Files section added; Installation Section
+					additions.
+
+Document Sections.
+------------------
+Description - general descripton of Release macro library.
+Installation Files - files provided for installation.
+Installation - install instructions.
+
+Description.
+------------
+The "Release" macro library has been created for spreadsheet power-users
+that will be tasked with taking the Release territories and massaging them
+into finalized publisher territories. The library name is "Release" and is
+an Apache OpenOffice Calc library that can be imported into the installed
+Calc on any system. At this time, there is no macro library for Windows
+Excel.
+
+The macro library is system-independent. It will run on either a Windows
+or GNU/Linux system that has Apache Open Office (or Libre Office) and Java
+Runtime Environment (JRE) installed. Along with the macro library is a custom
+keyboard configuration file that maps the user keyboard to the Release macro
+library. This provides power-users with shortcut keys to manage the territory
+spreadsheets.
+
+When included in a release, the macro library is contained in its own
+tarball. This requires separate extraction on the target system, followed
+by integration into the installed version of Calc. This process is described
+in the "Installation" section that follows.
+
+
+Installation Files.
+-------------------
+Four files comprise the Release macro installation; Module1.xba, script.xlb,
+dialog.xlb and ReleaseTerr.cfg.
+
+Module1.xba - Basic source code (.xba file format) that will be imported into
+ the Release macro library in Calc
+
+script.xlb - Calc directives for attaching to the Basic source code and any
+ dialog code
+
+dialog.xlb - JRE frameworks code for any dialog frames (windows) used by
+ the Basic code
+
+ReleaseTerr.cfg - keyboard configuration file for territory management 
+ power-users
+ 
+
+Installation.
+-------------
+This section documents installing the Release macro library and its custom
+keyboard for Apache OpenOffice Calc (or LibreOffice Calc). The macro library
+is the code for supporting the custom keyboard named 'ReleaseTerr.cfg'. The
+custom keyboard provides shortcut keys for massaging territory spreadsheets.
+
+The name of the territories release macro library is TerrRelease. The entire
+library is released in its own tarball TerrRelease.tar within the dated
+Release_mm-dd-yy folder.
+
+The files included in the TerrRelease folder that the tarball will expand
+into are:
+
+	Module1.xba
+	dialog.xlb
+	script.xlb
+
+These files are read-only to prevent inadvertant modification on the target
+system in which they are installed.
+
+To install the TerrRelease macro library into OpenOffice/Calc perform the
+following steps:
+
+	Extract the files into a /TerrRelease folder on your system. (For 
+	 recommendations on where to put the files, see the Release_10-28-0-21
+	 RELEASE_NOTES instructions.) You will be targeting a path like
+	 Territories/TerrRelease.
+	
+	Start an OpenOffice/Calc session
+	
+	From the main menu tabs select
+		Tools>Macros>OrganizeMacros>Basic
+	
+	Within the "Basic Macros" window:
+		Click the [Organizer..] button
+		
+	Within the "Basic Macros Organizer" window:
+		Click the {Libraries} tab
+		Click the [Import] button
+	
+	In the "Import Libraries" window:
+		navigate to the Territories/TerrRelease folder
+		highlight the file 'script.xlb'
+		double-click on the filename or click on [Open] button
+	
+	In the "Import Libraries" (small window):
+		Click the [OK] button
+	
+	In the "Basic Macros Organizer" window:
+		'Release' should now be in your list of libaries
+		Click the [Close] button
+	
+	In the "Basic Macros" window:
+		Click the [Close] button
+		
+This will place you back into the "Untitled" spreadsheet.
+
+
+The Release macro library is hooked to the ReleaseTerr.cfg keyboard file.
+
+	
+

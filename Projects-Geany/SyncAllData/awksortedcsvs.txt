@@ -1,0 +1,6 @@
+# awksortedcsvs.txt - gawk directives to generate sorted .csv list.
+# entry. $TEMP_PATH/RUSpecCSVList.txt = ls -lh $pathbase/$rupath/Special/*.csv.
+# execution. gawk -F "/" -f awksortedcsvs.txt $TEMP_PATH/.. > *TEMP_PATH/SortedCSVList.csv
+BEGIN{ix=0}
+{ix=NR;csvlist[ix]= substr($1,index($1,"202"),10)  " "  $12}
+END{n = asort(csvlist);for (i=0;i<=n;i++){print csvlist[i]}}

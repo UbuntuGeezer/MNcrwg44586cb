@@ -1,0 +1,60 @@
+# MakeFile - universal makefile template.
+# MakeRUSpecTerr_db - *make* file for RUSpecTerr_db.sh build.
+#	3/2/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 3/2/23.	wmk.	original code.
+#
+# Notes. This makefile breaks all of the rules for building .sh files from .sql
+# source. This is because the RUSpecTerr_db.sh shell predates all of the other
+# build processes. RUSpecTerr_db.sh is built by concatenating RUSpecTerr_1.sh
+# with the .sh for RUSpecTerr_db.sql, with RUSpecTerr_2.sh. A kludge is used
+# whereby AnySQLtoSH is used to construct RUSpecTerr_db.sh and RUSpecTerr_db.sq,
+# with the .sh file being dropped afterwards. 
+#
+# The RuSpecTerr_db.sql was modified to import from file <special>.csv.imp in
+# order to preserve the date on the .csv file for date synchronization. It is
+# vital for synchronization that the .csf file reflect the actual download date
+# for the data. (See SyncAllData project).
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/SpecialRUdb
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	cd $(altproj);./DoSed.sh $(projpath) RUSpecTerr_db
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	rm  $(projpath)/RUSpecTerr_db.sh
+	cat $(projpath)/RUSpecTerr_1.sh $(projpath)/RUSpecTerr_db.sq \
+	 $(projpath)/RUSpecTerr_2.sh > $(projpath)/RUSpecTerr_db.sh
+	chmod +x $(projpath)/RUSpecTerr_db.sh
+	if ! test -f $(projpath)/RUSpecTerr_db.sh;then \
+	 echo "** RUSpecTerr_db.sh generation failed **";exit 1;fi
+	echo "** RUSpecTerr_db.sh to build /Special RU database **"
+	
+#==================================================================
+# end MakeRUSpecTerr_db

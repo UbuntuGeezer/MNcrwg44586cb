@@ -1,0 +1,43 @@
+-- * DeactivateTer1.psq/sql - Deactivate records in Terrxxx_RUBridge, Terrxxx_SCBridge for terr.
+-- *	6/4/23.	wmk.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 5/29/23.	wmk.	original code.
+-- * 6/4/23.	wmk.	split out into DeactivateTerr1.
+-- *
+-- * Notes. DeactivateTerr sets the 'DelPending' field = 1 for all
+-- * records in Terrxxx_RU.db.Spec_RUBridge,
+-- * Terrxxx_SC.db.Spec_SCBridge database(s) for territory xxx. 
+-- *
+-- * This prevents any BridgesToTerr *make from picking up any obsoleted publisher
+-- * records, while preserving the records for archiving. A second layer of
+-- * protection is at the folder level; the file OBSOLETE, if present, indicates
+-- * that a territory is out of circulation.
+-- *;
+
+-- * open/attach db,s;
+
+.open '$pathbase/DB-Dev/junk.db'
+
+ATTACH '$pathbase/DB-Dev/TerrIDData.db'
+ AS db6;
+--pragma db6.table_info(Territory);
+
+ATTACH '$pathbase/$scpath/Terr965/Terr965_SC.db'
+ AS db11;
+-- pragma db11.table_info(Terr965_SCBridge);
+
+-- * set DelPending in SCBridge records;
+UPDATE db11.Terr965_SCBridge
+SET DelPending = 1;
+DETACH db11;
+
+-- * deactivate territory in TerrIDData;
+UPDATE db6.Territory
+SET StatusCode = TerrID,
+TerrID = TerrID || 'D'
+WHERE TerrID IS '965';
+
+.quit
+-- * END DeactivateTerr.sql;

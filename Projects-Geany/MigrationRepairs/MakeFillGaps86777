@@ -1,0 +1,80 @@
+# 5/6/23.     wmk.   (automated) move previous history comments.
+# Modification History.
+# ---------------------
+	
+	 echo "** FillGaps86777.sh generation failed **";exit 1;fi
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	cd $(altproj);./DoSed.sh $(projpath) FillGaps86777
+	echo "** FillGaps86777.sh to fill in propertyID gaps **"
+	if ! test -f $(projpath)/FillGaps86777.sh;then \
+  folderbase = $(HOME)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+ else
+ endif
+ ifeq ($(USER),ubuntu)
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+ projpath = $(codebase)/Projects-Geany/MigrationRepairs
+#
+#
+#	2/19/23.	wmk.
+# ---------------------
+# 2/19/23.	wmk.	original code.
+# MakeFillGaps.tmp - *make* file for <mame> build.
+# Modification History.
+# end MakeFile.tmp
+# primary target phony
+#==================================================================
+#==================================================================
+.NOPARALLEL : ;
+.ONESHELL : ;
+.PHONY  : Always
+Always :
+endif
+endif
+endif
+ifndef codebase
+ifndef folderbase
+ifndef pathbase
+# 5/6/23.     wmk.   (automated) move previous history comments.
+# Legacy mods.
+# 2/19/23.	wmk.	original code.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/MigrationRepairs
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	cd $(altproj);./DoSed.sh $(projpath) FillGaps86777
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/FillGaps86777.sh;then \
+	 echo "** FillGaps86777.sh generation failed **";exit 1;fi
+	echo "** FillGaps86777.sh to fill in propertyID gaps **"
+	
+#==================================================================
+# end MakeFile.tmp

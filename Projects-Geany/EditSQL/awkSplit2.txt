@@ -1,0 +1,5 @@
+#awkSplit2.txt
+BEGIN {inSelect = 0}
+$3=="END" && $4 == "FixFromSC" {inSelect = 1}
+{if ( inSelect ) {print};}
+

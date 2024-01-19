@@ -1,0 +1,129 @@
+<p>README - GitHub/TerritoriesCB/MNcrwg44586 project documentation.<br>
+8/12/23.    wmk.</p>
+
+<h3>Modification History.</h3>
+
+<pre><code>
+8/12/23.    wmk.    original document; adapted for MNcrwg44586 project.
+8/16/23.    wmk.    text corrections.
+Legacy mods.
+9/19/22.    wmk.   original document.
+9/22/22.    wmk.   update of Project Overview.
+</code></pre>
+
+<h3 id="IX">Document Sections.</h3>
+
+<pre><code>
+<a href="#1.0">link</a> 1.0 Project Overview - overall project description.
+<a href="#2.0">link</a> 2.0 Setup - build setups.
+<a href="#3.0">link</a> 3.0 File - key files within TerritoriesCB.
+<a href="#4.0">link</a> 4.0 Projects - projects within TerritoriesCB.
+<a href="#5.0">link</a> 5.0 Significant Notes -important stuff not documented elsewhere.
+</code></pre>
+
+<h3 id="1.0">1.0 Project Overview.</h3>
+
+<p>The TerritoriesCB project manages Territories source code under GitHub on the
+Chromebooks system. It is a clone of the GitHub/github.com project by the same
+name. It also functions identically to the GitHub Territories project on the
+"origin" system which presently is the HP Pavilion notebook computer. The 
+*master branch is now a legacy branch. All code is now maintained on separate
+branches for each computer system. The *Lenovo branch is the branch for the
+Lenovo Chromebook system.</p>
+
+<p>Effective 8/2023 the TerritoriesCB GitHub project now has separate folder paths
+for each county in each congregation's assigned territory. This eliminates
+ambiguity in the code segment where there are multiple counties within a
+congregation's assigned territory. Most of the code is common across counties
+within a congregation except for code that handles county-formatted data.</p>
+
+<p>The Basic code for the MNcrwg44586 library is now maintained in the GitHub
+Libraries-Project/MNcrwg44586 project. That project contains the source code
+and build procedures for the MNcr2wg44586 library code. This eliminates the
+need for the Basic folder under the TerritoriesCB/MNcrwg44586 project.</p>
+
+<p>TerritoriesCB folders and files are maintained and modified directly in the GitHub
+project files. This is somewhat different from the original system where the
+Territories project is actually a subsystem and the code segment is copied to the
+GitHub Territories project for backing up to the <em>github.com</em> cloud. For
+the present, TerritoriesCB and Territories are repositories that are kept
+isolated from each other on github.com. (It may be that in the future
+TerritoriesCB may become a "branch" of Territories).</p>
+
+<p>The TerritoriesCB folders are: Projects-Geany, Procs-Dev, include and Basic.
+These folders contain all of the relevant source code for Territories that
+might be modified for use with the Chromebook/chromeos system.
+<br><a href="#IX">Index</a></p>
+
+<h3 id="1.0">2.0 Setup.</h3>
+
+<p><br><a href="#IX">Index</a></p>
+
+<h3 id="1.0">3.0 Files.</h3>
+
+<p><br><a href="#IX">Index</a></p>
+
+<h3 id="1.0">4.0 Projects.</h3>
+
+<p>AddNVenAllRecord - add property record to TerritoryNVenice.db/NVenAll table.
+AddSCBridgeRecord - add missing property record to SCBridge table
+AddTerr86777Record - add property record to Terr86777 territory master db.
+AnySHtoSQL - reverse shell to .sql source.
+AnySQLtoSH - build any SQL query into shell for Chromebook.
+AnySQLtoSHHP - build any SQL query into shell for HP system.
+ArchivingBackups - Territories subsystem file dumping and loading shells.
+BizBridgeToTerr - business SCBridge and RUBridge data to territory data.
+BridgesToTerr - SCBridge and RUBridge table data to territory data.
+BTerrPageHdr - business territory add page header.
+BuildDates - build publisher territory generation dates table (calc).
+BuildSCDiff - build SC download differences db.
+CBtoHPgeany - Chromebook to HP geany project migration.
+DNCReport - generate report of Do Not Calls (calc)
+DoBizsWithCalc - calc spreadsheet business territory generation.
+DocumentationHP - Territories subsystem documentation from HP system.
+DoTerrsWithCalc - calc spreadsheet territory generation and tracking.
+EditBas - xba .bas module editing.
+EditSQL - .sql editing.
+Experiments-SQL - SQL query testing.
+ExtractDiff - extract differences in SCPA download.
+FixAnyRU - take FixyyyRU.sql and convert to FixyyyRU.sh for territory.
+FixAnyRUHP -take FixyyyRU.sql for HP territory and convert to FixyyyRU.sh.
+FixAnySC -- take FixyyySC.sql and convert to FixyyySC.sh for territory.
+FixAnySCHP - take FixyyySC.sql for HP territory and convert to FixyyySC.sh.
+FixMakes - fix makefiles damaged by migration.
+FixShells - fix shell files damaged by migration.
+FixSQLs - fix .sql files damaged by migration.
+FixTerrMakes - fix territory makefiles damaged by migration.
+FixTerrPSQs - fix territory .psq files damaged by migration.
+FixTerrShells - fix territory .sh files damaged by migration.
+FixTerrSQLs - fix territory .sql files damaged by migration.
+FlagSCUpdates - flag territories needing update from SCPA download.
+HdrsSQLtoSH
+ImportProject - import geany project from different system.
+ImportSCPA - import new SCPA download data.
+MigrationRepairs - shells to repair shells and makefiles with migration issues.
+NewBTerritory - create new business territory.
+NewTerritory - create new territory.
+ReleaseData - organize publisher territory release.
+RUNewBizTerr - initialize new RefUSA business territory.
+RUNewLetter - initialize new RefUSA letter territory.
+RUNewTerritory - initialize new RefUSA territory.
+SARANewTerritory - create new territory for Sarasota county.
+SCNewLetter - initialize new SCPA letter territory.
+SCNewTerritory - initialize new SCPA territory.
+SpceialSCdb - <strong>bogus name</strong>
+SpecialRUdb - create Special RefUSA database.
+SpecialSCdb - create Special SCPA database.
+TerrPageHeader - generate and integrate page header into publisher territory spreadsheet.
+UpdateCongTerr - update congregation territory with latest SCPA download data.
+UpdateMHPDwnld - update MHP RefUSA data from download.
+UpdateNVenAll - (obsolete) update NVenAll records from SCPA download data.
+UpdateRUDwnld - update RefUSA data from download.
+UpdateRULetter - update RefUSA letter territory from download.
+UpdateSCBridge - update SCBridge tables in territories from SCPA download data.
+UpdtRULetter - update RefUSA letter territory.
+<br><a href="#IX">Index</a></p>
+
+<h3 id="1.0">5.0 Significant Notes.</h3>
+
+<p><br><a href="#IX">Index</a></p>

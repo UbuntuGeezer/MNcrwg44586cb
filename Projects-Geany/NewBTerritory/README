@@ -1,0 +1,76 @@
+README - NewBTerritory project documentation.
+	9/24/21.	wmk.
+
+Modification History.
+---------------------
+9/24/21.	wmk.	original document; adapted from NewTerritory.
+
+
+Project Description.
+--------------------
+NewBTerritory sets up the RawData, TerrData folders and creates the
+Working-Files/Terrxxx TerrxxxHdr.csv for new business territory xxx.
+
+The initial folders created are:
+	BRefUSA-Downloads/TErrxxx
+	BRefUSA-Downloads/Terrxxx
+	BRefUSA-Downloads/Terrxxx/Previous
+	BSCPA-Downloads/TErrxxx
+	BSCPA-Downloads/Terrxxx
+	BSCPA-Downloads/Terrxxx/Previous
+
+The above folders are only created after testing for their existence.
+ 
+To create empty Map downloads in order to initialize the territory,
+use MakeEmptyBRUMap and MakeEmptyBSCMap.
+
+Setup.
+------
+Several steps are involved in creating a new business territory:
+
+	Define the territory boundaries and basic information in the TerrIDData.db.
+	 This includes the territory number, DoNotCalls, area name, optional
+	 subterritories, zip code and status. The territory header information
+	 is taken from this databsase.
+	
+	edit the territory id into the "sed" item in the Build menu
+	run "sed" from the Build menu to set up the makefile for building
+	 folders for the territory.
+	 
+	run "Make Dry Run" from the Build menu to check the setup.
+	
+	run "Make" from the Build menu to build the initial territory folders.
+	 The initial folders are named TErrxxx so they appear first in the
+	 file folders under RawData for SCPA and RefUSA. This makes the folders
+	 stand out for receiving territory download data.
+
+	run Calc on TerrData/Terrxxxhdr.csv to create Terrxxxhdr.ods
+	
+	use RefUSA to define and save the download polygon for the territory
+	download the RefUSA polygon data into the Downloads folder
+	rename the download Mapxxx_RU.csv
+	move/copy the download to the TErrxxx folder under BRefUSA-Downloads
+	rename the folder Terrxxx so it is in its proper place in the system
+	update the SystemTracker.Territory Master List sheet with the date
+	 of the download, as well as the RefUSA Downloads sheet
+	
+	use SCPA Property Search map to define the download polygon for the
+	 territory. There is no mechanism within SCPA to save the polygon.
+	download the SCPA polygon data into the Downloads folder
+	rename the download Mapxxx_SC.csv
+	move/copy the download to the TErrxxx folder under BSCPA-Downloads
+	rename the folder Terrxxx so it is in its proper place in the system
+	update the SystemTracker.Territory Master List sheet with the date
+	 of the download, as well as the SCPA Downloads sheet
+	[Note. Some territories have only 1 SCPA record (e.g. mobile home
+	 parks). For these, run MakeEmptySCMap.sh from the Procs-Dev folder
+	 to create an empty SC map.]
+	
+	move to the SCNewBTerritory project to guild the Terrxxx_SC.db
+	set the build commands and run make
+
+	WARNING: The RUNewBTerritory project depends upon SCNewTerritory having
+	 run first!
+	move to the RUNewBTerritory project to build the Terrxxx_RU.db
+	set the Build commands and run make
+	

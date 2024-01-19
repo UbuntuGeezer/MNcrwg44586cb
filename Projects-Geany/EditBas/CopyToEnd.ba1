@@ -1,0 +1,68 @@
+&apos;// CopyToEnd.bas
+&apos;//---------------------------------------------------------------
+&apos;// CopyToEnd - Copy currently selected sheet to end of workbook.
+&apos;//		10/15/20.	wmk.
+&apos;//---------------------------------------------------------------
+
+public sub CopyToEnd()
+
+&apos;//	Usage.	macro call or
+&apos;//			call CopyToEnd()
+&apos;//
+&apos;// Entry.	user has worksheet selected
+&apos;//
+&apos;//	Exit.	copy of worksheet made to end of workbook, automatic
+&apos;//			naming
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	10/12/20.	wmk.	original code; cloned from macro recording
+&apos;//	10/15/20.	wmk.	bug fix; code was welded to &quot;Terr102&quot;
+&apos;//
+&apos;//	Notes.
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+rem ----------------------------------------------------------------------
+rem define variables
+dim document   as object
+dim dispatcher as object
+
+dim oDoc		As Object
+dim sTitle		As String
+dim sDocName	As String
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	sTitle = oDoc.getTitle()
+	sDocName = left(sTitle,len(sTitle)-4)		
+
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dim args1(2) as new com.sun.star.beans.PropertyValue
+args1(0).Name = &quot;DocName&quot;
+args1(0).Value = sDocName
+args1(1).Name = &quot;Index&quot;
+args1(1).Value = 32767
+args1(2).Name = &quot;Copy&quot;
+args1(2).Value = true
+
+dispatcher.executeDispatch(document, &quot;.uno:Move&quot;, &quot;&quot;, 0, args1())
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;CopyToEnd - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end CopyToEnd		10/15/20

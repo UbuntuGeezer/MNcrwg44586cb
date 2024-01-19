@@ -1,0 +1,24 @@
+-- * ExtractSchema.psq/sql - Extract Schema from sqlite database.
+-- *	5/28/23.	wmk.
+-- *
+-- * Entry. DoSed has modified < terrpath > to the db path within *pathbase
+-- * 		DoSed has modified < dbname > to the database name schema from
+-- *
+-- * Exit.	*TEMP_PATH/dbschema.csv = extracted database schema
+-- * Modification History.
+-- * 5/28/23.	wmk.	original code.
+-- *
+-- * open specified db
+-- * query sqlite_master for 'table' records
+-- * extract 'sql' for each table record
+-- *;
+
+.open '$pathbase/<dbpath>/<dbname>.db'
+.mode csv
+.headers off
+.separator |
+.output '$TEMP_PATH/dbschema.csv'
+select '<dbname>',tbl_name, sql from sqlite_master
+where type is 'table';
+.quit
+-- ** END ExtractSchema.sql;

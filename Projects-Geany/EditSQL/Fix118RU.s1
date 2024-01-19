@@ -1,0 +1,142 @@
+--Fix118RU.sql - Fix RU records territory 118.
+-- * 5/7/22.	wmk.	(automated) *pathbase* integration.
+-- * 7/9/22.   wmk.   (automated) udpate FixFromSC (Terr124 template).
+-- * 6/2/22.     wmk.   (automated) NVenAll > Terr86777.
+-- * 1/13/22.	wmk.	(automated) ($)string repairs.
+-- *  6/12/21.	wmk.	(automated) ($)folderbase support.
+--	3/31/21.	wmk.
+--
+-- * Modification History.
+-- * ---------------------
+-- * 3/31/21.	wmk.	original code.
+-- * 5/19/21.	wmk.	updated for consistency.
+-- *
+-- * Notes. whatever relevant for this RU download..
+-- *;
+
+-- * subquery list.
+-- * --------------
+-- * AttachDBs - Attach required databases.
+-- * Fix118RU - Fix RU records territory 118.
+-- *;
+
+--FixX118RU.sql - Fix RU parcels in territory 118.
+--	5/19/21.	wmk.
+--
+-- * Modification History.
+-- * ---------------------
+-- * 3/31/21.	wmk.	original code.
+-- * 5/19/21.	wmk.	updated for consistency.
+-- *
+-- * Notes. whatever relevant for this RU download..
+-- *;
+
+-- * subquery list.
+-- * --------------
+-- * FixFromSC - Fix RU records from SC records for territory 118.
+-- * DelStrays - Delete stray records from RU download.
+-- * FixWhatever - Fix whatever for territory 118.
+-- *;
+
+-- ** AttachDBs **********
+-- *	5/19/21.	wmk.
+-- *---------------------
+-- *
+-- * AttachDBs - Attach required databases.
+-- *
+-- * Entry DB and table dependencies.
+-- *	junk.db - as main, junk database so can use dbxx ATTACHes
+-- *	Terr86777.db - as db2, SCPA data for NV territory
+-- *		Terr86777 - SCPA property records
+-- *	TerrIDData.db - as db4, territory and subterritories (all) defs
+-- *		Territory - territory id definitions
+-- *		SubTerrs - subterritory definitions
+-- *		DoNotCalls - DoNotCall addresses by territory
+-- *	AuxSCPAData - as db8, auxiliary data for SCPA records
+-- *		SitusDups - table of ambiguous situs addresses with account #s
+-- *		SitusConv - situs conversion table unitaddress <-> scpa situs
+-- *		AddrXcpt - address exceptions
+-- *	Terr118_SC.db - as db11, new territory records from SCPA polygon
+-- *		Terr118_SCBridge - Bridge formatted records extracted from SCPA
+-- *			for territory 118
+-- *	Terr118_RU.db - as db12, new territory records from RefUSA polygon
+-- *		Terr118_RUBridge - sorted Bridge formatted records extracted 
+-- *			from RefUSA polygon (see Terr118_RUPoly)
+-- *
+-- * Exit DB and table results.
+-- *
+-- * Notes.
+-- *;
+
+-- * junk as main;
+.open '$pathbase/DB-Dev/junk.db'
+
+ATTACH '$pathbase'
+||		'/DB-Dev/Terr86777.db' 
+ AS db2;
+--SELECT tbl_name FROM db2.sqlite_master 
+-- WHERE type is "table";
+--pragma db2.table_info(Terr86777);
+ 
+ATTACH '$pathbase'
+ ||		'/DB-Dev/TerrIDData.db'
+ AS db4;
+--SELECT tbl_name FROM db4.sqlite_master 
+-- WHERE type is "table";
+--pragma db4.table_info(DoNotCalls);
+
+ATTACH '$pathbase'
+ ||		'/DB-Dev/AuxSCPAData.db'
+  AS db8;
+--SELECT tbl_name FROM db8.sqlite_master;
+--pragma db8.table_info(AddrXcpt); 
+
+ATTACH '$pathbase'
+ ||		'/RawData/SCPA/SCPA-Downloads/Terr118/Terr118_SC.db'
+  AS db11;
+--  PRAGMA db11.table_info(Terr118_SCBridge);
+
+ATTACH '$pathbase'
+ ||		'/RawData/RefUSA/RefUSA-Downloads/Terr118/Terr118_RU.db'
+  AS db12;
+--  PRAGMA db12.table_info(Terr118_RUBridge);
+
+-- ** END AttachDBs **********;
+
+
+
+-- ** FixWhatever **********
+-- *	<date>.	wmk.
+-- *--------------------------
+-- *
+-- * FixWhatever - Fix whatever for territory 122.
+-- *
+-- * Entry DB and table dependencies.
+-- *	Terr86777.db - as db2, SCPA data for NV territory
+-- *		Terr86777 - SCPA property records
+-- *	Terrxxx_RU.db - as db12, new territory records from RefUSA polygon
+-- *		Terrxxx_RUBridge - sorted Bridge formatted records extracted 
+-- *			from RefUSA polygon (see Terrxxx_RUPoly)
+-- *			imported from Map122_RU.csv in folder RefUSA-Downloads
+-- *
+-- * Exit DB and table results.
+-- *	Terrxxx_RU.db - as db12, new territory records from RefUSA polygon
+-- *		Terrxxx_RUBridge - Bridge records fixed where..
+-- *
+-- * Notes. Whatever
+-- *;
+
+-- * DBs attached above;
+
+-- * Fix 229 Fiesole St;
+UPDATE Terr118_RUBridge 
+SET OwningParcel = "0429130018",
+ Phone2 = "",
+ SitusAddress = "NOT RECORDED",
+ PropUse = "0100",
+ RecordType = "P"
+where UnitAddress LIKE "229   Fiesole St%";
+
+-- ** END FixWhatever **********;
+
+

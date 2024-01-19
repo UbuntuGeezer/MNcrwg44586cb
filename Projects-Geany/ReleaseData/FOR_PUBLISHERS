@@ -1,0 +1,195 @@
+Publisher territory files .xslx and.pdf Contents
+	11/3/21.	wmk.
+
+Terrxxx_PubTerr.xlsx and Terrxxx_PubTerr.pdf contain the following information:
+
+	Both files contain all the addresses, names, and phone numbers from 2 sources,
+	Sarasota County Property Search, and RefUSA address search.
+	The file with the .xlsx name extension is a spreadsheet (Excel).
+	The file with the .pdf name extension is an Adobe/Acrobat PDF.
+	
+	The information is formatted as follows:
+	
+	5 lines of header information with basic information about the territory,
+	 and the date the publisher territory was generated. Included in this
+	 infomation is the city and zip code of the addresses. (See Letter-writing
+	 Territories below for exceptions).
+	
+	line 6 through whatever contain the territory addresses and names with
+	the following column headings:
+	UnitAddress, Unit, H, Name(s), Phone1, RefUSA, DNC, FL, Personal Notes
+	
+	The files are tagged as "landscape format" with "grid", so if printed
+	 as much information as possible will fit on the page. On most systems
+	 the "Personal Notes" column ends up on its own page.
+	
+Here is what is in each of the columns:
+	 
+	UnitAddress - the street address
+	
+	Unit - for multiple-dwelling buildings, or apartments, the unit #
+	
+	H - a '*' in this column indicates "homestead"; that is, the owner
+	 is claiming homestead exemption with the county, so considers this
+	 their permanent address
+	
+	Name(s) - name or names of residents; only county records will have
+	 multiple names in one record (see "Name Grouping" below)
+	 if this is a DoNotCall 'DO NOT CALL' will appear in the Name(s) column
+	
+	Phone1 - left empty if the publisher wishes to add a phone # found
+	 via one of the people search engines
+
+	RefUSA - the phone number listed with RefUSA for this address; if there
+	 is no phone number in RefUSA it will read "Not Available"
+
+	DNC - if set to '1' this is a DoNotCall
+
+	FL - if set to '1' this is a Foreign-Language DoNotCall
+
+	If the record information came from the Sarasota County Property search,
+	the record text will be in all uppercase (e.g. 800 THE ESPLANADE N).
+	If the record information came from the RefUSA search, the record text 
+	will be in mixed case (e.g. 800 The Esplanade N).
+
+Name Grouping.
+
+Resident names are grouped in two ways. If the county data lists multiple
+owners, all of the owner names appear in one cell, in uppercase, and separated
+with commas (e.g. SMITH JOSEPH, SMITH MARY). If the property is owned by
+a trust, often the secondary name(s) will be trustees. If the property is
+H='*' homestead, likely one or more RefUSA names will match the trustees.
+
+For RefUSA records, the names are one per record. If multiple residents
+are in the RefUSA data for the same address, each resident will have their
+own line of data.
+
+If a given address has territory records on more than one line, the first
+line of information is the first one encountered for the address. That line
+will be highlighted in green. Subsequent lines that belong with the same
+address will have the Unit column highlighted in blue. This makes it much
+easier to see all the residents for one address. If there is county data
+for the address likely (but not always) it will be the first line for the
+address, will have data in all uppercase, and highlighted green.
+
+**********************************************************************
+IF YOU KNOW HOW TO USE SPREADSHEETS, READ THIS SECTION. (Otherwise this
+will just give you a headache).
+
+Super Territories.
+------------------
+
+Super Territories are included with every regular and letter writing
+territory. They are always in spreadsheet (Excel) files, and are best
+used from a laptop, notebook, or desktop computer since most mobile
+devices that can use spreadsheets do not have the full spreadsheet
+functionality of following hyperlinks.
+
+All Super Territories have the filename Terrxxx_SuperTerr.xlsx, where
+'xxx' is the territory number. The spreadsheet file has two tabs, 
+Terrxxx_PubTerr and Terrxxx_Search. The first tab, Terrxxx_PubTerr,
+contains identical information to that in the Terrxxx_PubTerr.xlsx
+spreadsheet. It is the "standard" publisher territory information.
+
+The second tab, Terrxxx_Search, has the column headers rearranged along
+with some additional columns. The columns in this sheet are:
+H, Address, Unit, Name, Phone1, RefUSA, fastpeople, truepeople, 411, DNC, FL
+The fastpeople, truepeople and 411 columns contain hyperlinks to enable
+quick lookup for each address. (See the Hyperlinks segment below).
+
+The following are the individual column descriptions/explanations:
+
+H - "homestead"; if a '*' is present, this address and the associated Name(s)
+	are listed as homestead in the Sarasota County Property records. This 
+	implies that this address is the permanent address of the Name(s), so
+	the named person(s) should receive mail at that address year-round.
+
+Address - the street address of the location.
+
+Unit - for addresses with units (condos, apartments, duplexes, etc) this
+	is the unit #
+
+Name - the name(s) of the residents; if uppercase (e.g. DOE JOHN) it is
+	the name(s) from the SCPA county data; if mixed case (e.g. John Doe)
+	it is the name from the RefUSA data. Note that names in the county
+	are usually lastname first, from RefUSA are firstname first.
+
+Phone1 - left blank; may be filled in by using hyperlink data. (See the 
+	Hyperlinks segment below).
+	
+RefUSA - contains either the RefUSA listed phone number or "Not Available"
+
+fastpeople - contains a hyperlink for searching www.fastpeoplesearch.com
+	for this address; If you are using Excel, clicking on this cell will
+	transfer you into your web browser to the 411.com website, with the
+	address pre-loaded for you. (Some other spreadsheet packages like
+	OpenOffice/Calc may require you to shift-click on the cell).
+	
+truepeople - contains a hyperlink for searching www.truepeoplesearch.com
+	for this address; If you are using Excel, clicking on this cell will
+	transfer you into your web browser to the 411.com website, with the
+	address pre-loaded for you. (Some other spreadsheet packages like
+	OpenOffice/Calc may require you to shift-click on the cell).
+	
+411 - contains a hyperlink for searching www.411.com for this address; If
+	you are using Excel, clicking on this cell will transfer you into your
+	web browser to the 411.com website, with the address pre-loaded for
+	you. (Some other spreadsheet packages like OpenOffice/Calc may require
+	you to shift-click on the cell).
+	
+DNC - if '1' this address/unit is in our Do Not Call list; As an added
+	protection, the system places "DO NOT CALL" in the Name column.
+
+FL - if '1', this is a foreign-language do-not-call
+
+
+Hyperlinks.
+
+In general a hyperlink is a special-case text that is a link to an external
+source of information. Probably most are familiar with them in the JW
+publications as blue-highlighted fields that may contain Bible verse links
+or publication links (e.g. Is 55:8, w 02 23-24.). In the super territories
+they are links that your browser can follow directly to web site information.
+
+Hyperlinks to the 3 search engines, fastpeoplesearch, truepeoplesearch,
+and 411 allow the user to jump directly into the desired search engine
+without the tedium of typing in the address in the search engine search
+dialog box. One "click" gets you directly there.
+
+Most spreadsheet applications like Excel follow the convention of showing
+hyperlinks as highlighted blue. In the Terrxxx_Search sheets the hyperlinks
+are not highlighted, since they are "layered" under the text "Click here to
+search".
+
+Whatever column the "Click here to search" appears in, the hyperlink will
+link out to your browser for the search engine listed in the column header
+(e.g. fastpeople will link to fastpeoplesearch.com). The underlying
+hyperlink supplies the search engine with a preloaded address field that
+will send it directly to that information.
+
+Many search engines are now protected with a layer of security that
+precludes "robot" software from overloading the search engine. The first
+time you visit one of these sites in your browser session, you may be required
+to go through a verification to prove to the site that you are "human".
+This usually involves checking a checkbox "I am human" and/or identifying
+a series of pictures that follow a certain pattern (e.g. boats). Once you
+have "passed", as long as your browser session remains active, you will
+not have to repeat the "not-a-robot" verification for a given search engine.
+
+Once through the "not-a-robot" verification you will be connected directly
+to the address information for the site. By switching back and forth
+between your browser window and your spreadsheet window, you can easily
+compare information. The browser tab for the search engine/address will
+remain active until you close it. Keep in mind that if you continue
+clicking hyperlinks in the Super Territory, a new browser tab will be
+opened every time you click a link. You may wish to do some periodic
+"housekeeping" by closing browser tabs you are finished with.
+
+THIS IS THE COOL STUFF: With a browser tab that is the web page for the
+search information for a given address, all Windows operations may be
+performed on the fields in the browser web page. This means that you
+can "copy" and "paste" information from the web page back into your
+Terrxxx_Search sheet. You can cut and paste additional phone numbers,
+names, or any other information into your sheet for future reference.
+By saving the Terrxxx_SuperTerr.xlsx file, your additions will be there
+whenever you wish to use them in the future.

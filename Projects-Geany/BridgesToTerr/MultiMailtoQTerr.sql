@@ -1,0 +1,36 @@
+ INSERT INTO QGetTerr
+( OwningParcel, UnitAddress,
+ QNum, QSitus, QDir, Unit,
+  Resident1, Phone1, Phone2,
+  "RefUSA-Phone", SubTerritory,
+    CongTerrID, DoNotCall,
+     RSO, "Foreign",
+      RecordDate, SitusAddress,
+       PropUse
+ )
+SELECT OWNINGPARCEL, UNITADDRESS,
+CAST(SUBSTR(UNITADDRESS,1,INSTR(UNITADDRESS," ")-1) AS INTEGER) AS Num,
+TRIM(SUBSTR(SITUSADDRESS,INSTR(SITUSADDRESS, " "),36-INSTR(SITUSADDRESS, " "))) AS SCSitus, 
+CASE
+WHEN INSTR("NSEW",
+	SUBSTR(SITUSADDRESS,INSTR(SITUSADDRESS," ")-1,1)) > 0
+ THEN SUBSTR(SITUSADDRESS,INSTR(SITUSADDRESS," ")-1,1)
+ELSE ""
+END AS NSEW,
+ UNIT,
+Resident1, Phone1,
+CASE 
+WHEN Phone2 IS "*" 
+  AND UPPER(UNITADDRESS) IS UNITADDRESS 
+ THEN Phone2 
+ELSE "" 
+END AS H, 
+  "RefUSA-Phone" AS RefUSAPhone,
+SubTerritory, CongTerrID, DoNotCall, RSO,
+"Foreign", RecordDate, SitusAddress, PropUse 
+FROM db3.SPLITPROPS
+WHERE CONGTERRID IS "$TID"
+ AND SITUSADDRESS  NOTNULL 
+ AND SITUSADDRESS IS NOT ""
+ AND cast(DELPENDING as INT) IS NOT 1 
+ORDER BY SCSitus,Num,Unit ;

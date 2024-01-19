@@ -1,0 +1,175 @@
+&apos;// ParseSitus.bas
+&apos;//---------------------------------------------------------------
+&apos;// ParseSitus - Parse Situs :into number, street, unit fields.
+&apos;//		9/16/20.	wmk.	8:00
+&apos;//---------------------------------------------------------------
+
+public sub ParseSitus( psSitus As String, psNumber As String, _
+                   psStreet As String, psUnit As String )
+
+&apos;//	Usage.	macro call or
+&apos;//			call ParseSitus( sSitus, sNumber, sStreet, sUnit )
+&apos;//
+&apos;//		sSitus = full property address number, street, [unit]
+&apos;//		sNumber = [returned] house/bldg number
+&apos;//		sStreet = [returned] street name and suffix
+&apos;//		sUnit = [returned] [unit/lot/apt number]
+&apos;//
+&apos;// Entry.	sSitus is blank/tab separated fields
+&apos;//
+&apos;//	Exit.	sNumber = extracted house/bldg number
+&apos;//			sStreet = extracted street name [with suffix]
+&apos;//			sUnit = unit/lot/apt number or &quot;&quot;
+&apos;//
+&apos;// Calls.	Crack
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	8/9/20.		wmk.	original code
+&apos;//	8/10/20.	wmk.	modified to use Crack to break strings
+&apos;// 8/13/20.	wmk.	msgbox debugs deactivated
+&apos;//	8/16/20.	wmk.	bDone, bStreetDone explicitly declared; bug fix where
+&apos;//						N INDIES CIR being parsed as N INDIESCIR
+&apos;//	8/18/20.	wmk.	mod to split street direction off number
+&apos;//						(e.g. 700N Tamiami Tr)
+&apos;// 8/26/20.	wmk.	bug fix where empty string is actually found
+&apos;//						by InStr in source string at position 1
+&apos;//	9/15/20.	wmk.	day-1 bug fixes where street direction prefix
+&apos;//						returned as street, and street returned with unit
+&apos;//						and parsing ended with juxtaposed blanks;
+&apos;//						modified to return direction prefix as suffix
+&apos;//						on street to match RefUSA street formatting
+&apos;//	Notes.
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim bDone	As Boolean	&apos;// done parsing flag
+dim bStreetDone	As Boolean	&apos;// street done flag
+dim sBlank	As String	&apos;// blank
+dim sTab	As String	&apos;// tab
+dim sSitus	As String	&apos;// trimmed situs
+dim nSitusLen	As Integer	&apos;// situs length
+dim iSep	As Integer	&apos;// blank position
+dim jSep	As Integer	&apos;// tab position
+dim nExtLen	As Integer	&apos;// extracted substring len
+dim bMore	As Integer	&apos;// more street remaining flag
+dim sSeps	As String	&apos;// situs separators
+dim sFullStreet	As String	&apos;// full street
+dim sSepFnd	As String	&apos;// separator found
+dim sNumber	As String	&apos;// house number
+dim sStreet	As String	&apos;// street name
+dim sUnit	As String	&apos;// unit #
+Dim iPos	As Integer	&apos;// separator position
+dim sPostDir	As String	&apos;// post direction
+dim bBlanksFlushed	As Boolean	&apos;// blanks flushed flag
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	sTab = CHR(9)
+	sBlank = &quot; &quot;
+	sSeps= sBlank + sTab
+	sSitus = Trim(psSitus)
+	nSitusLen = len(sSitus)
+	
+	&apos;// Extract number.
+	&apos;// Parse to first blank or tab.
+	&apos;// Also include N S E W as SCPA includes as part of number field.	&apos;// mod081820
+	sSeps= &quot;NSEW&quot; + sBlank + sTab										&apos;// mod081820
+	call Crack(sSitus, sSeps, sNumber, sSepFnd)
+	bDone = (len(sSepFnd) = 0)
+
+if true then
+ GoTo Skip1
+endif
+&apos;//-------------------------------------------------------------------------------	
+	&apos;// if separator in set &quot;NSEW&quot;, re-insert back into sSitus at front	&apos;// mod081820
+	iPos = InStr(&quot;NSEW&quot;,sSepFnd)										&apos;// mod082620
+	if iPos  &gt; 0 then													&apos;// mod082620
+		sSitus = sSepFnd + sSitus										&apos;// mod081820
+	endif	&apos;// end number contains direction conditional				&apos;// mod081820
+&apos;//--------------------------------------------------------------------------------
+Skip1:
+
+	&apos;// if separator in set &quot;NSEW&quot;, save it and append to Street		&apos;// mod091620
+	iPos = InStr(&quot;NSEW&quot;,sSepFnd)										&apos;// mod091620
+	if iPos  &gt; 0 then													&apos;// mod091620
+		sPostDir = sSepFnd												&apos;// mod091620
+	endif	&apos;// end number contains direction conditional				&apos;// mod091620
+	
+&apos;// flush multiple blanks between number and street name
+	bBlanksFlushed = false
+	sSeps= sBlank + sTab	&apos;// limit further seps to blank and tab		&apos;// mod081820
+	sFullStreet = &quot;&quot;		&apos;// clear street accumulator
+	do while (NOT bBlanksFlushed)
+		Crack(sSitus, sSeps, sStreet, sSepFnd)
+		bBlanksFlushed = (len(sStreet) &gt; 0)
+		bDone = (len(sSepFnd) = 0)
+		if bDone then		&apos;// if only number, bail out
+			GoTo AllDone
+		endif
+ 	loop
+
+	sFullStreet = sFullStreet + &quot; &quot; + sStreet
+
+&apos;msgbox(&quot;ParseSitus - sNumber = &quot; + sNumber + CHR(13) + CHR(10) _
+&apos;	      + &quot; remaining Situs = &quot; + sSitus)
+
+	&apos;// Extract street name.
+	sSeps= sBlank + sTab	&apos;// limit further seps to blank and tab		&apos;// mod081820
+	bStreetDone = bDone
+ 	do while (NOT bStreetDone)
+ 		call Crack(sSitus, sSeps, sStreet, sSepFnd)
+ 		sFullStreet = sFullStreet + &quot; &quot; + sStreet
+ 		bStreetDone = (StrComp(sSepFnd, CHR(9)) = 0) _
+ 		            OR (Len(sSepFnd) = 0)	&apos;// done if tab or no separator
+if false then
+  GoTo Skip2
+endif
+&apos;//-----------------------------------------------------------------------------
+ 		if (NOT bStreetDone) then
+ 			call Crack(sSitus, sSeps, sStreet, sSepFnd)
+ 			bStreetDone = (len(sStreet) = 0)	&apos;// done if 2 separators juxt
+ 			if bStreetDone then
+ 				exit do
+ 			else
+ 				sFullStreet = sFullStreet + &quot; &quot; + sStreet
+ 			endif
+ 		endif	&apos;// end not TAB conditional
+ &apos;//---------------------------------------------------------------------------
+ Skip2:
+ 
+ NextSep:
+ 	loop	&apos;// end street not done conditional
+
+AllDone: 
+ 	sFullStreet = trim(sFullStreet)
+ 	
+ 	&apos;// append pre-direction as post-direction
+ 	if len(sPostDir) &gt; 0 then
+ 	   sFullStreet = sFullStreet + &quot; &quot; + sPostDir
+ 	endif
+ 	
+ 	sUnit = sSitus	&apos;// unit is whatever is left
+	
+&apos;msgbox(&quot;ParseSitus - sFullStreet = &apos;&quot; + sFullStreet + +&quot;&apos;&quot;+CHR(13) + CHR(10) _
+&apos;          + &quot;sUnit = &apos;&quot; + sUnit + &quot;&apos;&quot; + CHR(13)+CHR(10) _
+&apos;	      + &quot; remaining Situs = &apos;&quot; + sSitus + &quot;&apos;&quot;)
+
+	&apos;// set returned values.
+	psNumber = sNumber
+	psStreet = sFullStreet
+	psUnit = sUnit
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	&apos;// clear all returned strings
+	psNumber = &quot;&quot;
+	psStreet = &quot;&quot;
+	psUnit = &quot;&quot;
+	msgBox(&quot;ParseSitus - unprocessed error.&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end ParseSitus	9/16/20

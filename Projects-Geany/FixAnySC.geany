@@ -1,0 +1,78 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=FixAnySC
+base_path=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/FixAnySC/
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=9
+FILE_NAME_0=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2FClearTargets.sh;0;4
+FILE_NAME_1=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2FDoSCFixStrings.sh;0;4
+FILE_NAME_2=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2FDoSCSedPaths.sh;0;4
+FILE_NAME_3=391;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2FDoSed.sh;0;4
+FILE_NAME_4=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2FFix101SC.sh;0;4
+FILE_NAME_5=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2FhdrFixXXXSC.sh;0;4
+FILE_NAME_6=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2FhdrFixXXXSC_1.sh;0;4
+FILE_NAME_7=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2FhdrFixXXXSC_2.sh;0;4
+FILE_NAME_8=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2FMakeFixAnySC;0;4
+FILE_NAME_9=3037;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2FMakeFixAnySC.tmp;0;4
+FILE_NAME_10=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2FMakeSCTidyTerr;0;4
+FILE_NAME_11=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2FpreSCTidy.sh;0;4
+FILE_NAME_12=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2FREADME;0;4
+FILE_NAME_13=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2Fscratchfile.txt;0;4
+FILE_NAME_14=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2FSCTidyTerr_db.sh;0;4
+FILE_NAME_15=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2FSCTidyTerr_db.sh.bak;0;4
+FILE_NAME_16=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2FSCTidyTerr_db.sq;0;4
+FILE_NAME_17=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2FSCTidyTerr_db.sql;0;4
+FILE_NAME_18=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2FSCTidyTerr_db.sql.bak;0;4
+FILE_NAME_19=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2Fsedative.txt;0;4
+FILE_NAME_20=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2Fsedatives.txt;0;4
+FILE_NAME_21=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2Fsedstrfix.txt;0;4
+FILE_NAME_22=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2Ftidlist.tmp;0;4
+FILE_NAME_23=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FFixAnySC%2FTIDList.txt;0;4
+
+[VTE]
+last_dir=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/MigrationRepairs
+
+[build-menu]
+NF_00_LB=_Make
+NF_00_CM=make -f MakeFixAnySC
+NF_00_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/FixAnySC
+NF_01_LB=Make Custom _Target...
+NF_01_CM=make 
+NF_01_WD=
+NF_02_LB=Make _Object
+NF_02_CM=make %e.o
+NF_02_WD=
+NF_03_LB=sed
+NF_03_CM=./DoSed.sh 312
+NF_03_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/FixAnySC
+EX_01_LB=Make Dry-Run
+EX_01_CM=make  --dry-run  -f MakeFixAnySC
+EX_01_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/FixAnySC
+EX_00_LB=_Execute
+EX_00_CM=./%e
+EX_00_WD=

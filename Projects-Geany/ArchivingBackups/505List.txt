@@ -1,0 +1,579 @@
+P4 = : 
+   FindFileInTars initiated.
+  looping on findlist.txt ...
+ .tar file is : 
+  --file=./FLSARA86777Basic.0.tar \
+ .tar file is : 
+  --file=./FLSARA86777BTerrData.0.tar \
+BTerrData/Terr505/
+BTerrData/Terr505/Working-Files/
+BTerrData/Terr505Hdr.csv
+BTerrData/Terr505/Terr505_PubTerr.ods
+BTerrData/Terr505/Terr505_PubTerr.pdf
+BTerrData/Terr505/Terr505_PubTerr.xlsx
+BTerrData/Terr505/junk.txt
+BTerrData/Terr505/Working-Files/QTerr505.csv
+BTerrData/Terr505/Working-Files/QTerr505.ods
+BTerrData/Terr505/Working-Files/Terr505Hdr.csv
+BTerrData/Terr505/Working-Files/Terr505Hdr.ods
+BTerrData/Terr505/Working-Files/junk.txt
+ .tar file is : 
+  --file=./FLSARA86777BTerrData.1.tar \
+BTerrData/Terr505/
+BTerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777BTerrData.2.tar \
+BTerrData/Terr505/
+BTerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777DoNotCalls.0.tar \
+ .tar file is : 
+  --file=./FLSARA86777DoNotCalls.1.tar \
+ .tar file is : 
+  --file=./FLSARA86777DoNotCalls.2.tar \
+ .tar file is : 
+  --file=./FLSARA86777DoNotCalls.3.tar \
+ .tar file is : 
+  --file=./FLSARA86777DoNotCalls.4.tar \
+ .tar file is : 
+  --file=./FLSARA86777DoNotCalls.5.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.0.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.10.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.11.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.12.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.13.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.14.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.15.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.16.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.17.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.18.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.19.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.1.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.20.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.21.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.22.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.23.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.24.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.25.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.26.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.27.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.28.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.2.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.3.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.4.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.5.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.6.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.7.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.8.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.9.tar \
+ .tar file is : 
+  --file=./FLSARA86777Include.0.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.0.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.10.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.11.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.12.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.13.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.14.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.15.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.16.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.17.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.18.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.1.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.2.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.3.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.4.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.5.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.6.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.7.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.8.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.9.tar \
+ .tar file is : 
+  --file=./FLSARA86777Procs.0.tar \
+ .tar file is : 
+  --file=./FLSARA86777Procs.1.tar \
+ .tar file is : 
+  --file=./FLSARA86777Procs.2.tar \
+ .tar file is : 
+  --file=./FLSARA86777Procs.3.tar \
+ .tar file is : 
+  --file=./FLSARA86777Procs.4.tar \
+ .tar file is : 
+  --file=./FLSARA86777Procs.5.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.0.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.10.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.11.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.12.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.13.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.14.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.15.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.16.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.17.tar \
+RawData/RefUSA/RefUSA-Downloads/Terr505_RU.db
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.18.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.1.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.2.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.3.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.4.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.5.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.6.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.7.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.8.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.9.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.0.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.10.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.11.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.12.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.13.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.14.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.15.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.1.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.2.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.3.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.4.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.5.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.6.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.7.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.8.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.9.tar \
+ .tar file is : 
+  --file=./FLSARA86777Release.0.tar \
+ .tar file is : 
+  --file=./FLSARA86777Release.1.tar \
+ .tar file is : 
+  --file=./FLSARA86777Release.2.tar \
+ .tar file is : 
+  --file=./FLSARA86777TerrData.0.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+TerrData/Terr505/junk.txt
+ .tar file is : 
+  --file=./FLSARA86777TerrData.10.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.11.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.12.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.13.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.14.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.15.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.1.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.2.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.3.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.4.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.5.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.6.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.7.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.8.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.9.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777Basic.0.tar \
+ .tar file is : 
+  --file=./FLSARA86777BTerrData.0.tar \
+BTerrData/Terr505/
+BTerrData/Terr505/Working-Files/
+BTerrData/Terr505Hdr.csv
+BTerrData/Terr505/Terr505_PubTerr.ods
+BTerrData/Terr505/Terr505_PubTerr.pdf
+BTerrData/Terr505/Terr505_PubTerr.xlsx
+BTerrData/Terr505/junk.txt
+BTerrData/Terr505/Working-Files/QTerr505.csv
+BTerrData/Terr505/Working-Files/QTerr505.ods
+BTerrData/Terr505/Working-Files/Terr505Hdr.csv
+BTerrData/Terr505/Working-Files/Terr505Hdr.ods
+BTerrData/Terr505/Working-Files/junk.txt
+ .tar file is : 
+  --file=./FLSARA86777BTerrData.1.tar \
+BTerrData/Terr505/
+BTerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777BTerrData.2.tar \
+BTerrData/Terr505/
+BTerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777DoNotCalls.0.tar \
+ .tar file is : 
+  --file=./FLSARA86777DoNotCalls.1.tar \
+ .tar file is : 
+  --file=./FLSARA86777DoNotCalls.2.tar \
+ .tar file is : 
+  --file=./FLSARA86777DoNotCalls.3.tar \
+ .tar file is : 
+  --file=./FLSARA86777DoNotCalls.4.tar \
+ .tar file is : 
+  --file=./FLSARA86777DoNotCalls.5.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.0.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.10.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.11.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.12.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.13.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.14.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.15.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.16.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.17.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.18.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.19.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.1.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.20.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.21.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.22.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.23.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.24.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.25.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.26.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.27.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.28.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.2.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.3.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.4.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.5.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.6.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.7.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.8.tar \
+ .tar file is : 
+  --file=./FLSARA86777Geany.9.tar \
+ .tar file is : 
+  --file=./FLSARA86777Include.0.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.0.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.10.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.11.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.12.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.13.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.14.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.15.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.16.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.17.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.18.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.1.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.2.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.3.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.4.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.5.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.6.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.7.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.8.tar \
+ .tar file is : 
+  --file=./FLSARA86777MainDBs.9.tar \
+ .tar file is : 
+  --file=./FLSARA86777Procs.0.tar \
+ .tar file is : 
+  --file=./FLSARA86777Procs.1.tar \
+ .tar file is : 
+  --file=./FLSARA86777Procs.2.tar \
+ .tar file is : 
+  --file=./FLSARA86777Procs.3.tar \
+ .tar file is : 
+  --file=./FLSARA86777Procs.4.tar \
+ .tar file is : 
+  --file=./FLSARA86777Procs.5.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.0.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.10.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.11.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.12.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.13.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.14.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.15.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.16.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.17.tar \
+RawData/RefUSA/RefUSA-Downloads/Terr505_RU.db
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.18.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.1.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.2.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.3.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.4.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.5.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.6.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.7.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.8.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataRU.9.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.0.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.10.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.11.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.12.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.13.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.14.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.15.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.1.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.2.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.3.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.4.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.5.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.6.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.7.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.8.tar \
+ .tar file is : 
+  --file=./FLSARA86777RawDataSC.9.tar \
+ .tar file is : 
+  --file=./FLSARA86777Release.0.tar \
+ .tar file is : 
+  --file=./FLSARA86777Release.1.tar \
+ .tar file is : 
+  --file=./FLSARA86777Release.2.tar \
+ .tar file is : 
+  --file=./FLSARA86777TerrData.0.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+TerrData/Terr505/junk.txt
+ .tar file is : 
+  --file=./FLSARA86777TerrData.10.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.11.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.12.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.13.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.14.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.15.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.1.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.2.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.3.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.4.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.5.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.6.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.7.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.8.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/
+ .tar file is : 
+  --file=./FLSARA86777TerrData.9.tar \
+TerrData/Terr505/
+TerrData/Terr505/Working-Files/

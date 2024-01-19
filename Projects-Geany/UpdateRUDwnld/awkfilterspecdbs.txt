@@ -1,0 +1,9 @@
+# awkfilterspecdbs.tmp - filter /Special dbs listing from 216.
+#	6/29/23.	wmk.
+BEGIN{ p=1 }
+{
+ if( index($2,"216") > 0 || index($3,"216") > 0) p=0;;
+ if(p) {print}
+ else
+  p=1
+}

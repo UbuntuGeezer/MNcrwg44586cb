@@ -1,0 +1,109 @@
+# MakeHdrsSQLtoSH.tmp - template for make MakeHdrsSQLtoSH.
+#	11/26/22.	wmk.
+#
+#	Dependencies.
+#		hdrAnySQL.sh in folder ~/Procs-Dev
+#		SCSpecTerr_db set in Build (DoSed)
+#		/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/SpecialSCdb set in Build (DoSed)
+#		SCSpecTerr_db.sql in folder ~/Territories//home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/SpecialSCdb
+#		[preamble.sql] in folder ~/Territories//home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/SpecialSCdb
+#
+#	Build results.
+#		if [preamble.sql] present, is inserted just after hdrAnySQL_1.sh
+#		SCSpecTerr_db.sq in folder /home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/SpecialSCdb
+#		SCSpecTerr_db.sh in folder ~/Territories//home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/SpecialSCdb
+#
+# Modification History.
+# ---------------------
+# 11/26/22.	wmk.	*codebase dependent paths checked; comments tidied.
+# Legacy mods.
+# 5/28/22.	wmk.	.PHONY Always added; always make .sh from .sql.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+# Legacy mods.
+# 4/23/22.	wmk.	*pathbase* env var added.
+# 5/2/22.	wmk.	*folderbase* ifndef added.
+# Legacy mods.
+# 4/17/21.	wmk.	original code.
+# 6/17/21.	wmk.	multihost support.
+# 6/26/21.	wmk.	multihost support generalized; awk replaced with cat.
+#					superfluous "s removed.
+# 10/12/21.	wmk.	flow changed to go from .sql to .sq to .sh; documentation
+#					updated; entry changed to require full filepath for
+#					easy use from Make recipes.
+# 11/27/21.	wmk.	updated to use AnySQLtoSQ and AnySQtoSH shell files.
+# 12/3/21.	wmk.	bashpath replaced with bashbase, sqlpath replaced with
+#			 sqlbase, projpath replaced with projbase, basepath replaced
+#			 with terrbase.
+# 12/30/21.	wmk.	HOME changed to USER; chmod added to recipe to allow
+#			 generated .sh to execute.
+# 3/16/22.	wmk.	chmod +x in place of chmod 700
+# 3/18/22.	wmk.	projbase and projpath folderbase references corrected.
+#
+# Note. Build "sed" substitutes for SCSpecTerr_db and /home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/SpecialSCdb
+# throughout this template from passed values in the Build/sed item.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase=/media/ubuntu/Windows/Users/Bill
+ else
+  folderbase=$(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+vpath %.sql $(codebase)/Queries-SQL/Utilities-DB-SQL
+vpath %.sh $(codebase)/Procs-Dev
+vpath %.tmp $(codebase)/Projects-Geany/AnySQLtoSH
+
+bashbase = $(codebase)/Procs-Dev/
+ bashpath = $(codebase)/Procs-Dev
+sqlbase = $(codebase)/Queries-SQL/Utilities-DB-SQL/
+sqlpath = $(codebase)/Queries-SQL/Utilities-DB-SQL
+projbase = $(codebase)/Projects-Geany/HdrsSQLtoSH/
+ projpath = $(codebase)/Projects-Geany/HdrsSQLtoSH
+# new definition - supports SCSpecTerr_db.sh if provided.
+terrbase = $(pathbase)/
+basepath = $(pathbase)
+targpath = /home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/SpecialSCdb
+
+.PHONY : MakeAnySQLtoSH.tmp Always
+
+# main target: filename.sh
+#=====================================================================
+Always   : $(targpath)/SCSpecTerr_db.sql \
+ $(targpath)/SCSpecTerr_db.hd1  $(targpath)/SCSpecTerr_db.hd2
+	if test -f $(targpath)/SCSpecTerr_db.sq;then \
+	  rm $(targpath)/SCSpecTerr_db.sq;fi
+	# build SCSpecTerr_db.sq from SCSpecTerr_db.sql
+	$(bashbase)AnySQLtoSQ.sh $(targpath) SCSpecTerr_db
+	cp -p /home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/SpecialSCdb/SCSpecTerr_db.hd1 $(projpath)/AnyHdr_1.sh
+	cp -p /home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/SpecialSCdb/SCSpecTerr_db.hd2 $(projpath)/AnyHdr_2.sh
+	# now the *targpath*/SCSpecTerr_db.sq is in place; cat the mess together.
+	cat $(projpath)/AnyHdr_1.sh $(targpath)/SCSpecTerr_db.sq \
+	  $(projpath)/AnyHdr_2.sh > $(targpath)/SCSpecTerr_db.sh
+	chmod +x $(targpath)/SCSpecTerr_db.sh
+	
+
+$(targpath)/SCSpecTerr_db.sql   : 
+	if ! test -f $(targpath)/SCSpecTerr_db.sql;then
+	 echo "** SCSpecTerr_db.sql missing for MakeHdrsSQLtoSH **";exit 1;fi
+
+$(targpath)/SCSpecTerr_db.hd1   : 
+	if ! test -f $(targpath)/SCSpecTerr_db.sql;then
+	 echo "** SCSpecTerr_db.hd1 missing for MakeHdrsSQLtoSH **";exit 1;fi
+
+$(targpath)/SCSpecTerr_db.hd2  : 
+	if ! test -f $(targpath)/SCSpecTerr_db.sql;then
+	 echo "** SCSpecTerr_db.hd2 missing for MakeHdrsSQLtoSH **";exit 1;fi
+
+#=======================================================================
+# end MakeHdrsSQLtoSH.tmp

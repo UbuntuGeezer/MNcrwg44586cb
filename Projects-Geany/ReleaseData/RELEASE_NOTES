@@ -1,0 +1,30 @@
+RELEASE_NOTES - Release notes to accompany territory data releases.
+	mm/dd/yr.	wmk.
+
+Modification History.
+---------------------
+10/30/21.	wmk.	original document; template for all releases.
+mm/dd/yr.	wmk.	release notes for mm-dd-yr.
+
+Note: This file travels with each release and is release-specific.
+
+
+Release Notes - Release_mm-dd-yr.
+---------------------------------
+
+[Edit this section before transmitting files...]
+
+
+Release Description.
+--------------------
+[Edit this section before transmitting files...]
+
+
+New Features.
+-------------
+[Document new features in this release...]
+
+
+Deficiencies and Bugs.
+----------------------
+[Document significant bugs and deficiencies in the build...]

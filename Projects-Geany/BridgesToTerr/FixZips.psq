@@ -1,0 +1,10 @@
+UPDATE Terr626_SCBridge
+SET UnitAddress =
+case
+when OWNINGPARCEL IN (SELECT Acct FROM a)
+ then UnitAddress || '  '
+  || (SELECT Zip FROM a
+      WHERE Acct IS OwningParcel)
+ELSE UnitAddress
+end
+WHERE CONGTERRID LIKE '6%';

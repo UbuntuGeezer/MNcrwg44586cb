@@ -1,0 +1,71 @@
+README - RUNewBizTerr project documentation.<br>
+	5/11/22.	wmk.
+##Modification History.
+<pre><code>9/24/21.    wmk.  original document; adapted from RUNewTerritory.
+9/28/21.    wmk.   add note about MvBDwnld to move .csv to territory.
+5/11/22.    wmk.   .md formatting.
+</code></pre>
+##Document Sections.
+<pre><code>Project Description - general description of project.
+Setup - step-by-step build instructions.
+Raw Data Structure - data structure of RU territory database.
+Significant Notes - important notes about project.
+</code></pre>
+##Project Description.
+RUNewBizTerr takes download data from the RefUSA records and creates a
+database with the download records and Bridge table for territory generation.
+The download records are assumed to be "map" download records from a
+RefUSA business database in polygon record format. The Map download file
+is named Mapxxx_RU.csv where xxx is the territory number.
+
+If the file *ImportExtra.csv* exists, its contents are appended to the
+Mapxxx_RU.csv file before the db is created.
+##Setup.
+Perform the following steps from within the RUNewTerritory project:
+<pre><code>
+??	WARNING: do the SCNewTerritory project first, since this project
+	 depends upon the Terrxxx_SCBridge table when running InitialRUFix!
+
+	ensure that Mapxxx_RU.csv is present in the BRefUSA-Downloads/Terrxxx 
+	 folder (use MvBDwnld.sh to move the .csv download from Downloads)
+
+	edit the "sed" Build menu item with the territory ID of the new territory
+	run the "sed" Build menu item
+	
+	run the "Make Dry Run" Build menu item to check for desired results
+	
+	run the "Make" Build menu item to generate the territory database
+</code></pre>
+##Raw Data Structure.
+Following is the table structure of the map polygon data. In the first
+pass at generating territories, the "by shape" feature was used to draw
+polygons on the RefUSA street map to obtain the addresses. The resulting
+.csv download records all have the following SQL fields present:
+<pre><code>
+CREATE TABLE Terr502_RURaw 
+(CompanyName , ExecutiveFirstName , ExecutiveLastName , Address , City ,
+ State , ZIPCode , CreditScoreAlpha , ExecutiveGender , ExecutiveTitle , 
+ FaxNumberCombined , IUSANumber , LocationEmployeeSizeRange , 
+ LocationSalesVolumeRange , PhoneNumberCombined , PrimarySICCode , 
+ PrimarySICDescription , SICCode1 , SICCode1Description , RecordType )
+</code></pre>
+
+As can be seen from the table definition, the .csv fields are imported
+directly into table Terrxxx_RURaw where xxx is the territory ID.
+
+A provision has been made to take download data from RefUSA using entire
+streets instead of polygons. This provision covers cases where entire
+streets are necessary to have in a database, where the street spans two
+or more territories. The SpecialRUdb project handles these databases.
+Where a territory makes use of this provision, its raw data will contain
+documentation in file SPECIAL, and a secondary database Specxxx_RU.db of
+Special records in Bridge format for inclusion in the generated territory.
+(See the SpecialRUdb project documentation README for further information.)
+##Significant Notes.
+The Terryyy_RU.db UnitAddress fields are taken directly from the RefUSA
+business listings with no modifications. As with non-business territories
+these are in mixed upper/lowercase. However, unlike their counterparts in
+non-business territories, the UnitAddress fields do not have multiple
+spaces between the number and the street in the address field. For this
+reason, ANY DO NOT CALLS RECORDED IN THE TerrIDData.DoNotCalls TABLE
+MUST BE ENTERED EXACTLY AS THEY OCCUR IN A REFUSA BUSINESS DOWNLOAD.

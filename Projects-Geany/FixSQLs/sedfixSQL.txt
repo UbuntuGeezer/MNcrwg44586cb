@@ -1,0 +1,3 @@
+s?folderbase/Territories?pathbase?g
+s?/media/ubuntu/Windows/Users/Bill/Territories?\$pathbase?g
+1a-- * 5/28/22.	wmk.	(automated) *pathbase* integration.

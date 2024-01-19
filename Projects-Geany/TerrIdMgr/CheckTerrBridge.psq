@@ -1,0 +1,26 @@
+-- * CheckTerrBridge.psq/sql - Check RU/Terrxxx_RU.db, SC/Terrxxx_SC.db,s for Bridge table;
+-- * 6/2/23.	wmk.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 6/2/23.	wmk.	original code.
+-- *
+-- * Notes.
+-- *;
+.open '$pathbase/$rupath/Terryyy/Terryyy_RU.db'
+.mode list
+.output '$TEMP_PATH/FoundRUBridge.txt'
+SELECT CongTerrID from Terryyy_RUBridge
+WHERE TerrID IS 'yyy'
+LIMIT 1
+;
+
+.open '$pathbase/$scpath/Terryyy/Terryyy_SC.db'
+.mode list
+.output '$TEMP_PATH/FoundSCBridge.txt'
+SELECT CongTerrID from Terryyy_SCBridge
+WHERE TerrID IS 'yyy'
+LIMIT 1
+;
+.quit
+-- * END CheckTerrBridge.sql;

@@ -1,0 +1,155 @@
+<p>README - DNCReport project documentation.<br>
+    7/10/22.    wmk.</p>
+
+<h3>Modification History.</h3>
+
+<pre><code>
+11/1/21.    wmk.    original document.
+7/10/22.    wmk.    .md formatting; notes about FOREIGN KEY tables
+             support in TerrIDData for DNC related tables.
+</code></pre>
+
+<h3 id="IX">Document Sections</h3>
+
+<pre><code>
+<a href="#1.0">link</a> 1.0 Project Description.
+<a href="#2.0">link</a> 2.0 Results.
+<a href="#3.0">link</a> 3.0 Setup.
+</code></pre>
+
+<h3 id="1/0">1.0 Project Description.</h3>
+
+<p>extracts territory IDs and DNC counts from TerrIDData.DoNotCalls
+and writes to DNCSummary.csv
+DNCSummary.csv may then be used to update the DNC counts in 
+the SystemTracker.ods.<br><a href="#IX">Index</a></p>
+
+<h3 id="2.0">2.0 Results.</h3>
+
+<p>There are currently 4 shell queries with this project:</p>
+
+<p>DNCSummary.sh and DNCDetail.sh provide summary and detail report data exported
+to .csv files by their namesake. The summary is a list of territories, the total
+number of DONOTCALLs, and the oldest and newest dates of the DONOTCALLs. The detail
+is a complete list of DONOTCALLs, grouped by territory.</p>
+
+<p>RSOSummary.sh and RSODetail.sh provide summary and detail report data exported
+to .csv files by their namesake. The summary is a list of territories, the
+total number of registered sex offenders, and the oldest and newest dates of
+the records. The detail is a complete list of registered sex offenders, grouped
+by territory.</p>
+
+<p>The resultant .csv files are saved in the {DoTerrsWithCalc}/Tracking folder.
+The data in each .csv that can be imported into Calc, then
+used to update all the DNC counts in the RefUSA-Downloads sheet. (All of
+the RefUSA-Downloads DNC count fields are linked to the SCPA-Downloads
+sheet so they stay in sync. They have all been imported to .xlsx spreadsheets
+named after their namesakes.<br><a href="#IX">Index</a></p>
+
+<h3 id="3.0">3.0 Setup.</h3>
+
+<pre><code>Build menu:
+    run 'Execute' from Build menu
+OR
+Terminal: /Geany-Projects/DNCReport
+    run ./DNCReport.sh
+</code></pre>
+
+<p>/Tracking/DNCSummary.csv is ready to import into the SystemTracking workbook.
+<br><a href="#IX">Index</a></p>
+
+<h3 id="4.0">4.0 Linked Tables.</h3>
+
+<p>The primary database for Do Not Call information is TerrIDData.db. Within this
+database there are 3 tables used to manage DoNotCalls. DoNotCalls is the table
+used in territory generation that contains the DNC information that the
+publisher sees in the publisher territories. It has fields for Foreign Language
+('Foreign'), and Registered Sex Offender (RSO) as extended flags.</p>
+
+<p>(new) Previously the values in the 'Foreign' and 'RSO' fields were only 1 or 0,
+with 1 indicating the flag applies to the Do Not Call Record. To support the
+capability of generating specific reports for registered sex offenders, or
+foreign language, these fields now contain record index numbers for either
+the RSO table or the ForLang table. Both these tables are new to the TerrIDData.db.</p>
+
+<p><strong>RSO Tables.</strong>
+There are now two tables for recording registered sex offender information. <em>RSOAddress</em>
+contains the minimal registered sex offender information of property ID and unit. This
+is the "parent" table, with each record having a unique RSO id field. The RSO id field
+is a "foreign" key to both the DoNotCalls and RSOInfo tables. This links all three tables
+together so that if any records are deleted or updated in the <em>RSOAddress</em> table, the
+information is reflected in the DoNotCalls and RSOInfo tables.</p>
+
+<p>-- * first set existing RSO fields to rowid in RSOs within DoNotCalls;
+UPDATE DoNotCalls
+ SET RSO = rowid
+WHERE RSO &lt;> 0
+ AND length(RSO) > 0
+;</p>
+
+<p>PRAGMA Foreign_Key=ON;
+CREATE TABLE RSOAddress
+(RSOid INTEGER PRIMARY KEY AUTOINCREMENT,
+ PropID TEXT, Unit TEXT, Initials TEXT,
+ RecDate TEXT);</p>
+
+<p>CREATE TABLE RSOInfo
+(Name TEXT, Phone TEXT, Notes TEXT,
+ RSOid INTEGER NOT NULL,
+ PRIMARY KEY(RSOid),
+ FOREIGN KEY(RSOid)
+  REFERENCES RSOAddress(RSOid));</p>
+
+<p>-- * initially populate RSOAddress with entries from DoNotCalls;
+WITH a AS (SELECT rowid, PropID, Unit, RecDate,
+RSO
+  FROM DoNotCalls WHERE RSO = rowid)
+INSERT INTO RSOAddress
+SELECT rowid,PropID, Unit, 'wmk', RecDate
+FROM a;</p>
+
+<p>-- * initially populate RSOInfor with data from DoNotCalls;
+-- NAME, PHONE, NOTES, RSOid;
+WITH a AS (SELECT rowid, Name Nm, Phone Ph, Notes Nt,
+ RSO FROM DoNotCalls)
+INSERT INTO RSOInfo
+SELECT Nm, Ph, Nt, RSO
+FROM a
+ WHERE RSO = rowid;</p>
+
+<p>-- This query returns count of all that are NOT RSO;
+select count() RSO FROM DoNotCalls
+WHERE RSO = 0
+  or length(RSO) = 0
+  Or RSO IS NULL;</p>
+
+<p><strong>ForLang Tables.</strong>
+There are now two tables for recording foriegn language information. <em>ForLang</em>
+contains the information about each foreign language. This
+is the "parent" table, with each record having a unique Foreign Language id field. 
+The FL id field
+is a "foreign" key to both the DoNotCalls and FLInfo tables. This links all three tables
+together so that if any records are deleted or updated in the <em>ForLang</em> table, the
+information is reflected in the DoNotCall and FLInfo tables.</p>
+
+<p>PRAGMA Foreign_Keys=ON;
+CREATE TABLE ForLang
+(
+Language TEXT, FLid INTEGER,
+ PRIMARY KEY( FLid ));</p>
+
+<p>CREATE TABLE FLInfo
+(CongName TEXT, CongContact TEXT, CongPhone TEXT,
+ FLid INTEGER,
+ PRIMARY KEY( FLid ),
+ FOREIGN KEY (Flid)
+  REFERENCES ForLang (FLid));</p>
+
+<p>CREATE TABLE DoNotCalls
+( TerrID TEXT NOT NULL, Name TEXT, UnitAddress TEXT NOT NULL, Unit TEXT,
+ Phone TEXT, Notes TEXT, RecDate TEXT, RSO INTEGER, "Foreign" INTEGER,
+ PropID TEXT, ZipCode TEXT, DelPending INTEGER, DelDate TEXT, Initials TEXT,
+ FOREIGN KEY (RSO)
+  REFERENCES RSOAddress(RSOid),
+ FOREIGN KEY ("Foreign")
+  REFERENCES ForLang (FLid));</p>

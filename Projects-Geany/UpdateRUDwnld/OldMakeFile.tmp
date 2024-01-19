@@ -1,0 +1,43 @@
+#MakeUpdateRUDwnld.tmp - template for make MakeUpdateRUDwnld.
+#	3/24/21.	wmk.
+#
+# Modification History.
+# ---------------------
+# 3/1/21.	wmk.	original code.
+# 3/11/21.	wmk.	support for user-supplied post processor FixxxxRU.sh
+# 3/24/21.	wmk.	trailing RUTidyTerr_db call added to complete "fixed"
+#					records.
+#
+# Note. Will not work if there is not SCBridge data.
+# update happens if RefUSA-Downloads/Terryyy/Mapyyy_RU.csv newer than Terryyy_RU.db
+
+$(error **DO NOT USE OldMakeFile.tmp**)
+
+vpath %.db /media/ubuntu/Windows/Users/Bill/Territories/RawData/RefUSA/RefUSA-Downloads/Terryyy
+vpath %.csv /media/ubuntu/Windows/Users/Bill/Territories/RawData/RefUSA/RefUSA-Downloads/Terryyy
+bashpath = "/media/ubuntu/Windows/Users/Bill/Territories/Procs-Dev/"
+postpath = "/media/ubuntu/Windows/Users/Bill/Territories/RawData/RefUSA/RefUSA-Downloads/Terryyy/"
+
+# old recipe definition.
+#Terryyy_RU.db : Mapyyy_RU.csv
+#	bash $(bashpath)RUNewTerr_db.sh yyy 
+#	bash $(bashpath)RUTidyTerr_db.sh yyy
+#	sed '{s/xxx/yyy/g}' UpdateRUDwnld.sql > SQLTemp.sql
+#	sqlite3 < SQLTemp.sql
+
+.ONESHELL : ;
+
+.PHONY   :   Mapyyy_RU.csv
+
+# new definition - suppports FixyyyRU.sh if provided.
+Terryyy_RU.db : Mapyyy_RU.csv
+	bash $(bashpath)RUNewTerr_db.sh yyy 
+	bash $(bashpath)RUTidyTerr_db.sh yyy
+	bash $(bashpath)FixXXXru.sh yyy
+	touch $(postpath)FixyyyRU.sh
+	bash $(postpath)FixyyyRU.sh
+	bash $(bashpath)MissingIDs.sh yyy
+	bash $(bashpath)RUTidyTerr_db.sh yyy
+
+
+Mapyyy_RU.csv : 

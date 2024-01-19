@@ -1,0 +1,266 @@
+&apos;// TerrToBridge.bas
+&apos;//---------------------------------------------------------------
+&apos;// TerrToBridge - Pub-Territory sheet to Admin-Bridge sheet.
+&apos;//		9/19/20.	wmk.	19:45
+&apos;//---------------------------------------------------------------
+
+public sub TerrToBridge()
+
+&apos;//	Usage.	macro call or
+&apos;//			call TerrToBridge()
+&apos;//
+&apos;//	Entry..	user in a &quot;Pub-Territory&quot; formatted sheet with the following fields:
+&apos;//        A    	B      C       D      E     F    		G		   H		I
+&apos;//		Address  Name1  Name2   Phone1  Phone2 RU/Phone	 DoNotCall	Foreign	Personal/Notes
+&apos;//[source] B      C	  D		   E	  F	        G          J       L		-
+&apos;//
+&apos;// Exit.	entry sheet transformed to Admin-Bridge with following fields:
+&apos;//[src]  E1	 	   A           B       C         D      E      F
+&apos;//	OwningParcel  UnitAddress  Resident1 Resident2 Phone1 Phone2 RUPhone
+&apos;//			A			B			C		D		  E		 F		G	
+&apos;//
+&apos;//[src] B4     D4        G       -    H       C2       fsAddrToSCFormat  -
+&apos;//  SubTerr CongTerr DoNotCall RSO Foreign  RecordDate SitusAddress  DelPending
+&apos;//		H		I		   J     K     L		M			  N			  O
+&apos;//
+&apos;// Calls.	BoldHeadings, ForceRecalc, SetTerrWidths,
+&apos;//			SetSelection, MergeOwnerCells, MergeStreetsCells,
+&apos;//			MergeSheetType
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/18/20.	wmk.	original code; adapted from EditToTerr
+&apos;//	9/19/20.	wmk.	Merge.. calls; FreezeView call added
+&apos;//
+&apos;//	Notes.
+&apos;// Method.
+&apos;//     Insert new column A
+&apos;//     col A heading to &quot;OwningParcel&quot;
+&apos;//		Move header B1-I4 to A1
+&apos;//		col B heading to &quot;UnitAddress&quot;
+&apos;//		col C heading to &quot;Resident1&quot;
+&apos;//		col D heading to &quot;Resident2&quot;
+&apos;//		col G heading to &quot;RefUSA&quot;
+&apos;//     insert 2 cols at H
+&apos;//     col H heading to &quot;SubTerritory
+&apos;//		col I heading to &quot;CongTerrID&quot;
+&apos;//     insert 1 col at K
+&apos;//     col K heading to &quot;RSO&quot;
+&apos;//     del col M
+&apos;//		col M heAding to &quot;RecordDate&quot;
+&apos;//		col N heading to &quot;SitusAddress&quot;
+&apos;//		col O heading to &quot;DelPending&quot;
+&apos;// for each active row
+&apos;//			Ax = E1 OwnerParcel
+&apos;//			Nx = fsAddrToSCFormat(Bx)
+&apos;//			Mx = C2 date
+&apos;//			Ix = D4 CongTerrID
+&apos;//			Hx = B4 SubTerritory
+&apos;// next row
+&apos;//		H1 = &quot;Admin-Bridge formatted sheet&quot; 
+
+&apos;//	constants.
+const COL_PARCEL=0		&apos;// &quot;OwningParcel&quot; column index
+const COL_A=0
+const COL_B=1
+const COL_C=2	
+const COL_D=3
+const COL_E=4
+const COL_F=5
+const COL_G=6			&apos;// column G index
+const COL_H=7			&apos;// column H index
+const COL_I=8			&apos;// column I index
+const COL_J=9			&apos;// column J index
+const COL_K=10			&apos;// column K index
+const COL_L=11			&apos;// column L index
+const COL_M=12			&apos;// column M index (RecordDate)
+const COL_N=13			&apos;// column N index (SitusAddress)
+const COL_O=14			&apos;// column O index (DelPending)
+const ROW_1=0
+const ROW_2=1
+const ROW_3=2
+const ROW_4=3
+const ROW_HEADING=4		&apos;// headings row index
+const LJUST=1		&apos;// left-justify HoriJustify				&apos;// mod052020
+const CJUST=2		&apos;// center HoriJustify						&apos;// mod052020
+const RJUST=3		&apos;// right-justify HoriJustify				&apos;// mod052320
+const MDYY=30		&apos;// &apos;M/D/YY&apos; format value
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+dim oMrgRange	As Object	&apos;// merge range
+
+dim oCell	As Object		&apos;// cell working on
+dim i		As Integer		&apos;// loop index
+dim sPropID	As String		&apos;// property ID
+dim sSubTerr	As String	&apos;// subterritory
+dim sCongTerr	As String	&apos;// cong terr ID
+dim lRowCount	As Long		&apos;// row count of addresses
+dim dDate		As Double	&apos;// date value
+dim sAddr		As String	&apos;// full address
+dim sNotes		As String	&apos;// notes field
+dim nCols		As Integer	&apos;// removal column count
+dim oCols		As Object	&apos;// .Columns array this sheet
+dim oCell2		As Object	&apos;// target cell when moving cell contents
+
+	&apos;// code.
+	ON ERROR GoTo ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	oCols = oSheet.Columns
+	
+	oCell =	oSheet.getCellByPosition(COL_B, ROW_2)
+	lRowCount = oCell.Value
+
+
+	&apos;//     Insert new column A
+	&apos;//     col A heading to &quot;OwningParcel&quot;
+	oCols.insertByIndex(COL_A, 1)
+	oCell = oSheet.getCellByPosition(COL_A, ROW_HEADING)
+	oCell.String = &quot;OwningParcel&quot;
+	oCell.HoriJustify = CJUST
+
+	&apos;//		Move header B1-I4 to A1
+	oMrgRange = oRange
+	oMrgRange.StartColumn = COL_B
+	oMrgRange.EndColumn = COL_I
+	oMrgRange.StartRow = ROW_1
+	oMrgRange.EndRow = ROW_4
+dim oTarget as new com.sun.star.table.CellAddress
+	oTarget.Sheet = oRange.Sheet
+	oTarget.Column = COL_A
+	oTarget.Row = ROW_1
+	oSheet.moveRange(oTarget,oMrgRange)
+
+	&apos;//	restore B2 formula row count
+	oCell = oSheet.getCellByPosition(COL_B, ROW_2)
+	oCell.setFormula(&quot;=COUNTA($A$6:$A$1299)&quot;)
+	
+	&apos;//		col B heading to &quot;UnitAddress&quot;
+	oCell = oSheet.getCellByPosition(COL_B, ROW_HEADING)
+	oCell.String = &quot;UnitAddress&quot;
+	oCell.HoriJustify = CJUST
+	
+	&apos;//		col C heading to &quot;Resident1&quot;
+	oCell = oSheet.getCellByPosition(COL_C, ROW_HEADING)
+	oCell.String = &quot;Resident1&quot;
+	oCell.HoriJustify = CJUST
+	
+	&apos;//		col D heading to &quot;Resident2&quot;
+	oCell = oSheet.getCellByPosition(COL_D, ROW_HEADING)
+	oCell.String = &quot;Resident2&quot;
+	oCell.HoriJustify = CJUST
+
+	&apos;//		col G heading to &quot;RefUSA&quot;
+	oCell = oSheet.getCellByPosition(COL_G, ROW_HEADING)
+	oCell.String = &quot;RefUSA&quot;
+	oCell.HoriJustify = CJUST
+
+	&apos;//		clear old H1 title 
+	oCell = oSheet.getCellByPosition(COL_H, ROW_1)
+	oCell.String = &quot;&quot;
+
+	&apos;//     insert 2 cols at H
+	&apos;//     col H heading to &quot;SubTerritory
+	&apos;//		col I heading to &quot;CongTerrID&quot;
+	oCols.insertByIndex(COL_H, 2)
+	oCell = oSheet.getCellByPosition(COL_H, ROW_HEADING)
+	oCell.String = &quot;SubTerritory&quot;
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_I, ROW_HEADING)
+	oCell.String = &quot;CongTerrID&quot;
+	oCell.HoriJustify = CJUST
+	
+	&apos;//     insert 1 col at K
+	&apos;//     col K heading to &quot;RSO&quot;
+	oCols.insertByIndex(COL_K,1)
+	oCell = oSheet.getCellByPosition(COL_K, ROW_HEADING)
+	oCell.String = &quot;RSO&quot;
+	oCell.HoriJustify = CJUST
+	
+	&apos;//     del col M
+	&apos;//		col M heading to &quot;RecordDate&quot;
+	oCols.removeByIndex(COL_M, 1)
+	oCell = oSheet.getCellByPosition(COL_M, ROW_HEADING)
+	oCell.String = &quot;RecordDate&quot;
+	oCell.HoriJustify = CJUST
+	
+	&apos;//		col N heading to &quot;SitusAddress&quot;
+	oCell = oSheet.getCellByPosition(COL_N, ROW_HEADING)
+	oCell.String = &quot;SitusAddress&quot;
+	oCell.HoriJustify = CJUST
+
+	&apos;//		col O heading to &quot;DelPending&quot;
+	oCell = oSheet.getCellByPosition(COL_O, ROW_HEADING)
+	oCell.String = &quot;DelPending&quot;
+	oCell.HoriJustify = CJUST
+
+	&apos;// grab E1 PropertyID
+	oCell = oSheet.getCellByPosition(COL_E, ROW_1)
+	sPropID = oCell.String
+	
+	&apos;// for each active row
+	lThisRow = ROW_HEADING
+	for i = 0 to lRowCount-1
+		lThisRow = lThisRow + 1
+
+		&apos;//			Ax = E1 OwnerParcel
+		oCell = oSheet.getCellByPosition(COL_A, lThisRow)
+		oCell.String = sPropID
+		
+		&apos;//			Hx = B4 SubTerritory
+		oCell = oSheet.getCellByPosition(COL_H, lThisRow)
+		oCell.setFormula(&quot;=$B$4&quot;)
+		
+		&apos;//			Ix = D4 CongTerrID
+		oCell = oSheet.getCellByPosition(COL_I, lThisRow)
+		oCell.setFormula(&quot;=$D$4&quot;)
+
+		&apos;//			Mx = C2 date
+		oCell = oSheet.getCellByPosition(COL_C, ROW_2)
+		oCell2 = oSheet.getCellByPosition(COL_M, lThisRow)
+		oCell2.setValue(oCell.getValue())
+		oCell2.NumberFormat = MDYY
+		
+		&apos;//			Nx = fsAddrToSCFormat(Bx)
+		oCell = oSheet.getCellByPosition(COL_B, lThisRow)
+		sAddr = oCell.String
+		oCell2 = oSheet.getCellByPosition(COL_N, lThisRow)
+		oCell2.String = fsAddrToSCFormat(sAddr)
+		oCell2.HoriJustify = LJUST
+		
+	&apos;// next row
+	next i
+
+	&apos;//		H1 = &quot;Admin-Bridge formatted sheet&quot; 
+	oCell = oSheet.getCellByPosition(COL_H, ROW_1)
+	oCell.String = &quot;Admin-Bridge formatted sheet&quot;
+
+	&apos;// tidy up header information
+	ForceRecalc()
+	BoldHeadings()
+	SetBridgeColWidths()
+&apos;	MergeAreaCells()
+&apos;	MergeOwnerCells()
+&apos;	MergePropIDCells()
+&apos;	MergeSheetType()
+&apos;	MergeStreetsCells()
+	FreezeView()
+	
+NormalExit:
+	exit sub
+
+ErrorHandler:
+	msgbox(&quot;TerrToBridge - unprocessed error.&quot;)
+	GoTo NormalExit
+
+end sub		&apos;// end TerrToBridge		9/19/20

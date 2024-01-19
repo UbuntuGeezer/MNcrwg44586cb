@@ -1,0 +1,68 @@
+# MakeBuildSpecDB.tmp - template for MakeBuildSpecDB make file.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	7/4/21.wmk.
+#
+# Dependencies.
+#	MakeBuildSpecDB.tmp placeholders vvvv, @@ and zz will be edited
+#	 by DoSed.sh to be a special database name and month, date.
+#	RUvvvv_mm-dd.csv contains the download records for the entire MHP
+#	  as of month mm and day dd.
+#
+# Modification History.
+# ---------------------
+# 5/4/22. wmk.	(automated) path corrections.
+# 6/7/22.	wmk.	code checked for FL/SARA/86777.
+# Legacy mods.
+# 7/4/21.	wmk.	original code.
+
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : $(specialpth)vvvv.csv
+.ONESHELL : ;
+
+# RUvvvv_mm-dd.db recipe
+#============================================================
+# DoSed run prior with params vvvv @@ zz.
+
+$(specialpth)Ruvvvv_@@-zz.db : $(specialpth)RUvvvv_@@-zz.csv
+	sqlite3 < BuildSpclDB.sql
+
+
+#============================================================
+
+
+#RUvvvv_mm-dd.csv recipe
+#============================================================
+
+$(specialpth)RUvvvv_@@-zz.csv : $(specialpth)vvvv.csv
+	cp $(specialpth)vvvv.csv $(specialpth)RUvvvv_@@-zz.csv
+	
+#============================================================
+
+
+#vvvv.csv recipe - if invoked is error...
+#============================================================
+
+$(specialpth)vvvv.csv : ;
+#	$(error ** vvvv.csv missing for MakeUpdateMHPDwnld !**)

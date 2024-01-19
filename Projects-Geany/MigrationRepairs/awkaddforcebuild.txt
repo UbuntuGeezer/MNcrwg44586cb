@@ -1,0 +1,25 @@
+# awkaddforebuild.txt  12/17/22.
+# Modification History.
+# ---------------------
+# 12/17/22.	wmk.	original code.
+# 12/20/22.	wmk.	thisproj definition moved to follow *shellpath definition.
+BEGIN {yup=1;prereqdone=0}
+{ if(NR==2){print "# 12/16/22.    wmk.   (automated) *codebase env var support." }
+  if( index($0,"shellpath =") > 0){print $0;print "thisproj = $(codebase)/Projects-Geany/SpecialRUdb";yup=0}
+  if( index($0,"end conditional recipe for MHP") != 0)
+  {print $0 "\n" "$(thisproj)/ForceBuild : ;\n" "\tif ! test -f $@;then\n";
+   print "\t echo \" ** missing ForceBuild semaphore file for Terrxxx_RU.db build **\";exit 1;fi";yup=0}
+   else if($0 ~ ".db :") 
+   {print substr($0,1,index($0,":")) " $(thisproj)/ForceBuild \\";
+    print " " substr($0,index($0,":")+1,99);prereqdone=1;yup=0};
+   if(yup)print;yup=1
+
+#if ( 1 == 0 ) print
+#   else if(index($0,":") > 0 && prereqdone == 0)
+#   {print substr($0,1,index($0,":")) " $(thisproj)/ForceBuild \\\n";
+#    print " " substr($0,index($0,":")+1,99);prereqdone=1;yup=0}
+#   else if(index($0,":") > 0)
+#    {print $0
+#    yup=0}
+#   if(yup)print;yup=1
+}

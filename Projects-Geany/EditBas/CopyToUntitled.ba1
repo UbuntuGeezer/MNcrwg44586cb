@@ -1,0 +1,61 @@
+&apos;// CopyToUntitled.bas
+&apos;//---------------------------------------------------------------
+&apos;// CopyToUntitled - Copy selected sheet to new workbook.
+&apos;//		10/14/20.	wmk.
+&apos;//---------------------------------------------------------------
+
+public sub CopyToUntitled()
+
+&apos;//	Usage.	macro call or
+&apos;//			call CopyToUntitled()
+&apos;//
+&apos;//		sDocName = name of new workbook
+&apos;//
+&apos;// Entry.	user has sheet selected that will be copied to new workbook
+&apos;//
+&apos;//	Exit.	selected sheet copied into &quot;Untitled 1&quot;
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	10/14/20.	wmk.	original code.
+&apos;//
+&apos;//	Notes.
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+rem ----------------------------------------------------------------------
+rem define variables
+dim document   as object
+dim dispatcher as object
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dim args1(2) as new com.sun.star.beans.PropertyValue
+args1(0).Name = &quot;DocName&quot;
+args1(0).Value = &quot;Untitled 2&quot;
+args1(1).Name = &quot;Index&quot;
+args1(1).Value = 32767
+args1(2).Name = &quot;Copy&quot;
+args1(2).Value = true
+
+dispatcher.executeDispatch(document, &quot;.uno:Move&quot;, &quot;&quot;, 0, args1())
+
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;CopyToUntitled - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end CopyToUntitled	&apos;// 3/14/21.	18:53

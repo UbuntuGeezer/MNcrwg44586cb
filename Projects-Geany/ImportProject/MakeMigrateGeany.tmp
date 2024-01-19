@@ -1,0 +1,48 @@
+# MakeMigrateGeany.tmp - MigrateGeany makefile template for *CBtoHPgeany.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	9/20/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 9/20/22.	wmk.	modified for HP to Chromebook migration.
+# Legacy mods.
+# 4/1/22.	wmk.	original code; adapted from *MigrateGeany* project
+#			 to *CBtoHPgeany project.
+# 4/3/22.	wmk.	change *host* to *c onvtype* to facilitate hosttype
+#			 environment bar
+#
+# DoSed edits *p rojname* and *c onvtype* strings in this makefile.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+.ONESHELL  : ;
+
+.PHONY     :  Always 
+
+ projpath = $(codebase)/Projects-Geany/CBtoHPgeany
+projbase = $(pathbase)/Projects-Geany
+
+# always make MigrateGeany.sh
+#======================================================
+Always  :
+	export hosttype=convtype  
+	$(projpath)/MigrateGeany.sh  projname
+	echo "MigrateGeany projname host *make* complete."; \
+	
+
+#======================================================

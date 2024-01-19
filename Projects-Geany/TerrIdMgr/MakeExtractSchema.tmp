@@ -1,0 +1,45 @@
+# MakeExtractSchema.tmp - *make* file for ExtractSchema.sh build.
+#	5/30/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 5/28/23.	wmk.	original code.
+# 5/30/23.	wmk.	header text corrected.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/TerrIdMgr
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	cd $(altproj);./DoSed.sh $(projpath) ExtractSchema
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/ExtractSchema.sh;then \
+	 echo "** ExtractSchema.sh generation failed **";exit 1;fi
+	echo "** ExtractSchema.sh to <do-whatever> **"
+	
+#==================================================================
+# end MakeFile.tmp

@@ -1,0 +1,24 @@
+-- InitialRUFix.psq - Initial SQL to set property IDs in new RefUSA db.
+-- * 5/7/22.	wmk.	(automated) *pathbase* integration.
+--	8/29/21.	wmk.
+.open '$pathbase/RawData/RefUSA/RefUSA-Downloads/Terrxxx/Terrxxx_RU.db'
+ATTACH '$pathbase/DB-Dev/VeniceNTerritory.db'
+ as db2;
+-- pragma db2.table_info(NVenAll);
+WITH a AS (SELECT "ACCOUNT #" AS Acct, 
+   TRIM(SUBSTR("situs address (prooerty address)",1,35) AS StreetAddr,
+   SUBSTR("situs address (prooerty address)",36) AS SCUnit
+   FROM NVENALL 
+   WHERE StreetAddr IN (SELECT UPPER(TRIM(UnitAddress))
+    FROM Terrxxx_RUBridge) )
+UPDATE Terrxxx_RUBridge
+SET OWNINGPARCEL = 
+CASE 
+WHEN UPPER(TRIM()) IN (SELECT StreetAddr FROM a
+  WHERE SCUnit IS Unit)
+ THEN (SELECT Acct FROM a
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) 
+   AND SCUnit IS Unit)
+ELSE OWNINGPARCEL
+END
+WHERE OwningParcel IS '-';

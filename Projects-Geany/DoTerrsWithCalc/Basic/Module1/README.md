@@ -1,0 +1,51 @@
+README - /Basic/Module1 documentation.<br>
+8/21/23.	wmk.
+###Modification History.
+<pre><code>8/21/23.    wmk.   original document.
+</code></pre>
+<h3 id="IX">Documentation Sections.</h3>
+<pre><code><a href="#1.0">link</a> 1.0 Description - overall description.
+<a href="#2.0">link</a> 2.0 Dependencies - project dependencies.
+<a href="#3.0">link</a> 3.0 Project Build - step-by-step build instructions.
+<a href="#4.0">link</a> 4.0 Significant Notes - important stuff not documented elsewhere.
+</code></pre>
+<h3 id="1.0">1.0 Description.</h3>
+Basic/Module1 is the repository for ProcessQTerrs.ods macro source code.
+Module1.bas is the extracted code from the ProcessQTerrs.ods Module1 macros.
+This file is populated by using copy/paste from within LibreOffice/Calc to
+extract all the source code from ProcessQTerrs.ods/Module1.
+Other .bas files in the folder are individual macro blocks extracted from within
+the Module1.bas source code.
+<a href="#IX">Index</a>
+<h3 id="2.0">2.0 Dependencies.</h3>
+The following files are "permanent" residents within the Basic/Module1 folder:
+<pre><code>
+awkextractbas.tmp - *mawk utility program template for extracting .bas modules.
+ExtractBasMod.sh - shell for extracting single .bas module from Module1.bas.
+ExtractAllBas.sh - shell for extracting all .bas modules from Module1.bas
+GetModList.sh - shell to extract all .bas module names from Module1.bas
+Module1.bas - latest extracted code from ProcessQTerrs12.ods
+</code></pre>
+The following files are target files for shells within the Basic/Module1 folder:
+<pre><code>
+ModList.txt - full list of .bas module names within Module1.bas; used by ExtractAllBas.
+awkextractbas.txt - latest *sed-edited *mawk utility directives for extacting .bas module.
+</code></pre>
+<a href="#IX">Index</a>
+<h3 id="3.0">3.0 Project Build.</h3>
+Because the source code is maintained within ProcessQTerrs.ods, any
+modifications to .bas source must be propagated back into the ProcessQTerrs.ods
+workbook macros. The source code may be modified directly in the
+ProcessQTerrs.ods workbook/Edit macros or indirectly by modifying the source
+.bas file in the Basic/Module1 folder then block-copying the entire .bas module
+back over the ProcessQTerrs.ods macro.
+
+**CAUTION.** Whenever a .bas file is modified within the Basic/Module1 folder,
+the Module1.bas file is now out-of-sync with the < basmodule > .bas file. After
+modifying a < basmodule >.bas file and block-copying over the
+ProcessQTerrs.ods workbook, the .bas file should also be block-copied over
+the Module1.bas file to keep the Module1.bas file up-to-date. An alternative
+would be to block copy the entire Module1 code from ProcssQTerrs.ods back
+over the Module1/Module1.bas file.
+<br><a href="#IX">Index</a>
+<h3 id="4.0">4.0 Significant Notes.</h3>

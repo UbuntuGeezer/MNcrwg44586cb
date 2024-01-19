@@ -1,0 +1,51 @@
+# MakeRUNewLetter.tmp - Makefile for RUNewLetter build (template).
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	10/23/21.	wmk.
+#
+# Modification History.
+# ---------------------
+# 10/14/21.	wmk.	original makefile; modified to create empty Terryyy_RU.db
+# 10/23/21.	wmk.	InitLettSpecial PHONY target added to initialize all the
+#					SPECIAL stuff for the new territory; .ONESHELL added to
+#					force sequential processing.
+#
+# Notes. This makefile is edited by DoSed substituting <terrid> for y yy.
+
+
+ifeq ($(USER),ubuntu)
+ folderbase = /media/ubuntu/Windows/Users/Bill
+else
+ folderbase = $(HOME)
+endif
+
+.PHONY : InitLettSpecial ;
+
+.ONESHELL :
+
+targpath = $(folderbase)/Territories/RawData/RefUSA/RefUSA-Downloads/Terryyy
+ bashpath = $(codebase)/Territories/Procs-Dev
+projbase = $(folderbase)Territories/Projects-Geany
+ projpath = $(codebase)/Territories/Projects-Geany/RUNewLetter
+
+# (targpath)/Terryyy_RU.db - primary target
+# ====================================================================
+$(targpath)/Terryyy_RU.db : $(targpath)/Mapyyy_RU.csv
+	$(bashpath)/RUNewTerr_db.sh yyy
+
+$(targpath)/Mapyyy_RU.csv : 
+	$(bashpath)/MakeEmptyRUMap.sh yyy
+
+#---
+$(projpath)/NewLetter.sql : ;
+
+#=====================================================================
+
+
+# InitLettSpecial - Initialize all SPECIAL files for new letter territory.
+#=========================================================================
+InitLettSpecial :
+	$(projbase)/RUNewLetter/InitLetter.sh yyy
+
+
+#=========================================================================

@@ -1,0 +1,84 @@
+# MakeFixAnyRU.tmp - template for make MakeFixAnyRU.
+#	6/5/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 6/5/23.	wmk.	*pathbase corrected; main recipe updated to use AnySQLtoSH;
+#			 comments tidied.
+# Legacy mods.
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# Legacy mods.
+# 4/25/22.	wmk.	modified for general use with FL/SARA/86777.
+# 5/7/22.	wmk.	trailing '/' removed in Fix220RU.sq *pathbase* recipe.
+# 5/17/22.	wmk.	.PHONY list includes both .sq and .sql files to force
+#			 rebuilding.
+# 6/18/22.	wmk.	.PHONY Always added to force build.
+# Legacy mods.
+# 3/15/21.	wmk.	original code.
+# 5/28/21.	wmk		modified for use with either home or Kay's system;
+#					whichsystem, folderbase vars added..
+# 9/19/21.	wmk.	multihost code generalized; change from awk to cat
+#					when generating Fix220RU.sh; superfluous "s removed;
+#					use SQLtoSQ instead of SQLtoSH; make Recursive eliminated.
+# 1/30/22.	wmk.	chmod added to recipe to ensure that .sh is executable;
+#			 build recipe for FixXXXRU changed to .sql > .sq > sh; AnySQLtoSH
+#			 moved to new recipe for FixXXXRU.sh.
+#
+#	Dependencies.
+#		hdrFixXXXRU.sh in folder ~/Procs-Dev
+#		Fix220RU.sql in folder ~/RefUSA-Downloads/Terr220
+#
+#	Build results.
+#		Fix220RU.sh in folder ~/RefUSA-Downloads/Terr220
+#
+# Notes. 
+# update happens if RefUSA-Downloads/Terr220/Map220_RU.csv newer than Terr220_RU.db
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+vpath %.sql $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terr220
+vpath %.sh $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terr220
+vpath %.tmp $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terr220
+ bashpath = $(codebase)/Procs-Dev
+postpath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terr220
+targpath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terr220
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# new definition - suppports Fix220RU.sql if provided.
+
+.PHONY : Always
+.ONESHELL : ;
+
+# Fix220RU.sh (path determined by vpath above)
+#=================================================================================
+#$(targpath)/Fix220RU.sh   :  $(targpath)/Fix220RU.sql
+Always   :  $(targpath)/Fix220RU.sql $(targpath)/Fix220RU.sql
+	if test -f $(targpath/OBSOLETE;then \
+	 echo " ** Territory 220y is OBSOLETE - MakeFixAnyRU exiting...";exit 2;fi
+	if test -f $(targpath)/Fix220RU.sh;then rm $(targpath)/Fix220RU.sh;fi
+	cd $(altproj);./DoSed.sh $(targpath) Fix220RU
+	$(MAKE) -f $(altproj)/AnySQLtoSH
+
+$(targpath)/Fix220RU.sql :
+	if test -f $(targpath)/OBSOLETE;then \
+	 echo " ** Territory 220y is OBSOLETE - MakeFixAnyRU exiting...";exit 2;fi
+	if ! test -f $@;then \
+	 echo "** Fix220RU.sql missing for MakeFixAnyRU **";exit 1;fi
+ 
+#================================================================================
+# end MakeFixAnyRU

@@ -1,0 +1,72 @@
+# 5/6/23.     wmk.   (automated) move previous history comments.
+# MakeFixRUSpecTidy.tmp - template for make FixRUSpecTidy.
+#	5/6/23.	wmk.
+#
+# Entry. SCPA-Downloads/Terr*/FixTerr*RU.sql files all current with
+#			*pathbase*
+#
+# Build Results: SCPA-Downloads/Terr*/FixTerr*RU.sh files all rebuilt
+#
+# update happens if SCPA-Downloads/SCPADiff_mm-dd.db is newer than 
+#		SCPA-Downloads/Updtxxx.csv for all territories xxx.
+#
+# Modification History.
+# ---------------------
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+# 5/6/23.     wmk.   (automated) move previous history comments.
+# Legacy mods.
+# 5/28/22.	wmk.	original code.
+# 9/21/22.	wmk.	modified for Chromebook.
+# 9/23/22.	wmk.	*codebase var support.
+##
+# Dependencies. - run "sed" make preprocessor after editing sed Build command.
+# yyy  run Build "sed" to change yyy to territory id.
+#
+# Notes. The *tidy* SQL code and associated shell are part of the
+# "data segment", not the "code segment". On the Chromebook/chromeos
+# system, the "data segment" is not managed under GitHub, so has its
+# own folder system at the *folderbase level. The *pathbase var points
+# to the "data segement" root. A new var *codebase points to the "code
+# segment root (*folderbase/GitHub/TerritoriesCB).
+#
+.ONESHELL : ;
+.NOTPARALLEL : ;
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories
+endif
+
+vpath %.csv $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terryyy
+RUDwnldPath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads
+scterrpath = $(RUDwnldPath)/Terryyy
+
+ projpath = $(codebase)/Projects-Geany/MigrationRepairs
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+.PHONY  : Always
+.ONESHELL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	cd $(altproj);./DoSed.sh $(scterrpath) FixyyyRU
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(scterrpath)/FixyyyRU.sh;then \
+	 echo "** FixyyyRU.sh generation failed **";exit 1;fi
+	$(scterrpath)/FixyyyRU.sh
+	
+#==================================================================
+# end MakeFixRUSpecTidy

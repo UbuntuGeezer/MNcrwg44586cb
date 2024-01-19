@@ -1,0 +1,20 @@
+--RUUpdateTerr.sql - Update newly downloaded RU territory from SC Bridge.
+--	1/1/21.	wmk.
+--
+-- * subquery list.
+-- * --------------
+-- *;
+-- ** subquery_name **********
+-- *	mm/dd/yy.	wmk.
+-- *--------------------------
+-- *
+-- * subquery_name - simple description.
+-- *
+-- * Entry DB and table dependencies.
+-- *   <list main DB and ATTACHed DBs and tables>
+-- *
+-- * Exit DB and table results.
+-- *
+-- * Notes.;
+
+-- ** END subquery_name **********;

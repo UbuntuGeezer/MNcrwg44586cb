@@ -1,0 +1,60 @@
+#!/bin/bash
+# BLDMSG.sh - Issue build process message to BuildErrors log.
+# 5/12/23.	wmk.
+#
+# Usage. bash  BLDMSG.sh <text>
+#
+#	<text> = message text
+#
+# Entry. 
+#
+# Dependencies.
+#
+# Exit. <text> issued to $TEMP_PATH/BuildErrors.txt
+#
+# Modification History.
+# ---------------------
+# 2/2/23.	wmk.	original shell (template)
+#
+# Notes. 
+#
+# set parameters P1..Pn here..
+#
+P1=$1
+export MSG="$P1"
+if [ -z "$P1" ];then
+ export MSG="<.>."
+fi
+if [ -z "$folderbase" ];then
+ if [ "$USER" == "ubuntu" ]; then
+  export folderbase=/media/ubuntu/Windows/Users/Bill
+ else
+  export folderbase=$HOME
+ fi
+fi
+if [ -z "$pathbase" ];then
+ export pathbase=$folderbase/Territories/FL/SARA/86777
+fi
+if [ -z "$codebase" ];then
+ export pathbase=$folderbase/GitHub/TerritoriesCB
+fi
+if [ -z "$system_log" ]; then
+  system_log=$folderbase/ubuntu/SystemLog.txt
+  ~/sysprocs/LOGMSG "  BLDMSG - initiated from Make"
+  echo "  BLDMSG - initiated from Make"
+else
+  ~/sysprocs/LOGMSG "  BLDMSG - initiated from Terminal"
+  echo "  BLDMSG - initiated from Terminal"
+fi 
+TEMP_PATH=$HOME/temp
+#	Environment vars:
+if [ -z "$TODAY" ];then
+ . ~/GitHub/TerritoriesCB/Procs-Dev/SetToday.sh
+#TODAY=2022-04-22
+fi
+#procbodyhere
+date +%T | mawk '{print $0 ". " ENVIRON["MSG"]}' >> $TEMP_PATH/BuildLog.txt
+#endprocbody
+echo "  BLDMSG complete."
+~/sysprocs/LOGMSG "  BLDMSG complete."
+# end BLDMSG.sh

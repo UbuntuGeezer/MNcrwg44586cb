@@ -1,0 +1,91 @@
+&apos;// sGenPhoneURL.bas
+&apos;//---------------------------------------------------------------
+&apos;// sGenPhoneURL - Generate phone look-up url.
+&apos;//		8/16/20.	wmk.	15:45
+&apos;//---------------------------------------------------------------
+
+public function sGenPhoneURL(psSitus As String, psCity As String) as String
+
+&apos;//	Usage.	sURL = sGenPhoneURL( sSitus, sCity )
+&apos;//
+&apos;//		sSitus = full situs street address
+&apos;//		sCity = situs city
+&apos;//
+&apos;// Entry.	Cells pointed to by oRange.StartRow contain address information
+&apos;//         from which to generate the returned url.
+&apos;//
+&apos;//	Exit.	sURL = url of truepeoplesearch.com to search for phone number
+&apos;//           by following the url in any browser; pattern is as follows:
+&apos;//&quot; https://www.truepeoplesearch.com/
+&apos;//    details?streetaddress=&lt;number&gt;%20&lt;street name&gt;%20&lt;unit&gt;
+&apos;//    &amp;citystatezip=&lt;city&gt;%2C%20&lt;state&gt;&amp;rid=0x0&quot;
+&apos;//
+&apos;// Calls.	ParseSitus.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	8/9/20.		wmk.	original code
+&apos;// 8/10/20.	wmk.	bug fixes
+&apos;//	8/15/20.	wmk.	calling sequence changed adding City parameter
+&apos;// 8/16/20.	wmk.	psState corrected to psCity
+&apos;//
+&apos;//	Notes.
+&apos;//
+
+&apos;//	constants.
+
+&apos;// URL building constants.
+const csURLBase=&quot;https://www.truepeoplesearch.com/&quot;
+const csQuery=&quot;details?streetaddress=&quot;
+&apos;// insert house number here
+const csSep=&quot;%20&quot;
+&apos;// insert street name here
+&apos;const csSep here
+&apos;// insert unit here
+const csCityStateZip=&quot;&amp;citystatezip=&quot;
+&apos;// insert city here
+const csSep2=&quot;%2C%20&quot;
+&apos;// insert state here
+const csQEnd= &quot;&amp;rid=0x0&quot;
+
+&apos;//	local variables.
+dim sRetValue As String		&apos;// returned value
+dim sState		As String	&apos;// state from address
+dim sCity		As String	&apos;// city from address
+dim sSitus		As String	&apos;// copy of passed situs
+dim sUnit		As String	&apos;// unit #, if present
+dim sStreet		As String	&apos;// street here
+dim sNumber		As String	&apos;// number here
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	sRetValue = &quot;&quot;
+	
+	&apos;// set actual values from situs
+	sSitus = psSitus
+	ParseSitus(sSitus, sNumber, sStreet, sUnit)
+	if len(psCity) = 0 then
+		sCity = &quot;Venice&quot;
+	else
+		sCity = psCity
+	endif
+	
+	sState = &quot;FL&quot;
+	
+	&apos;// generate url from extracted information.
+	sRetValue = csURLBase + csQuery + sNumber + csSep _
+	          + sStreet
+	if len(sUnit) &gt; 0 then
+	   sRetValue = sRetValue + csSep + sUnit
+	endif
+	sRetValue = sRetValue + csCityStateZip + sCity + csSep2 _
+	              + sState + csQEnd
+	
+NormalExit:
+	sGenPhoneURL = sRetValue
+	exit function
+	
+ErrorHandler:
+   msgbox(&quot; sGenPhoneURL - unprocessed error.&quot;)
+   GoTo NormalExit
+end function 	&apos;// end sGenPhoneURL	8/15/20.

@@ -1,0 +1,46 @@
+echo "-- * UpdateDBNames.sql - Update DBNames.db records."  > SQLTemp.sql
+echo "-- * 1/30/23.	wmk."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Entry.	/SCPA-Downlaods/Special/SpecialDBs.db.DBNames is table of SC special"  >> SQLTemp.sql
+echo "-- *		 databases"  >> SQLTemp.sql
+echo "-- *		DBNameDates.csv is the record data for updating DBNames"  >> SQLTemp.sql
+echo "-- * "  >> SQLTemp.sql
+echo "-- * Exit.	DBNames.db entries are updated with entries from the .csv"  >> SQLTemp.sql
+echo "-- *		 file DBNameDates.csv"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * ---------------------"  >> SQLTemp.sql
+echo "-- * 1/30/23.	wmk.	original code."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Notes. The shell UpdateDBNames.sh has preamble code that generates the"  >> SQLTemp.sql
+echo "-- * DBNameDates.csv file using *ls and *awk utilities."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * When *ls produces a list using -lh, the date modified field will"  >> SQLTemp.sql
+echo "-- * either be <monthname> <day> <timestamp> or <monthname> <day> <year>"  >> SQLTemp.sql
+echo "-- * the <year> and <timestamp> are differentiated with ':' being present"  >> SQLTemp.sql
+echo "-- * in the <timestamp>. The <year> will only be present if it differs"  >> SQLTemp.sql
+echo "-- * from the current year. *awk formats the .csv field the same as the"  >> SQLTemp.sql
+echo "-- * RecordDate field <year>-<month>-<day>."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo ".open '$pathbase/RawData/SCPA/SCPA-Downloads/Special/SpecialDBs.db'"  >> SQLTemp.sql
+echo ".headers off"  >> SQLTemp.sql
+echo ".mode csv"  >> SQLTemp.sql
+echo ".separator ,"  >> SQLTemp.sql
+echo "DROP TABLE IF EXISTS NameUpdates;"  >> SQLTemp.sql
+echo "CREATE TABLE NameUpDates("  >> SQLTemp.sql
+echo " SpecDB TEXT,"  >> SQLTemp.sql
+echo " ModDate TEXT, "  >> SQLTemp.sql
+echo " base_status INTEGER DEFAULT 0, "  >> SQLTemp.sql
+echo " Status INTEGER DEFAULT 0,"  >> SQLTemp.sql
+echo " PRIMARY KEY(Status));"  >> SQLTemp.sql
+echo ".import '$pathbase/RawData/SCPA/SCPA-Downloads/Special/DBNameDates.csv' NameUpdates"  >> SQLTemp.sql
+echo "DROP TABLE IF EXISTS DBNames;"  >> SQLTemp.sql
+echo "CREATE TABLE DBNames("  >> SQLTemp.sql
+echo " DBName TEXT, ModDate TEXT, base_status INTEGER, Status INTEGER,"  >> SQLTemp.sql
+echo " PRIMARY KEY(Status) );"  >> SQLTemp.sql
+echo " "  >> SQLTemp.sql
+echo "INSERT OR REPLACE INTO DBNames"  >> SQLTemp.sql
+echo "SELECT SpecDB, ModDate, (rowid-1)*2, (rowid-1)*2 FROM NameUpdates;"  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo "-- * END UpdateDBNames.sql;"  >> SQLTemp.sql

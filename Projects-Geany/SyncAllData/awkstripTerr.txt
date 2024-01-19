@@ -1,0 +1,2 @@
+# awkstripTerr.txt - strip leading "Terr" string from file lines.
+{if( $1 ~ "^Terr")print substr($0,5,100)}

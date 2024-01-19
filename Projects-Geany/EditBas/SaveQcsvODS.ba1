@@ -1,0 +1,69 @@
+&apos;// SaveQcsvODS.bas
+&apos;//---------------------------------------------------------------
+&apos;// SaveQcsvODS - Save current workbook as .ods file.
+&apos;//		9/26/21.	wmk.	16:32
+&apos;//---------------------------------------------------------------
+
+public sub SaveQcsvODS(poDoc As Object)
+
+&apos;//	Usage.	macro call or
+&apos;//			call SaveQcsvODS(oDoc)
+&apos;//
+&apos;//		oDoc = document object
+&apos;//
+&apos;// Entry.	ThisComponent.URL = &quot;file://&lt;filepath to this Doc&gt;
+&apos;//			filename assumed to be &quot;Terrxxx.ods&quot;
+&apos;//
+&apos;//	Exit.	QTerrxxx.csv saved as QTerrxxx.ods with Hdr tab.
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	2/11/21		wmk.	original code; cloned from SaveBridgeODS
+&apos;// 9/26/21.	wmk.	bug fix where focus lost on current frame; set from
+&apos;//						passed parameter.
+&apos;//
+&apos;//	Notes. 
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim document   as object
+dim dispatcher as object
+dim sDocURL		As String	&apos;// document URL
+dim nURLlen		As Integer	&apos;// URL length
+dim sURLBase	As String	&apos;// base of new URL
+dim sNewURL		As String	&apos;// new full URL for file save
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	document   = poDoc.CurrentController.Frame
+	sDocURL = poDoc.getURL()
+	nURLlen = len(sDocURL)
+	sURLBase = left(sDocURL, nURLLen-4)
+	sNewURL = sURLBase + &quot;.ods&quot;
+
+rem ----------------------------------------------------------------------
+rem get access to the document
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dim args1(1) as new com.sun.star.beans.PropertyValue
+args1(0).Name = &quot;URL&quot;
+&apos;args1(0).Value = &quot;file:///media/ubuntu/Windows/Users/Bill/Documents/Cong-Files/Territories/csvs-Dev/Terr102.ods&quot;
+args1(0).Value = sNewURL
+args1(1).Name = &quot;FilterName&quot;
+args1(1).Value = &quot;calc8&quot;
+
+dispatcher.executeDispatch(document, &quot;.uno:SaveAs&quot;, &quot;&quot;, 0, args1())
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SaveQcsvODS - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end SaveQcsvODS		9/26/21.	16:32

@@ -1,0 +1,15 @@
+README - UpdtRULetter project documentation.
+	10/20/21.	wmk.
+
+Project Description.
+--------------------
+UpdtRULetter regenerates the key dbs for a letter-writing territory. The
+Build process does the following:
+
+	Cycles the previous RU letter database to ./Previous
+	
+	Clears the Terrxxx_RU.db.Terrxxx_RUBridge records, but preserves the
+	 empty table
+	
+	runs Make on the MakeSpecials makefile in the territory download folder
+

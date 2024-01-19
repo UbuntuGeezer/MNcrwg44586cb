@@ -1,0 +1,35 @@
+#hdrAnySQL.sh - Any .sql to .sh shell source.
+#hdrAnySQL.sh - Any .sql to .sh shell source.
+#	6/8/23.	wmk.
+#hdrAnySQL.sh - Any .sql to .sh shell source.
+# BuildDNCCounts.sh - Build DNCCounts table in TerrIDData.
+# CleanupDNCs.sh - Remove DoNotCalls with DelPending flag set.
+#hdrAnySQL.sh - Any .sql to .sh shell source.
+#hdrAnySQL.sh - Any .sql to .sh shell source.
+#hdrAnySQL.sh - Any .sql to .sh shell source.
+# DoSedArchive.sh - *sed edit files for MakeArchiveDNCs.
+# DoSedBuild.sh - *sed edit files for MakeBuildDNC, MakeCleanupDNCs.
+# DoSedDelete.sh - *sed edit files for MakeDeleteDNC.
+# DoSedDelRSO.sh - *sed edit files for MakeDeleteRSO.
+# DoSedMove.sh - *sed edit files for MakeMoveDNC.
+# DoSedRecover.sh - *sed edit files for MakeRecoverDNCs.
+# DumpDNCLog.sh - Dump DNCLog table to DNCLog.csv for spreadsheet.
+# DumpRSOLog.sh - Dump RSOLog table to RSOLog.csv for spreadsheet.
+# DumpTerrLog.sh - Dump TerrLog table to TerrLog.csv for spreadsheet.
+# GetAddrPID.sh - Get DNC Property ID given unitaddress, unit.
+# GetArchList.sh - Get list of archived DNCs on *TEMP_PATH/ArchList.csv.
+# GetArchLog.sh - List DNC archive log to *TEMP_PATH/ArchLog.txt.
+# GetDelList.sh - List all deleted DoNotCalls to *TEMP_PATH/DeletedList.csv.
+# GetDNCList.sh - List all DoNotCalls to *TEMP_PATH/DNCList.txt.
+# GetDNCLog.sh - Copy DNCLog to *TEMP_PATH/DNCLog.txt.
+# GetDNCpid.sh - Get DNC Property ID given unitaddress, unit.
+#	6/8/23.	wmk.
+# GetDNCLog.sh - Get DNC Property ID given terric.
+# Login.sh - Log in Administrator.
+# Logout.sh - Log out Administrator.
+#hdrAnySQL.sh - Any .sql to .sh shell source.
+#	6/14/23.	wmk.
+#	6/13/23.	wmk.
+# RecoverDNCs.sh - Recover archived DoNotCalls.
+#hdrAnySQL.sh - Any .sql to .sh shell source.
+# WhosLoggedIn.sh - Set *adminwho env var to initials of logged in administrator.

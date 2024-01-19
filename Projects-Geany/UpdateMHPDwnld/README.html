@@ -1,0 +1,257 @@
+<p>README - UpdateMHPDwnld project documentation.<br>
+6/7/22. wmk.</p>
+
+<h2>Modification History.</h2>
+
+<pre></code>6/7/22.     wmk.    .md formatting; links added.
+Legacy mods.
+7/5/21.     wmk.    original document.
+9/9/21.     wmk.    updated to reflect build quirks and incorporation of
+                    ExtractOldDiffs and IntegrateOldDiffs into process.
+9/10/21.    wmk.    Significant Notes section added.
+11/12/21.   wmk.    NOTE added about BuildBridges for MHP Terrxxx_SC.db
+</code></pre>
+
+<h3 id="IX">Document Sections.</h3>
+
+<pre><code><a href="#1.0">link</a> 1.0 Project Desciption - overall project description.
+<a href="#2.0">link</a> 2.0 Method
+<a href="#3.0">link</a> 3.0 Build Processes - builds within the UpdateMHPDwnld project.
+<a href="#4.0">link</a> 4.0 Support Utilities/Shells - utilities and shell scripts within the project.
+<a href="#4.0">link</a> 4.0 Significant Notes - important notes and cautions concerning project.
+</code></pre>
+
+<h3 id="1.0">1.0 Project Description.</h3>
+
+<p>UpdateMHPDwnld facilitates updating all the Mobile Home Park (MHP)
+records for any given territory within the MHP. A SPECIAL RU
+download named <mhp-name>MHP.csv will contain the raw data from
+the RefUSA download of the entire MHP, where <mhp-name> is the name of
+the MHP (e.g. BayIndiesMHP.db). It is assumed that this download is the
+current data.</p>
+
+<p>When the UpdateMHPDwnld build is complete, the Terrxxx<em>RU.db has an
+updated Terrxxx</em>RUBridge table that is ready for the BridgesToTerr
+project to process into the master territory building databases.</p>
+
+<p>MHP territories are all "special". The entire UpdateMHPDwnld process
+depends upon all of the required databases and support shells being
+present in the RefUSA-Downloads/Terrxxx folder.</p>
+
+<p>The SpecialRUdb project documentation README and SPECIAL should be
+followed carefully to construct the 
+RefUSA-Downloads/Special/<special-db>.db database and the dependent
+territories' Specxxx_RU.db and support files.</p>
+
+<p>The InitSpecial.sh shell within the SpecialRUdb project will set up all 
+the required files in the territory RU download folder. The InitSpecSed
+project will perform the bulk of the editing required to set up the MHP 
+territory as "special". If it is necessary to re-do all of the files
+in the territory RU download folder, the Utility shell ClearSpecial.sh
+will clear out all of the old files making way for InitSpecial to reload
+the files for the territory.</p>
+
+<p>Each MHP territory has a shell <em>RegenSpecDB</em> that extracts the territory
+records from the &lt; special-db >.db in RefUSA-Downloads/Special. The current
+method depends upon Terrxxx_SC.db having all of the UnitAddress,s for the
+MHP territory.</p>
+
+<p>As of 11/2021, the MHP RU databases are built/rebult by running "make"
+on the MakeSpecials makefile. UpdateMHPDwnld now uses that method in place
+of regenerating the database with RUNewTerritory. Whenever a &lt; special-db >.db
+is updated in the /Special folder there is an associated <em>make</em> file named
+Make.&lt; special-db >.Terr that runs <em>make</em> on all territories that use the
+&lt; special-db > database. Those <em>make</em> runs use the *MakeSpecials> makefiles
+in each /RefUSA-Downloads/Terrxxx folder for each territory xxx.</p>
+
+<p>NOTE: The BuildBridges project has a utility to regenerate the Terrxxx_SC.db
+database with pseudo SCBridge records corresponing to the MHP records
+in Terryyy_RU.db.<br><a href="#IX">Index</a></p>
+
+<h3 id="2.0">2.0 Method.</h3>
+
+<p>To update a mobile home park (MHP) territory that has been set up with SPECIAL
+processing, perform the following steps:</p>
+
+<pre><code>
+RefUSA-Downloads/Special.
+
+    Update the MHP Special download(s) by using RefUSA online to download
+     the latest .csv records for each .db
+
+SpecialRUdb project.
+
+    Build menu; open README and follow the Build Steps for SpecialRUdb
+     beginning with  edit Cycle Special DB command with < special-db >
+
+    remove the current RefUSA-Downloads/Special/< special-db >.db (use the
+     Terminal within Geany)
+
+    Follow the remaining steps to completion to update < special-db >; repeat
+     the preceding steps for each .db that the territory uses (typically
+     only one).
+
+UpdateMHPDownload project.
+
+    Build menu; edit the "sed" command line with the < special-db > and
+     territory ID
+    run "sed" from the Build menu to setup the MakeUpdateMHPDwnld makefile
+
+    run the "Make Dry-run menu item to check the make setup
+
+    run the "Make" Build menu item to update the MHP download in the
+     territory
+</code></pre><a href="#IX">Index</a>
+
+<h3 id="3.0">3.0 Build Processes.</h3>
+There are several build processes within UpdateMHPDwnld:
+<pre><code>
+    MakeRUMHP - adds the table Terrxxx_MHP cloned from Terrxxx_RUPoly to
+                  the Terrxxx_RU.db
+    MakeBuildSpecDB - creates the database RU<mhp-name>_mm-dd.db from
+                  the MHP RU download .csv
+    MakeUpdateMHPDwnld - creates anew the Mapxxx_RU.csv using a query
+                  of the RH<mhp-name>_mm-dd.db records specific to
+                  territory xxx
+    MakeExtractOldDiffs - creates ExtractOldDiffs.sh to extract records
+        from /Previous Terrxxx_RU.db where the previous UnitAddress is
+        not present in the latest MHP download (see ExtractOldDiffs).
+    MakeIntegrateOldDiffs - creates IntegrateOldDiffs.sh to integrate
+        previous UnitAddress records back into Terrxxx_RU.db (see
+        IntegrateOldDiffs).
+
+MakeUpdateMHPDwnld.
+
+    Dependencies.
+        MakeRUMHP build process run sometime prior to ensure the presence
+         of the Terrxxx_MHP table within the Terrxxx_RU.db
+        MakeBuildSpecDB build process for mm-dd .csv download of the
+         territory map raw data from RefUSA creating RU< mhp-name >_mm-dd
+        DoSed.sh shell invoked prior to make to edit territory ID and
+         < mhp-name > into MakeUpdateMHPDwnld.tmp and MakeBuildSpecDB.tmp
+</code></pre>
+
+<p>The primary target for MakeUpdateMHPDwnld is the Mapxxx_RU.csv file.
+MapxxRU.csv will be considered out-of-date if the RH&lt; mhp-name ><em>mm-dd.db
+file is newer. MakeUpdateMHPDwnld creates anew the Mapxxx_RU.csv by
+querying the RH&lt; mhp-name >_ mm-dd.db for records specific to territory xxx.
+It depends upon the Terrxxx</em>RU.db table Terrxxx_MHP to match up address
+fields from RH&lt; mhp-name>_mm-dd.db that belong to that territory.</p>
+
+<p>Once the Mapxxx<em>RU.csv has been updated, the build process for UpdateRUDwnld
+is run to update the actual Terrxxx</em>RU.db. The previous (now out-of-date)
+Terrxxx<em>RU.db must be preserved prior to invoking the UpdateRUDwnld make
+process, since it will delete the original, creating a new Terrxxx</em>RU.db.
+After the UpdateRUDwnld process completes, the Terrxxx_MHP table from
+the out-of-date database is copied over into the newly created database.
+This preserves the data for the next time MakeUpdateMHP download runs
+on a newer RH&lt; mhp-name >_m2-d2.db.</p>
+
+<p>Once the previous Terrxxx_MHP has been restored into the new database,
+one more step is required. If there are any addresses in the new <em>RUPoly
+table that are not in the Terrxxx</em>MHP table, they need to be added. This
+needs to be done, since any given\ RefUSA map query may not have all
+addresses within the MHP territory.</p>
+
+<p>The AllUpdateMHPDwnld.sh shell uses the TIDList.txt file in the
+UpdateMHPDwnld project as a list of territory IDs on which to run the
+MakeUpdateMHPDwnld build. This shell updates all territories for the
+MHP with the latest download data.</p>
+
+<pre><code>MakeBuildSpecDB.
+
+    Dependencies.
+
+        < MHP-name >.csv download contains all RefUSA download records from
+          RefUSA map for the territory. (If multiple downloads were required
+          due to the 250 record per download limitation, < MHP-name >.csv
+          is the consolidation of all download pieces.)
+        BuildSpclDB.sq contains the SQL template for creating the database.
+        DoSed.sh is the stream edit shell that updates the make file and
+          the BuildSpcDB.sq to tailor both to the MHP name and download date.
+</code></pre>
+
+<p>The build process MakeBuildSpecDB has as its primary target
+RU<mhp-name><em>mm-dd.db. It will be considered out-of-date if 
+RU<mhp-name></em>mm-dd.csv is newer. The build process will then regenerate
+the .db file from the <MHP-name>.csv.</p>
+
+<p>MakeRUMHP.</p>
+
+<pre><code>Dependencies.
+    Terrxxx_RU.db exists and has table Terrxxx_RUPoly from prior 
+      download of RefUSA map for territory xxx.
+    DoSed1.sh shell invoked prior to make to edit territory ID and
+     &lt;mhp-name&gt; into MakeRUMHP.tmp and AddMHPTable.sq
+</code></pre>
+
+<p>MakeRUMHP builds the table Terrxxx<em>MHP into the Terrxxx</em>RU.db. If a prior
+Terrxxx<em>MHP table exists, it is removed and a new table created. The query
+AddMHPTable.sql is edited by DoSed, then run to create a new table and
+populate it with the data from the existing Terrxxx</em>RUPoly records.</p>
+
+<p>If the .db file is rebuilt, the AllMakeUpdateMHPDwnld shell will then
+use the TIDList.txt file as a list of all the territories whose
+Mapxxx<em>RU.csv files need to be updated, and update them. It will then
+use the same TIDList information to perform a batch update of all the
+RefUSA-Downloads/Terrxx/Terrxxx</em>RU.db files to bring them all up-to-date.</p>
+
+<p>Further, once all the Terrxxx_RU.db files are brought up-to-date,
+the same TIDList information will be used to perform a batch run of
+BridgesToTerr on all these territories to update their QTerrxxx.ods and
+.csv files. Then the user can manually run Calc to regenerate the
+actual publisher territories.</p>
+
+<p>A separate MHP RU Downloads table in the SystemTracker spreadsheet keeps
+track of the MHP full downloads and updates. (future)This table will then
+have a macro assigned that will update the corresponding record for each
+territory in the "Territory Master Map" worksheet, so that the master is
+kept up-to-date with these changes.<br><a href="#IX">Index</a></p>
+
+<h3 id="4.0">4.0 Support Utilities/Shells.</h3>
+
+<p><pre><code>
+DoSed - shell executed from Build menu to set territory ID and special
+  database name in the makefiles, sql, and shell files for building
+  this MHP database update.</p>
+
+<p>PreMake - Build menu item to perform make of ExtractOldDiffs and
+  IntegrateOldDiffs shells prior to invoking Make. DoSed must be run
+  prior to selecting PreMake, since DoSed modifies the SQL for both
+  ExtractOldDiffs and IntegrateOldDiffs. This menu item is only visible
+  if the user is focused on a file that has a .sh extension.</p>
+
+<p>ExtractOldDiffs - shell script built on-the-fly to extract records from
+  previous download (/Previous/Terrxxx_RU.db) where the previous UnitAddress
+  was not picked up in the RU download that populated the /Special MHP
+  database. This preserves prior UnitAddress records across downloads of
+  the MHP, since there is no county data for each address in the MHP.
+  RefUSA may, or may not, have a given UnitAddress in its data for
+  "unoccupied" properties. For letter coverage of the territories it
+  is important to have as complete a list of addresses as possible.</p>
+
+<p>IntegrateOldDiffs - shell script built on-the-fly to integrate previous
+  download records obtained by ExtractOldDiffs back into the current
+  MHP territory database. This restores addresses that were in the prior
+  database, but which were not in the latest MHP download. Restored
+  addresses have the "resident" field changed to "?" to indicate that
+  the present occupant is unknown to RefUSA, but the address has been
+  preserved.</p>
+
+<p>Make - Build menu item to make the Terrxxx_RU.db fresh from the new download
+  while preserving previous addresses.</p>
+
+<p>(bashpath)AnySQLtoSQ - shell utility to convert SQL to a series of shell
+  'echo' statements creating an SQLTemp.sql when run. This facilitates
+  using bash's parameter passing capabilities to morph an SQL query
+  on-the-fly to match whatever build is in progress.
+</code></pre><a href="#IX">Index</a></p>
+
+<h3 id="5.0">Significant Notes.</h3>
+
+<p>The CyclePreviousRU.sh shell in /Procs-Dev recycles the Terrxxx_RU.db
+into the Terrxxx/Previous folder. This shell essentially "pushes" the
+current Terrxxx_RU.db into Previous so that it can be differenced with
+the updated Terrxxx_RU.db created by the UpdateMHPDwnld build. This
+operation is essential in order for ExtractOldDiffs and IntegrateOldDiffs
+to work properly.<br><a href="#IX">Index</a></p>

@@ -1,0 +1,60 @@
+&apos;// fsGetSrchSheetName.bas
+&apos;//---------------------------------------------------------------
+&apos;// fsGetSrchSheetName - Set PubTerr sheet name in module var.
+&apos;//		3/17/21.	wmk. 09:53
+&apos;//---------------------------------------------------------------
+
+public function fsGetSrchSheetName() as String
+
+&apos;//	Usage.	sTarget = fsGetSrchSheetName()
+&apos;//			
+&apos;//		sTarget = reserved string var for return of name
+&apos;//
+&apos;// Entry.	gsPubTerrSheet module var declared
+&apos;//
+&apos;//	Exit.	sTarget = gsSearchSheet
+&apos;//				if gsSearchSheet is empty on entry, it will be
+&apos;//				set to &quot;Terrxxx_Search&quot; where xxx is taken from
+&apos;//				the end of the sheet title in A1
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	3/17/21.		wmk.	original code; adapted from fsGetPubSheetName
+&apos;//
+&apos;//	Notes. The gsSearchSheet module var holds the name of the Search
+&apos;// sheet in the territory workbook. A territory workbook has the
+&apos;// standardized name %Terrxxx% where xxx is the territory id
+&apos;// (e.g. QTerr125 for territory 125).
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim sRetValue As String
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	sRetValue = gsSearchSheet
+	
+	&apos;// check, if gsPubTerrSheet not set, set it from
+	&apos;// territory id.
+	if len(sRetValue) = 0 then
+		sRetValue = fsGetTerrID()
+		if len(sRetValue) = 0 then
+			GoTo ErrorHandler
+		endif
+		gsSearchSheet = &quot;Terr&quot; + sRetValue + &quot;_Search&quot;
+		sRetValue = gsSearchSheet
+	endif
+	
+NormalExit:
+	fsGetSrchSheetName = sRetValue
+	exit function
+	
+ErrorHandler:
+	sRetValue = &quot;&quot;
+	msgbox(&quot;fsGetSrchSheetName - unprocessed error&quot;)
+	GoTo NormalExit
+
+end function 	&apos;// end fsGetSrchSheetName	3/17/21.	09:53

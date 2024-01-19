@@ -1,0 +1,8 @@
+BEGIN {
+p = 1; FS = " "}
+#$1 ~ /:/ {nchars = length($1);print "nchars = "nchars}
+$1 ~ /:/ {nchars = length($1); plen = nchars - 1; dir = substr($1,1,plen)}
+length( $9 ) > 0 && substr($1,1,2) != "dr" {if( plen > 1 ) print dir"/"$9; else\
+ if( substr(dir,1,1) != ".") print dir"./"$9;else print dir"/"$9}
+
+

@@ -1,0 +1,40 @@
+-- AddNVenAllRec.psq - AddNVenAllRec.sql template.
+--	9/22/21.	wmk.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 9/22/21.	wmk.	original code.
+-- *
+-- * Notes. sed substitutes property id for w www and download month/day
+-- * for m 1 and d 1 within this query, writing the resultant to .sql.
+-- *;
+
+.open 'folderbase/Territories/DB-Dev/VeniceNTerritory.db'
+ATTACH 'folderbase/Territories/RawData/SCPA/SCPA-Downloads'
+ || '/SCPA_m1-d1.db'
+ AS db15;
+-- pragma db15.table_info(Datam1d1);
+-- Note - fieldnames in Datam1d1 are blank-compressed;
+
+INSERT INTO NVenAll
+SELECT "Account#" , Owner1 , Owner2 , Owner3 , MailingAddress1 ,
+ MailingAddress2 , MailingCity , MailingState , MailingZipCode ,
+  MailingCountry , "SitusAddress(PropertyAddress)" , SitusCity , 
+  SitusState , SitusZipCode , PropertyUseCode , Neighborhood , 
+  Subdivision , TaxingDistrict , Municipality , WaterfrontCode , 
+  "HomesteadExemption(YESorNO)" , HomesteadExemptionGrantYear , 
+  Zoning , ParcelDesc1 , ParcelDesc2 , ParcelDesc3 , 
+  ParcelDesc4 , "Pool(YESorNO)" , TotalLivingUnits , 
+  "LandAreaS.F." , GrossBldgArea , LivingArea , Bedrooms , 
+  Baths , HalfBaths , YearBuilt , LastSaleAmount , 
+  LastSaleDate , LastSaleQualCode , PriorSaleAmount , 
+  PriorSaleDate , PriorSaleQualCode , JustValue , 
+  AssessedValue , TaxableValue , LinktoPropertyDetailPage , 
+  ValueDataSource , ParcelCharacteristicsData , Status, '2021-m1-d1'
+FROM Datam1d1
+WHERE "Account#" IS 'wwww';
+-- now add new record into NVenAccts table;
+INSERT INTO NVenAccts
+ VALUES('wwww');
+.quit
+-- End AddNvenAllRec;

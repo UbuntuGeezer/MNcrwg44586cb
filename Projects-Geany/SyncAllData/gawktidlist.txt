@@ -1,0 +1,7 @@
+# gawktidlist.txt	2/23/23.	wmk.
+BEGIN{ ix = 0 }
+{tidlist[ix] = substr($1,5,3)}
+END{ n = asort(tidlist)
+ for ( i=1 ; i <= n ; i++ ){
+  print tidlist[i] }
+ }

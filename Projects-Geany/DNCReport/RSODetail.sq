@@ -1,0 +1,32 @@
+echo "-- * RSODetail.sql - Generate RSODetail.csv in Tracking folder."  > SQLTemp.sql
+echo "-- *	7/10/22.	wmk."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Entry.	*pathbase/DB-Dev/TerrIDData.db.DoNotCalls table has all"  >> SQLTemp.sql
+echo "-- *	DO NOT CALL entries."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Exit.  *pathbase/Projects-Geany/DoTerrsWithCalc/Tracking/RSODetail.csv"  >> SQLTemp.sql
+echo "-- * 	has count of RSOs by territory. This can easily be imported into a"  >> SQLTemp.sql
+echo "-- *	spreadsheet for a general format report."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * This query should be run through the AnySQLtoSH project to produce the"  >> SQLTemp.sql
+echo "-- * RSODetail.sh shell. That shell will produce the output described in the"  >> SQLTemp.sql
+echo "-- * Exit conditions above."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ".open '$pathbase/DB-Dev/TerrIDData.db'"  >> SQLTemp.sql
+echo "DROP TABLE IF EXISTs RSODetail;"  >> SQLTemp.sql
+echo "create temp table RSODetail"  >> SQLTemp.sql
+echo "(TID  TEXT, Address TEXT, Unit TEXT, Name TEXT, Phone TEXT, Notes TEXT,"  >> SQLTemp.sql
+echo "  SODate TEXT);"  >> SQLTemp.sql
+echo "insert into RSODetail"  >> SQLTemp.sql
+echo "SELECT TERRID, UnitAddress, Unit, Name, Phone, Notes, RecDate "  >> SQLTemp.sql
+echo "fROM donotcalls"  >> SQLTemp.sql
+echo " WHERE RSO > 0"  >> SQLTemp.sql
+echo "  AND LENGTH(RSO) > 0"  >> SQLTemp.sql
+echo "order by TERRID;"  >> SQLTemp.sql
+echo ".mode csv"  >> SQLTemp.sql
+echo ".headers on"  >> SQLTemp.sql
+echo ".separator ,"  >> SQLTemp.sql
+echo ".output '$pathbase/Projects-Geany/DoTerrsWithCalc/Tracking/RSODetail.csv'"  >> SQLTemp.sql
+echo "select * from RSODetail;"  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo "-- ** END RSODetail **********;"  >> SQLTemp.sql

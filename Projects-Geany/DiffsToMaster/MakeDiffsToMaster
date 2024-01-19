@@ -1,0 +1,88 @@
+# MakeDiffsToMaster - Make template for DiffsToMaster.
+#	1/23/23.	wmk.
+#
+# Exit. target file = DiffsToMaster.sh shell to update Terr86777.db.
+#
+# Modification History.
+# ---------------------
+# 1/23/23.	wmk.	orginal code; adapted from MakeExtractDiffs.
+# Legacy mods.
+# 11/21/22.	wmk.	*codebase support.
+# Legacy mods.
+# 4/27/22.	wmk.	modified for general use; *pathbase* support; all 
+#			 *..path*, *..dir* vars trailing '/' removed.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+# Legacy mods.
+# 6/20/21.	wmk.	original makefile.
+# 6/29/21.	wmk.	mod to use cat instead of awk.
+# 9/30/21.	wmk.	preamble dependency added; dead recipe code removed.
+# 2/6/22.	wmk.	chmod added to ensure that .sh is executable.
+# 3/19/22.	wmk.	HOME changed to USER in host test;chmod +x instead of
+#			 700.
+#
+# Notes. (see README also)
+# This makefile is an extracted subset of what will be the master makefile,
+# MakeBuildSCDiff.tmp. Isolating this makefile allows for modular testing
+# of the main build sections of MakeBuildSCDiff.
+#
+# Dependencies.
+# -------------
+# Project AnySQLtoSH is used to build the DiffsToMaster.sh.
+
+# var definitions.
+#==================================================================
+# makefile setup section.
+# set folderbase contignent upon ($)HOME system information.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase=$(folderbase)/Territories/FL/SARA/86777
+endif
+
+SHELL = /bin/bash
+.SUFFIXES:
+.SUFFIXES: .s .db .csv .sql .sh
+
+# path variables for use inside recipes.
+maindbpath = $(pathbase)/DB-Dev
+scdwnldpath = $(pathbase)/RawData/SCPA/SCPA-Downloads
+sqltoshpath = $(codebase)/Projects-Geany/AnySQLtoSH
+includepath = $(codebase)/include
+ bashpath = $(codebase)/Procs-Dev
+targpath = $(codebase)/Projects-Geany/DiffsToMaster
+srcdir = $(codebase)/Projects-Geany/DiffsToMaster
+thisproj = $(codebase)/Projects-Geany/DiffsToMaster
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+.ONESHELL : ;
+.PHONY : err placeholder;
+#====================================================================
+
+
+# $(srcdir)/DiffsToMaster.sh
+#====================================================================
+# primary target recipe.
+# recipe for .sh
+
+$(srcdir)/DiffsToMaster.sh  :  $(srcdir)/DiffsToMaster.sql 
+	# now build the .sh file from the AnySQL.sh header, the preamble.sh and .s file.
+	cd $(altproj);./DoSed.sh $(srcdir) DiffsToMaster
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+
+$(srcdir)/DiffsToMaster.sql : ;
+	if ! -f $@;then \
+	 echo "** DiffsToMaster.sql missing for build DiffsToMaster **";exit 1;fi
+
+#===================================================================

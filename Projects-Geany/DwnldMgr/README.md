@@ -1,0 +1,27 @@
+README.md - DwnldMgr project documentation<br>
+7/2/23.	wmk.
+###Modification History.
+<pre><code>6/28/23.    wmk.   original document.
+7/2/23.	wmk.	FixRUcsv, FixAllRUcsv documented.
+</code></pre>
+<h3 id="IX">Documentation Sections.</h3>
+<pre><code><a href="#1.0">link</a> 1.0 Project Description - overall project description.
+<a href="#2.0">link</a> 2.0 Dependencies - project dependencies.
+<a href="#3.0">link</a> 3.0 Tools and Utilties - support shells for DwnldMgr.
+<a href="#4.0">link</a> 4.0 Significant Notes - important stuff not documented elsewhere.
+</code></pre>
+<h3 id="1.0">1.0 Project Description.</h3>
+DwnldMgr provides shells and tools to manage territory downloads. While the
+RefUSA and SCPA data segment pieces have utilities to manage downloads within
+their area, DwnldMgr manages territory downloads across all data segment
+boundaries.
+<a href="#IX">Index</a>
+<h3 id="2.0">2.0 Dependencies.</h3>
+<h3 id="3.0">3.0 Tools and Utilities.</h3>
+ListDwnldDates
+AllListDates
+>FixRUcsv.sh - Fix .csv download from "full" to "summary" format.
+
+>FixAllRUcsv.sh - Fix .csv downloads in CSVList.txt to summary format.
+
+<h3 id="4.0">4.0 Significant Notes.</h3>

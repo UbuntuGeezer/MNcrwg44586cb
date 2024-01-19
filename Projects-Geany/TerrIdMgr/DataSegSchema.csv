@@ -1,0 +1,145 @@
+TerrIDData|SubTerrs|"CREATE TABLE ""SubTerrs"" (
+	`TerrID`	TEXT NOT NULL,
+	`SubTerr`	TEXT NOT NULL,
+	`Streets-Address(s)`	TEXT,
+	`Homestead`	TEXT,
+	`Parcel-LIKE`	TEXT,
+	`Unit-LIKE`	TEXT,
+	`DBName`	TEXT,
+	PRIMARY KEY(`TerrID`,`SubTerr`)
+)"
+TerrIDData|DeletedDNCs|"CREATE TABLE DeletedDNCs ( `TerrID` TEXT NOT NULL, `Name` TEXT, `UnitAddress` TEXT NOT NULL, `Unit` TEXT, `Phone` TEXT, `Notes` TEXT, `RecDate` TEXT, `RSO` INTEGER, `Foreign` INTEGER, `PropID` TEXT, `ZipCode` TEXT, `DelPending` INTEGER, `DelDate` TEXT, `Initials` TEXT )"
+TerrIDData|RSOAddress|"CREATE TABLE RSOAddress
+(RSOid INTEGER PRIMARY KEY AUTOINCREMENT,
+ PropID TEXT, Unit TEXT, Initials TEXT,
+ RecDate TEXT)"
+TerrIDData|sqlite_sequence|"CREATE TABLE sqlite_sequence(name,seq)"
+TerrIDData|FLAddress|"CREATE TABLE ""FLAddress"" (
+	`FLid`	INTEGER PRIMARY KEY AUTOINCREMENT,
+	`PropID`	TEXT,
+	`Unit`	TEXT,
+	`Initials`	TEXT,
+	`RecDate`	TEXT,
+	`LangID`	INTEGER
+)"
+TerrIDData|FLCong|"CREATE TABLE FLCong
+(LangID INTEGER PRIMARY KEY AUTOINCREMENT,
+ Lang TEXT, CongName TEXT, CongAddress TEXT)"
+TerrIDData|RSOInfo|"CREATE TABLE ""RSOInfo"" (
+	`Name`	TEXT,
+	`Address`	TEXT,
+	`Unit`	TEXT,
+	`Phone`	TEXT,
+	`Notes`	TEXT,
+	`RSOid`	INTEGER NOT NULL,
+	PRIMARY KEY(`RSOid`),
+	FOREIGN KEY(`RSOid`) REFERENCES `RSOAddress`(`RSOid`)
+)"
+TerrIDData|DNCLog|"CREATE TABLE DNCLog
+ (TimeStamp TEXT, LogMsg TEXT)"
+TerrIDData|FLInfo|"CREATE TABLE ""FLInfo"" (
+	`Name`	TEXT,
+	`Address`	TEXT,
+	`Unit`	TEXT,
+	`Phone`	TEXT,
+	`Notes`	TEXT,
+	`ZipCode`	TEXT,
+	`FLid`	INTEGER DEFAULT 1,
+	`LangID`	INTEGER,
+	PRIMARY KEY(`FLid`),
+	FOREIGN KEY(`FLid`) REFERENCES `FLAddress`(`FLid`)
+)"
+TerrIDData|NewForeign|"CREATE TABLE ""NewForeign"" (
+	`TerrID`	,
+	`Name`	,
+	`UnitAddress`	,
+	`Unit`	,
+	`Phone`	,
+	`ZipCode`	,
+	`Notes`	,
+	`RecDate`	,
+	`Initials`	
+)"
+TerrIDData|DoNotCalls|"CREATE TABLE ""DoNotCalls"" (
+	`TerrID`	TEXT NOT NULL,
+	`Name`	TEXT,
+	`UnitAddress`	TEXT NOT NULL,
+	`Unit`	TEXT,
+	`Phone`	TEXT,
+	`Notes`	TEXT,
+	`RecDate`	TEXT,
+	`RSO`	INTEGER,
+	`Foreign`	INTEGER,
+	`PropID`	TEXT,
+	`ZipCode`	TEXT,
+	`DelPending`	INTEGER,
+	`DelDate`	TEXT,
+	`Initials`	TEXT,
+	`LangID`	INTEGER
+)"
+TerrIDData|SpecialRU|"CREATE TABLE ""SpecialRU"" (
+	""TID""	TEXT NOT NULL,
+	""SpecialDB""	TEXT
+)"
+TerrIDData|SpecialSC|"CREATE TABLE SpecialSC(
+TID TEXT, SpecialDB TEXT)"
+TerrIDData|Territory|"CREATE TABLE ""Territory"" (
+	""TerrID""	TEXT NOT NULL,
+	""AreaName""	TEXT,
+	""Street-Address(s)""	TEXT,
+	""City""	TEXT,
+	""Zip""	TEXT,
+	""Location""	TEXT,
+	""Type""	TEXT,
+	""HasSubs""	TEXT,
+	""DBName1""	TEXT,
+	""DBName2""	TEXT,
+	""StatusCode""	TEXT,
+	""SpecialRU""	INTEGER,
+	""SpecialSC""	INTEGER,
+	""Segmented""	INTEGER,
+	PRIMARY KEY(""TerrID"")
+)"
+TerrIDData|SegDefs|"CREATE TABLE SegDefs (
+ RecNo INTEGER PRIMARY KEY AUTOINCREMENT,
+ TerrID TEXT,
+ dbName TEXT, 
+ sqldef TEXT 
+)"
+TerrIDData|SegSelect|"CREATE TABLE SegSelect(
+ Type TEXT,
+ tidFilter TEXT,
+ dbFilter
+ )"
+TerrIDData|Counts806|"CREATE TABLE Counts806(
+ Count INTEGER )"
+TerrIDData|Defs806|"CREATE TABLE Defs806(
+ newtid TEXT,
+ newdb TEXT,
+ newsql TEXT)"
+TerrIDData|Counts805|"CREATE TABLE Counts805(
+ Count INTEGER )"
+TerrIDData|Defs805|"CREATE TABLE Defs805(
+ newtid TEXT,
+ newdb TEXT,
+ newsql TEXT)"
+TerrIDData|Counts804|"CREATE TABLE Counts804(
+ Count INTEGER )"
+TerrIDData|Defs804|"CREATE TABLE Defs804(
+ newtid TEXT,
+ newdb TEXT,
+ newsql TEXT)"
+TerrIDData|Counts802|"CREATE TABLE Counts802(
+ Count INTEGER )"
+TerrIDData|Defs802|"CREATE TABLE Defs802(
+ newtid TEXT,
+ newdb TEXT,
+ newsql TEXT)"
+TerrIDData|Counts808|"CREATE TABLE Counts808(
+ Count INTEGER )"
+TerrIDData|EndMessage|"CREATE TABLE EndMessage(
+ msg TEXT)"
+TerrIDData|Defs808|"CREATE TABLE Defs808(
+ newtid TEXT,
+ newdb TEXT,
+ newsql TEXT)"

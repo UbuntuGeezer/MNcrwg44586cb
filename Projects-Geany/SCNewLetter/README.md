@@ -1,0 +1,188 @@
+README - RUNewLetter project documentation.<br>
+12/25/22.	wmk.
+###Modification History.
+<pre><code>9/21/21.	wmk.	original document (adapted from RUNewLetter).
+10/4/21.	wmk.	document updated working through process with new
+			 territory 626; UpdateRUDwnld step removed that
+			 preceded MakeEmptyRUMap step.
+10/15/21.	wmk.	note updated adding Special requirement for including
+					RU data in finished territory.
+10/23/21.	wmk.	Method section rewritten.
+10/27/21.	wmk.	run FixyyySC.sh added to Method section for SC initial
+			 corrections.
+</code</pre>
+<h3 id="IX">Document Sections.</h3>
+<pre><code>
+1.0 Project Description - overal project description.
+2.0 Dependencies - build dependencies.
+3.0 Method - step-by-step build directions.
+4.0 Zip Code Considerations - zip codes in letter/phone territories.
+</code></pre>
+<h3 id="1.0">1.0 Project Description.</h3>
+The SCNewLetter project creates a database that emulates the database
+created by the SCNewTerritory_db.db within Terryyy SCPA-Download folder.
+It takes a .csv file of letter writing addresses and converts them into
+a Terryyy\_SCPoly table that looks exactly like a Terryyy\_SCPoly table
+created from a Mapyyy\_RU.csv download.
+
+It then creates a Terryyy\_SCBridge table that is exactly like the SCBridge
+table created by SCNewTerritory project. This essentially spoofs the system
+into handling a letter writing territory as though it were created from
+an SC download. Once the Terryyy\_SC.db is created, it is handled exactly
+the same as any SC territory download.
+
+This project should be run before the RUNewLetter project build.<br><a href="#IX">Index</a>
+<h3 id="2.0">2.0 Dependencies.</h3>
+<pre><code>
+NewLetter.sql - SQL to create new Terryyy_SC.db and populate from Letteryyy_TS.csv
+
+Lettyyy_TS.csv - .csv created by using Calc, cutting/pasting Lett632_TS.pdf
+	lines into cells, then exporting to a .csv file. By using <space> as the
+	field separator, the .pdf lines are parsed into fields that closely resemble
+	a Mapyyy_SCPoly record.
+
+Terryyy_SC.db - empty new database with same structure as any Terryyy_SC.db
+
+TIDList.txt - optional list of territory IDs to process for MvDwnPDF.sh
+</code></pre><br><a href="#IX">Index</a>
+<h3 id = "3.0">3.0 Method.</h3>
+To create a new letter-writing territory peform the following steps:
+
+The first step is to obtain the letter writing territory TS definition
+by downloading Letter_xxx.pdf from territory servant. This file will be
+located in the Territory-PDFs folder.
+<pre><code>
+/Procs-Dev folder:
+	run ./MvDwnPDF.sh xxx to move the download PDF into the 
+	 SCPA-Downloads/Terrxxx folder
+
+SCPA-Downloads/Terrxxx folder:
+	open the .pdf in Adobe Reader
+	
+	open a new spreadsheet in Calc
+	
+	copy and paste all lines 1st 2 fields from the .pdf into the new Calc
+	 spreadsheet starting at row 2
+	
+	Add the column headings:
+	 AreaName, HouseNumber, Street1, Street2, Street3, Unit, City, empty,
+	  State, Zip
+
+	combine any columns A and B that have a split area name into column A
+	 (e.g. 'Bridle' 'Oaks' becomes 'Bridle Oaks' in column A
+	 move columns at right left 1 column so that house number is in column B
+	align remaining column data under appropriate headings; watch out for Units
+	 
+	Save the spreadsheet as Lettxxx_TS.ods
+
+	From new spreadsheet AreaName column, make a list of the different
+	 area names
+	 
+	Save the spreadsheet as Lettxxx_TS.csv
+	
+	
+/DB-Dev folder:
+	open database TerrIDData.db
+	
+	create a new record in table "Territory" with the relevant information
+	 obtained from the Letter_xxx.TS.ods to define the territory
+	 
+/Procs-Dev folder:
+	run GenTerrHdr.sh <terrid> to generate the territory header .csv
+	
+	run Calc to process the TerrxxxHdr.csv and save as TerxxxHdr.ods
+
+Enter the SCNewLetter project:
+
+	in the Build commands, set "sed" parameter to territory ID
+	run "sed" from the Buid menu to set up MakeSCNewLetter makefile
+	 and edit the territory ID into NewLetter.sql
+
+	run Make from the Build menu to execute the SQL from NewLetter.sql
+	 creating Terrxxx_SC.db from the Lettxxx_TS.csv data
+	 MakeSCNewLetter will also create an empty Mapxxx_RU.csv file and
+	  generate an empty Terrxxx_RU.db in the RefUSA-Downloads/Terrxxx
+	  folder
+
+Terminal: Projects-Geany/SCNewLetter project folder:
+
+	run InitLetter.sh to copy the files:
+	 LETTER, ~/Territory-PDFs/Letter_yyy.pdf, AddZips.sql, MakeAddZips
+	 to ~SCPA-Downloads/Terr<terrid>
+
+Back in the SCPA-Downloads/Terrxxx folder:
+
+	Use sqlite brower to review Terrxxx_SC.db, checking record data for
+	 missing fields like OwningParcel, etc.
+	
+	If there are any missing, or incorrect fields (like Units) or 
+	 street names needing correction (e.g. Crossing > Xing):
+	---- 
+	 Code the fixes for Terrxxx into FixyyySC.sql SQL source. This code
+	  will use the information from VeniceNTerritory.NVenAll to set the
+	  basic information in each record.
+	
+	 Terminal: move to the FixAnySC project folder (cdj FixAnySC)
+	 execute the ClearTargets.sh shell with the territory ID
+
+	 move back to the SCPA-Downloads/Terrxxx folder
+	 rm the Terrxxx_SC.db database to clear the way for rebuilding with
+	  UpdateRUDwnld project
+	
+Enter the FixAnySC project:
+
+		set the territory ID into the "sed" Build menu item
+		run "sed" from the Build menu
+		run Make from the Build menu to create the FixyyySC.sh shell
+		that will be invoked by then UpdateSCBridge project
+
+re-enter the SCPA-Downloads/Terrxxx folder
+	run ./FixxxxSC.sh to perform an initial fix on the records needing
+	 to be corrected
+	----
+	
+	edit AddZips.sql to ensure proper SQL for adding zip codes this territory
+	[run make -f MakeAddZips --dry-run to test the AddZips makefile]
+	run make -f MakeAddZips to make the AddZips.sh shell
+	run the ./AddZips.sh shell to add the zip codes into the UnitAddresses
+	
+/TerrData/Terrxxx folder: [Note: if you omit here, BridgesToTerr will remind you]
+	run Calc to open TerrxxxHdr.csv
+	save as TerrxxxHDR.ods
+	
+[Note: this step has been incorporated into the MakeSCNewLetter makefile.]
+Enter the RUNewTerritory project:
+
+	set the territory ID into the "sed" Build menu item
+	run "sed" from the Build menu
+	
+	run Make from the Build menu to create the Terrxxx_RU.db anew
+	 with no records, to placate territory generation
+</code></pre>
+The letter writing territory will use one or more RefUSA-Downloads/Special
+dbs to extract its own records from the RefUSA databases for the
+RefUSA records to be included in the generated territory. But in order for
+this to work, the SCBridge table in Terrxxx_SC.db must be completed.
+
+The letter writing territory is now set to work just like any other
+territory. Special processing should be added to include the RU data
+addresses. The RefUSA-Downloads/Terrxxx/MakeSpecials makefile will 
+run several shells to make the Specxxx_RU.db, then populate the Terrxxx_RU.db
+by merging in the Specxxx_RU.db.Specxxx_RUBridge entries.<br><a href="#IX">Index</a>
+<h3 id="4.0">4.0 Zip Code Considerations.</h3>
+Since letter writing territories do not necessarily contain contiguous addresses
+within the same zip code, all UnitAddress fields within letter-writing territories
+have the mailing zip code appended at the end of the address. The SCNewLetter
+project contains a build process to facilitate adding the zip codes to any
+Terrxxx_SC.db records.
+
+From within the SCNewLetter project the DoSed.sh shell sets the territory iD
+into the file AddZips.sql and stores it in the target territiory SCPA-Downloads/Terrxxx
+folder. Then \*make\* is run on the MakeAddZips makefile to build the AddZips.sh
+shell within the territory.<br>
+<pre><code>    cd $codebase/Projects-Geany/SCNewLetter
+    ./DoSed.sh xxx
+    make -f MakeAddZips
+</code></pre>
+To set the zip codes in the Terrxxx_SC.db run the AddZips.sh shell from within
+the territory folder.<br><a href="#IX">Index</a>

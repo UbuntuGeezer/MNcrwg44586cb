@@ -1,0 +1,6 @@
+# awkmon2dig - month name to digit conversion.
+#	1/31/23.
+{monum=(index("JanFebMarAprMayJunJulAugSepOctNovDec",$6)+2)/3
+ if(monum <= 9) print "0" monum
+  else print monum
+}

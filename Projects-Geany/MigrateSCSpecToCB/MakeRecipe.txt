@@ -1,0 +1,12 @@
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+================================================="
+$(prepath)/SyncTerrToSpec.sh : $(prepath)/SyncTerrToSpec.sql
+	cd $(altproj);./DoSed.sh $(prepath) SyncTerrToSpec
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+
+
+$(prepath)/SyncTerrToSpec.sql :;
+	if ! test -f $@;then \
+	 echo " ** missing SyncTerrToSpec.sql for build SyncTerrToSpec.sh **";exit 1;fi
+
+================================================== 

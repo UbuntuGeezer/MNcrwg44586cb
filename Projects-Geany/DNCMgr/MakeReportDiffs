@@ -1,0 +1,46 @@
+# MakeReportDiffss.tmp - *make* file for ReportDiffs.sh build.
+#	6/8/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 6/1/23.	wmk.	original code.
+# 6/8/23.	wmk.	adminpreamble added to *make recipe; "run" message changed.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/DNCMgr
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	cd $(altproj);./DoSed.sh $(projpath) ReportDiffs adminpreamble.sh
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/ReportDiffs.sh;then \
+	 echo "** ReportDiffs.sh generation failed **";exit 1;fi
+	$(projpath)/ReportDiffs.sh
+	echo "Entering Calc.. save DNCDiffs as .xlsx for upload to Territory Servant.";sleep 3
+	$$("$$spath/soffice.bin" $(projpath)/DNCDiffs.csv)
+#==================================================================
+# end MakeReportDiffs.tmp

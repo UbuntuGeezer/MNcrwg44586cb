@@ -1,0 +1,48 @@
+# MakeDeleteSQL.tmp - Makefile (template) for MakeDeleteSQL.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+#   7/6/22. wmk.	(automated) path corrections.
+#
+# MakeDeleteSQL deletes a module from the specified .xba file.
+# the module must be bounded by '<modulename>.sql at the beginning
+# and '/**/' at the end.
+#
+# Modification History.
+# ---------------------
+# 7/6/22.	wmk.	original makefile; adapted from EditBas project.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+.PHONY : Always JustDoIt
+.ONESHELL : ;
+
+ projpath = $(codebase)/Projects-Geany/EditSQL
+
+# <projpath>/<sqlfile>.sql
+#=======================================================
+Always : JustDoIt
+	sed -i '/-- \* <sqlmodule>.sql/,/--\/\*\*\//d' <sqlfile>.sql
+	echo "<sqlmodule> deleted from <sqfile>.sql"
+	~/sysprocs/LOGMSG "  <sqlmodule> deleted from <sqlfile>.sql."
+
+#=======================================================
+JustDoIt: ;

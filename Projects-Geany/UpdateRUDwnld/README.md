@@ -1,0 +1,453 @@
+README - Documentation for UpdateRUDwnld project.<br>
+7/1/23.	wmk.
+###Modification History.
+<pre><code>
+5/31/22.	wmk.	.md formatting updated; links added.
+6/24/22.	wmk.	typos corrected.
+7/9/22.     wmk.    Dependencies updates with *ForceBuild* documentation.
+7/1/23.		wmk.	Utility Shells documented.
+Legacy mods.
+6/2/21.		wmk.	original documentation.
+6/6/21.		wmk.	CAUTION added when using in multihost environment.
+7/16/21.	wmk.	*Prerequisites* section added.
+8/16/21.	wmk.	documentation review.
+8/29/21.	wmk.	AnySQLtoSQ usage documented.
+8/30/21.	wmk.	InitialRUFix integration documented.
+9/4/21.		wmk.	ExtractOldDiffs and IntegrateOldDiffs processes documented.
+9/11/21.	wmk.	*Setup* section updated.
+12/5/21.	wmk.	DiffQueries.sql documented in *Significant Notes*.
+1/13/22.	wmk.	multihost CAUTION removed.
+</code></pre>
+<h3 id="IX">Documentation Sections.</h3>
+<pre><code>
+<a href="#1.0">link</a> 1.0 Project Description - general description of project.
+<a href="#2.0">link</a> 2.0 Setup - step-by-step set up for updating an RU territory.
+<a href="#3.0">link</a> 3.0 Dependencies - makefile dependencies.
+<a href="#4.0">link</a> 4.0 Prerequisites - target prerequisites for the build.
+<a href="#5.0">link</a> 5.0 Build variables - 'make' variables used in the build.
+<a href="#6.0">link</a> 6.0 Build Results - results of the build (primary target and others).
+<a href="#7.0">link</a> 7.0 RefUSA/SCPA Mismatch Handling.
+<a href="#8.0">link</a> 8.0 Managing Downloads - notes on managing RefUSA downloads.
+<a href="#9.0">link</a> 9.0 Significant Notes - important stuff not in other sections.
+</code></pre>
+<h3 id="1.0">1.0 Project Description.</h3>
+Download data for territories is stored in Comma Separated Value (.csv) files.
+This file format is compatible with many apps for importing data. The Territory
+system uses several apps that depend upon this file format. For information
+on managing downloads, refer to the <a href="#8.0">Managing Downloads</a> section below.
+
+UpdateRUDwnld takes a RefUSA download map .csv and moves it through several
+processes generating a completely fresh territory RU database. The map
+.csv file will typically be the latest polygon download for a given
+territory. Since no algorithm has been developed to update the existing
+territory RU data from the latest download, the territory RU database is
+completely rebuilt from the latest download.
+
+The RefUSA download .csv files are stored in each RefUSA-Downloads/Terrxx
+folder for each territory 'xxx'. The process of downloading RefUSA data
+and getting it into each Terrxxx folder is detailed in the
+[Managing Territory Data](file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/DocumentationCB/ManagingTerritoryData.html#4.0)
+document. The UpdateRUDwnld project has two shells that are used for
+moving data from the /Downloads folder to the /Terrxxx folder. These are
+discussed in the 
+[Managing Territory Data](file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/DocumentationCB/ManagingTerritoryData.html#5.0)
+document as well.
+
+UpdateRUDwnld is not intended to update either mobile home park (MHP) or
+letter-writing territories. These both have unique download characteristics
+so are handled by their own separate update projects. Refer to the
+[UpdateMHPDwnld](file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/UpdateMHPDwnld/README.html)
+project documentation for updating mobile home park records, and
+[UpdateLtrDwnld](file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/UpdateLtrDwnld/README.html)
+project documentation for updating letter-writing records.
+
+The Build menu has 2 relevant Independent commands: *sed* and *Make*.
+
+sed runs DoSed.sh to edit territory-specific paths and directives prior
+to running Make. Using the Build menu item Set Build Commands, the 
+territory ID is set as the passed parameter to DoSed.
+
+Make runs the *make* utility to build the territory RU database. Once
+the sed menu item has been run, Make can subsequently be run to update
+the RU database for the territory.<br>
+<a href="#IX">Index</a>
+<h3 id="2.0">2.0 Setup.</h3>
+**Prior to running the UpdateRUDwnld build, remove the file
+  RefUSA-Downloads/Terrxxx/FixxxxRU.sh or rebuild it with the
+  FixAnyRU project**
+  
+This is necessary since all of the older FixxxxRU.sh shells go into an
+infinite loop.
+It is also advisable to run UpdateSCBridge first, since FixyyyRU.sql
+may be using the SCBridge data.
+
+Since the update process can be a bit involved as new anomalies are found
+within the RU and SC data the steps below give an outline "bridging" the
+operations of editing SQL corrections in the code and integrating the corrections
+into the RU data before proceeding with territory generation.
+<pre><code>
+Terminal session:
+	change to the territory RU folder
+	 cdt <terrid>
+
+	edit FixyyyRU.sql and check the code for latest compatibility
+	 gedit FixyyyRU.sql
+
+	push the current working directory and change to FixAnyRU folder
+	 pd
+	 cdj FixAnyRU
+
+	set up and run the FixAnyRU *make* to generate the new FixyyyRU.sh
+	 ./DoSed.sh yyy
+	 make -f MakeFixAnyRU
+
+	change back to the territory RU folder, then move to the UpdateRUDwnld project
+	 p-d
+	 cdj UpdateRUDwnld
+
+	Note: There are circumstances where you wish to "force" the build from the
+	latest RU download (i.e. the Terrxxx_RU.db is newer than any of the prerequisites).
+	This will typically happen if the ./Previous/Terrxxx_RU.db got copied over
+	the Terr_RU.db and a ClearRUBridge operation was run. This leaves the 
+	Terrxxx_RUBridge table cleared, but the file date has been updated, so will
+	be newer than the build prerequisites.
+	** to force the build enter the following command:
+	 touch ForceBuild
+
+	set up and run the UpdateRUDwnld *make* to process the latest download
+	 ./DoSed.sh yyy
+	 make -f MakeUpdateRUDwnld
+
+	change back to the territory RU folder and check the MissingIDs
+	 p-d
+	 ls -lh Missing*
+
+	if the length of the MissingIDs.csv is > 0, use *less* to inspect the records,
+	then repeat the above steps
+	 less MissingIDs.csv
+</code></pre>
+**Prior to running UpdateRUDwnld, you may wish to ensure the current
+  Terrxxx\_RU.db has been preserved on /Previous by running
+  /Procs-Dev/CyclePrevious RU.**
+
+To run the UpdateRUDwnld on a single territory perform the following steps:
+<pre><code>
+	edit "sed" item in Build menu with territory ID
+	run "sed" item from Build menu
+	
+	run "Make dry-run" from Build menu to pretest the make; note that
+	 with the current "include" dependencies, make may report that the
+	 .db is up-to-date when it actually is not
+	
+	run "Make" from the Build menu to generate the updated Terrxxx\_RU.db
+	 Note: this now includes the generation of InitialRUFix.sh if necessary
+	 and the running of this shell once the .db is generated.
+</code></pre>
+If there may have been properties that were in the prior .db cycle, but
+not in the current .db, the old entries can be picked up with the following:
+<pre><code>
+	run ExtractOldDiffs.sh to extract the older/missing entries
+	use an editor to check /Terrxxx/TerrxxxOldDiffs.csv to see if you 
+	 actually want to integrate the old entries (some may have been corrected)
+	
+	run IntegrateOldDiffs.sh to integrate the older entries with the new
+	 .db records. The older entries will be recorded with "?" as the resident.
+	 
+	 Note. There are separate makefiles in the UpdateRUDwnld project for
+	 ExtractOldDiffs.sh and IntegrateOldDiffs.sh builds just to be consistent,
+	 but both .sh shells use sqlite directly on their .sql files.
+</code></pre><br>
+<a href="#IX">Index</a>
+<h3 id="3.0">3.0 Dependencies.</h3>
+This section documents the primary dependencies in the makefile. There
+may also be secondary dependencies for prerequisites listed in these
+primary dependencies.
+
+The following shells are used by UpdateRUDwnld:
+<pre><code>
+	RUNewTerr_db.sh - generate new Terryyy_RU.db from Mapyyy_RU.csv
+	RUTidyTerr_db.sh - complete missing fields in new Terryyy_RU.db
+	FixyyyRU.sh - add and cleanup special case records for Terryyy_RU.db
+	SetRUDNCs.sh - set DoNotCall fields in Terryyy_RU.DB/Terryyy_RUBridges
+	MissingIDs.sh - create MissingIDs.csv summary of records missing OwningParcel
+</code></pre>
+The following databases are used by UpdateRUDwnld:
+
+~/DB-Dev databases
+>Terr86777.db	 -  master db of SC records for all properties
+		within the bounds of North Venice congregation territory
+>AuxSCPAData.db		 -	auxiliary tables for processing territory
+							records, AddrXcpt, SitusDups (and others)
+>TerrIDData.db		 -	data specific to each territory, like
+							table Territory (territory definitions) and
+							DoNotCalls (do not call list)
+
+>~/RawData/RefUSA/RefUSA-Downloads/Teryyy databases
+	Terryyy\_RU.db		 -  (rebuilt) RefUSA records for territory yyy
+
+
+>~/RawData/RefUSA/RefUSA-Downloads/Special databases
+	<supplemental>		 -	supplemental RU download data, like entire
+						    streets for use in cases where different
+							territories use only certain addresses from
+							a given street;
+							taken from RefUSA-Downloads/Special folder
+
+The following include files are used by UpadateRUDwnld:
+
+>~/include
+	pathRUdefs.i - generic RU path definitions
+
+>~/<project>
+	pathRUdefs.inc - pathRUdefs.i stream edited by Build/DoSed.sh to match
+	  territory ID
+
+
+The following SQL files are used by UpdateRUDwnld
+
+
+>~/<project>
+	UpdateRUDwnld.sql (obsolete) - was used by OldMakeFile.tmp
+
+**Utility Shells.**
+>InitSpecial.sh - shell file provided to assist with initial setup of 
+  Special database processing for RU territories; copies essential
+  file templates to territory RU download folder.<br>
+
+>ListTerrSpecDBs.sh - shell to list all /Special db,s used by territory.<br>
+
+>ListAllTerrSpecDBs.sh - shell to list all /Special db,s used by list of
+  territories.
+
+>ListTerrDates.sh - shell to list download date for single territory.
+
+>AllTerrDates.sh - shell to list download dates of all territories in list.
+<a href="#IX">Index</a>
+<h3 id="4.0">4.0 Prerequisites.</h3>
+\(adapted for RU from SC special preprocessing...)
+SpecyyyRU.sh is the optional preprocessing shell for Territory yyy.
+SpecyyyRU.sql is the sql query that is the basis for the shell. SpecyyyRU.sh
+will be considered out-of-date if SpecyyyRU.sql is newer. If there is
+no preprocessing .sql, an empty SpecyyyRU.sh will be generated to avoid
+an error in the makefile. The primary function of the SpecyyyRU.sql is
+to ensure that all the relevant addresses for the territory are present
+in the Bridge records before the update from the download occurs.
+
+In several territories, the RefUSA map polygon data either misses addresses
+or is too cumbersome to accurately get all the addresses in the territory.
+The folder Special in the RefUSA-Downloads directory contains .dbs built
+from street-oriented RefUSA downloads. A given street download may contain
+many addresses outside of the territory, so it is up to the preprocessing
+query to extract only the relevant addresses.
+
+The file SPECIAL within a RefUSA territory download's raw data is used to
+document the dependencies the territory has on .dbs within the
+RefUSA-Downloads/Special folder. It will be considered to be of high
+importance, like the README file, documenting quirks of the territory.<br>
+<a href="#IX">Index</a>
+<h3 id="5.0">5.0 Build Variables.</h3>
+
+>whichsystem - set to "home" or "Kays" to steer folders (see folderbase).
+
+>folderbase - base path of Territories subsystem; set dependent upon
+	'whichsystem' var
+
+>bashpath - path to shell files; set in pathRUdefs.inc
+
+>postpath - path to postprocessor for territory; set in pathRUdefs.inc
+
+>RUQBpath - path to RefUSA .sql queries; set in pathRUdefs.inc<br>
+<a href="#IX">Index</a>
+<h3 id="6.0">6.0 Build Results.</h3>
+If the Terryyy\_RU.csv file or the Specxxx\_RU.csv is newer than Terryyy\_RU.db,
+Terryyy\_RU.db will be rebuilt using the records in Terryyy\_RU.csv. 'vpath;'
+directives in pathRUdefs.inc file set the paths for both the .csv and .db files.
+
+WARNING: It is imperative that the build process preserve the existing
+Terryyy\_RU.db in the ./Previous folder for the territory. This will
+prevent problems if an individual territory is updated with UpdateRUDwnld,
+then later updated with UpdateMHPDwnld as a MHP territory. This is because
+UpdateRUDwnld does not depend upon the table Terrxxx\_MHP, so it does not
+implicitly restore it if it was in the prior territory db. Perhaps future
+code could check for it in the ./Previous file and restore it after
+rebuilding the .db.
+
+pathRUdefs.inc will be considered out-of-date and rebuilt if pathRUdefs.i
+is newer. (See Dependencies).
+
+RUTidyTerr\_db.sh will be considered out-of-date and rebuilt if
+ $(RUQBPath)RUTidyTerr\_db.sql is newer.
+
+File ~/RefUSA/RefUSA-Downloads/Terryyy/MissingIDs.csv is written as
+the last step, which contains records from the download for which there
+are no matching property IDs in the Bridge table. For a review of all
+territories for which this is a non-empty file, run the following
+commands from the ./RefUSA-Downloads directory:
+	ls -lh ./Terr*/MissingIDs.csv > MissingIDs.txt
+	awk -F' ' '{ if ($5 != "0") print $5 "   " $9 }' MissingIDs.txt > MissingIDList.txt
+
+<h3 id="7.0">7.0 RefUSA/SCPA Mismatch Handling.</h3>
+When territories are "perfect" there will always be a matching record in the
+SCPA dat for each record in the RefUSA data. While this is the case for many
+territories, there are always exceptions. The exceptions show up in each
+individual territory in the /RefUSA-Downloads/Terrxxx/MissingIDs.csv file. If
+this file is not 0-length, it is a list of RefUSA records for which a matching
+SCPA record could not be found.
+
+The average RefUSA record is about 300 characters, so the number of mismatching
+records is about the size of the file divided by 300. (A more accurate
+determination could easily be made by using \*wc -l to determine the line count
+in the MissingIDs.csv file).
+
+The utility shells AllMissIDs.sh and ListMissIDs.sh are tools provided to
+prioritize resolving exceptions. Territories with few exceptions are likely not
+worth bothering with. Territories with many exceptions may have an underlying
+issue with "Fix" shells that are not correctly tweeking records to match
+between the RefUSA and SCPA data.
+
+AllMissIDs uses the TIDList.txt list of territories to produce a full listing
+of MissingIDs.csv files that are non-zero length. ListMissIDs.sh produces a
+sorted listing of MissingiDs.csv files, largest first. By using this list the
+data administrator can prioritize fixing the worst-case territories first.
+<br><a href="#IX">Index</a>
+<h3 id="8.0">8.0 Managing Downloads.</h3>
+Territory downloads of RefUSA data are managed in two projects: UpdateRUDwnld,
+(this project) and DwnldMgr. Both these projects assist the database administrator
+in getting download data into the publisher territories as it is updated. The
+UpdateRUDwnld project focuses more on single territory updating. The DwnldMgr
+project is broader in scope encompassing special downloads that are used by
+multiple territories.
+
+The Reference Solutions website provides the data for the RefUSA downloads.
+There are over 250 saved lists being maintained on the website that extract the
+downloads for the Territory system. These saved lists correspond to the
+publisher territory maps, streets, or areas within the congregation assigned
+territory. It is a continual process to download current data from RefUSA
+in order to keep territories up-to-date.
+
+The BuildDates.xlsx spreadsheet stored in the TerrData folder contains the
+build dates for each publisher territory. This spreadsheet is consulted by the
+database administrator to determine which territories are getting "stale" and
+need to be updated. This information combined with the information provided by
+the utility shells within the project gives the adminstrator an idea of which
+territories need updated download data. For a complete discussion of the
+BuildDates spreadsheet see
+the [BuildDates](file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/BuildDates/README.html) project documentation.
+
+Several utility shells within UpdateRUDwnld provide the database administrator
+with information to prioritize downloading the RefUSA data. These utilities
+help the adminstrator to identify "stale" downloads that indicate that
+territories probably need updating.
+
+>ListTerrDates - shell that lists the date of the RefUSA download used to build
+  the publisher territory currently in use.
+
+>AllTerrDates - shell that uses a list of territories to list the dates of the
+  RefUSA downloads used to build those publisher territories.
+
+>ListTerrSpecDBs - shell that lists the special databases used by a territory
+  These are either streets or areas that need special handing for the territory.
+
+>ListAllTerrSpecDBs - shell that uses a list of territories to list the special
+  databases used to build those territories.
+
+For a complete discussion of RefUSA downloads refer to
+the [Managing Territory Data](file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/DocumentationCB/ManagingTerritoryData.html) document.
+<br><a href="#IX">Index</a>
+<h3 id="9.0">9.0 Significant Notes.</h3>
+Two new post-download shells have been added that bring forward any UnitAddress'es
+that were in the previous databae, but not in the current database. A comparison
+is done searching for UnitAddress fields that are in /Previous/Terrxxx\_RU.db, but
+not present in Terrxxx\_RU.db.
+
+ExtractOldDiffs.sh is the shell that summarizes the found Previous UnitAddress'es
+and stores them in RU/Terrxxx/TerrxxxOldDefs.csv.
+<pre><code>
+	run make MakeExtractOldDiffs to build the ExtractOldDiffs.sh shell
+	run ExtractOldDiffs.sh from the UpdateRUDwnld project folder 
+</code></pre>
+IntegrateOldDiffs.sh is the shell that integrates the older definitions with the
+current database, replacing the "Resident1" name with "?". When the publisher territory
+is produced the records with "?" as the resident will indicate that the address
+is valid, but the latest download from RefUSA did not have any data for that address.
+
+	run make MakeIntegrateOldDiffs to build the IntegrateOldDiffs.sh shell
+	run IntegrateOldDiffs.sh xxx (xxx is the territory ID) to integrate the old
+	  addresses with the current Terrxxx_RU.db
+
+---
+Mobile Home Parks (MHP) that do not have individual lot ownership all
+have only one SC property ID for the entire park. Examples are Bay Indies,
+Ridgewood, Bay Lake Estates. Currently all territories within these parks
+have individual RefUSA map polygons that download only the streets
+within the territory boundaries.
+
+The implication is that in order to update the territories within a given
+MHP, the individual territory polygons need to be downloaded. For Bay
+Indies, there are about 20 territory polygons.
+
+A less time consuming method is to download the entire
+MHP as one RefUSA query, then generate a SPECIAL database with all
+of the park entries within it. Then a batch update of all the MHP
+territories can be done, keeping all the territories within the MHP
+in synch with a given download date. Like SCPA downloads, the MHP
+downloads could be named with the date-stamp of the download to facilitate
+an UpdateMHPDwnld project that would bring any given Mapxxx\_RU.csv file
+up-to-date with the download specified. The shell AllUpdtMHPDwnld.sh
+uses the TIDList.txt file in the UpdateMHPDwnld project to bring
+all the territories'Terrxxx\_RU.db files up-to-date with the download
+date specified.
+
+---
+Notes. ExtractOldDiffs looks for records in
+./Previous/Terrxxx\_RU.db.Terrxxx\_RUBridge where the UnitAddress is
+not in the current Terrxxx\_RU.db and extracts them to a .csv
+TerrxxxOldDiffs.csv. This .csv may then be imported into the current
+Terrxxx\_RUBridge with the Resident1 fields cleared to "?", indicating
+that the address belongs in the Terrxxx\_RUBridge table, but was not
+picked up with the latest RU download.
+
+AllExtractOldDiffs uses TIDList.txt and runs ExtractOldDiffs on all
+territories whose territory ID is in the list file.
+
+IntegrateOldDiffs integrates the TerrxxxOldDiffs.csv Bridge records
+back into the current Terrxxx\_RUBridge table, leaving the RecordDate
+intact from the old record, but changing the Resident1 field to "?"
+indicating that the address is valid, but there was no RefUSA record
+for it with the latest download. (Note: if the DoNotCall status changed,
+it will not be picked up here.)
+
+A new file suffix, .psq, has been introduced with this project. This
+suffix is used for SQL queries that need to be modified by sed to
+put them in correct context. The resultant will be a .sql suffix
+SQL query that is ready to be run in SQL (typically sqlite3 batch run).
+ExtrarctOldDiffs.psq and IntegrateOldDiffs.psq are files that fall
+into this category.
+
+---
+DiffQueries.sql has been added that contains 3 queries useful in prioritizing
+which territories need to have their RU data updated with RU downloads.
+Since UpdateRUDwnld can do batch updates, these 3 queries can prepare
+TIDList files that are the lists for batch updates, as well as the lists
+of files needing RU download updates.
+
+For example, TIDoldest12-02.txt is the list of territory IDs that were
+in the 11-02 differences, but not in the 12-02 differences. These should
+have the highest priority for download, since they are the most out-of-date.
+
+TIDcommon12-02.txt is the list of territory IDs that are in both the 11-02
+differences and the 12-02 differences. These should be the next highest
+priority for download, especially those from 11-02 that have not been
+downloaded since the 11-02 SCPA download.
+
+TIDnewsts12-02.txt is the list of territory IDs that are in the 12-02
+differences, but not in the 11-02 differences. These are the lowest priority
+for RU download, since they are the least out-of-date.
+
+Probably the safest way to deterimine additional RU download priority
+is to take any give list, and look at the generation date of the territory,
+and the Mapxxx\_RU.csv date. For letter-writing territories ?? 
+If the Tracking/SystemTracker.ods is up-to-date, that can be used to
+prioritize lists.. last sheet *Territory Master Map\_Sorting*.<br>
+<a href="#IX">Index</a>
+

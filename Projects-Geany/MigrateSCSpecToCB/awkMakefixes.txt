@@ -1,0 +1,24 @@
+# awkMakefixes.txt - Fix SPECIAL SC territory Makefiles.
+#	11/25/22.	wmk.
+#
+# awkMakefixes contains the *mawk* directives to correct *codebase, *procpath,
+# and *bashpath variables and references within the makefile that *mawk* is
+# run against. Used primarily for automated repair of the set of makefiles
+# MakeRegenSpecDB, MakeSetSpecTerrs, MakeSyncTerrToSpec and MakeSpecials
+# within a SPECIAL /SCPA-Downloads/Terrxxx folder.
+BEGIN {print "# 11/25/22.   wmk.   (automated) correct *procpath, *codebase, *bashpath"
+p=1}
+#insert leading comment.
+{
+# replace *procpath definition.
+if (index($0,"procpath =") > 0){print "procpath = $(codebase)/Procs-Dev";p=0}
+# insert *codebase definition.
+else if( $1 == "ifndef" && $2=="AWK") {print "ifndef codebase";print " codebase=$(folderbase)/GitHub/TerritoriesCB";print "endif";print "";p=1}
+# repair *procpath definition.
+else if (index($0,"procpath =") > 0){p=0;print "procpath = $(codebase)/Procs-Dev";p=0}
+# repair *bashpath definition.
+else if (index($0,"bashpath =") > 0){p=0;print "bashpath = $(codebase)/Procs-Dev";p=0};
+#
+#else if (p) {print;p=0};
+if (p) print;p=1
+}

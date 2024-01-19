@@ -1,0 +1,14 @@
+./Terr129/Spec129_SC.db
+./Terr139/Spec139_SC.db
+./Terr140/Spec140_SC.db
+./Terr201/Spec201_SC.db
+./Terr205/Spec205_SC.db
+./Terr206/Spec206_SC.db
+./Terr233/Spec233_SC.db
+./Terr234/Spec234_SC.db
+./Terr266/Spec266_SC.db
+./Terr274/Spec274_SC.db
+./Terr279/Spec279_SC.db
+./Terr288/Spec288_SC.db
+./Terr290/Spec290_SC.db
+./Terr289/Spec289_SC.db

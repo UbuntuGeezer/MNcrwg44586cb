@@ -1,0 +1,91 @@
+&apos;// sGen411URL.bas
+&apos;//---------------------------------------------------------------
+&apos;// sGen411URL - Generate 411.com phone look-up url.
+&apos;//		8/16/20.	wmk.	15:45
+&apos;//---------------------------------------------------------------
+
+&apos;public function sGen411URL(poRange As Object) as String
+public function sGen411URL(psSitus, psCity) as String
+
+&apos;//	Usage.	sURL = sGen411URL( sSitus )
+&apos;//	Usage.	sURL = sGen411URL( oRange )
+&apos;//
+&apos;//		sSitus = full situs address
+&apos;//		[oRange = CellRangeAddress of row with relevant data]
+&apos;//
+&apos;// Entry.	Cells pointed to by oRange.StartRow contain address information
+&apos;//         from which to generate the returned url.
+&apos;//
+&apos;//	Exit.	sURL = url of truepeoplesearch.com to search for phone number
+&apos;//           by following the url in any browser; pattern is as follows:
+&apos;//  &quot;https://www.411.com/address/413-Andros/Venice-FL/?&quot;
+&apos;//
+&apos;// Calls.	ParseSitus.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	8/12/20.	wmk.	original code
+&apos;//	8/13/20.	wmk.	minor bug fixes where &quot;number&quot; not in URL and
+&apos;//                     wrong city-state separator
+&apos;//	8/15/20.	wmk.	calling sequence changed adding City parameter
+&apos;//	8/16/20.	wmk.	sCity corrected to psCity in parameters
+&apos;//
+&apos;//	Notes. For now, City assumed to be &quot;Venice&quot;, State assumed to be &quot;FL&quot;
+&apos;// Modify to accept City as 2nd parameter; caller will obtain from
+&apos;// a fixed cell, say A4, in spreadsheet, or from Situs-City field
+&apos;// if using SCPA data.
+
+&apos;//	constants.
+const csURLBase=&quot;https://www.411.com/address/&quot;
+&apos;// insert house number here
+const csSep=&quot;-&quot;
+&apos;// insert street name here
+&apos;const csSep here
+&apos;// insert unit here
+const csSep2=&quot;/&quot;
+&apos;// insert city here
+&apos;const csSep here
+&apos;// insert state here
+&apos;const csSep2
+const csQuery=&quot;?&quot;
+
+&apos;//	local variables.
+dim sRetValue 	As String	&apos;// returned value
+dim sState		As String	&apos;// state from address
+dim sCity		As String	&apos;// city from address
+dim sSitus		As String	&apos;// copy of passed situs
+dim sUnit		As String	&apos;// unit #, if present
+dim sStreet		As String	&apos;// street here
+dim sNumber		As String	&apos;// number here
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	sRetValue = &quot;&quot;
+	
+	&apos;// set actual values from situs
+	sSitus = psSitus
+	ParseSitus(sSitus, sNumber, sStreet, sUnit)
+	if len(psCity) = 0 then
+		sCity = &quot;Venice&quot;
+	else
+		sCity = psCity
+	endif
+	sState = &quot;FL&quot;
+	
+	&apos;// generate url from extracted information.
+	sRetValue = csURLBase + sNumber + csSep _
+	          + sStreet
+	if len(sUnit) &gt; 0 then
+	   sRetValue = sRetValue + csSep + sUnit
+	endif
+	sRetValue = sRetValue + csSep2 + sCity + csSep _
+	              + sState + csSep2 + csQuery
+	
+NormalExit:
+	sGen411URL = sRetValue
+	exit function
+	
+ErrorHandler:
+   msgbox(&quot; sGen411URL - unprocessed error.&quot;)
+   GoTo NormalExit
+end function 	&apos;// end sGen411URL	8/16/20.

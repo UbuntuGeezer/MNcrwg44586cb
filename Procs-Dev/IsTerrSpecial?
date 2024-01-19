@@ -1,0 +1,36 @@
+#!/bin/bash
+# IsTerrSpecial?.sh - Determine if territory <terrid> is "special".
+#	12/15/22.	wmk.
+P1=$1
+is_specialRU=0
+is_specialSC=0
+terr=Terr
+ru=_RU
+sc=_SC
+pushd ./
+if test -d $pathbase/$rupath/$terr$P1;then 
+ cd $pathbase/$rupath/$terr$P1
+ ls $terr$P1$ru.db 1>$TEMP_PATH/scratchfile 2>$TEMP_PATH/scratchfile
+ if [ $? -eq 0 ];then
+  is_specialRU=1
+ fi
+else
+ echo "Territory $P1 RefUSA data not loaded."
+fi
+if test -d $pathbase/$scpath/$terr$P1;then 
+ cd $pathbase/$scpath/$terr$P1
+ ls $terr$P1$sc.db 1> $TEMP_PATH/scratchfile 2>$TEMP_PATH/scratchfile
+ if [ $? -eq 0 ];then
+  is_specialSC=1
+ fi
+else
+ echo "Territory $P1 SCPA data not loaded."
+fi
+if [ $is_specialRU -ne 0 ];then
+ echo "Territory $P1 is RefuSA special."
+fi
+if [ $is_specialSC -ne 0 ];then
+ echo "Territory $P1 is SCPA special."
+fi
+popd
+# end IsTerrSpecial?

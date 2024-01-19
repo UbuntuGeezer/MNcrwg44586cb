@@ -1,0 +1,509 @@
+&apos;// RUDldToRaw.bas
+&apos;//----------------------------------------------------------------------------
+&apos;// RUDldToRaw - Restructure ReferenceUSA imported sheet to RawData.csv format.
+&apos;//		9/14/20.	wmk.	01:10	
+&apos;//----------------------------------------------------------------------------
+
+public sub RUDldToRaw()
+
+&apos;//	Usage.	macro call or
+&apos;//			call RUDldToRaw()
+&apos;//
+&apos;// Entry.	sheet selected with raw .csv imported data from ReferenceUSA
+&apos;//			row index 0 contains headings
+&apos;//
+&apos;//	Exit.	sheet reorganized as per Notes below; resultant sheet is
+&apos;//			in RefUSA-RawData format
+&apos;//
+&apos;// Calls.	KillAutoRecalc, FreezeView, BoldHeadings, SetPhoneWidts
+&apos;//			SetFullAddrWidth, SetColWidth, SelectActiveRows, SetSelection,
+&apos;//			SortOnAddress, SetSearchWidths
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/13/20.	wmk.	original code
+&apos;//	9/14/20.	wmk.	code completion; misc bug fixes
+&apos;//
+&apos;//	Notes. Territories/RefUSATest.csv import into sheet..
+&apos;// CREATE TABLE &quot;RawData&quot;
+&apos;//  ( &apos;LastName&apos; TEXT NOT NULL,	
+  &apos;// &apos;FirstName&apos; TEXT NOT NULL,
+  &apos;// &apos;HouseNumber&apos; TEXT,
+  &apos;// &apos;Pre-Dir&apos; TEXT,
+  &apos;// &apos;Street&apos; TEXT,
+  &apos;// &apos;PostDir&apos; TEXT, 
+  &apos;// &apos;AptNum&apos; TEXT, 
+  &apos;// &apos;City&apos; TEXT, 
+  &apos;// &apos;State&apos; TEXT, 
+  &apos;// &apos;Zip&apos; TEXT, 
+  &apos;// &apos;County&apos; TEXT, 
+  &apos;// &apos;Phone&apos; TEXT,
+  &apos;// &apos;FullAddress&apos; TEXT,
+  &apos;// &apos;CongTerr&apos; TEXT,
+  &apos;// &apos;RecordDate&apos; REAL DEFAULT 0,
+  &apos;// &apos;DelPending&apos; INTEGER DEFAULT 0 )
+&apos;//	Method. the following steps will be executed
+&apos;//		insert 4 rows starting at row index 0
+&apos;//		[Set View/Freeze Rows and Columns at column 0, row 5]
+&apos;//		insert column at index 2 &quot;Found Name&quot;
+&apos;//		set column header at index 2 &quot;Found Name&quot;
+&apos;//		delete 4 columns at column index 9 (city, state, zip, county)
+&apos;//		add 3 columns at column index 9 (Full Address, Phone1, Phone2)
+&apos;//		insert 3 columns at column index 13 (truepeople, 411, whitepages)
+&apos;//		write column headings in 2 cells row indexes 3,4 column indexes 13-15
+&apos;//			&quot;search/truepeople&quot;, &quot;search/411&quot;, &quot;search/whitepages&quot;
+
+&apos;//	constants.
+const ONE_INCH=2540
+
+const COL_FULLNAME=2		&apos;// found name
+const COL_NUMBER=3			&apos;// house number
+const COL_PREDIR=4			&apos;// street pre-direction
+const COL_STREET=5			&apos;// street name
+const COL_SUFFIX=6			&apos;// street suffix (e.g. Ave)
+const COL_POSTDIR=7			&apos;// street post direction
+const COL_UNIT=8			&apos;// unit/apt #
+const YELLOW=16776960		&apos;// decimal value of YELLOW color
+const MDYY=30				&apos;// number format M/D/YYY
+const LJUST=1		&apos;// left-justify HoriJustify				&apos;// mod052020
+const CJUST=2		&apos;// center HoriJustify						&apos;// mod052020
+const RJUST=3		&apos;// right-justify HoriJustify				&apos;// mod052320
+const COL_FULLADDR=13
+const COL_CONGTERR=14
+const COL_RECDATE=15
+const COL_DELPENDING=16
+
+const ROW_HEADING=4
+
+const COL_AREA=0
+const ROW_AREA=0
+const COL_CITY=8		&apos;// I
+const COL_ZIP = 10
+const COL_ICITY=1
+const ROW_ICITY=2
+const COL_IZIP=2
+const ROW_DATE=1
+const COL_DATE=2
+const ROW_BASE=5
+const COL_UNITS=0		&apos;// &quot;Units shown:&quot;
+const ROW_UNITS=1
+const COL_FUNITS=1		&apos;// &quot;=COUNTA(A6:A298)&quot;
+
+&apos;// new header locations 9/2/20
+const COL_SUBTERR=0		&apos;// &quot;SubTerritory&quot;
+const ROW_SUBTERR=3
+const COL_TERRID=2		&apos;// &quot;CongTerrID&quot;
+const ROW_TERRID=3
+const COL_PROPID=3		&apos;// &quot;Property ID&quot;
+const ROW_PROPID=0
+const ROW_OWNER=1		&apos;// &quot;Owner&quot;
+const ROW_STRADDR=2		&apos;// &quot;Streets/Addrs&quot;
+&apos;// end new header locations 9/2/20
+const COL_SEARCH=13		&apos;//	search/truepeople
+const COL_RUPHONE=12	&apos;// RefUSA Phone column
+const COL_DONOTCALL=16		&apos;// do not call
+const COL_RSO=17			&apos;// registered sex offender
+const COL_FOREIGN=18		&apos;// foreign language
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim oCols	As Object		&apos;// .Columns this sheet
+dim lThisRow as long		&apos;// current row selected on sheet
+dim oMrgRange	As Object	&apos;// merge range
+
+&apos;// processing variables.
+dim oCell 		As Object	&apos;// transient cell data
+dim	i			As Integer	&apos;// loop counter
+dim nRowCount	As Integer	&apos;// active rows count
+dim nRowsProcessed	As Integer	&apos;// processed rows count
+dim sFullAddress	As String	&apos;// full address string
+dim dTodaysDate	As Double	&apos;// today&apos;s date NOW()
+dim sTerrID		As String	&apos;// territory ID from D4
+
+	&apos;// code.
+	ON ERROR GoTo ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	oCols = oSheet.Columns
+
+	&apos;// insert 4 rows at top of sheet
+	oSheet.Rows.insertByIndex(0, 4)	&apos;// insert new category 1 row
+	&apos;// set up heading information
+	&apos;// merge columns 0,1,2 in row 0 &quot;&lt;AREA NAME&gt;&quot;
+	&apos;// column 0, row 1 &quot;Units shown&quot;
+	&apos;// column 1, row 1 formula &quot;=COUNTA(A6:A1298)
+	&apos;// column 0, row 2 &quot;City&quot;, row 3 &quot;Street&quot;
+	&apos;// columns 1,2,3 row 3 merged &quot;&lt;street list&gt;&quot;
+	&apos;// column 3, row 1 set date
+	&apos;// column 3, row 2 set zip from cell data row 5 cell 10
+	&apos;// column 1, row 2 set city from cell data row 5 cell 8
+
+
+	&apos;// set header information dependent on RefUSA import columns
+	&apos;// set &lt;AREA NAME&gt; in header
+	oCell = oSheet.getCellByPosition(COL_AREA, ROW_AREA)
+	oCell.String = &quot;Territory n&gt;&quot;
+	&apos;// Merge cells A1-C1.
+	oMrgRange = oRange
+	oMrgRange.Sheet = oRange.Sheet
+	oMrgRange.StartColumn = 0	&apos;// $A
+	oMrgRange.EndColumn = 2		&apos;// $C
+	oMrgRange.StartRow = 0
+	oMrgRange.EndRow =0
+	SetSelection(oMrgRange)
+	MergeNCenter()
+	
+	
+&apos;// K6 has Zip, I6 has City
+dim sCity	As String	&apos;// city from import data
+dim sZip	As String	&apos;// zip code from import data	
+	oCell = oSheet.getCellByPosition(COL_CITY, ROW_BASE)
+	sCity = oCell.String
+	oCell = oSheet.getCellByPosition(COL_ZIP, ROW_BASE)
+	sZip = oCell.String
+	oCell = oSheet.getCellByPosition(COL_ICITY-1, ROW_ICITY)
+	oCell.String = &quot;City&quot;
+	oCell.HoriJustify = RJUST
+	oCell = oSheet.getCellByPosition(COL_ICITY, ROW_ICITY)
+	oCell.String = sCity
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_IZIP, ROW_ICITY)
+	oCell.String = sZip
+	oCell.HoriJustify = CJUST
+	
+	
+	&apos;// Units shown header and formula.
+	oCell = oSheet.getCellByPosition(COL_UNITS, ROW_UNITS)
+	oCell.String = &quot;Units shown:&quot;
+	oCell.HoriJustify = RJUST
+	oCell = oSheet.getCellByPosition(COL_FUNITS, ROW_UNITS)
+	oCell.setFormula(&quot;=COUNTA(A6:A1298)&quot;)
+	SetColWidth(COL_UNITS, 1.0)
+
+const COL_A=0
+const COL_B=1
+const COL_C=2
+const COL_D=3
+const COL_E=4
+const COL_H=7
+const ROW_1=0
+const ROW_2=1
+const ROW_3=2
+const ROW_4=3
+	&apos;// A4 = &quot;SubTerritory, B4 =&quot;&quot;
+	oCell = oSheet.getCellByPosition(COL_A, ROW_4)
+	oCell.String = &quot;SubTerritory&quot;
+	oCell = oSheet.getCellByPosition(COL_B, ROW_4)
+	oCell.String = &quot;&quot;
+	
+	&apos;// C4 = &quot;CongTerrID&quot;, D4 = &quot;&lt;territory_number&gt;&quot;
+	oCell = oSheet.getCellByPosition(COL_C, ROW_4)
+	oCell.String = &quot;CongTerrID&quot;
+	oCell = oSheet.getCellByPosition(COL_D, ROW_4)
+	oCell.String = &quot;&lt;territory-number&gt;&quot;
+	
+	&apos;// D1 - D3 = &quot;Property ID&quot;, &quot;Owner&quot;, &quot;Streets-Address(s)&quot;
+	oCell = oSheet.getCellByPosition(COL_D, ROW_1)
+	oCell.String = &quot;Property ID&quot;
+	oCell = oSheet.getCellByPosition(COL_D, ROW_2)
+	oCell.String = &quot;Owner&quot;
+	oCell = oSheet.getCellByPosition(COL_D, ROW_3)
+	oCell.String = &quot;Streets-Address(s)&quot;
+
+	&apos;// E1 - E3 = &quot;-&quot;, &quot;-&quot;, &quot;All streets in Territory &lt;territory_number&gt;&quot;
+	oCell = oSheet.getCellByPosition(COL_E, ROW_1)
+	oCell.String = &quot;-&quot;
+	oCell = oSheet.getCellByPosition(COL_E, ROW_2)
+	oCell.String = &quot;-&quot;
+	oCell = oSheet.getCellByPosition(COL_E, ROW_3)
+	oCell.String = &quot;All streets in Territory &lt;territory_number&gt;&quot;
+	
+	&apos;// H1 = &quot;Terr-RawData formatted sheet&quot;
+	oCell = oSheet.getCellByPosition(COL_H, ROW_1)
+	oCell.String = &quot;Terr-RawData formatted sheet&quot;
+	
+&apos;//	Define new columns at end FullAddress, CongTerr, RecordDate, DeletePending	
+	&apos;// define column at end &quot;FullAddress&quot;
+&apos;	oSheet.Columns.insertByIndex(COL_FULLADDR, 1)
+	oCell = oSheet.getCellByPosition(COL_FULLADDR, ROW_HEADING)
+	oCell.String = &quot;FullAddress&quot;
+	oCell.HoriJustify = CJUST
+	oCols(COL_FULLADDR).setPropertyValue(&quot;Width&quot;, 1.75*ONE_INCH)
+
+	oCell = oSheet.getCellByPosition(COL_CONGTERR, ROW_HEADING)
+	oCell.String = &quot;CongTerr&quot;
+	oCell.HoriJustify = CJUST
+	oCols(COL_CONGTERR).setPropertyValue(&quot;Width&quot;, 0.75*ONE_INCH)
+
+	oCell = oSheet.getCellByPosition(COL_RECDATE, ROW_HEADING)
+	oCell.String = &quot;RecordDate&quot;
+	oCell.HoriJustify = CJUST
+	oCols(COL_RECDATE).setPropertyValue(&quot;Width&quot;, 2.0*ONE_INCH)
+
+	oCell = oSheet.getCellByPosition(COL_DELPENDING, ROW_HEADING)
+	oCell.String = &quot;DelPending&quot;
+	oCell.HoriJustify = CJUST
+	oCols(COL_DELPENDING).setPropertyValue(&quot;Width&quot;, 0.75*ONE_INCH)
+
+	&apos;// loop on all active rows
+	&apos;// set COL_DELPENDING.Value = 0
+	&apos;//	set COL_RECDATE = Now(); .NumberFormat=30
+	&apos;//	set COL_CONG_TERR = sCongTerr
+	&apos;// set COL_FULLADDR = fsConcatRawAddress( lThisRow )
+	dTodaysDate = Now()
+	lThisRow = ROW_HEADING
+	nRowsProcessed = 0
+	oCell = oSheet.getCellByPosition(COL_FUNITS, ROW_UNITS)
+	nRowCount = oCell.getValue()
+	for i = 0 to nRowCount-1
+		lThisRow = lThisRow + 1
+		&apos;// set COL_DELPENDING.Value = 0
+		oCell = oSheet.getCellByPosition(COL_DELPENDING, lThisRow)
+		oCell.setValue(0)
+		
+		&apos;//	set COL_RECDATE = Now(); .NumberFormat=30
+		oCell = oSheet.getCellByPosition(COL_RECDATE, lThisRow)
+		oCell.setValue(dTodaysDate)
+		oCell.NumberFormat = MDYY
+		
+		&apos;//	set COL_CONG_TERR = sCongTerr
+		oCell = oSheet.getCellByPosition(COL_CONGTERR, lThisRow)
+		oCell.setFormula(&quot;=$D$4&quot;)
+
+		&apos;// because may skip, concatenate address last
+		sFullAddress = fsConcatRawAddress(lThisRow)
+		oCell = oSheet.getCellByPosition(COL_FULLADDR, lThisRow)
+		if Len(sFullAddress) = 0 then
+			oCell.String = &quot;&quot;
+			oCell.CellBackColor = YELLOW
+			msgbox(&quot;At row &quot; + lThisRow + &quot;... empty address - skipped&quot;)
+		else
+			oCell.String = UCase(sFullAddress)
+		endif	&apos;// end empty address fields conditional
+
+NextFor:
+		nRowsProcessed = nRowsProcessed + 1
+	next i
+	
+if true then
+	GoTo EndOldCode
+endif
+&apos;//---------------------------------------------------------------
+	&apos;// remove 4 columns at Full Address column
+	oSheet.Columns.removeByIndex(COL_FULLADDR, 4)
+	
+	&apos;// insert 3 columns at Full Address column
+	&apos;// Headings &quot;Full Address&quot;, &quot;Phone1&quot;, &quot;Phone2&quot;
+	oSheet.Columns.insertByIndex(COL_FULLADDR, 3)
+	
+	&apos;// Now all columns in place; set headings
+	&apos;// Date to header
+	oCell = oSheet.getCellByPosition(COL_DATE, ROW_DATE)
+	oCell.setValue(Now())					&apos;// time stamp
+
+&apos;	oCell.String = Date
+	oCell.Text.NumberFormat = MDYY
+	oCell.HoriJustify = CJUST
+	
+	&apos;// set column headings
+	oCell = oSheet.getCellByPosition(COL_IZIP, ROW_ICITY)
+	oCell.String = sZip
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_FULLADDR, ROW_HEADING)
+	oCell.String = &quot;Full Address&quot;
+	oCell.HoriJustify = CJUST
+	SetColWidth(COL_FULLADDR, 1.75)
+	oCell = oSheet.getCellByPosition(COL_FULLADDR+1, ROW_HEADING)
+	oCell.String = &quot;Phone1&quot;
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_FULLADDR+2, ROW_HEADING)
+	oCell.String = &quot;Phone2&quot;
+	oCell.HoriJustify = CJUST
+	
+	&apos;// place &quot;RefUSA&quot; heading above its phone heading.
+	oCell = oSheet.getCellByPosition(COL_RUPHONE, ROW_HEADING-1)
+	oCell.String = &quot;RefUSA&quot;
+	
+	&apos;// place column headings on search/truepeople, search/411,
+	&apos;//  search/whitepages
+	oCell = oSheet.getCellByPosition(COL_SEARCH, ROW_HEADING)
+	oCell.String = &quot;truepeople&quot;
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_SEARCH+1, ROW_HEADING)
+	oCell.String = &quot;411&quot;
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_SEARCH+2, ROW_HEADING)
+	oCell.String = &quot;whitepages&quot;
+	oCell.HoriJustify = CJUST
+
+	oCell = oSheet.getCellByPosition(COL_SEARCH, ROW_HEADING-1)
+	oCell.String = &quot;search&quot;
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_SEARCH+1, ROW_HEADING-1)
+	oCell.String = &quot;search&quot;
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_SEARCH+2, ROW_HEADING-1)
+	oCell.String = &quot;search&quot;
+	oCell.HoriJustify = CJUST
+
+	&apos;// place column headings on DoNotCall, RSO, and Foreign
+	oCell = oSheet.getCellByPosition(COL_DONOTCALL, ROW_HEADING)
+	oCell.String = &quot;DoNotCall&quot;
+	oCell.HoriJustify = CJUST
+	
+	oCell = oSheet.getCellByPosition(COL_RSO, ROW_HEADING)
+	oCell.String = &quot;RSO&quot;
+	oCell.HoriJustify = CJUST
+	
+	oCell = oSheet.getCellByPosition(COL_FOREIGN, ROW_HEADING)
+	oCell.String = &quot;Foreign&quot;
+	oCell.HoriJustify = CJUST
+	
+	&apos;// Columns fixed; now set remaining header information
+	&apos;// new header locations 9/2/20
+&apos;const COL_SUBTERR=0		&apos;// &quot;SubTerritory&quot;
+&apos;const ROW_SUBTERR=3
+&apos;const COL_TERRID=2		&apos;// &quot;CongTerrID&quot;
+&apos;const ROW_TERRID=3
+&apos;const COL_PROPID=3		&apos;// &quot;Property ID&quot;
+&apos;const ROW_PROPID=0
+&apos;const ROW_OWNER=0		&apos;// &quot;Owner&quot;
+&apos;const ROW_STRADDR=2		&apos;// &quot;Streets/Addrs&quot;
+&apos;// end new header locations 9/2/20
+
+	oCell = oSheet.getCellByPosition(COL_SUBTERR, ROW_SUBTERR)
+	oCell.String = &quot;SubTerritory&quot;
+	oCell.HoriJustify = RJUST
+
+	oCell = oSheet.getCellByPosition(COL_TERRID, ROW_TERRID)
+	oCell.String = &quot;CongTerrID&quot;
+	oCell.HoriJustify = RJUST
+
+	oCell = oSheet.getCellByPosition(COL_PROPID, ROW_PROPID)
+	oCell.String = &quot;Property ID&quot;
+	oCell.HoriJustify = RJUST
+	oCell = oSheet.getCellByPosition(COL_PROPID+1, ROW_PROPID)
+	oCell.String = &quot;&lt;OwnerParcel&gt;&quot;
+	oCell.HoriJustify = CJUST
+	
+	oCell = oSheet.getCellByPosition(COL_PROPID, ROW_OWNER)
+	oCell.String = &quot;Owner&quot;
+	oCell.HoriJustify = RJUST
+	oCell = oSheet.getCellByPosition(COL_PROPID+1, ROW_OWNER)
+	oCell.String = &quot;&lt;OwnerName1&gt;&quot;
+	oCell.HoriJustify = LJUST
+	
+	oCell = oSheet.getCellByPosition(COL_PROPID, ROW_STRADDR)
+	oCell.String = &quot;Streets/Addrs&quot;
+	oCell.HoriJustify = RJUST
+	oCell = oSheet.getCellByPosition(COL_PROPID+1, ROW_STRADDR)
+	oCell.String = &quot;&lt;Streets-Address(s)&gt;&quot;
+
+	&apos;// kill AutoCalculate
+	KillAutoRecalc()
+
+	&apos;// Set phone column widths.
+	SetPhoneWidths()
+
+	&apos;// Set full address column width.
+	SetFullAddrWidth()
+
+	&apos;// Set search columns widths.
+	SetSearchWidths()
+	
+	&apos;// Merge cells A1-C1.
+	oMrgRange = oRange
+	oMrgRange.Sheet = oRange.Sheet
+	oMrgRange.StartColumn = 0	&apos;// $A
+	oMrgRange.EndColumn = 2
+	oMrgRange.StartRow = 0
+	oMrgRange.EndRow =0
+	SetSelection(oMrgRange)
+	MergeNCenter()
+	
+	&apos;// Merge cells E1-G1.
+	oMrgRange.StartColumn = 4	&apos;// $E
+	oMrgRange.EndColumn = 6	&apos;// $G
+	oMrgRange.StartRow = 0
+	oMrgRange.EndRow = 0		&apos;// .$1
+	SetSelection(oMrgRange)
+	MergeNCenter()
+	
+	&apos;// Merge cells E2-G2
+	oMrgRange.StartColumn = 4	&apos;// $E
+	oMrgRange.EndColumn = 6	&apos;// $G
+	oMrgRange.StartRow = 1
+	oMrgRange.EndRow = 1		&apos;// .$2
+	SetSelection(oMrgRange)
+	MergeNCenter()
+	
+	&apos;// Merge cells E3-G3.
+	oMrgRange.StartColumn = 4	&apos;// $E
+	oMrgRange.EndColumn = 6	&apos;// $G
+	oMrgRange.StartRow = 2
+	oMrgRange.EndRow = 2		&apos;// .$3
+	SetSelection(oMrgRange)
+	MergeNCenter()
+	
+&apos;const COL_H=7
+&apos;const ROW_1=0
+	&apos;// set sheet type at H1 &quot;Admin-Bridge formatted sheet&quot;
+	oCell =	oSheet.getCellByPosition(COL_H, ROW_1)
+	oCell.String = &quot;Admin-Import formatted sheet&quot;
+	
+	&apos;// select all active rows.
+	SelectActiveRows()
+	
+	&apos;// concatenate addresses
+	ConcatAddressM()
+	
+	&apos;// concatenate names
+	ConcatFirstLastM()
+
+	&apos;// select through column S (at column A in last row)
+&apos;// 
+dim oDocument	As Object
+dim oDispatcher	As Object
+dim nColumns	As Integer
+	oDocument   = ThisComponent.CurrentController.Frame
+	oDispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+	nColumns = ASC(&quot;S&quot;) - ASC(&quot;A&quot;)
+dim args2(0) as new com.sun.star.beans.PropertyValue
+	args2(0).Name = &quot;By&quot;
+	args2(0).Value = nColumns
+oDispatcher.executeDispatch(oDocument, &quot;.uno:GoRightSel&quot;, &quot;&quot;, 0, args2())
+	SortOnAddress()
+	
+&apos;//--------------------------------------------------------------------	
+EndOldCode:
+
+	&apos;// Freeze header so stays when scrolling
+	FreezeView()
+	
+	&apos;// Bold and center headings
+	BoldHeadings()
+	SetColWidth(COL_RECDATE, 1.0)
+	oCols(COL_FULLADDR).setPropertyValue(&quot;Width&quot;, 1.75*ONE_INCH)
+		
+	&apos;// restore user entry range selection.
+	SetSelection(oRange)
+		
+	&apos;// finished
+	msgbox(&quot;RUDldToRaw complete.&quot;)
+
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;RUDldToRaw - unprocessed error.&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end RUDldToRaw	9/14/20

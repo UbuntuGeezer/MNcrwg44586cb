@@ -1,0 +1,54 @@
+-- CopyMHPTable.sq - Copy the Terrxxx_MHP table from ./Previous/Terrxxx_RU.db.
+--	7/6/21.	wmk.
+--
+-- * Modification History.
+-- * ---------------------
+-- * 7/6/21.	wmk.	original code (multihost support included).
+-- *;
+
+-- * subquery list.
+-- * --------------
+-- * CopyMHPTable - Copy the Terrxxx_MHP table from ./Previous/Terrxxx_RU.db.
+-- *;
+
+-- ** CopyMHPTable **********
+-- *	7/6/21.	wmk.
+-- *-------------------------
+-- *
+-- * CopyMHPTable - Copy the Terrxxx_MHP table from ./Previous/Terrxxx_RU.db.
+-- *
+-- * Entry DB and table dependencies.
+-- *	./Previous/Terrxxx_RU.db - as db30, previous download database
+-- *	  Terrxxx_MHP table - MHP address list of territory xxx
+-- *	Terrxxx_RU.db - as main, current download database
+-- *
+-- * Exit DB and table results.
+-- *	Terrxxx_RU.db - current download database, table Terrxxx_MHP added
+-- *	  Terrxxx_MHP table - clone of previous download address list
+-- *
+-- * Notes. This query assumes the existence of the table Terrxxx_MHP
+-- * in the Terrxxx/Previous folder. It will throw an error to the calling
+-- * shell if the table is not present. Assuming success, this query
+-- * will copy the Terrxxx_MHP table from the ./Previous/Terrxxx_RU.db
+-- * (%)folderbase is used in place of ($)folderbase, since the calling
+-- * shell will replace it with the environment var ($)folderbase.
+-- *;
+
+-- CopyMHPTable.sql - copy ./Previous/Terrxxx_RU.db Terr237_MHP table.
+.cd '%folderbase/Territories/RawData/RefUSA/RefUSA-Downloads'
+.cd './Terrxxx'
+.open 'Terrxxx_RU.db'
+DROP TABLE IF EXISTS Terrxxx_MHP;
+CREATE TABLE Terrxxx_MHP ("Last Name" TEXT,"First Name" TEXT,
+ "House Number" TEXT, "Pre-directional" TEXT,"Street" TEXT,
+  "Street Suffix" TEXT, "Post-directional" TEXT,"Apartment Number" TEXT,
+  "City" TEXT, "State" TEXT,"ZIP Code" TEXT, "County Name" TEXT,
+  "Phone Number" TEXT);
+ATTACH './Previous/Terrxxx_RU.db'
+ AS db30;
+INSERT INTO Terrxxx_MHP
+SELECT * FROM db30.Terrxxx_MHP;
+.quit
+
+-- ** END CopyMHPTable **********;
+

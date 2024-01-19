@@ -1,0 +1,124 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=SpecialRUdb
+base_path=/media/ubuntu/Windows/Users/Bill/Territories/Projects-Geany/SpecialRUdb/
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=28
+FILE_NAME_0=2363;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FCatSpecDwnld.sh;0;4
+FILE_NAME_1=85;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FClearMHPruBridge.psq;0;4
+FILE_NAME_2=1275;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FCollectMoveOuts.sql;0;4
+FILE_NAME_3=496;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FClearSpecial.sh;0;4
+FILE_NAME_4=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FCountTerrIDList.sql;0;4
+FILE_NAME_5=885;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FCycleAllSpecRU.sh;0;4
+FILE_NAME_6=1318;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FCyclePrevSpecRU.sh;0;4
+FILE_NAME_7=762;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FCycleSpecialRU.sh;0;4
+FILE_NAME_8=1527;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FDoFixSed.sh;0;4
+FILE_NAME_9=1774;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FDoSed.sh;0;4
+FILE_NAME_10=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FFixRUMenu.i;0;4
+FILE_NAME_11=0;Pascal;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FFixRUMenu.inc;0;4
+FILE_NAME_12=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FGetSpecTIDList.sql;0;4
+FILE_NAME_13=184;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FInitSpecial;0;4
+FILE_NAME_14=3741;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FInitSpecial.sh;0;4
+FILE_NAME_15=1726;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FMake.CapriIslesBlvd.csv;0;4
+FILE_NAME_16=1741;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FMakeClearMHPruBridge.tmp;0;4
+FILE_NAME_17=1562;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FMakeFixDownload.tmp;0;4
+FILE_NAME_18=2140;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FMakeRegenSpecDB.tmp;0;4
+FILE_NAME_19=1543;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FMakeSetMHPSpecTerrs.tmp;0;4
+FILE_NAME_20=2263;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FMakeSetNewBridgeTerrs;0;4
+FILE_NAME_21=1109;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FMakeSetSpecTerrs.tmp;0;4
+FILE_NAME_22=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FMakeSpecialRUdb;0;4
+FILE_NAME_23=4842;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FMakeSpecialRUdb.tmp;0;4
+FILE_NAME_24=399;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FMakeSpecTerrQuery;0;4
+FILE_NAME_25=1611;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FMakeSyncTerrToSpec.tmp;0;4
+FILE_NAME_26=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FMHPQuery.sql;0;4
+FILE_NAME_27=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FMoreQueries.sql;0;4
+FILE_NAME_28=417;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FMvSpecDwnld.sh;0;4
+FILE_NAME_29=1196;Pascal;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FpathRUdefs.inc;0;4
+FILE_NAME_30=9424;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FREADME;0;4
+FILE_NAME_31=1475;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FRegenAllSpecRU.sh;0;4
+FILE_NAME_32=355;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FRegenSpecDB.MHP.sql;0;4
+FILE_NAME_33=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FRegenSpecDB.sql;0;4
+FILE_NAME_34=418;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FRemakeSetSpecs.sh;0;4
+FILE_NAME_35=0;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FRemakeTerrSpecials;0;4
+FILE_NAME_36=2995;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FRUSpecTerr_1.sh;0;4
+FILE_NAME_37=341;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FRUSpecTerr_2.sh;0;4
+FILE_NAME_38=15480;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FRUSpecTerr_db.sh;0;4
+FILE_NAME_39=9229;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FRUSpecTerr_db.sq;0;4
+FILE_NAME_40=1381;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FRUSpecTerr_db.sql;0;4
+FILE_NAME_41=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FSetNewBridgeTerrs.sql;0;4
+FILE_NAME_42=982;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FSetSpecialDNCs.sh;0;4
+FILE_NAME_43=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FSetSpecTerrs.MHP.sql;0;4
+FILE_NAME_44=278;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FSetSpecTerrs.sql;0;4
+FILE_NAME_45=8221;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FSPECIAL;0;4
+FILE_NAME_46=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FSyncTerrToSpec.sq;0;4
+FILE_NAME_47=293;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FSyncTerrToSpec.sql;0;4
+FILE_NAME_48=88;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FTIDList.txt;0;4
+FILE_NAME_49=0;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FUpdateSpecTerrIDs.sh;0;4
+FILE_NAME_50=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FUsefulQueries.sql;0;4
+FILE_NAME_51=0;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FMovSpecDwnld.sh;0;4
+FILE_NAME_52=132;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FMultiChangeEdits.txt;0;4
+FILE_NAME_53=155;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FGibbsRdQueries.sql;0;4
+FILE_NAME_54=6198;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FMakeSpecials.back;0;4
+FILE_NAME_55=542;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FRebldAllRUSpecials.sh;0;4
+FILE_NAME_56=348;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2Fspecpathdefs.i;0;4
+FILE_NAME_57=0;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProcs-Dev%2FAnySQLtoSQ.sh;0;4
+FILE_NAME_58=129;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FDBList.txt;0;4
+FILE_NAME_59=428;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialRUdb%2FDBList;0;4
+
+[VTE]
+last_dir=/media/ubuntu/Windows/Users/Bill/Territories/Projects-Geany/SpecialRUdb
+
+[build-menu]
+NF_00_LB=_Make
+NF_00_CM=make -f MakeSpecialRUdb
+NF_00_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/SpecialRUdb
+NF_02_LB=Make _Object
+NF_02_CM=make %e.o
+NF_02_WD=
+NF_03_LB=sed
+NF_03_CM=./DoSed.sh   '' AvensCohosh
+NF_03_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/SpecialRUdb
+EX_01_LB=Make Dry-Run
+EX_01_CM=make --dry-run -f MakeSpecialRUdb
+EX_01_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/SpecialRUdb
+EX_00_LB=Tidy Refreshed DB
+EX_00_CM=./AvensCohoshTidy.sh  2021-11-09
+EX_00_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/RawData/RefUSA/RefUSA-Downloads/Special
+NF_01_LB=Make Custom _Target...
+NF_01_CM=make 
+NF_01_WD=
+NoneFT_02_LB=FixSed
+NoneFT_02_CM=./DoFixSed.sh AvenidaEstancias
+NoneFT_02_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/SpecialRUdb
+filetypes=None;
+NoneFT_01_LB=Cycle Special DB
+NoneFT_01_CM=./CycleSpecialRU.sh  LakesideWoodsDr
+NoneFT_01_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/SpecialRUdb
+NoneFT_00_LB=Update Special TerrIDs
+NoneFT_00_CM=./UpdateSpecTerrIDs.sh  <special-db>
+NoneFT_00_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/SpecialRUdb

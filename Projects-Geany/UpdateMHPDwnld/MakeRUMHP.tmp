@@ -1,0 +1,58 @@
+# MakeRUMHP.tmp - template for MakeRUMHP make file.
+#	6/6/23.wmk.
+#
+# Dependencies.
+#	MakeRUMHP.tmp placeholder yyy will be edited
+#	 by DoSed1.sh to be a territory ID.
+#	Terrxxx_RUPoly table contains the existing records for the entire MHP.
+#
+# Modification History.
+# ---------------------
+# 6/6/23.	wmk.	*pathbase corrected; OBSOLETE terriotory detection;
+#			 comments tidied.
+# Legacy mods.
+# 5/4/22.	wmk.	(automated) path corrections.
+# 7/4/21.	wmk.	original code.
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : $(specialpth)vvvv.csv
+.ONESHELL : ;
+
+include pathRUdefs.inc
+
+# Terrxxx_RU.db recipe
+#============================================================
+# DoSed1 run prior with params yyy as <terrid>
+
+$(postpath)/Terryyy_RU.db : $(specialpath)/vvvv.csv
+	if test -f $(pathbase)/$$rupath/Terryyy/OBSOLETE;then
+	 echo " ** Territory yyy OBSOLETE - MakeRUMHP exiting...**";exit 2;fi
+	sqlite3 < AddMHPTable.sql
+
+$(specialpath)/vvvv.csv : ;
+#============================================================
+
+

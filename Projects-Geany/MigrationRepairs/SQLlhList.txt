@@ -1,0 +1,6 @@
+-rwxr-xr-x 1 vncwmk3 vncwmk3  13K Sep  9 11:51 AddZips.sql
+-rwxr-xr-x 1 vncwmk3 vncwmk3 4.4K Jun  2  2022 InitialRUFix.sql
+-rwxr-xr-x 1 vncwmk3 vncwmk3 1.4K Jun  2  2022 RegenSpecDB.sql
+-rwxr-xr-x 1 vncwmk3 vncwmk3  11K Jun 15  2022 SetSpecTerrs.sql
+-rwxr-xr-x 1 vncwmk3 vncwmk3 1.9K Jun  2  2022 Spec642RU.sql
+-rwxr-xr-x 1 vncwmk3 vncwmk3 3.2K Jun 14  2022 SyncTerrToSpec.sql

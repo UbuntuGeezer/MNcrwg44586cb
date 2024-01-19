@@ -1,0 +1,61 @@
+# MakeExtractOldDiffs.tmp - (template) ExtractOldDiffs makefile to build ExtractOldDiffs.sh
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	1/23/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 8/29/21.	wmk.	original makefile.
+# 9/8/21.	wmk.	modified to rebuild ExtractOldDiffs.sh after DoSed run for
+#			 project; yy y added so makefile can be edited by DoSed for
+#			 building to territory xxx.
+# 9/9/21.	wmk.	cloned from UpdateRUDwnld project into UpdateMHPDwnld;
+#			 projpath var edited to UpdateMHPDwnld; MakeUpdateMHPDwnld
+#			 prerequisite added to force rebuild whenever DoSed changes
+#			 MakeUdpateMHPDwnld.
+# 1/23/22.	wmk.	multihost code updated; chmod added to allow execution
+#			 of resultant .sh.
+#
+# Notes. DoSed for the UpdateMHPDwnld project edits the territory ID into the
+# ExtractOldDiffs.psq template to produce ExtractOldDiffs.sql. The resultant
+# .sql file is picked up by this makefile to generate ExtractOldDiffs.sh.
+
+.ONESHELL :
+.PHONY : 
+
+ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+else
+  folderbase = $(HOME)
+endif
+
+ bashpath = $(codebase)/Territories/Procs-Dev/
+ projpath = $(codebase)/Territories/Projects-Geany/UpdateMHPDwnld
+
+# ExtractOldDiffs.sh
+#==========================================================
+
+$(projpath)/ExtractOldDiffs.sh : $(projpath)/ExtractOldDiffs.sq
+	#@echo "ExtractOldDiffs.sh runs 'as-is' using sqlite and ExtractOldDiffs.sql"
+	cat $(bashpath)hdrAnySQL_1.sh $(projpath)/ExtractOldDiffs.sq $(bashpath)hdrAnySQL_2.sh \
+  	 > $@
+	sed -i 's?<filename>?ExtractOldDiffs?g' $@
+	chmod 700 $@
+
+
+$(projpath)/ExtractOldDiffs.sq : $(projpath)/ExtractOldDiffs.sql
+	sed 's?xxx?321?g' $(projpath)/ExtractOldDiffs.psq > $(projpath)/ExtractOldDiffs.sql
+	$(bashpath)AnySQLtoSQ.sh $(projpath) ExtractOldDiffs
+
+
+
+$(projpath)/ExtractOldDiffs.sql : $(projpath)/ExtractOldDiffs.psq
+	sed 's?xxx?321?g' $(projpath)/ExtractOldDiffs.psq > $(projpath)/ExtractOldDiffs.sql
+	
+
+$(projpath)/ExtractOldDiffs.psq : ;
+	(warning ** ExtractOldDiffs.psq missing for ExtractOldDiffs.sq build **)
+
+AlwaysMake : ;
+
+#==========================================================

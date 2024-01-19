@@ -1,0 +1,61 @@
+&apos;// SetHdrSumFormula.bas
+&apos;//---------------------------------------------------------------
+&apos;// SetHdrSumFormula - Set header sum formula in Territory sheet.
+&apos;//		9/21/20.	wmk.	05:50
+&apos;//---------------------------------------------------------------
+
+public sub SetHdrSumFormula()
+
+&apos;//	Usage.	macro call or
+&apos;//			call SetHdrSumFormula()
+&apos;//
+&apos;// Entry.	user has territory sheet selected
+&apos;//
+&apos;//	Exit.	cell B2 set to &quot;=$COUNTA($A$6:$A$1299)&quot;
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/21/20.		wmk.	original code
+&apos;//
+&apos;//	Notes.
+
+
+&apos;//	constants.
+const COL_B=1
+const ROW_2=1
+const CJUST=2
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+dim oMrgRange	As Object	&apos;// merge range
+
+dim oCell	As Object		&apos;// cell working on
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	
+	oCell =	oSheet.getCellByPosition(COL_B, ROW_2)
+	oCell.setFormula(&quot;=COUNTA($A$6:$A$1299)&quot;)
+	oCell.HoriJustify = CJUST
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SetHdrSumFormula - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end SetHdrSumFormula	9/21/20

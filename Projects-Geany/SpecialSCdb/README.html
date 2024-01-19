@@ -1,0 +1,334 @@
+<p>README - Documentation for SpecialSCdb project.<br>
+   1/25/23. wmk.</p>
+
+<h3>Modification History.</h3>
+
+<pre><code>4/10/22.    wmk.   first pass modification for TX/HDLG/99999.
+5/29/22.    wmk.   .md formatting; links included.
+6/5/22.     wmk.   documentation updated to reflect use of *HdrsSQLtoSH* project.
+11/26/22.   wmk.   NVenAll changed to Terr86777 to update documentation.
+1/25/23.    wmk.   Complex territories notes added to Project Description.
+Legacy mods.
+7/2/21.     wmk.    original documentation.
+7/24/21.    wmk.    project name change from SpecialDBsc to SpecialSCdb
+             for consistency with SpecialRUdb project.
+8/10/21.    wmk.    documentation updated.
+8/12/21.    wmk.    additional documentation.
+9/16/21.    wmk.    documentation reviewed; minor editing.
+9/18/21.    wmk.    Significant Notes section added.
+10/7/21.    wmk.    Method section updated.
+11/2/21.    wmk.    database named in Method 1 and 2 segment.
+11/27/21.   wmk.    ClearSpecial note added for territory.
+11/28/21.   wmk.    Method section updated; ClearSpecial added to
+             Support Shells and Queries section.
+</pre></code>
+<h3 id="IX">Document Sections.</h3>
+<pre><code><a href="#1.0">link</a> 1.0 Project Description - overall project description.
+<a href="#2.0">link</a> 2.0 Method - steps to perform when creating a /Special database.
+[Method Documentation](file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/SpecialSCdb/README.Method.html)
+<a href="#3.0">link</a> 3.0 Territory Setup - build instructions.
+<a href="#4.0">link</a> 4.0 Dependencies - build dependencies.
+<a href="#5.0">link</a> 5.0 Support Shells and Queries - project support shells and queries.
+<a href="#6.0">link</a> 6.0 Significant Notes - essential information not in other sections.
+</code></pre>
+
+<h3 id="1.0">1.0 Project Description.</h3>
+
+<p>Special territories have anomalies that hamper straight-forward extraction of the
+records from the RefUSA or SCPA sources. Examples are territories that
+use streets as boundaries where one side of the street is in one publisher
+territory and the other side of the street is in a different publisher territory.
+Another case is where both sides of the street, but different segments of the
+street, are in different territories. If a long street serves as the boundary
+for several publisher territories different segments and different sides of the
+street may be in several different territories. Territories that have any of
+these characteristics are referred to here as "complex" territories.</p>
+
+<p>Complex territory streets pose a unique set of challenges in separating download
+data into the correct territories. To meet this challenge "special" download
+databases are supported that allow downloading all addresses for a single street
+(or area) into one database. Then each address within that database is tagged
+with which territory it is assigned into. Databases which contain this type of
+records are termed "special" databases. Territories which utilize segments of
+streets have a property "Segmented" in their TerrIDData definition. Defining
+these segments are discussed in the documentation for
+<a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/Territories/FL/SARA/86777/RawData/RefUSA/RefUSA-Downloads/Special/README.html">RefUSA-Downloads/Special</a></p>
+
+<p>document.</p>
+
+<p>Because of using two sources for publisher territory data, there are two types
+of "special" databases; those that contain county data and those that contain
+RefUSA data. For consistency it is wise to define the county and the RefUSA
+databases with matching names to facilitate identification. Wherever practical
+the county data should be considered the "master" for the special data. By doing
+this, the RefUSA data can then be more easily harmonized with the owner data in
+the county special database.</p>
+
+<p>The county special database should be defined and reconciled for accuracy before
+defining the RefUSA special database. This makes for much easier coordination of
+the publisher territory records between the county and RefUSA data. For further
+information on setting up RefUSA special databases see the
+<a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/SpecialRUdb/README.html">SpecialRUdb</a>
+project documentaion.</p>
+
+<p>The SpecialSCdb project takes a special SC download .csv and
+creates a .db that can be used for building territory-specific special dbs.
+The .csv and its associated .db will reside in folder 
+~/SCPA/SCPA-Downloads/Special. The special SC download .csv records are
+full records from the SCPA download.</p>
+
+<p><strong>IMPORTANT NOTE.</strong> Once the /Special/&lt; special-db > has been built, each
+territory using it must have a set of files specific to that territory
+to incorporate the &lt; special-db > records into its Terrxxx_SC.db. The file
+<a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/SpecialSCdb/SPECIAL.html">SPECIAL</a> with this project documents this
+process.</p>
+
+<p>The primary build target of the project is the database &lt; special-db >.db
+that will reside in the ..SCPA-Downloads/Special folder. The makefile
+MakeSpecialSC.tmp provides the template for the actual makefile, with
+provision for specifying the &lt; special-db > name for the build.</p>
+
+<p>SpecialDBsc will build the &lt; special-db >.db from a <special-db>.csv that
+is the SC download from SCPA. It will build 3 tables, the first being the
+extracted records of full download data from the current Terr86777.db
+table Terr86777. A query coded by the user will extract the appropriate
+records from Ter86777 into a .csv file. The .csv file will then be imported
+into a table by the same name as the database, <special-db>. Once imported,
+a territory ID field will be added to each record, allowing easy extraction
+of records for any given territory.</p>
+
+<p>The second table is created with the following SQL:</p>
+
+<pre><code>--create PropTerr table with account#, location name + location  street, terrid.;
+</code></pre>
+
+<p>This is a legacy table, currently used by congregation number 86777 Capri Isles
+(?) territory Bridle Oaks (possibly others). This table may be eliminated since
+the first table now contains the TID field for extracting territories.</p>
+
+<p>The third table is the <em>TerrList</em> table that contains the list of
+territories which have records in the &lt; special-db > table, along with
+the count of records for each territory. This provides an index of
+territories which are affected whenever the &lt; special-db > database is
+updated. Since SCPA records all have unique property IDs, the TerrList
+table can be most accurately build by searching all territory SCBridge
+tables for the property IDs. When this table is populated, corresponding
+records in the &lt; special-db > table will also be updated with the territory
+id.</p>
+
+<p>The fourth table is the <em>Spec_SCBridge</em> table that contains the basic unit
+dwelling address information in Bridge format for easy extraction into
+Specxxx_SC.db databases for each special territory.</p>
+
+<p>Once the .csv data has been downloaded with the data from the SCPA<em>mm-dd.db
+download, its table is modified on-the-fly adding one additional field "TID".
+For each record, this field will contain the territory ID of the territory
+the record belongs in. Each territory which references records from this
+<special-db> database will extract its own records into its own download
+folder. Specxxx</em>SC.db will be the standardized name in each territory
+download containing "special" records from any set of <special-db> databases.</p>
+
+<p>Some of the SC polygons span territories because of the way the parcel
+boundaries fall on the map. Their db tables can only be properly populated
+when entire street(s) or a larger, covering, polygon is downloaded from
+the SC data. One such case is territory 611 which is a letter/phone
+territory covering Sawgrass. The download data table will always be
+named the same as the .csv file the populates it (e.g. SawgrassPlus).</p>
+
+<p>To facilitate allocating the SCPA records into the proper territory table(s)
+the TID field in each <special-db> record will be set to the territory ID
+of the territory it belongs in. These fields are populated by a query
+in each SCPA-Downloads/Terrxxx folder that uses the special db. The
+standardized name fo that query is SetSpecTerrs.sql.</p>
+
+<p>Fix611SC.sql and any similar post-download fix shells will now have the
+flexibility to use "special" download databases to include/exclude
+download records for street(s) in their territories. The "special"
+databases that they will use are created by SpecialDBsc Build processes.</p>
+
+<p>Any territory that requires special SC download processing will contain
+a documentation file SPECIAL, similar to README for a project. The
+SPECIAL file will contain the documentation of the special database(s)
+(in folder /SCPA-Downloads/Special) that are required to correctly
+generate the Terrxxx_SC.db/SCBridge table.</p>
+
+<p>By implementing this, all territories that are "special" cases can be
+handled the same way. A special SCPA extraction query will regenerate
+the .csv whenever the SCPA full database is updated. The SpecialDBsc Build
+will build/rebuild the special .db from scratch with the new data. It will
+then be available for the UpdateSCDwnload Build to use when updating
+the SC data for the territory.</p>
+
+<p>SCSpecTerr_db.sql is the SQL source for this build. It will be run through
+AnySQLtoSH to generate the shell that actually runs sqlite3 and creates
+the <spec-name>.db. The optional file "preamble.s" for the territory will
+contain any environment variables or other setup code that can be
+appended to the AnySQLtoSH header_1 code when building the shell
+for creating the special db. The SCSpecTerr.sql is saved in the SpecialDBsc
+project directory.<br>
+<a href="#IX">Index</a></p>
+
+<h3 id="2.0">2.0 Method.</h3>
+
+<p>The project SpecialSCdb contains the necessary support objects when setting
+up a special SC database. The database will be named after the principal
+street or area covered (e.g. TheEsplanade.db). The special database will
+reside in folder SCPA-Downloads/Special.</p>
+
+<p>Steps below refer to "Methods" - how the data for the special database was
+obtained.
+To view the current Method documentation use the following link:
+<a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/SpecialSCdb/README.Method.html">Method Documentation</a></p>
+
+<p>The following steps should be performed in order when setting up a special
+SC database: (Method 1 - records extracted from Terr86777.db,
+Method 2 - records downloaded via SC Polygon)</p>
+
+<pre><code>
+Method 1:
+
+    Create the query <special-db>.sql in the /Special folder to extract the
+      correct records from Terr8677 (< special-db >.sql
+      is the template). The extracted records are in file < special-db >.csv.
+      The query also contains the SQL to take the extracted records and
+      build the < special-db >, PropList, TerrList, and Spec_SCBridge tables
+      from full SCPA download records. {SpecialSCdb}/Method1.sql is the
+      template for this type of query.
+
+    Create the "preamble" and "postamble" files < special-db >.hd1 and
+      < special-db >.hd2 that contain the shell start/end code that will
+      be included in the *SpecialSCdb*/SpecialSC_db.sh shell that builds the
+      /Special/< special-db >.db
+
+Method 2:
+
+    Create the query < special-db >.sql in the /Special folder to take
+     downloaded records from SCPA polygon map data <special-db>.csv
+     and build the < special-db >\_SCPoly, PropTerr, TerrList, and Spec_SCBridge
+     tables from the map download data. {SpecialSCdb}/Method2.sql is the
+     template for this type of query.
+
+Method 1 and 2:
+
+Terminal Session:
+
+    cd *pathbase*/Projects-Geany/SpecialSCdb to move to the *SpecialSCdb* project
+
+    run DoSed to set up the *MakeSpecialSCdb* makefile with month and day of 
+      Terr86777.db data that will be used.
+      ./DoSed.sh < special-db > < month > < day >
+
+    build < special-db > by running *make* on the *MakeSpecialSCdb* makefile
+      make -f MakeSpecialSCdb
+
+    use SQL db browser to verify
+    [Since territory will be set in all records, if not all are in
+     same territory, run SQL and clear the Special_SCBridge.CongTerrID
+     fields]
+
+    [this step is new as of 10/6/21.]
+    The SQL < special-db >Tidy.sql should be implemented for territories
+    which are almost totally dependent upon the Special database (like
+    letter-writing territories with random addresses). This SQL will
+    "tidy up" the < special-db >.db, setting the RecordDate and 
+    RecordType fields in the Special_SCBridge table. This will only
+    leave the "DoNotCall" fields unset. They will need to be be set by
+    the MakeSpecials make for each territory.
+
+    After the <special-db>Tidy.sql has been coded, it should be
+    processed by (bashpath)AnySQLtoSQ and (bashpath)AnySQtoSH.
+    run through the AnySQLtoSH project to generate its .sq shell
+    statements, then it should be made into a .sh file for running
+    the actual fixes into the <special-db>.db. Perform the following
+    steps to finish "tidying" the new < special-db >.db:
+
+        Using EaglePointTidy.sql as a template, code < special-db >Tidy.sql
+        use ./DoSedAnyTidy.sh. < special-db > to set up the *make*
+        run make -f Make.AnyTidy
+
+    At this point < special-db >Tidy.sh has been built. To finish "tidying"
+    the < special-db > records, run the < special-db >Tidy.sh
+
+        ./< special-db >Tidy.sh
+</code></pre>
+
+<p>After the special database has been created and "tidied" in SCPA-Downloads/Special,
+each territory using records extracted from that db will have to be set
+up to process it. The processes and files for integrating the special db
+data with the "regular" territory SC data all need to be defined in the
+territory's SCPA-Downloads/Terrxxx folder. See the following section for
+details.<br>
+<a href="#IX">Index</a></p>
+
+<h3 id="3.0">3.0 Territory Setup.</h3>
+
+<p>The following steps should be performed in order when setting up a territory
+to use one or more special databases:</p>
+
+<pre><code>
+    create parent special database using SpecialSCdb build procedures (see <a href="#2.0">above</a>)
+
+{NewTerritory} project:
+    follow <a href="file:///media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/NewTerritory/README.html">README</a> steps to create new territory folders if non-existent
+
+Terminal: {SpecialSCdb} folder:
+    [if "older" Special handling code is present in the territory folder
+     run ClearSpecial.sh xxx, where xxx is the territory ID.]
+
+<pre><code>run InitSpecial.sh xxx, where xxx is territory ID
+</code></pre>
+
+<p>Terminal: SCPA/Terrxxx folder:
+    edit SpecxxxSC.sql to extract records from special database(s)
+    replace $P1 with territory ID in MakeSpecTerrQuery
+    edit the SELECT from SpecxxxSC.sql to edit RegenSpecDB.sqL to match
+    edit the &lt; special-db > in MakeRegenSpecDB with Special db name
+    edit SPECIAL and document the special dbs required for this territory
+      and the records needed from each
+    edit the &lt; special-db > in SetSpecTerrs.sql checking for anomalies and
+      setting territory IDs, RecordTypes (clone from another territory
+      like 288)
+    check SyncTerrToSpec.sq for territory ID
+    check MakeSyncTerrToSpec setting territory ID and &lt; special-db >
+    edit MakeSpecials with the &lt; special-db ></p>
+
+<pre><code>[run make -f MakeSpecials --dry-run to check setup]
+run make -f MakeSpecials to setup SC special territory data.
+</code></pre>
+
+<p></code></pre><br>
+<a href="#IX">Index</a></p>
+
+<h3 id="4.0">4.0 Dependencies.</h3>
+
+<p>DoSed.sh - performs pre-make sed operations for MakeSpecialSCdb.</p>
+
+<p>&lt; special-db >.sql - query to extract special recordset from territory master
+  database (VeniceNTerritory.db); resides in SCPA-Downloads/Special folder.<br>
+<a href="#IX">Index</a></p>
+
+<h3 id="5.0">5.0 Support Shells and Queries.</h3>
+
+<p>ClearSpecial.sh - clears special file set in territory for full InitSpecial
+InitSpecial.sh - creates initial file set for territory SC Special processing.<br>
+<a href="#IX">Index</a></p>
+
+<h3 id="6.0">6.0 Significant Notes.</h3>
+
+<p>BUG: The <special-db> queries that extract the special recordset from
+VeniceNTerritory.db may miss some valid addresses/properties that were
+not picked up when the database was originally built in July of 2020.
+This was discovered with the SCPA_08-25.db build from the 8/25/2021
+full download from the county, when missing addresses in territory 311
+were not able to be picked up.</p>
+
+<p>The interim solution is to have the Special queries extract records from
+the latest SCPA full download, as opposed to VeniceNTerritory.db. This 
+way at least the records will be integrated into the territory Bridge
+tables, even though missing from VeniceNTerritory.db</p>
+
+<p>The best solution is to come up with a better way of updating the
+VeniceNTerritory.db after a new download, since the differences can
+only focus on property IDs already known in the NVenAccts table of
+VeniceNTerritory.db.<br>
+<a href="#IX">Index</a></p>

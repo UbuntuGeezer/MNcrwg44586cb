@@ -1,0 +1,71 @@
+<p>README.md - EditBas project documentation.<br>
+    3/8/22. wmk.</p>
+
+<h2>Modification History.</h2>
+
+<pre><code>3/7/22.     wmk.   original document.
+3/8/22.     wmk.   Supporting Files section added.
+</code></pre>
+
+<h2>Document Sections.</h2>
+
+<pre><code>Project Description - overall project description.
+Setup - step-by-step instructions for various builds done by project.
+Supporting Files - files integrated with project processes.
+</code></pre>
+
+<h2>Project Description.</h2>
+
+<p>The EditBas project provides tools for editing an integrating .bas code
+modules into the Territories Calc library. A utility uses <em>awk</em> to extract
+modules from the current library. It uses <em>sed</em> to replace modules within
+the Territories library. It prompts the user to use <em>Calc</em> to update the
+Territories library in the <em>GitHub/Libraries Project</em> folder. It uses
+<em>make</em> to  perform the above operations.</p>
+
+<p>EditBas depends upon minimal special formatting of each subroutine/function
+within the Calc library. Each module (subroutine/function) should be preceded
+by a line containing <em>'// modulename.bas</em>. Each module should
+be followed by a line containing <em>'/**/</em>. These lines delimit the subroutine/function
+to allow extraction, replacement or deletion of the module.</p>
+
+<h2>Setup.</h2>
+
+<p>There are several setups for the EditBas project.</p>
+
+<p><strong>Setup for ExtractBas.</strong></p>
+
+<pre><code>Build Menu:
+    ensure the .xba in GitHub/Libraries-Project/Territories is current by
+     using Calc>Tools>Macros>Organize Macros>Basic>[Organizer][Libraries]>Territories[Export](*)Export as Basic Library
+     to export the Territories .xba files to GitHub/Libraries-Project (this 
+     will automatically overwrite the Territories folder under /Libraries-Project)
+
+    copy the appropriate .xba from GitHub/Libraries-Project/Territories to
+     the project folder (e.g. Module1.xba) by using the GetXBAModule.sh
+     shell file
+
+    edit 'sed' command parameters with basmodule and *bafile* parameters
+    run *sed* from the Build Menu
+    run *Make from the Build Menu to extract the source to a .bas file
+</code></pre>
+
+<p>The file \<basmodule>.bas in the project is the stripped .bas source for
+the module. It can be replaced over the appropriate /Basic/\<basmodule>.bas
+file to freshen the Basic source image to match the current Territories
+library module. Use <em>CopyXBAoverBAS.sh</em> to do the copy.</p>
+
+<h2>Supporting Files.</h2>
+
+<pre><code>CopyXBAoverBAS.sh - shell to copy extracted XBA module.bas file over
+ existing /Basic/module.bas file.
+
+GetXBAModule.sh - shell to copy XBA module from GitHub/Territories folder
+ to project folder; typically done to extract current source from tracked
+ .xba library file.
+
+ DoSed.sh - shell to edit *basmodule* and *bafile* into .tmp makefiles
+  for project.
+
+MakeExtractBas.tmp - makefile template for extraction builds.
+</code></pre>

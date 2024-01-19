@@ -1,0 +1,151 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=UpdateSCBridge
+base_path=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/UpdateSCBridge/
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=84
+FILE_NAME_0=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FActv8TIDBlock.sh;0;4
+FILE_NAME_1=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2Fawkactv8IDs.txt;0;4
+FILE_NAME_2=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2Fawkactv8TIDs.tmp;0;4
+FILE_NAME_3=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2Fawkactv8TIDs.txt;0;4
+FILE_NAME_4=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2Fawkfactv8IDs.txt;0;4
+FILE_NAME_5=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FawkfixTIDs.tmp;0;4
+FILE_NAME_6=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FawkfixTIDs.txt;0;4
+FILE_NAME_7=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FCreateBridgeFromSplitProp.sql;0;4
+FILE_NAME_8=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FDBList.txt;0;4
+FILE_NAME_9=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FDiffAcctsFixes.sql;0;4
+FILE_NAME_10=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FDiffTerrs_03-19.txt;0;4
+FILE_NAME_11=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FDoSed.sh;0;4
+FILE_NAME_12=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FDoSed1.sh;0;4
+FILE_NAME_13=80;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FDoSed2.sh;0;4
+FILE_NAME_14=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FDownloadDeltas.csv;0;4
+FILE_NAME_15=2123;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FFindAllIDinTerrs.sh;0;4
+FILE_NAME_16=11;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FFindAllIDlist.sh;0;4
+FILE_NAME_17=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FFixSCMenu.i;0;4
+FILE_NAME_18=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FFixSCMenu.in;0;4
+FILE_NAME_19=0;Pascal;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FFixSCMenu.inc;0;4
+FILE_NAME_20=74;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FGetReloadList.sh;0;4
+FILE_NAME_21=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FGetSCUpdateList.psq;0;4
+FILE_NAME_22=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FGetSCUpdateList.sh;0;4
+FILE_NAME_23=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FGetSCUpdateList.sq;0;4
+FILE_NAME_24=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FGetSCUpdateList.sql;0;4
+FILE_NAME_25=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FGetTIDList.psq;0;4
+FILE_NAME_26=4568;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FGetTIDList.sh;0;4
+FILE_NAME_27=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FGetTIDList.sq;0;4
+FILE_NAME_28=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FGetTIDList.sql;0;4
+FILE_NAME_29=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FKillTIDBlock.sh;0;4
+FILE_NAME_30=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FLostIDlist.txt;0;4
+FILE_NAME_31=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FMakeGetTIDList;0;4
+FILE_NAME_32=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FMakeGetUpdateList;0;4
+FILE_NAME_33=2134;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FMakeGetUpdateList.tmp;0;4
+FILE_NAME_34=4857;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FMakeUpdateSCBridge;0;4
+FILE_NAME_35=73;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FMakeUpdateSCBridge.tmp;0;4
+FILE_NAME_36=2484;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FMakeUpdtSpecSCBridge.tmp;0;4
+FILE_NAME_37=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FMiscDiffQueries.sql;0;4
+FILE_NAME_38=1028;Pascal;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FpathSCdefs.inc;0;4
+FILE_NAME_39=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FQGetMissingPropTerrList.sql;0;4
+FILE_NAME_40=2480;Markdown;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FREADME.md;0;4
+FILE_NAME_41=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FReloadList.txt;0;4
+FILE_NAME_42=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FSearchBridges4Diff.sql;0;4
+FILE_NAME_43=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2Fsedative.txt;0;4
+FILE_NAME_44=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2Fsedative.txxt;0;4
+FILE_NAME_45=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2Fsedatives.txt;0;4
+FILE_NAME_46=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2Fseddir.txt;0;4
+FILE_NAME_47=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FSQLTemp.sql;0;4
+FILE_NAME_48=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FTIDAllList.txt;0;4
+FILE_NAME_49=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FTIDdone.txt;0;4
+FILE_NAME_50=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FTIDList.csv;0;4
+FILE_NAME_51=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FTIDList.tmp;0;4
+FILE_NAME_52=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FTIDList.txt;0;4
+FILE_NAME_53=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FTIDList0102.csv;0;4
+FILE_NAME_54=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FTIDList0205.csv;0;4
+FILE_NAME_55=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FTIDList0319.txt;0;4
+FILE_NAME_56=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FTIDList0426.csv;0;4
+FILE_NAME_57=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FTIDList0526.csv;0;4
+FILE_NAME_58=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FTIDList0630.csv;0;4
+FILE_NAME_59=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FTIDList0930.csv;0;4
+FILE_NAME_60=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FTIDList1102.csv;0;4
+FILE_NAME_61=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FTIDList1121.csv;0;4
+FILE_NAME_62=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FTIDList1202.csv;0;4
+FILE_NAME_63=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FTIDSave.txt;0;4
+FILE_NAME_64=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FUpdateSCBridge.psq;0;4
+FILE_NAME_65=6067;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FUpdateSCBridge.sh;0;4
+FILE_NAME_66=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FUpdateSCBridge.sq;0;4
+FILE_NAME_67=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FUpdateSCBridge.sql;0;4
+FILE_NAME_68=5597;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FUpdtAllSCBridge.sh;0;4
+FILE_NAME_69=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FUpdtAllSCSpecials.sh;0;4
+FILE_NAME_70=390;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FUpdtSpecSCBridge.psq;0;4
+FILE_NAME_71=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FUpdtSpecSCBridge.sh;0;4
+FILE_NAME_72=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FUpdtSpecSCBridge.sq;0;4
+FILE_NAME_73=689;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FUpdtSpecSCBridge.sql;0;4
+FILE_NAME_74=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FMakeTerrUpdtSpecBridge.tmp;0;4
+FILE_NAME_75=108;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FTerrUpdtSpecBridge.psq;0;4
+FILE_NAME_76=1783;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FExperiments-Make%2FPPidTOsh.sh;0;4
+FILE_NAME_77=191;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FPostScript.sh;0;4
+FILE_NAME_78=223;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FPreamble.sh;0;4
+FILE_NAME_79=146;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FDocumentationCB%2Fjumpto.sh;0;4
+FILE_NAME_80=1845;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FMakeGetSCUpdateList.tmp;0;4
+FILE_NAME_81=1251;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FSHCode.tmp;0;4
+FILE_NAME_82=1633;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FListTerrUpdt.sh;0;4
+FILE_NAME_83=2136;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FListAllTerrUpdt.sh;0;4
+FILE_NAME_84=3180;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FListSpecDBs.sh;0;4
+FILE_NAME_85=2308;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FListAllSpecDBs.sh;0;4
+FILE_NAME_86=521;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateSCBridge%2FListTerrSpecDBs.sh;0;4
+
+[VTE]
+last_dir=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/UpdateSCBridge
+
+[build-menu]
+NF_00_LB=_Make
+NF_00_CM=make -f MakeUpdateSCBridge
+NF_00_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/UpdateSCBridge
+NF_03_LB=sed
+NF_03_CM=./DoSed.sh  108 01 13
+NF_03_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/UpdateSCBridge
+EX_00_LB=_Execute
+EX_00_CM=./%e
+EX_00_WD=
+EX_01_LB=Make Dry-Run
+EX_01_CM=make  -f  MakeUpdateSCBridge --dry-run
+EX_01_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/UpdateSCBridge
+NF_02_LB=Make Update Dry-run
+NF_02_CM=make--dry-run -f MakeUpdtSpecSCBridge
+NF_02_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/UpdateSCBridge
+NF_01_LB=Make Update Spec SC Bridge
+NF_01_CM=make  -f MakeUpdtSpecSCBridge
+NF_01_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/UpdateSCBridge
+NoneFT_02_LB=Batch SCBridges
+NoneFT_02_CM=./UpdtAllSCBridge.sh 03 19
+NoneFT_02_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/UpdateSCBridge
+filetypes=None;
+NoneFT_01_LB=sed1
+NoneFT_01_CM=./DoSed1.sh  CountryClubMHP   01 02
+NoneFT_01_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/UpdateSCBridge
+NoneFT_00_LB=Batch SCSpecials
+NoneFT_00_CM=./UpdtAllSCSpecials.sh  01 02
+NoneFT_00_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/UpdateSCBridge

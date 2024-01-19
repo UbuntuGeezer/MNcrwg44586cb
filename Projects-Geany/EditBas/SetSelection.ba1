@@ -1,0 +1,93 @@
+&apos;// SetSelection.bas
+&apos;//---------------------------------------------------------------
+&apos;// SetSelection - Select area given CellRangeAddress.
+&apos;//		9/2/20.	wmk.	16:30
+&apos;//---------------------------------------------------------------
+
+public sub SetSelection(poRange As Object)
+
+&apos;//	Usage.	macro call or
+&apos;//			call SetSelection( oRange )
+&apos;//
+&apos;//		oRange = RangeAddress with selection criteria
+&apos;//
+&apos;// Entry.	
+&apos;//
+&apos;//	Exit.	selected cells in current sheet set by oRange criteria
+&apos;//
+&apos;// Calls.	fIdxColName
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/1/20.		wmk.	original code; stub
+&apos;//	9/2/20.		wmk.	debug msgbox commented
+&apos;//
+&apos;//	Notes.
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim strColumn	As String	&apos;// converted oRange.StartColumn
+dim strRow		As String	&apos;// converted oRange.StartRow
+dim l1stColumn	As Long		&apos;// first column index
+dim l1stRow		As Long		&apos;// first row index
+dim sCellID		As String	&apos;// cell id e.g. $A$6
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+
+	&apos;// oRange.StartColumn = 0.. -&gt;A..ZAA..ZZ..AAA.ZZZ etc
+	&apos;//						 26.. AA.AZ
+	&apos;//						 52.. BA..BZ etc.
+	&apos;// Modulus(StartColumn, 26) = offset into last letter
+	&apos;//	StartColumn/26 = first 
+&apos;		msgBox(&quot;In SetSelection - stubbed.&quot;)
+	&apos;// Get upper left alphanumberic cell address
+
+	l1stColumn = poRange.StartColumn
+	l1StRow = poRange.StartRow
+	strColumn = fIdxColName(l1stColumn)
+	strRow = CStr(l1stRow+1)
+	sCellID = &quot;$&quot; + strColumn + &quot;$&quot; + strRow
+
+&apos;	msgBox(&quot;SetSelection - upper left = &quot; + sCellID)
+	
+dim oDocument	As Object	&apos;// UNO document object
+dim oDispatcher	As Object	&apos;// UNO service interface	
+	&apos;// move to upper left corner of selection
+	oDocument   = ThisComponent.CurrentController.Frame
+	oDispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+	&apos;// set up arguments for uno:GoToCell interface
+	dim args1(0) as new com.sun.star.beans.PropertyValue
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = sCellID
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	&apos;// move selection cursor through defined area
+dim lDownMoves	As Long		&apos;// number of &quot;Down 1 moves&quot;
+dim lRightMoves	As Long		&apos;// number of &quot;Right 1 moves&quot;
+	lDownMoves = poRange.EndRow - l1stRow
+	lRightMoves = poRange.EndColumn - l1stColumn
+	
+dim args2(0) as new com.sun.star.beans.PropertyValue
+	args2(0).Name = &quot;By&quot;
+	if lDownMoves &gt; 0 then
+	args2(0).Value = lDownMoves
+oDispatcher.executeDispatch(oDocument, &quot;.uno:GoDownSel&quot;, &quot;&quot;, 0, args2())
+	endif
+
+	if lRightMoves &gt; 0 then
+		args2(0).Value = lRightMoves
+oDispatcher.executeDispatch(oDocument, &quot;.uno:GoRightSel&quot;, &quot;&quot;, 0, args2())
+	endif
+	
+NormalExit:
+	exit sub
+
+ErrorHandler:
+	msgbox(&quot;SetSelection - unprocessed error.&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end SetSelection	9/2/20

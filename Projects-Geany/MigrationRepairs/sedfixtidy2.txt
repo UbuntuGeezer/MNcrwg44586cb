@@ -1,0 +1,4 @@
+# sedfixtidy2.txt - delete old set RecordDate/RecordType block.
+# 3/2/23.	wmk.
+/* set RecordDate and RecordType/d
+/deletetoEnd/,/END;/d

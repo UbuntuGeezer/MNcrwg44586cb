@@ -1,0 +1,28 @@
+BEGIN{skip=0}
+{
+ if( NR == 1 ){
+  print $0
+  print "# 5/10/23.\twmk.\t.(automated) replace first recipe line with Always:"
+  }
+  
+ if( index($1,"$(basepath)/Terr") == 1 ){
+  print "# " $0
+  print "Always : "
+  }
+ else if($1 != ".PHONY")
+  print
+ 
+ if( $1 == ".PHONY"){
+  semipos = index($0,";")
+  if( index($0,"Always") == 0)
+
+   if(semipos == 0 )
+    print $0 " Always"
+   else 
+    print substr($0,1,semipos-1) " Always " substr($0,semipos,99)
+   
+  else if(NR != 1 )
+   print $0
+  }
+   
+}

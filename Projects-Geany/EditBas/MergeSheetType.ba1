@@ -1,0 +1,53 @@
+&apos;// MergeSheetType.bas
+&apos;//----------------------------------------------------------------------
+&apos;// MergeSheetType - Merge Sheet type cells in Territory sheet header.
+&apos;//		9/24/20.	wmk.	21:45
+&apos;//----------------------------------------------------------------------
+
+public sub MergeSheetType()
+
+&apos;//	Usage.	macro call or
+&apos;//			call MergeSheetType()
+&apos;//
+&apos;// Entry.	user has territory sheet selectd
+&apos;//
+&apos;//	Exit.	Sheet type cells merged (H1:I1)
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/12/20.	wmk.	original code
+&apos;//	9/24/20.	wmk.	mod to only use H1-I1 so page fits in landscape
+&apos;//						when printing PubTerr formatted sheet
+&apos;//
+&apos;//	Notes.
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim oDocument   as object
+dim oDispatcher as object
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDocument   = ThisComponent.CurrentController.Frame
+	oDispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+	&apos;// select range H1:I1
+	dim args1(0) as new com.sun.star.beans.PropertyValue
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$H$1:$I$1&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ToggleMergeCells&quot;, &quot;&quot;, 0, Array())
+
+
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;MergeSheetType - unprocessed error.&quot;)
+	
+end sub		&apos;// end MergeSheetType		9/24/20

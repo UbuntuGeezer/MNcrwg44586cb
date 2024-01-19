@@ -1,0 +1,50 @@
+-- ** END FixFromSC **********;
+--/**/
+
+.quit
+-- *** END Fix136RU ***********;
+
+-- ********** Legacy code ***********************
+-- ** FixSCFlamingo **********
+-- *	mm/dd/yy.	wmk.
+-- *--------------------------
+-- *
+-- * subquery_name - simple description.
+-- *
+-- * Entry DB and table dependencies.
+-- *   <list main DB and ATTACHed DBs and tables>
+-- *
+-- * Exit DB and table results.
+-- *
+-- * Notes.;
+
+SELECT * FROM NVENALL 
+WHERE "SITUS ADDRESS (PROPERTY ADDRESS)"
+LIKE "620$FLAMINGO DR%"
+ORDER BY "SITUS ADDRESS (PROPERTY ADDRESS)";
+
+WITH a AS (SELECT "ACCOUNT #" AS Acct,
+SUBSTR("SITUS ADDRESS (PROPERTY ADDRESS)",1,3) 
+ || " " || TRIM(SUBSTR("SITUS ADDRESS (PROPERTY ADDRESS)",
+				5,31)) || " W" AS StreetAddr,
+ SUBSTR("SITUS ADDRESS (PROPERTY ADDRESS)",36) AS SCUnit
+ FROM NVENALL 
+ WHERE "SITUS ADDRESS (PROPERTY ADDRESS)"
+  LIKE "620$FLAMINGO DR%"
+ )
+UPDATE Terr136_SCBridge
+SET OwningParcel = 
+CASE 
+WHEN UnitAddress IN (SELECT StreetAddr from a
+ WHERE SCUnit is Unit) 
+ THEN (SELECT Acct FROM a 
+  WHERE StreetAddr IS UnitAddress 
+   AND SCUnit IS Unit
+ )
+ELSE OwningParcel
+END  
+WHERE UnitAddress LIKE "620   FLAMINGO%";
+
+-- ** END FixSCFlamingo **********;
+
+

@@ -1,0 +1,43 @@
+README-Projects - ArchivingBackups Projects documentation.
+	7/1/21.	wmk.
+
+Modification History.
+---------------------
+7/1/21.		wmk.	original documentation.
+
+Project Description.
+--------------------
+The ArchivingBackups project is a central information point regarding
+the file archiving and backup provisions. Currently there is no "make" 
+file. The "Projects" portion of the ArchivingBackups relates to backing
+up and restoring git projects from the Windows HDD to flash drives.
+Currently the git projects are extremely depenedent on the Windows HDD
+file system, residing on Windows/Users/Bill/Documents/GitHub. In the
+event of a Windows HDD failure or accessibility issues (e.g. read-only
+file system), the backup and restore procedures here are essential.
+
+Many of the GitHub projects are maintained on github.com by doing
+push/pull git operations, with the github.com repositories set up
+as "remote" repositories for the projects. For these projects, github.com
+will be considered the primary backup source.
+
+Special Note. The GitHub projects Territories and ShellFiles currently 
+use the github.com repositories as their primary backup source. The
+flash drive backups of these projects are out-of-date. The data portion
+of the Territories git project, namely RawData and TerrData and their
+subdirectories, are backed up and restored apart from the github.com
+Territories repository. See README-Territories for further information.
+
+See also: README, README-Territories, README-System.
+
+
+Supporting Code and Utilities.
+------------------------------
+The Projects portion is supported by several shell files that perform
+backup and restore operations specific to the GitHub projects.
+The shell files for the system backup and restore reside in the
+GitHub/ShellFiles folder and are:
+
+PJDUMP - dump files from any GitHub project to flash drive using git
+  clone operation.
+

@@ -1,0 +1,10 @@
+3 d
+4 i#   4/6/22.   wmk.
+/Notes/ i# 4/6/22.     wmk.   use *pathbase* and passed <state> <county> <congo> in paths.
+/HOME/ s?HOME" = "/home/ubuntu?USER" == "ubuntu?
+/TEMP_PATH/ d
+/**WARNING/ iTEMP_PATH=$HOME/temp
+s?$folderbase/Territories?$pathbase?g
+
+
+

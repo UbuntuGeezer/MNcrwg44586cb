@@ -1,0 +1,46 @@
+# MakeSetSpecTerrs.tmp
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	1/4/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 8/12/21.	wmk.	original code.
+# 9/16/21.	wmk.	fixed <filename> in .sh.
+# 1/4/22.	wmk.	chmod added to recipe to ensure .sh executable.
+
+ifeq ($(HOME),/home/ubuntu) 
+ folderbase=/media/ubuntu/Windows/Users/Bill
+else
+ folderbase=$(HOME)
+endif
+
+prepath = $(folderbase)/Territories/RawData/SCPA/SCPA-Downloads/Terr111/
+ procpath = $(codebase)/Territories/Procs-Dev/
+
+# SetSpecTerrs.sh primary target.
+#=====================================================================================
+$(prepath)SetSpecTerrs.sh : $(prepath)SetSpecTerrs.sql $(prepath)SetSpecTerrs.sq
+	cat $(procpath)hdrAnySQL_1.sh $(prepath)SetSpecTerrs.sq \
+	 $(procpath)hdrAnySQL_2.sh > $@
+	sed -i 's?<filename>?SetSpecTerrs?g' $@
+	chmod 700 $@
+
+
+$(prepath)SetSpecTerrs.sq : $(prepath)SetSpecTerrs.sql
+	echo 's?\"?\\\\"?g' > sedatives.txt
+	echo "s?^?echo \"?g" >> sedatives.txt
+	echo "s?\$$?\" >> SQLTemp.sql?g" >> sedatives.txt
+	echo "1s?>>?>?g" >> sedatives.txt
+	sed -f sedatives.txt $(prepath)SetSpecTerrs.sql > $@
+	sed -i 's?%folderbase?\$$folderbase?g' $@
+
+$(prepath)SetSpecTerrs.sql : ;
+	$(error ** missing $(prepath)SetSpecTerrs.sql to build SetSpecTerrs.sh **)
+	
+$(procpath)hdrAnySQL_1.sh : ;
+	$(error ** missing $(prepath)hdrAnySQL_2.sh to build SetSpecTerrs.sh **)
+
+$(procpath)hdrAnySQL_2.sh : ;
+	$(error ** missing $(procath)hdrAnySQL_2.sh to build SetSpecTerrs.sh **)
+#====================================================================================

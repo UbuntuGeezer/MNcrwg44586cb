@@ -1,0 +1,49 @@
+&apos;// KillAutoRecalc.bas
+&apos;//---------------------------------------------------------------
+&apos;// KillAutoRecalc - Turn off autorecalc.
+&apos;//		8/28/20.	wmk.
+&apos;//---------------------------------------------------------------
+
+public sub KillAutoRecalc ()
+
+&apos;//	Usage.	macro call or
+&apos;//			call KillAutoRecalc( &lt;parameters&gt; )
+&apos;//
+&apos;//		&lt;parameters description&gt;
+&apos;//
+&apos;// Entry.	user has open spreadhseet
+&apos;//
+&apos;//	Exit.	AutoCalc turned off
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	8/28/20.		wmk.	original code
+&apos;//
+&apos;//	Notes. Autocalc is turned off to avoid hanging LibreCalc when
+&apos;//	moving through large amounts of records that have many calculated
+&apos;// fields (e.g. territory with 4 hyperlinks per record and thousands
+&apos;// of records.
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim document   as object
+dim dispatcher as object
+
+	&apos;// code.
+	document   = ThisComponent.CurrentController.Frame
+	dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+	&apos;// set arguments for AutomaticCalculation property control
+	dim args1(0) as new com.sun.star.beans.PropertyValue
+	args1(0).Name = &quot;AutomaticCalculation&quot;
+	args1(0).Value = false
+
+	dispatcher.executeDispatch(document, &quot;.uno:AutomaticCalculation&quot;, _
+								&quot;&quot;, 0, args1())
+
+
+end sub		&apos;// end KillAutoRecalc		8/28/20

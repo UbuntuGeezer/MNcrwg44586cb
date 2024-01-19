@@ -1,0 +1,51 @@
+# MakeUpdtRULetter.tmp - Makefile (template) for UpdtRULetter project.
+#    wmk.   (automated) ver2.0 Make fixes.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	10/21/21.	wmk.
+#
+# Modification History.
+# ---------------------
+# 10/20/21.	wmk.	original makefile.
+# 10/21/21.	wmk.	added MissingIDs call in primary recipe.
+#
+# MakeUpdtRULetter cycles the previous Terrxxx_RU.db to ./Previous, then
+# runs Make with the MakeSpecials makefile in the territory download
+# folder to regenerate the Specxxx_RU.db and repopulate the Terrxxx_RUBridge
+# table.
+#
+# DoSed in the project edits the MakeUpdtRULetter.tmp to MakeUpdtRULetter.
+# Notes. DoSed modifies this makefile changing y yy to the territory id
+
+ifeq ($(HOME),/home/ubuntu)
+ folderbase = /media/ubuntu/Windows
+else
+ folderbase = $(HOME)
+endif
+
+basepath = $(folderbase)/Territories/RawData/RefUSA/RefUSA-Downloads/Terryyy
+ procpath = $(codebase)/Territories/Procs-Dev
+ projpath = $(codebase)/Territories/Projects-Geany/UpdtRULetter
+
+# Specyyy_RU.db - primary target.
+#================================================================
+$(basepath)/Specyyy_RU.db : $(basepath)/MakeAddZips \
+ $(projpath)/ClearRUBridge.sh
+	$(procpath)/CyclePreviousRU.sh yyy
+	$(projpath)/ClearRUBridge.sh yyy
+	$(MAKE) -f $(basepath)/MakeSpecials
+	$(procpath)/MissingIDs.sh yyy
+
+$(projpath)/ClearRUBridge.sh : $(projpath)/ClearRUBridge.sq
+	cat $(procpath)/hdrAnySQL_1.sh  $(projpath)/ClearRUBridge.sq \
+	  $(procpath)/hdrAnySQL_2.sh  > $@
+	 sed -i 's?<filename>?ClearRUBridge?g' $@
+
+$(projpath)/ClearRUBridge.sq : $(projpath)/ClearRUBridge.sql
+	$(procpath)/AnySQLtoSQ.sh $(projpath) ClearRUBridge
+
+$(projpath)/ClearRUBridge.sql : ;
+
+$(basepath)/MakeAddZips : ;
+
+#================================================================

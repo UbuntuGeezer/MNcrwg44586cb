@@ -1,0 +1,57 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=ImportSCPA
+base_path=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/ImportSCPA/
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=14
+FILE_NAME_0=2240;Markdown;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FImportSCPA%2FREADME.md;0;4
+FILE_NAME_1=4279;Markdown;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateCongTerr%2FREADME.md;0;4
+FILE_NAME_2=2238;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FImportSCPA%2FMovSCDwnldHP.sh;0;4
+FILE_NAME_3=1543;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FImportSCPA%2FCreateNewSCPA.psq;0;4
+FILE_NAME_4=172;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FImportSCPA%2FMakeCreateNewSCPA.tmp;0;4
+FILE_NAME_5=3451;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FImportSCPA%2FMakeImportSCPA.tmp;0;4
+FILE_NAME_6=1869;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FImportSCPA%2FDoSed.sh;0;4
+FILE_NAME_7=759;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FImportSCPA%2FPopulateCongTerr.psq;0;4
+FILE_NAME_8=1930;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FImportSCPA%2FMakePopulateCongTerr.tmp;0;4
+FILE_NAME_9=306;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FImportSCPA%2FPopulateCongTerr.sql;0;4
+FILE_NAME_10=396;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FImportSCPA%2FPopulateAllAccts.psq;0;4
+FILE_NAME_11=1424;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FImportSCPA%2FMakePopulateAllAccts.tmp;0;4
+FILE_NAME_12=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FImportSCPA%2FPopulateAllAccts.sql;0;4
+FILE_NAME_13=2639;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FImportSCPA%2FMovSCDwnld.sh;0;4
+FILE_NAME_14=1394;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FImportSCPA%2FMakeCreateNewSCPA;0;4
+
+[VTE]
+last_dir=/home/vncwmk3/Territories/FL/SARA/86777/RawData/SCPA/SCPA-Downloads
+
+[build-menu]
+NF_03_LB=sed
+NF_03_CM=./DoSed.sh  01 13
+NF_03_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/ImportSCPA
+NF_01_LB=Make Custom _Target...
+NF_01_CM=make -f MakePopulateAllAccts
+NF_01_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/ImportSCPA

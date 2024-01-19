@@ -1,0 +1,2 @@
+TerrID,AreaName,Street-Address(s),City,Zip,Location,Type,HasSubs,DBName1,DBName2,StatusCode,SpecialRU,SpecialSC,Segmented
+<terrid>,"Territory <terrid>","All in Terr <terrid>",VENICE|NOKOMIS,34285|34292|34275,"Bounded by ",R,NO,PolyTerri.db,"",00,0,0,0

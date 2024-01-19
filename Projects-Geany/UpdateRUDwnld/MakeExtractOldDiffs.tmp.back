@@ -1,0 +1,64 @@
+# MakeExtractOldDiffs.tmp - (template) ExtractOldDiffs makefile to build ExtractOldDiffs.sh
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	4/25/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 4/25/22.	wmk.	modified for general use FL/SARA/86777.
+# Legacy mods.
+# 8/29/21.	wmk.	original makefile.
+# 9/8/21.	wmk.	modified to rebuild ExtractOldDiffs.sh after DoSed run for
+#					project; yy y added so makefile can be edited by DoSed for
+#					building to territory xxx.
+#
+# Notes. DoSed for the UpdateRUDwnld project edits the territory ID into the
+# ExtractOldDiffs.psq template to produce ExtractOldDiffs.sql. The resultant
+# .sql file is picked up by this makefile to generate ExtractOldDiffs.sh.
+
+.ONESHELL :
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+ bashpath = $(codebase)/Territories/Procs-Dev
+ projpath = $(codebase)/Territories/Projects-Geany/UpdateRUDwnld
+
+# ExtractOldDiffs.sh
+#==========================================================
+$(projpath)/ExtractOldDiffs.sh : $(projpath)/ExtractOldDiffs.sq \
+ $(projpath)/ExtractOldDiffs.sql  $(projpath)/ExtractOldDiffs.sq ExtractOldDiffs.sql
+	#@echo "ExtractOldDiffs.sh runs 'as-is' using sqlite and ExtractOldDiffs.sql"
+	cat $(bashpath)/hdrAnySQL_1.sh $(projpath)/ExtractOldDiffs.sq  \
+	 $(bashpath)/hdrAnySQL_2.sh  > $@
+	sed -i 's?<filename>?ExtractOldDiffs?g' $@
+	chmod +x $@
+
+
+$(projpath)/ExtractOldDiffs.sq : $(projpath)/ExtractOldDiffs.sql
+	$(bashpath)/AnySQLtoSQ.sh $(projpath) ExtractOldDiffs
+
+
+
+$(projpath)/ExtractOldDiffs.sql : $(projpath)/ExtractOldDiffs.psq
+	sed 's?xxx?yyy?g' $(projpath)/ExtractOldDiffs.psq > $(projpath)/ExtractOldDiffs.sql
+	
+
+$(projpath)/ExtractOldDiffs.psq : ;
+	(warning ** ExtractOldDiffs.psq missing for ExtractOldDiffs.sq build **)
+
+
+#==========================================================

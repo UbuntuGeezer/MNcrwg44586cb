@@ -1,0 +1,62 @@
+# 5/6/23.     wmk.   (automated) move previous history comments.
+# MakeRebuildFixRU.tmp - template for make MakeRebuildFixRU.
+#	5/6/23.	wmk.
+#
+# Entry. SCPA-Downloads/Terr*/FixTerr*RU.sql files all current with
+#			*pathbase*
+#
+# Build Results: SCPA-Downloads/Terr*/FixTerr*RU.sh files all rebuilt
+#
+# update happens if SCPA-Downloads/SCPADiff_mm-dd.db is newer than 
+#		SCPA-Downloads/Updtxxx.csv for all territories xxx.
+#
+# Modification History.
+# ---------------------
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 5/6/23.     wmk.   (automated) move previous history comments.
+# Legacy mods.
+# 5/28/22.	wmk.	original code.
+# 9/21/22.	wmk.	modified for Chromebook.
+#
+# Dependencies. - run "sed" make preprocessor after editing sed Build command.
+# yyy  run Build "sed" to change yyy to territory id.
+
+.ONESHELL : ;
+.NOTPARALLEL : ;
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories
+endif
+
+vpath %.csv $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terryyy
+RUDwnldPath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads
+ projpath = $(codebase)/Projects-Geany/MigrationRepairs
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+scterrpath = $(RUDwnldPath)/Terryyy
+
+.PHONY  : Always
+.ONESHELL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	cd $(altproj);./DoSed.sh $(scterrpath) FixyyyRU
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(scterrpath)/FixyyyRU.sh;then \
+	 echo "** FixyyyRU.sh generation failed **";exit 1;fi
+	$(scterrpath)/FixyyyRU.sh
+	
+#==================================================================
+# end MakeRebuildFixRU

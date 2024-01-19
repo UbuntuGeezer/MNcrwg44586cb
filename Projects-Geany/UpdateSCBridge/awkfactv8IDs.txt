@@ -1,0 +1,2 @@
+BEGIN {p=1}
+{{if (substr($1,1,2) == "#6"){print substr($1,2,99) ;p=0};if(p) print $0;p=1}}

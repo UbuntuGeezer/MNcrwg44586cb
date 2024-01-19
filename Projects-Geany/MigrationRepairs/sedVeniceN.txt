@@ -1,0 +1,5 @@
+# sedVeniceN.txt - VeniceNTerritory/NVenAll fixes.
+16,999s?VeniceNTerritory?Terr86777?g
+16,999s?NVenAll?Terr86777?g
+16,999s?nvenall?Terr86777?g
+2a-- * 6/2/22.     wmk.   (automated) NVenAll > Terr86777.

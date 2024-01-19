@@ -1,0 +1,9 @@
+lines before
+more lines before
+-- testfile.txt
+some line
+more line
+more lines
+--/**/
+lines after
+more lines after

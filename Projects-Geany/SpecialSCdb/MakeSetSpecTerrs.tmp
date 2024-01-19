@@ -1,0 +1,56 @@
+# MakeSetSpecTerrs - Makefile for SetSpecTerrs.sh.
+#	5/6/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 5/6/23.	wmk.	comments tidied.
+# Legacy mods.
+# 5/4/22.	wmk.	(automated) path corrections.
+# 11/25/22. wmk.    (automated) main .sh recipe fix.
+# 11/25/22. wmk.    (automated) correct *procpath, *codebase, *bashpath
+# Legacy mods.
+# 8/12/21.	wmk.	original code.
+# 9/16/21.	wmk.	fixed <filename> in .sh.
+# 12/15/21.	wmk.	edited for territory xxx.
+
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef codebase
+ codebase=$(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : ;
+.ONESHELL : ;
+
+prepath = $(pathbase)/RawData/SCPA/SCPA-Downloads/Terrxxx
+procpath = $(codebase)/Procs-Dev
+
+# SetSpecTerrs.sh primary target.
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+#================================================="
+$(prepath)/SetSpecTerrs.sh : $(prepath)/SetSpecTerrs.sql
+	cd $(altproj);./DoSed.sh $(prepath) SetSpecTerrs
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+
+
+$(prepath)/SetSpecTerrs.sql :;
+	if ! test -f $@;then \
+	 echo " ** missing SetSpecTerrs.sql for build SetSpecTerrs.sh **";exit 1;fi
+
+#================================================== 

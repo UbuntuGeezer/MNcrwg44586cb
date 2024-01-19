@@ -1,0 +1,104 @@
+&apos;// RUNewTerr_1.bas
+&apos;//---------------------------------------------------------------
+&apos;// RUNewTerr_1 - RefUSA new territory phase 1 process.
+&apos;//		10/16/20.	wmk.	22:15
+&apos;//---------------------------------------------------------------
+
+public sub RUNewTerr_1()
+
+&apos;//	Usage.	macro call or
+&apos;//			call RUNewTerr_1()
+&apos;//
+&apos;// Entry.	user has loaded Terxxx.csv RefUSA raw data with column headings
+&apos;//			user has also (optionally) created TErrxxxHdr sheet with
+&apos;//			 essential territory definition fields set
+&apos;//
+&apos;//	Exit.	Terrxxx_Bridge.csv created and ready for SQL .import using
+&apos;//			RUNewTerr_2.sh proc
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	10/15/20.	wmk.	original code
+&apos;//	10/16/20.	wmk.	add CopyToEnd and delete 4 lines before copy
+&apos;//						to file for export; export sheet as .csv with
+&apos;//						name Terrxxx_Bridge.csv; mod to require
+&apos;//						TerrNewHdr to be present
+&apos;//	Notes.
+
+
+&apos;//	constants.
+const DKLIME=6207774			&apos;// DARKLIME color value
+
+&apos;//	local variables.
+dim oDoc		As Object
+dim oSel		As Object
+dim oRange		As Object
+dim oSheet		As Object
+dim iSheetIx	As Integer
+dim sSheetName	As String
+dim sTerrID	As String		&apos;// territory ID
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+		
+	TabColor( DKLIME )
+	ProtectSheet()
+	CopyToEnd()
+	UnprotectSheet()
+
+	&apos;// presort imported data
+	SelectNewRows()
+	
+dim oDocument	As Object
+dim oDispatcher	As Object
+dim nColumns	As Integer
+	oDocument   = ThisComponent.CurrentController.Frame
+	oDispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+	nColumns = ASC(&quot;S&quot;) - ASC(&quot;A&quot;)
+dim args2(0) as new com.sun.star.beans.PropertyValue
+	args2(0).Name = &quot;By&quot;
+	args2(0).Value = nColumns
+oDispatcher.executeDispatch(oDocument, &quot;.uno:GoRightSel&quot;, &quot;&quot;, 0, args2())
+	SortByStreetNum()
+
+	ImportRefUSA()
+	sTerrID = Mid(ThisComponent.getTitle(),5,3)
+	sSheetName = &quot;Terr&quot; + sTerrID + &quot;_Import&quot;
+	RenameSheet(sSheetName)
+	ProtectSheet()
+	CopyToEnd()
+	
+	UnprotectSheet()
+	RUImportToBridge
+	sSheetName = &quot;Terr&quot; + sTerrID + &quot;_Import&quot;
+	RenameSheet(sSheetName)
+	ProtectSheet()
+	CopyToEnd()
+	
+	UnprotectSheet()
+	&apos;// pick up new sheet pointers
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	&apos;// leave all header rows, since linked values will lose refs if delete
+	sSheetName = &quot;Terr&quot; + sTerrID + &quot;_IBridge&quot;
+	RenameSheet(sSheetName)
+	ProtectSheet()
+	CopyToNewWork()
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;RUNewTerr_1 - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end RUNewTerr_1		10/16/20

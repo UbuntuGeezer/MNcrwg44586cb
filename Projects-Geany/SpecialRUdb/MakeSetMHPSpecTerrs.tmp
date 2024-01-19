@@ -1,0 +1,53 @@
+# MakeSetMHPSpecTerrs.tmp - Build SetMHPSpecTerrs.sh for RU territory xxx.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 10/4/22.    wmk.   (automated) fix *pathbase for CB system.
+# 10/4/22.    wmk.   (automated) fix *pathbase for CB system.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	5/29/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 4/24/22.	wmk.	code generalized for FL/SARA/86777;*pathbase*, 
+#			 *congterr*, *conglib* env vars introduced.
+# 5/29/22.	wmk.	main recipe simplified to use AnySQLtoSH *make*.
+# Legacy mods.
+# 9/9/21.	wmk.	original makefile; adpated from MakeSetSpeTerrs.tmp.
+# 12/28/21.	wmk.	chmod 700 added to recipe so .sh will execute.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu) 
+  folderbase=/media/ubuntu/Windows/Users/Bill
+ else
+  folderbase=$(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+prepath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terrxxx/
+ procpath = $(codebase)/Procs-Dev/
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# SetMHPSpecTerrs.sh primary target.
+#=====================================================================================
+$(prepath)SetMHPSpecTerrs.sh : $(prepath)SetMHPSpecTerrs.sql
+	cd $(altproj); ./DoSed.sh $(prepath) SetMHPSpecTerrs
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+
+#	cat $(procpath)hdrAnySQL_1.sh $(prepath)SetMHPSpecTerrs.sq \
+#	 $(procpath)hdrAnySQL_2.sh > $@
+#	sed -i 's?<filename>?SetMHPSpecTerrs?g' $@
+#	chmod +x $@
+
+$(prepath)SetMHPSpecTerrs.sql : ;
+	if ! test -f $(prepath)SetMHPSpecTerrs.sql;then \
+	 echo "** missing $(prepath)SetMHPSpecTerrs.sql to build SetMHPSpecTerrs.sh **";exit 1;fi
+	
+#====================================================================================
+#end MakeSetMHPSpecTerrs.tmp

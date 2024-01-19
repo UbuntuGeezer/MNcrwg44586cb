@@ -1,0 +1,64 @@
+# MakeSetMHPSpecTerrs - Build SetMHPSpecTerrs.sh for RU territory xxx.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#   5/4/22. wmk.	(automated) path corrections.
+#	12/28/21.	wmk.
+#
+# Modification History.
+# ---------------------
+# 9/9/21.	wmk.	original makefile.
+# 9/9/21.	wmk.	$ folderbase corrected in .sq file.
+# 12/28/21.	wmk.	chmod 700 added to .sh permissions.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : ;
+.ONESHELL : ;
+
+prepath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terrxxx
+ procpath = $(codebase)/Procs-Dev
+
+# SetMHPSpecTerrs.sh primary target.
+#=====================================================================================
+$(prepath)/SetMHPSpecTerrs.sh : $(prepath)/SetMHPSpecTerrs.sql $(prepath)/SetMHPSpecTerrs.sq
+	cat $(procpath)/hdrAnySQL_1.sh $(prepath)/SetMHPSpecTerrs.sq \
+	 $(procpath)/hdrAnySQL_2.sh > $@
+	sed -i 's?<filename>?SetMHPSpecTerrs?g' $@
+	chmod 700 $@
+
+$(prepath)/SetMHPSpecTerrs.sq : $(prepath)/SetMHPSpecTerrs.sql
+	echo 's?\"?\\\\"?g' > sedatives.txt
+	echo "s?^?echo \"?g" >> sedatives.txt
+	echo "s?\$$?\" >> SQLTemp.sql?g" >> sedatives.txt
+	echo "1s?>>?>?g" >> sedatives.txt
+	sed -f sedatives.txt $(prepath)/SetMHPSpecTerrs.sql > $@
+	sed -i 's?%folderbase?\$$folderbase?g' $@
+
+$(prepath)/SetMHPSpecTerrs.sql : ;
+	$(error ** missing $(prepath)/SetMHPSpecTerrs.sql to build SetMHPSpecTerrs.sh **)
+	
+$(procpath)/hdrAnySQL_1.sh : ;
+	$(error ** missing $(prepath)/hdrAnySQL_2.sh to build SetMHPSpecTerrs.sh **)
+
+$(procpath)/hdrAnySQL_2.sh : ;
+	$(error ** missing $(procath)hdrAnySQL_2.sh to build SetMHPSpecTerrs.sh **)
+#====================================================================================

@@ -1,0 +1,7 @@
+# awkaddcodebase.txt  12/16/22.
+BEGIN {yup=1}
+{ if(NR==2){print "# 12/16/22.    wmk.   (automated) *codebase env var support." }
+  if( index($0,"ifndef pathbase") != 0)
+  {print "ifndef codebase\n codebase = $(folderbase)/GitHub/TerritoriesCB\nendif\n";
+   yup=0};yup;print
+}

@@ -1,0 +1,89 @@
+-- SyncTerrToSpec.sq- Synchronize Terr$P1_RU.db with new Spec$P1_RU.db records.
+--	9/8/21.	wmk.
+-- copy and edit this SQL template to territory RU download folder.
+.cd '$folderbase/Territories'
+.cd './RawData/RefUSA/RefUSA-Downloads/Terr$P1'
+--.trace 'Procs-Dev/SQLTrace.txt'
+-- open Terr$P1_RU.db and attach Spec$P1_RU.db;
+.open 'Terr$P1_RU.db'
+ATTACH 'Spec$P1_RU.db' AS db29;
+-- insert records from Spec$P1_RU.db.Spec_RUBridge into;
+--   Terr$P1_RU.db.Terr$P1_RUBridge;
+INSERT INTO Terr$P1_RUBridge
+ SELECT * FROM db29.Spec_RUBridge;
+-- eliminate oldest dups from Terr$P1_RUBridge based on UnitAddress,Unit;
+-- NOTE: empty Unit fields are expected to be "", not null;
+UPDATE Terr$P1_RUBridge
+SET UnitAddress = trim(UnitAddress);
+DELETE FROM Terr$P1_RUBridge 
+--WHERE rowid NOT IN (SELECT MAX(rowid) FROM Terr$P1_RUBridge
+  WHERE RecordDate NOT IN (SELECT MAX(RecordDate) FROM Terr$P1_RUBridge
+	GROUP BY UnitAddress, Unit);
+--	GROUP BY UnitAddress, Unit, Resident1);
+-- * now see if can set parcel IDs.
+ATTACH '$folderbase/Territories/RawData/SCPA/SCPA-Downloads/Terr$P1/Terr$P1_SC.db'
+	AS db11;
+with a AS (SELECT OwningParcel as PropID, 
+ TRIM(UnitAddress) AS StreetAddr, Unit AS SCunit
+ FROM TERR$P1_SCBridge)
+UPDATE Terr$P1_RUBridge
+SET OwningParcel = 
+CASE 
+WHEN Upper(trim(UnitAddress))
+ IN (SELECT StreetAddr FROM a
+ WHERE SCunit IS Unit)
+ THEN (SELECT PropID FROM a 
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress))
+   AND SCunit IS Unit)
+ELSE OwningParcel
+END 
+WHERE OwningParcel IS "-";
+-- * set remaining parcel IDs from NVenAll;
+detach db11;
+ATTACH '$folderbase/Territories/DB-Dev/VeniceNTerritory.db'
+ AS db2;
+WITH a AS (SELECT "Account #" AS Acct, 
+ TRIM(SUBSTR("situs address (property address)",1,19)) AS StreetAddr,
+ SUBSTR("situs address (property address)",36) AS SCunit,
+ "property use code" AS UseType
+ FROM NVenAll
+ WHERE StreetAddr LIKE "%840   THE ESPLANADE%")
+ Update Terr$P1_RUBridge 
+ SET OwningParcel = 
+ CASE 
+ WHEN substr(upper(trim(UnitAddress)),1,19)
+  IN (SELECT StreetAddr FROM a 
+   WHERE StreetAddr IS substr(UPPER(TRIM(UnitAddress)),1,19)
+    AND SCUnit IS Unit)
+  THEN (SELECT Acct FROM a 
+   WHERE StreetAddr IS substr(UPPER(TRIM(UNitAddress)),1,19)
+    AND SCUnit IS Unit)
+ ELSE OwningParcel
+ END ,
+ RecordType = "M"
+ WHERE OwningParcel IS "-";
+ -- * end set remaining from NVenAll;
+-- * set all SitusAddress fields;
+UPDATE Terr$P1_RUBridge
+SET SitusAddress = 
+ TRIM(UPPER(UnitAddress)) || "     " || Unit
+WHERE SitusAddress ISNULL 
+ OR LENGTH(TRIM(SitusAddress)) = 0;
+-- * end set all SitusAddress fields;
+-- * set all propuse fields;
+WITH a AS (SELECT "Account #" AS Acct, "property use code" AS UseType
+ FROM NVenAll
+ WHERE Acct IN (SELECT OwningParcel FROM Terr$P1_RUBridge))
+UPDATE Terr$P1_RUBridge
+SET  PropUse = 
+CASE 
+ WHEN OwningParcel IN (SELECT Acct FROM a)
+  THEN (SELECT UseType FROM a 
+   WHERE Acct IS OwningParcel)
+ ELSE PropUse
+ END,
+RecordType = "M"
+WHERE PropUse ISNULL OR LENGTH(TRIM(PropUSE)) = 0;
+-- * end set all propuse fields;
+.quit
+-- end SyncTerrToSpec.sq;

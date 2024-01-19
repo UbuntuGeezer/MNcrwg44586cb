@@ -1,0 +1,81 @@
+README - Documentation for FixAnySC project.
+	10/27/21.	wmk.
+
+Modification History.
+---------------------
+5/31/21.	wmk.	original document.
+10/27/21.	wmk.	sections reorganized for consistency; Method section
+					added.
+4/7/22.		wmk.	change "Method" section to "Setup".
+
+Document Sections.
+------------------
+Project Description - overall project description.
+Setup - build steps for FixAnySC.
+Dependencies - project build dependencies/prerequisites.
+Build Results - build target summary.
+Batched Runs of FixAnySC - using TIDList.txt for multiple fixes.
+
+
+Project Description.
+--------------------
+FixAnySC takes the SQL postprocess query for any given territory and
+builds it into a shell that can be executed by the make for UpdateSCBridge.
+The execution of the FixyyySC.sh shell cleans up records which have missing
+OwningParcel fields, to complete as many SC download records as
+possible in the SCBridge table for the territory.
+
+Polygon data is downloaded from SCPA Property Search into a separate .csv
+file for each territory. The .csv filename is Mapyyy_SC.csv for any
+territory yyy. The TerryyyRU.db is considered "out-of-date" if the 
+SCPA-Downloads/Terryyy/Mapyyy_SC.csv file is newer than Terryyy_SC.db.
+
+An "out-of-date" Terryyy_SC.db will be rebuilt in its entirety from the
+the new download data in Mapyyy_SC.csv.
+
+
+Setup.
+------
+To build FixyyySC.sh for a given territory yyy:
+
+	Build Menu:
+	'sed' - enter the territory ID in the sed build menu command line
+	run 'sed' from the Build menu
+	
+	run 'Make Dry-Run' from the Build menu to test the build sequence
+	
+	run 'Make' from the build menu to make the Terryyy/FixyyySC.sh shell
+	
+Dependencies.
+-------------
+	hdrFixXXXSC.sh in folder ~/Procs-Dev
+	FixyyySC.sql in folder ~/SCPA-Downloads/Terryyy
+
+
+Build results.
+--------------
+	FixyyySC.sh in folder ~/SCPA-Downloads/Terryyy
+
+
+
+Batched runs of FixAnySC.
+-------------------------
+The territory system has now matured to the point where multiple territories
+may be downloaded at, or near, the same time. For each RefUSA polygon download,
+its corresponding territory SC database needs to be brought up-to-date with
+the current download information. The UpdateSCBridge project uses the "make"
+utility to accomplish this. Part of that "make" process is to run FixyyySC.sh
+after importing the records to handle exceptions in the download data.
+
+Given the above, to facilitate the generation of multiple FixyyySC.sh files
+with a single run, the FixAllSC.sh shell has been provided. While it resides
+in the Procs-Dev folder, it is included with the FixAnySC project to keep
+it bundled with the FixAnySC make facility.
+
+FixAllSC.sh depends upon the file TIDList.txt resident in the FixAnySC project
+folder. TIDList.txt provides FixAllSC.sh with a list of territory IDs for
+which to run the MakeFixAnySC makefile. The shell loops reading the TIDList.txt
+file, invoking DoSed and make for each specified territory. All that is necessary
+is to execute the FixAllSC.sh shell (no parameters), typically from the Procs-Dev
+folder.
+

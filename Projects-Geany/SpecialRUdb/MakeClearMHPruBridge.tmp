@@ -1,0 +1,70 @@
+# MakeClearMHPruBridge.tmp  - (template) makefile for ClearMHPruBridge.
+#	6/5/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 6/5/23.	wmk.	main recipe simplfied; OBSOLETE territory detection added;
+#			 comments tidied.
+# 4/24/22.	wmk.	code generalized for FL/SARA/86777;*pathbase*, 
+#			 *congterr*, *conglib* env vars introduced.
+# 5/4/22.   wmk.	(automated) path corrections.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 10/4/22.  wmk.    (automated) fix *pathbase for CB system.
+# 10/4/22.  wmk.    (automated) fix *pathbase for CB system.
+# Legacy mods.
+# 11/13/21.	wmk.	original makefile.
+# 12/28/21.	wmk.	chmod 700 added so .sh will execute.
+#
+# Notes. This makefile will be edited by DoFixSed.sh with the territory id
+# substituted for x xx throughout. DoFixSed and 'make' are invoked on this makefile
+# by the MakeSpecials makefile in the territory download folder.
+
+# end MakeClearMHPruBridge
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : ;
+.ONESHELL : ;
+
+specpath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Special
+targpath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terrxxx
+ projpath = $(codebase)/Projects-Geany/SpecialRUdb
+ bashpath = $(codebase)/Procs-Dev
+ altproj = $(codebase)/AnySQLtoSH
+
+# (targpath)/ClearMHPruBridge.sh primary target
+#==================================================
+$(targpath)/ClearMHPruBridge.sh : $(targpath)/ClearMHPruBridge.sql
+	if test -f $(targpath)/OBSOLETE;then \
+	 echo " ** Territory xxx OBSOLETE - MakeClearMHPruBridge exiting..";exit 2;fi
+	cd $(altproj);./DoSed.sh $(targpath) ClearMHPruBridge
+	$(MAKE) -f $(altproj)/AnySQLtoSH
+
+$(targpath)/ClearMHPruBridge.sql  : $(targpath)/ClearMHPruBridge.psq
+	if ! test $@;then
+	 echo "**WARNING - DoSed not run on ClearMHPruBrige.psq **";exit1;fi
+
+$(targpath)/ClearMHPruBridge.psq  : ;
+
+#==================================================
+
+# end MakeClearMHPruBridge

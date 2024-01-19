@@ -1,0 +1,43 @@
+pushd ./ >> $TEMP_PATH/bitbucket.txt
+cd $folderbase/Territories/RawData/SCPA/SCPA-Downloads
+#
+case $TID in 
+"tidlist" )
+# fill in read of tidlist file here
+ file='$folderbase/Territories/Projects-Geany/BridgesToTerr/TIDList.txt'
+ touch $file
+while read -e; do
+#cd $folderbase/Territories/RawData/SCPA/SCPA-Downloads
+  len=${#REPLY}
+  len1=$((len-1))
+  firstchar=${REPLY:0:1}
+  if [ "$firstchar" = "#" ]
+  then			# skip comment
+   echo >> $HOME/temp/scratchfile
+  else
+# process next territory ID..
+  TID=$REPLY
+  pushd ./ >> $TEMP_PATH/bitbucket.txt
+     BridgesToTerr - processing $TID ..."
+  cd $folderbase/Territories/Projects-Geany/BridgesToTerr
+  ./DoSed.sh $TID
+  sleep 3
+  make -f MakeBridgesToTerr
+  ~/sysprocs/LOGMSG "   BridgesToTerr $TID complete."
+  popd >> $TEMP_PATH/bitbucket.txt
+#   echo $REPLY
+ fi
+ done < $file
+    Done reading TIDList.txt." 
+	;;
+* )
+  pushd ./ >> $TEMP_PATH/bitbucket.txt
+  cd $folderbase/Territories/Projects-Geany/BridgesToTerr
+  ./DoSed.sh $TID 
+  sleep 3
+  make -f MakeBridgesToTerr
+  ~/sysprocs/LOGMSG "   BridgesToTerr $TID complete."
+     Copying all previous .sql files to $FOLDER/Previous..."
+  popd >> $TEMP_PATH/bitbucket.txt
+	;;
+esac

@@ -1,0 +1,74 @@
+<p>README.md - FixSQLs project documentation.<br>
+5/6/22. wmk.</p>
+
+<h3>Modification History.</h3>
+
+<pre><code>5/6/22.     wmk.   original document.
+5/30/22.    wmk.   links added.
+</code></pre>
+
+<h3 id="IX">Document Sections.</h3>
+
+<pre><code><a href="#1.0">link</a> 1.0 Project Description - overall project description.
+<a href="#2.0">link</a> 2.0 Setup - FixSQLs shell usage.
+</code></pre>
+
+<h3 id="1.0">1.0 Project Description.</h3>
+
+<p>FixSQLs is a "reliability" project that goes through a folder's .sql files
+and batch edits them to be consistent with all SQL queries for a given
+Territory system. The most obvious is to ensure the SQL is using the
+environment variable <em>pathbase</em> in all file referencing operations like
+.open,.import.,.output and ATTACH. The single build uses <em>sed</em>, <em>awk</em> and
+<em>cat</em> to modifify the .sql files in a specific folder (typically a territory
+download or Geany project folder.</p>
+
+<p>The project will also be used when creating new congregation Territory
+systems. There are over 1,000 .sql queru files within a Territory system, many
+of which have path dependencies on the <em>folderbase</em>, <em>basepath</em> and
+<em>congterr</em> environment variables. Whenever these system-wide environment
+variables are changed, the downstream SQL queries and shell files will be
+affected. FixSQLs, especially the FixAllSQLs shell, facilitates rapidly
+editing all affected SQL queries.<br>
+<a href="#IX">Index</a></p>
+
+<h3 id="2.0">2.0 Setup.</h3>
+
+<p>FixSQLs consists of "stand-alone" shells that fix .sql and .psq files.<br>
+FixSQL.sh fixes a single file.</p>
+
+<blockquote>
+  <p>Usage. bash FixSQL.sh &lt; path > &lt; file > [&lt; extension >]</p>
+
+<blockquote>
+  <p>&lt; path > = full file path (e.g. <em>pathbase</em>/Projects-Geany/BridgesToTerr)<br>
+&lt; file > = filename w/o extension (e.g. GetRecords)<br>
+&lt; extension > = (optional) filename extension [ .sql| .psq ]<br>
+(   default is .sql)</p>
+</blockquote>
+
+<p></blockquote></p>
+
+<p>FixAllSQLs.sh fixes all .sql files in the &lt; path ><br></p>
+
+<blockquote>
+  <p>Usage. bash FixAllSQL.sh &lt; path ></p>
+
+<blockquote>
+  <p>&lt; path > = full file path (e.g. <em>pathbase</em>/Projects-Geany/BridgesToTerr)<br></p>
+</blockquote>
+
+<p></blockquote></p>
+
+<p>FixAllPSQs.sh fixes all .psq files in the &lt; path ><br></p>
+
+<blockquote>
+  <p>Usage. bash FixAllSQL.sh &lt; path ></p>
+
+<blockquote>
+  <p>&lt; path > = full file path (e.g. <em>pathbase</em>/Projects-Geany/BridgesToTerr)</p>
+</blockquote>
+
+<p></blockquote></p>
+
+<p><a href="#IX">Index</a></p>

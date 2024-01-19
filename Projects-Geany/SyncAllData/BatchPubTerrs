@@ -1,0 +1,166 @@
+#!/bin/bash
+# BatchPubTerrs.sh - <description>.
+# 5/14/23.	wmk.
+#
+# Usage. bash  BatchPubTerrs.sh  <mm> <dd> <start-tid> <end-tid> [-nx]
+#
+#	<mm> = month of latest SCPA download
+#	<dd> = day of latest SCPA download
+#	<start-tid> = starting territory ID
+#	<end-tid> = ending territory id
+#	-nx = (optional) if present suppress execution of soffice
+#
+# Entry. *TEMP_PATH/autotids.txt = residual list of territories to run
+#	ProcessQTerrs12 on from prior BatchPubTerrs runs. User will be
+#	prompted before removing. This allows batch runs to accumulate
+#	a build list for ProcessQTerrs12. 
+#
+# Dependencies.
+#
+# Modification History.
+# ---------------------
+# 3/5/23.	wmk.	original shell.
+# 3/7/23.	wmk.	prompt user before removing autotids.txt; *run_soffice env
+#			 var exported.
+# 3/10/23.	wmk.	always rm PToodList.txt for new batch run.
+# 3/12/23.	wmk.	check with user before clearing RUoodList.txt.
+# 3/27/23.	wmk.	OBSOLETE territory detection.
+# 5/14/23.	wmk.	BuildLog messaging and error handling added.
+# Notes. The environment var *batchrun is exported = 1 to flag downstream
+# processes that a bath run of publisher territories is in progress.
+# The environment var *run_soffice is exported to flag whether or not
+# soffice.bin (LibreOffice) is executed in the final MakePubTerr recipe. 
+#
+# set parameters P1..Pn here..
+#
+P1=$1
+P2=$2
+P3=$3
+P4=$4
+P5=$5
+if [ -z "$P1" ] || [ -z "$P2" ] ||  [ -z "$P3" ] || [ -z "$P4" ];then
+ echo "BatchPubTerrs <mm> <dd> <start-tid> <end-tid> [-nx] missing parameter(s) - abandoned."
+ exit 1
+fi
+export run_soffice=1
+if [ ! -z "$P5" ];then
+ if [ "$P5" != "-nx" ];then
+  echo "BatchPubTerrs <mm> <dd> <start-tid> <end-tid> [-nx] invalid $P5 for -nx - abandoned."
+  exit 1
+ else
+  export run_soffice=0
+ fi
+fi
+if [ -z "$folderbase" ];then
+ if [ "$USER" == "ubuntu" ]; then
+  folderbase=/media/ubuntu/Windows/Users/Bill
+ else
+  folderbase=$HOME
+ fi
+fi
+if [ -z "$pathbase" ];then
+ export pathbase=$folderbase/Territories/FL/SARA/86777
+fi
+if [ -z "$codebase" ];then
+ export pathbase=$folderbase/GitHub/TerritoriesCB
+fi
+if [ -z "$system_log" ]; then
+  system_log=$folderbase/ubuntu/SystemLog.txt
+  ~/sysprocs/LOGMSG "  BatchPubTerrs - initiated from Make"
+  echo "  BatchPubTerrs - initiated from Make"
+else
+  ~/sysprocs/LOGMSG "  BatchPubTerrs - initiated from Terminal"
+  echo "  BatchPubTerrs - initiated from Terminal"
+fi 
+TEMP_PATH=$HOME/temp
+#	Environment vars:
+if [ -z "$TODAY" ];then
+ . ~/GitHub/TerritoriesCB/Procs-Dev/SetToday.sh
+#TODAY=2022-04-22
+fi
+#procbodyhere
+# Preamble.sh - preamble for UpdateSCBridge.
+#	5/12/23.	wmk.
+#jumpto function definition
+function jumpto
+{
+    label=$1
+    cmd=$(sed -n "/$label:/{:a;n;p;ba};" $0 | grep -v ':$')
+    eval "$cmd"
+    exit
+}
+export thisid=$$
+if [ -z "$build_log" ];then
+ export build_log=$TEMP_PATH/BuildLog.txt
+fi
+projpath=$codebase/Projects-Geany/SyncAllData
+if [ "$P3" == "$P4" ];then
+ export batchrun=0
+else
+ export batchrun=1
+fi
+if test -f $projpath/RUoodList.txt;then
+ echo "  list of territories for queued for RU update already exists..."
+  read -p " Do you wish to clear it (y/n)? "
+  yn=${REPLY^^}
+  if [ "$yn" == "Y" ];then
+   rm $projpath/RUoodList.txt
+  fi
+fi
+if test -f $TEMP_PATH/autotids.txt;then
+ echo "  list of territories for queued for generation already exists..."
+  read -p " Do you wish to clear it (y/n)? "
+  yn=${REPLY^^}
+  if [ "$yn" == "Y" ];then
+   rm $TEMP_PATH/autotids.txt
+  else	# treat as though batch run
+   export batchrun=1
+  fi
+fi
+~/sysprocs/ClrBuildLog.sh
+if test -f PToodList.txt;then rm PToodList.txt;fi
+export batchend=0
+seq $P3 $P4 > $TEMP_PATH/PubTerrs.txt
+file=$TEMP_PATH/PubTerrs.txt
+errcount=0
+# loop on the following for each territory.
+while read -e;do
+ skipit=0
+ TID=$REPLY
+ if [ "$TID" == "" ];then break;fi
+ if test -f $pathbase/$rupath/Terr$TID/OBSOLETE;then
+  echo " Territory $TID is OBSOLETE, skipping..."
+  skipit=1
+ fi
+ if [ $skipit -eq 0 ];then
+  $projpath/DoSed.sh $P1 $P2  $TID $TID
+  if [ $TID -eq $P4 ];then
+   export batchend=1
+  fi
+  make -f $projpath/MakePubTerr
+  if [ $? -ne 0 ];then errcount=$((errcount+1));fi
+ fi	# end skipit
+done < $file
+#endprocbody
+if [ $errcount -eq 0 ];then
+ jumpto NormalExit
+# PostScript.sh - test postscript for BatchPubTerrs.sh
+#   5/14/23. wmk
+else
+ # error handling.
+ ~/sysprocs/BLDMSG "  ** errors encountered BatchPubTerrs (see above) **"
+  grep PPid /proc/$thisid/task/$thisid/status | \
+ mawk \
+ '{print "#!/bin/bash";print "export idtext="$2;print "echo \"this process id=$thisid\"";print "echo \"parent process id=$idtext\""}' > temp.sh
+ chmod +x temp.sh
+ sed -i '1,4d' temp.sh
+ . ./temp.sh
+# at this point *idtext env var contains process ID that
+# can be passed to child processes.
+ ps $idtext >> $build_log
+ exit 1
+fi
+jumpto NormalExit
+NormalExit:echo "  BatchPubTerrs complete."
+~/sysprocs/LOGMSG "  BatchPubTerrs complete."
+# end BatchPubTerrs.sh

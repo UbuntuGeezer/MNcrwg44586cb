@@ -1,0 +1,60 @@
+# MakeReportUnassigned.tmp - makefile for ReportUnassigned.sh
+#	11/27/22.	wmk.
+#
+# Exit. ReportUnassigned.psq > ReportUnassigned.sh
+#
+# Modification History.
+# ---------------------
+# 11/27/22.	wmk.	comments tidied.
+# Legacy mods.
+# 9/22/22.  wmk.   (automated) *codebase env var support.
+# 9/22/22.  wmk.   (automated) CB *codebase env var support.
+# Legacy mods.
+# 5/27/22.	wmk.	original code; (old preamble eliminated).
+#
+# Notes. ReportUnassigned.sh will always be made. MakeReportUnassigned
+# assumes DoSed edited ReportUnassigned.psq > ReportUnassigned.sql
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+.PHONY : Always ;
+.ONESHELL : ;
+
+ procpath = $(codebase)/Procs-Dev
+scpafolder = $(pathbase)/RawData/SCPA/SCPA-Downloads
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+ projpath = $(codebase)/Projects-Geany/UpdateCongTerr
+
+#ReportUnassigned.sh primary target
+#====================================================================
+#ReportUnassigned.sh :   ReportUnassigned.sq  ReportUnassigned.sql \
+# ReportUnassigned.psq
+Always : $(projpath)/ReportUnassigned.sql $(projpath)/ReportUnassigned.psq
+	cd $(altproj); ./DoSed.sh $(projpath) ReportUnassigned
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	echo "** Now run ReportUnassigned.sh from Terminal to integrate Diffs0404 into Terr86777 **"
+
+$(projpath)/ReportUnassigned.sql : $(projpath)/ReportUnassigned.psq
+	if ! test -f $@;then \
+	 echo "** Run DoSed to update ReportUnassigned.sql from ReportUnassigned.psq **";exit 1;fi
+
+$(projpath)/ReportUnassigned.psq :;
+	if ! test -f $@;then \
+	 echo "  ** ReportUnassigned.psq missing for ReportUnassigned.sh build **";exit 1;fi
+	 
+#====================================================================
+# end MakeReportUnassigned

@@ -1,0 +1,32 @@
+# MakeQGetTerr - QGetTerr makefile.
+#	6/26/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 6/26/22.	wmk.	original code.
+
+ifndef folderbase
+endif
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase=/media/ubuntu/Windows/Users/Bill
+ else
+  folderbase=$(HOME)
+ endif
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+bashpath = $(pathbase)/Procs-Dev
+projbase = $(pathbase)/Projects-Geany/
+projpath = $(projbase)BridgesToTerr
+targpath = $(pathbase)/TerrData/Terryyy/Working-Files
+
+.PHONY : CopyBridges
+.NOTPARALLEL : ;
+.ONESHELL : ;
+
+
+#=======================================================

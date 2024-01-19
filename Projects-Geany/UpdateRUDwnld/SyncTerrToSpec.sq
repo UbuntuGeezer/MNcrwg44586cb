@@ -1,0 +1,48 @@
+-- * SyncTerrToSpec.sq- Synchronize Terrxxx_RU.db with new Specxxx_RU.db records.
+-- * 7/2/23.	wmk.
+-- *  copy and edit this SQL template to territory RU download folder.
+-- * Modification History.
+-- * ---------------------
+-- * 4/25/22.	wmk.	original code; udpated previously using *pathbase env var.
+-- * 7/2/23.	wmk.	MakeSyncTerrToSpec *makefile modified to skip this code
+-- *			 by detecting NOMAP semaphore file. If NOMAP semaphore is present
+-- * 			 in the territory folder, MakeSyncTerrToSpec will run the
+-- *			 SyncNOMAPTerr query instead.
+.cd '$pathbase'
+.cd './RawData/RefUSA/RefUSA-Downloads/Terrxxx'
+--.trace 'Procs-Dev/SQLTrace.txt'
+-- open Terrxxx_RU.db and attach Specxxx_RU.db;
+.open 'Terrxxx_RU.db'
+ATTACH 'Specxxx_RU.db' AS db29;
+-- insert records from Specxxx_RU.db.Spec_RUBridge into;
+--   Terrxxx_RU.db.Terrxxx_RUBridge;
+INSERT INTO Terrxxx_RUBridge
+ SELECT * FROM db29.Spec_RUBridge;
+-- trim UnitAddress fields before eliminating dups;
+UPDATE Terrxxx_RUBridge
+SET UnitAddress = trim(UnitAddress);
+-- eliminate oldest dups from Terrxxx_RUBridge based on UnitAddress,Unit;
+-- NOTE: empty Unit fields are expected to be "", not null;
+DELETE FROM Terrxxx_RUBridge 
+WHERE rowid NOT IN (SELECT MAX(rowid) FROM Terrxxx_RUBridge
+	GROUP BY UnitAddress, Unit);
+-- * now see if can set parcel IDs.
+ATTACH '$folderbase/Territories/RawData/SCPA/SCPA-Downloads/Terrxxx/Terrxxx_SC.db'
+	AS db11;
+with a AS (SELECT OwningParcel as PropID, 
+ TRIM(UnitAddress) AS StreetAddr, Unit AS SCunit
+ FROM TERRxxx_SCBridge)
+UPDATE Terrxxx_RUBridge
+SET OwningParcel = 
+CASE 
+WHEN Upper(trim(UnitAddress))
+ IN (SELECT StreetAddr FROM a
+ WHERE SCunit IS Unit)
+ THEN (SELECT PropID FROM a 
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress))
+   AND SCunit IS Unit)
+ELSE OwningParcel
+END 
+WHERE OwningParcel IS "-";
+.quit
+-- end SyncTerrToSpec.sq;

@@ -1,0 +1,1 @@
+-rwxr-xr-x 1 vncwmk3 vncwmk3 8.9M 2023-02-04 02:55 /home/vncwmk3/Territories/FL/SARA/86777/DB-Dev/Terr86777.db

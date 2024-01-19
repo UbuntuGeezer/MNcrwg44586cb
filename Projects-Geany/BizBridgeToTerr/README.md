@@ -1,0 +1,77 @@
+README - BizBridgeToTerr project documentation.<br>
+	10/15/21.	wmk.
+##Modification History.
+<pre><code>8/12/21.	wmk.	original document.
+10/15/21.	wmk.	Setup section added.
+</code></pre>
+##Document Sections.
+<pre><code>Project Description - overall project description.
+Dependencies - prerequisite and other dependencies.
+Setup - set up and run project instructions.
+</code></pre>
+##Project Description.
+BizBridgeToTerr takes the Bridge data from the RU download business
+database and selects all the Bridge table records into a .csv for use by
+Calc in generating a business territory.
+
+This project is a bit unconventional in that, unlike other projects, the
+primary target of the build is phony. All of the results of this build
+are side-effects, that will be used in generating territories.
+##Dependencies.
+Most of the project dependencies are shell files that were invoked
+individually prior to defining the makefile for this project.
+
+MakeBizBridgeToTerr.tmp - template for MakeBizBridgeToTerr makefile to build
+   from the Bridges in databases to a territory table, then ultimately
+   to a .csv file for use by Calc in generating the publisher territory.
+
+DoSed.sh - sed preprocessor to edit territory ID into MakeBizBridgeToTerr.
+
+TIDList.txt - [optional] list of territory IDs for repeated calls to
+   process multiple territories from their Bridge tables to .csv files
+   to generate publisher territories.
+
+Procs-Dev Shells.
+ClearTerr.sh - shell to clear all territory records from PolyTerri and
+   MultiMail for fresh generation of records.
+
+CombineBridgeNames.sh - shell to combine all owner names from SCPA county
+   data into comma separated field for publisher territory.
+
+SetSCRUdncs.sh - set donotcall fields in territory records.
+
+NewRUSCTerrToDBs - move RU and SC territory records from territory Bridge
+   tables into PolyTerri and MultiMail dbs.
+
+QGetTerr.sh - extract territory records from PolyTerri and MultiMail into
+   QTerrxxx.db for publisher territory generation.
+
+SortQTerrByAddr.sh - sort QTerrxxx.db records by address, using house/bldg
+   number as integer to assure correct ordering by Calc.
+
+QGenTable.sh - generate table.csv records for import into Calc for 
+   generating territory.
+
+Project Shells.
+LastChanceDNCs.sh - redo DNC fields in QTerrxxx.db to ensure no DNCs missed.
+
+LastChanceDNCs.sq - SQL query built into .sh shell for setting DNC fields.
+
+Other Projects Dependencies.
+MakeBizBridgeToTerr uses other projects in processing.
+
+MakeAnySQLtoSH - project to take any SQL file and convert it to a series
+   of shell commands, generating SQLTemp.sql for sqlite.
+##Setup.
+Ensure that file Mapxxx_RU.csv exists in BTerrData/BRefUSA/BRefUSA-Downloads/Terrxxx
+ folder and is a RefUSA business polygon download.
+ 
+ Build Menu: "sed" command, edit the territory ID in the command line
+	run "sed" Build menu item to set up MakeBizBridgeToTerr makefile
+	run "Make Dry Run" Build menu item to dry-run the make process
+	run "Make" Build menu item to generate the QBTerrxxx.csv file for
+	 input to ProcessBQTerrs.ods Calc workbook
+
+At this point, LibreOffice/Calc is used to generate the actual business
+territory from the .csv file generated above.
+ 

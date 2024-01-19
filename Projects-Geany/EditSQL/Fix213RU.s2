@@ -1,0 +1,25 @@
+-- ** END FixFromSC **********;
+--/**/
+
+
+-- ** subquery **********
+-- *	3/25/21.	wmk.
+-- *--------------------------
+-- *
+-- * subquery_name - simple description.
+-- *
+-- * Entry DB and table dependencies.
+-- *   <list main DB and ATTACHed DBs and tables>
+-- *
+-- * Exit DB and table results.
+-- *
+-- * Notes.
+-- *;
+
+-- ** END query **********;
+
+.quit
+-- ** END Fix213RU **********;
+
+
+

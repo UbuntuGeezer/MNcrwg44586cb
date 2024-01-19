@@ -1,0 +1,93 @@
+README - ArchivingBackups project documentation.
+	11/16/21.	wmk.
+
+Modification History.
+---------------------
+6/28/21.	wmk.	original documentation.
+7/1/21.		wmk.	original moved to README-Territories; rewrite
+					documenting ArchivingBackups README files.
+7/26/21.	wmk.	documentation of shell utilities IncDumpRawData,
+					IncDumpTerrData.
+11/16/21.	wmk.	add IncDumpRelease and RestartIncRelease.
+					
+Project Description.
+--------------------
+The ArchivingBackups project is a central information point regarding
+the file archiving and backup provisions. Currently there is no "make"
+file. Information regarding specific system backups is found in the
+following files:
+
+	README-Projects - documentation on backups of Projects in GitHub
+	  folders to flash drives.
+	  
+	README-Territories - documentation on backups of Territories project
+	  files and databases.
+	  
+	README-System - documentation on backups of ubuntu system for
+	  improved system recovery if Windows HDD fails.
+
+Dependencies.
+-------------
+The incremental dump shell utilities are dependent upon the following:
+
+	Territories/log/Rawlevel.txt - text file with numeric level of current
+		incrmental RawData.level.tar to be created. If this file does not
+		exist it will be initialized with "0" and a full dump will be
+		performed.
+
+	Territories/log/TDlevel.txt - text file with numeric level of current
+		incremental TerrData.level.tar to be created. If this file does
+		not exist it will be initialized with "0" and a full dump will
+		be performed. (recorded as TerrData.0.tar
+
+	Territories/log/RawData.snar-cycle - --listed-incremental snapshot
+	    archive information for RawData.level.tar incremental dump.
+	
+	Territories/log/TerrData.snar-cycle - --listed-incremental snapshot
+		archive information for TerrData.level.tar incremental dump.
+
+
+Shell Utility Files.
+--------------------
+IncDumpRawData.sh - perform incremental dump of Territories/RawData folders
+  to uncompressed RawData.cycle.tar, where cycle taken from file
+  Territories/Rawlevel.txt.
+
+IncDumpRURaw.sh - perform incremental dump of Territories/RawData/RefUSA folders
+  to uncompressed RawDataRU.cycle.tar, where cycle taken from file
+  Territories/RawRUlevel.txt.
+
+IncDumpSCRaw.sh - perform incremental dump of Territories/RawData/SCPA folders
+  to uncompressed RawDataSC.cycle.tar, where cycle taken from file
+  Territories/RawRUlevel.txt.
+
+IncDumpTerrData.sh - perform incrmental dump of Territories/TerrData folders
+  to uncompressed TerrData.cycle.tar where cycle taken from file
+  Territories/TDlevel.txt.
+
+IncDumpRelease.sh - perform incrmental dump of Territories/ReleasData folders
+  to uncompressed TerrData.cycle.tar where cycle taken from file
+  Territories/TDlevel.txt.
+	  
+TerrFullData.sh - perform full dump of both RawData and TerrData folder
+  paths; uses ./tarxcptlist.txt as exceptions list of patterns to ignore.
+
+RestartIncRawData.sh - restart fresh incremental dump archive of RawData
+  by removing Territories/log/Rawlevel.txt; also removes all
+  Territories/RawData.cycle.tar files to start fresh (after warning).
+
+RestartIncRURaw.sh - restart fresh incremental dump archive of RawData/RefUSA
+  by removing Territories/log/RawRUlevel.txt; also removes all
+  Territories/RawDataRU.cycle.tar files to start fresh (after warning).
+
+RestartIncSCRaw.sh - restart fresh incremental dump archive of RawData/SCPA
+  by removing Territories/log/RawSClevel.txt; also removes all
+  Territories/RawDataSC.cycle.tar files to start fresh (after warning).
+
+RestartIncTerrData.sh - restart fresh incrmental dump archive of TerrData
+  by removing Territories/log/TDlevel.txt; also removes all 
+  Territories/TerrData.cycle.tar file to start fresh (after warning).
+
+RestartIncRelease.sh - restart fresh incremental dump archive of ReleaseData
+  by removing Territories/log/Releaselevel.txt; also removes all
+  Territories/Release.cycle.tar files to start fresh (after warning).

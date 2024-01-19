@@ -1,0 +1,60 @@
+# MakeIntegrateOldDiffs.tmp - (template) IntegerateOldDiffs makefile to build IntegrateOldDiffs.sh
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	1/23/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 8/29/21.	wmk.	original makefile.
+# 9/8/21.	wmk.	modified to rebuild IntegrateOldDiffs.sh after DoSed run for
+#					project; y yy added so DoSed can set up this makefile for 
+#					territory xxx.
+# 9/9/21.	wmk.	cloned into UpdateMHPDwnld from UpdateRUDwnld project;
+#					projpath var edited to UpdateMHPDwnld; MakeUpdateMHPDwnld
+#					prerequisite added to force rebuild whenever DoSed changes
+#					MakeUdpateMHPDwnld
+# 1/23/22.	wmk.	multihost code updated; chmod added to allow execution
+#			 of resultant .sh.
+#
+# Notes. DoSed for the UpdateRUDwnld project edits the territory ID into the
+# ExtractOldDiffs.psq template to produce ExtractOldDiffs.sql. The resultant
+# .sql file is picked up by this makefile to generate ExtractOldDiffs.sh.
+
+.ONESHELL :
+.PHONY : 
+
+ifeq ($(HOME),/home/ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+else
+  folderbase = $(HOME)
+endif
+
+ bashpath = $(codebase)/Territories/Procs-Dev/
+ projpath = $(codebase)/Territories/Projects-Geany/UpdateMHPDwnld
+
+# IntegrateOldDiffs.sh
+#==========================================================
+$(projpath)/IntegrateOldDiffs.sh : $(projpath)/IntegrateOldDiffs.sq
+	#echo "IntegrateOldDiffs.sh runs 'as-is' using sqlite and IntegrateOldDiffs.sql"
+	cat $(bashpath)hdrAnySQL_1.sh $(projpath)/IntegrateOldDiffs.sq $(bashpath)hdrAnySQL_2.sh \
+  	 > $@
+	sed -i 's?<filename>?IntegrateOldDiffs?g' $@
+	chmod 700 $@
+
+
+$(projpath)/IntegrateOldDiffs.sq : $(projpath)/IntegrateOldDiffs.sql
+	sed 's?xxx?yyy?g' $(projpath)/IntegrateOldDiffs.psq > $(projpath)/IntegrateOldDiffs.sql
+	$(bashpath)AnySQLtoSQ.sh $(projpath) IntegrateOldDiffs
+
+
+$(projpath)/IntegrateOldDiffs.sql : $(projpath)/IntegrateOldDiffs.psq
+	sed 's?xxx?yyy?g' $(projpath)/IntegrateOldDiffs.psq > $(projpath)/IntegrateOldDiffs.sql
+	
+
+$(projpath)/IntegrateOldDiffs.psq : ;
+	(warning ** IntegrateOldDiffs.psq missing for IntegrateOldDiffs.sq build **)
+
+AlwaysMake : ;
+
+#==========================================================
+#end MakeIntegrateOldDiffs

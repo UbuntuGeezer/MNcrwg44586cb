@@ -1,0 +1,76 @@
+
+# MakeIntegrateOldDiffs.tmp - (template) IntegerateOldDiffs makefile to build IntegrateOldDiffs.sh
+#	6/6/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 6/6/23.	wmk.	*pathbase corrected; duplicate .PHONY removed; main recipe
+#			 updated; comments tidied.
+# Legacy mods.
+# 9/22/22.	wmk.    (automated) *codebase env var support.
+# 9/22/22.	wmk.    (automated) CB *codebase env var support.
+# 10/4/22.	wmk.	*pathbase corrected for CB system.
+# Legacy mods.
+# 4/25/22.	wmk.	modified for general use FL/SARA/86777.
+# 5/4/22.	wmk.	(automated) path corrections.
+# Legacy mods.
+# 8/29/21.	wmk.	original makefile.
+# 9/8/21.	wmk.	modified to rebuild IntegrateOldDiffs.sh after DoSed run for
+#					project; y yy added so DoSed can set up this makefile for 
+#					territory xxx.
+# Notes. DoSed for the UpdateRUDwnld project edits the territory ID into the
+# ExtractOldDiffs.psq template to produce ExtractOldDiffs.sql. The resultant
+# .sql file is picked up by this makefile to generate ExtractOldDiffs.sh.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : ;
+.ONESHELL : ;
+
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+.PHONY : ;
+
+ bashpath = $(codebase)/Territories/Procs-Dev
+ projpath = $(codebase)/Territories/Projects-Geany/UpdateRUDwnld
+ altproj = $(codebase)/Territories/Projects-Geany/AnySQLtoSH
+ 
+# IntegrateOldDiffs.sh
+#==========================================================
+$(projpath)/IntegrateOldDiffs.sh : $(projpath)/IntegrateOldDiffs.sql
+	#echo "IntegrateOldDiffs.sh runs 'as-is' using sqlite and IntegrateOldDiffs.sql"
+	cd $(altproj);./DoSed.sh $(projpath) IntegrateOldDiffs
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+
+$(projpath)/IntegrateOldDiffs.sql : 
+	if ! test -f $@;then \
+	 echo " ** IntegrateOldDiffs.sql missing for IntegrateOldDiffs.sh build **";exit 1;fi
+
+
+#==========================================================
+#end MakeIntegrateOldDiffs

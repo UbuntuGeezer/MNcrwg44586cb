@@ -1,0 +1,104 @@
+&apos;// ParseUnit.bas - Parse bridge table unit field.
+&apos;//---------------------------------------------------------------
+&apos;// ParseUnit - Parse bridge table unit field.
+&apos;//		2/9/21.	wmk.
+&apos;//---------------------------------------------------------------
+
+public sub ParseUnit( psUnitStr As String, psSCUnit As String,_
+			psBldUnit As String, psBldg As String, psBldNum As String )
+
+&apos;//	Usage.	macro call or
+&apos;//			call ParseUnit(sUnitStr, sSCUnit, sBldUnit, sBldg, sBldNum)
+&apos;//
+&apos;//		sUnitStr = full unit string, likely from SC data
+&apos;//					&lt;unit-string&gt; ::= NULL | &lt;unit-spec&gt;
+&apos;//					&lt;unit-spec&gt; ::= &lt;unit&gt; | &lt;unit&gt; &lt;unit-suffx&gt;
+&apos;//					&lt;unit&gt; ::= &lt;n&gt;[&lt;n&gt;*] | &lt;a&gt; | &lt;a&gt;-&lt;n&gt;[&lt;n&gt;*]
+&apos;//						| &lt;n&gt;[&lt;n&gt;*]/&lt;a&gt;[&lt;a&gt;*]
+&apos;//					&lt;unit-sufx&gt; ::= &lt;bldg&gt; | BLD &lt;bldg&gt;
+&apos;//
+&apos;// Entry,
+&apos;//
+&apos;//	Exit.	sSCUnit = SC unit extracted from &lt;exit conditions&gt;
+&apos;//
+&apos;// Calls. Crack
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;// 2/9/21.		wmk.	original code
+&apos;//
+&apos;// Method. Crack up to 3 fields, space-separated
+&apos;//			Crack field1 for &quot;/&quot;
+&apos;//				if present, cracked portion is SCUnit, remaining is BldUnit
+&apos;//				otherwise is SCUnit and BldUnit is empty
+&apos;//			sBldg is returned (field2) &quot;BLD&quot; or similar string
+&apos;//			sBldNum is returned (field3)
+&apos;//
+&apos;//	Notes. For all UnitStr fields, space is the only recognized delimiter.
+&apos;// The SC data has NO STANDARDS, so this is at best guesswork. ParseUnit
+&apos;// will parse at most 3 fields, assuming the first to be the unit and
+&apos;// any subsequent fields &quot;BLD&quot; or &quot;BLDG&quot; followed by a building designator.
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+&apos;psUnitStr - passed full unit string
+&apos;psSCUnit - [returned] SC unit from string nnn/a
+&apos;psBldUnit - [returned] building physical unit from string nnn/a
+&apos;psBldg - [returned] &quot;BLD&quot; or &quot;BLDG&quot; or &quot;&quot;
+&apos;psBldNum - [returned] building number field
+dim sUnitStr	As String	&apos;// copy of passed full unit string for parsing
+dim sSCUnit		As String	&apos;// returned SC unit
+dim sBldUnit	As String	&apos;// returned physical unit
+dim sBldg		AS String	&apos;// returned BLD or similar string
+dim sBldNum		As String	&apos;// returned building number field
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+
+	&apos;// initialize returned string vars.
+	sScUnit = &quot;&quot;
+	sBldUnit = &quot;&quot;
+	sBldg = &quot;&quot;
+	sBldNum = &quot;&quot;
+	sUnitStr = trim(psUnitStr)
+	if len(sUnitStr) = 0 then
+	   goto NormalExit
+	endif
+
+dim sField1		As String	&apos;// 1st cracked field
+dim sField2		As String	&apos;// 2nd cracked field
+dim sField3		As String	&apos;// 3rd cracked field
+dim sSep		As String	&apos;// Crack found separator
+	
+	&apos;// Crack up to 3 fields on space.
+	sUnitStr = trim(psUnitStr)
+	sField1 = &quot;&quot;
+	sField2 = &quot;&quot;
+	sField3 = &quot;&quot;
+	Crack(sUnitStr, &quot; &quot;, sField1, sSep)
+	if len(sSep) &gt; 0 then
+	   Crack(sUnitStr, &quot; &quot;, sField2, sSep)
+	   sField3 = sUnitStr
+	endif
+	
+	Crack(sField1, &quot;/&quot;, sSCUnit, sSep)
+	sBldUnit = sField1
+	
+NormalExit:
+&apos;psSCUnit - [returned] SC unit from string nnn/a
+&apos;psBldUnit - [returned] building physical unit from string nnn/a
+&apos;psBldg - [returned] &quot;BLD&quot; or &quot;BLDG&quot; or &quot;&quot;
+&apos;psBldNum - [returned] building number field
+	psSCUnit = sSCUnit
+	psBldUnit = sBldUnit
+	psBldg = sBldg
+	psBldNum = sBldNum
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;ParseUnit - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end ParseUnit	2/9/21.

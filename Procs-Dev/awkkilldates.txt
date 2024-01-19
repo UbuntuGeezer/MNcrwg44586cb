@@ -1,0 +1,9 @@
+# awkkilldates.txt - *mawk date selection directives.
+#	9/1/23.	wmk.
+#
+# select dates prior to today.
+BEGIN{b=substr(testdate,1,4) substr(testdate,6,2) substr(testdate,9,2)}
+{a=substr($6,1,4) substr($6,6,2) substr($6,9,2)
+ # print "a = " a ", b = " b
+ if (a < b){print $8};;
+}

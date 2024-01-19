@@ -1,0 +1,36 @@
+# MakeGenRUSpecList - GenRUSpecList makefile.
+#	11/28/22.	wmk.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+projpath = $(codebase)/Projects-Geany/ArchivingBackups
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# GetRUSpecList.sh
+########################################################
+ $(projpath)/GetRUSpecList.sh : $(projpath)/GetTerrRUSpecList.sql
+	cd $(altproj);./DoSed.sh $(projpath) GetTerrRUSpecList
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	echo "** Now run GetTerrRUSpecList.sh to generate dump list. **"
+  	
+$(projpath)/GetTerrRUSpecList.sql :;
+	if ! test -f $@;then \
+	 echo "** GetTerrRUSpecList.sql missing for GetTerrRUSpecList.sh build **;exit 1;fi
+
+########################################################
+

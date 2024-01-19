@@ -1,0 +1,61 @@
+#!/bin/bash
+echo " ** ExtractBody.sh out-of-date **";exit 1
+echo " ** ExtractBody.sh out-of-date **";exit 1
+# 9/23/22.    wmk.   (automated) CB *codebase env var support.
+# 10/4/22.    wmk.   (automated) fix *pathbase for CB system.
+# ExtractBody.sh - Rebuild all FixyyySC.sh files on *pathbase*.
+#	9/21/22.	wmk.
+#
+# Usage.  bash ExtractBody.sh <source> <target>
+#
+#	<source> = file with block delimited by "procbodyhere" "endprocbody"
+#				(usually a .sh file)
+#	<target> = (optional) target file for extraction
+#			     default is <source>.bdy
+#
+# Modification History.
+# ---------------------
+# 5/29/22.	wmk.	original code.
+# 9/21/22.	wmk.	"# endprocbody." added to <target> end of file.
+#
+P1=$1
+P2=$2
+if [ -z "$P1" ];then
+ echo "ExtractBody <source> [<target>] missing parameter(s) - abandoned."
+ exit 1
+fi
+if [ -z "$P2" ];then
+ P2=$P1.bdy
+fi
+if ! test -f $P1;then
+ echo "ExtractBody path '$P1' does not exist - abandoned."
+ exit 1
+fi
+if [ -z "$folderbase" ];then
+ if [ "$USER" == "ubuntu" ]; then
+  folderbase=/media/ubuntu/Windows/Users/Bill
+ else
+  folderbase=$HOME
+ fi
+fi
+if [ -z "$codebase" ];then
+ codebase=$folderbase/GitHub/TerritoriesCB
+fi
+if [ -z "$pathbase" ];then
+ export pathbase=$folderbase/Territories/FL/SARA/86777
+fi
+if [ -z "$system_log" ]; then
+  system_log=$folderbase/ubuntu/SystemLog.txt
+  ~/sysprocs/LOGMSG "  ExtractBody - initiated from Make"
+  echo "  ExtractBody - initiated from Make"
+else
+  ~/sysprocs/LOGMSG "  ExtractBody - initiated from Terminal"
+  echo "  ExtractBody - initiated from Terminal"
+fi 
+TEMP_PATH=$HOME/temp
+# procbodyhere.
+mawk '/procbodyhere/,/endprocbody/{print}END {print "# endprocbody."}' $P1 > $P2
+#endprocbody.
+~/sysprocs/LOGMSG "  ExtractBody $P1 complete."
+echo "  ExtractBody $P1  $P2 complete."
+# end ExtractBody.sh

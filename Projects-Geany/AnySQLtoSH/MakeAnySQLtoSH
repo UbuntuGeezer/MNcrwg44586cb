@@ -1,0 +1,100 @@
+# MakeAnySQLtoSH.tmp - template for make MakeAnySQLtoSH.
+#	10/5/22.	wmk.
+#
+#	Dependencies.
+#		hdrAnySQL.sh in folder ~/Procs-Dev
+#		Fix275RU set in Build (DoSed)
+#		/home/vncwmk3/Territories/MN/CRWG/99999/RawData/RefUSA/RefUSA-Downloads/Terr275 set in Build (DoSed)
+#		Fix275RU.sql in folder ~/Territories//home/vncwmk3/Territories/MN/CRWG/99999/RawData/RefUSA/RefUSA-Downloads/Terr275
+#		[preamble.sql] in folder ~/Territories//home/vncwmk3/Territories/MN/CRWG/99999/RawData/RefUSA/RefUSA-Downloads/Terr275
+#
+#	Build results.
+#		if [preamble.sql] present, is inserted just after hdrAnySQL_1.sh
+#		Fix275RU.sq in folder /home/vncwmk3/Territories/MN/CRWG/99999/RawData/RefUSA/RefUSA-Downloads/Terr275
+#		Fix275RU.sh in folder ~/Territories//home/vncwmk3/Territories/MN/CRWG/99999/RawData/RefUSA/RefUSA-Downloads/Terr275
+#
+# Modification History.
+# ---------------------
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# 10/4/22.  wmk.    (automated) fix *pathbase for CB system.
+# 10/5/22.	wmk.	bug fix *pathbase changed to *codebase in all code
+#			 referencing paths; comments tidied.
+# Legacy mods.
+# 5/28/22.	wmk.	.PHONY Always added; always make .sh from .sql.
+# 6/5/22.	wmk.	bug fix in if test -f Fix275RU not in quotes.
+# 6/26/22.	wmk.	preamble.sh now inserted if exists in base path;
+#			 AnySQtoSH.sh actually does the insertion.
+# Legacy mods.
+# 4/23/22.	wmk.	*pathbase* env var added.
+# 5/2/22.	wmk.	*folderbase* ifndef added.
+# Legacy mods.
+# 4/17/21.	wmk.	original code.
+# 6/17/21.	wmk.	multihost support.
+# 6/26/21.	wmk.	multihost support generalized; awk replaced with cat.
+#			 superfluous "s removed.
+# 10/12/21.	wmk.	flow changed to go from .sql to .sq to .sh; documentation
+#			 updated; entry changed to require full filepath for
+#			 easy use from Make recipes.
+# 11/27/21.	wmk.	updated to use AnySQLtoSQ and AnySQtoSH shell files.
+# 12/3/21.	wmk.	bashpath replaced with bashbase, sqlpath replaced with
+#			 sqlbase, projpath replaced with projbase, basepath replaced
+#			 with terrbase.
+# 12/30/21.	wmk.	HOME changed to USER; chmod added to recipe to allow
+#			 generated .sh to execute.
+# 3/16/22.	wmk.	chmod +x in place of chmod 700
+# 3/18/22.	wmk.	projbase and projpath folderbase references corrected.
+#
+# Note. Build "sed" substitutes for Fix275RU and /home/vncwmk3/Territories/MN/CRWG/99999/RawData/RefUSA/RefUSA-Downloads/Terr275
+# throughout this template from passed values in the Build/sed item.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase=/media/ubuntu/Windows/Users/Bill
+ else
+  folderbase=$(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+vpath %.sql $(codebase)/Queries-SQL/Utilities-DB-SQL
+vpath %.sh $(codebase)/Procs-Dev
+vpath %.tmp $(codebase)/Projects-Geany/AnySQLtoSH
+
+bashbase = $(codebase)/Procs-Dev/
+ bashpath = $(codebase)/Procs-Dev
+sqlbase = $(codebase)/Queries-SQL/Utilities-DB-SQL/
+sqlpath = $(codebase)/Queries-SQL/Utilities-DB-SQL
+projbase = $(codebase)/Projects-Geany/AnySQLtoSH/
+ projpath = $(codebase)/Projects-Geany/AnySQLtoSH
+# new definition - supports Fix275RU.sh if provided.
+terrbase = $(pathbase)/
+basepath = $(pathbase)
+targpath = /home/vncwmk3/Territories/MN/CRWG/99999/RawData/RefUSA/RefUSA-Downloads/Terr275
+
+.PHONY : MakeAnySQLtoSH.tmp Always
+
+# main target: filename.sh
+#=====================================================================
+Always   : $(targpath)/Fix275RU.sql
+	if test -f $(targpath)/Fix275RU.sq;then \
+	  rm $(targpath)/Fix275RU.sq;fi
+	$(bashbase)AnySQLtoSQ.sh $(targpath) Fix275RU
+	$(bashbase)AnySQtoSH.sh $(targpath) Fix275RU  
+	chmod +x $(targpath)/Fix275RU.sh
+	
+
+$(targpath)/Fix275RU.sql   : 
+	if ! test -f $(targpath)/Fix275RU.sql;then \
+	 echo "** Fix275RU.sql missing for MakeAnySQLtoSH **";exit 1;fi
+
+#=======================================================================
+# end MakeAnySQLtoSH.tmp

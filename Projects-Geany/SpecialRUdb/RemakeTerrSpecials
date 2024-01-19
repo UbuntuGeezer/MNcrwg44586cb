@@ -1,0 +1,31 @@
+#!/bin/bash
+# RemakeTerrSpecials.sh - Run MakeSpecials for territory xxx.
+#		5/5/22.	wmk.
+#
+# Usage. bash RemakeSpecTerr.sh  <terrid>
+#
+#	<terrid> = territory ID for SedFix to work on.
+# Modification History.
+# 11/10/21.	wmk.	original code.
+# 5/5/22.	wmk.	*pathbase* support.
+#
+# set sqlpath pointing to /RefUSA-Downloads/Terrxxx
+if [ -z "$folderbase" ];then
+ if[ "$USER" == "ubuntu" ];then
+  export folderbase=/media/ubuntu/Windows/Users/Bill
+ else
+  export folderbase=$HOME
+ fi
+fi
+if [ -z "$pathabase" ];then
+ export pathbase=$folderbase/Territories/FL/SARA/86777
+fi
+P1=$1
+if [ -z "$P1" ];then
+ echo "RemakeTerrSpecials missing <terrid> parameter - abandoned."
+ exit 1
+fi
+sqlpath=$pathbase/RawData/RefUSA/RefUSA-Downloads/Terr$P1
+~/sysprocs/LOGMSG "  'make' MakeSpecials $P1."
+make -f $sqlpath/MakeSpecials
+# end RemakeSpecTerr.sh

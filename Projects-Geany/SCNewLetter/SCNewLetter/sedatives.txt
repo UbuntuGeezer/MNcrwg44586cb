@@ -1,0 +1,2 @@
+s/yyy/641/g
+s?$folderbase?/media/ubuntu/Windows/Users/Bill?g

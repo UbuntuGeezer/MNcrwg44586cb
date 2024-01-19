@@ -1,0 +1,54 @@
+# MakeSetDiffAcctsTerrIDs.tmp - makefile for SetDiffAcctsTerrIDs.sh
+#	4/25/23.	wmk.
+#
+# Exit. SetDiffAcctsTerrIDs.psq > SetDiffAcctsTerrIDs.sh
+#
+# Modification History.
+# ---------------------
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# 4/25/23.	wmk.	*pathbase corrected; comments tidied.
+# Legacy mods.
+# 5/27/22.	wmk.	original code; (old preamble eliminated).
+# 5/27/22.	wmk.	migrated from UpdateCongTerr; projpath changed to
+#			 BuildSCDiff.
+#
+# Notes. SetDiffAcctsTerrIDs.sh will always be made. MakeSetDiffAcctsTerrIDs
+# assumes DoSed edited SetDiffAcctsTerrIDs.psq > SetDiffAcctsTerrIDs.sql
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+.PHONY : Always ;
+.ONESHELL : ;
+
+ procpath = $(codebase)/Procs-Dev
+scpafolder = $(pathbase)/RawData/SCPA/SCPA-Downloads
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+ projpath = $(codebase)/Projects-Geany/BuildSCDiff
+
+#SetDiffAcctsTerrIDs.sh primary target
+#====================================================================
+#SetDiffAcctsTerrIDs.sh :  SetDiffAcctsTerrIDs.sql \
+# SetDiffAcctsTerrIDs.psq
+Always :
+	cd $(altproj); ./DoSed.sh $(projpath) SetDiffAcctsTerrIDs
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	echo "** Now run SetDiffAcctsTerrIDs.sh to set territory IDs in DiffAccts table **"
+
+
+#====================================================================
+# end MakeSetDiffAcctsTerrIDs

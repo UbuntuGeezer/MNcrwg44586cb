@@ -1,0 +1,60 @@
+&apos;// fsGetPubSheetName.bas
+&apos;//---------------------------------------------------------------
+&apos;// fsGetPubSheetName - Set PubTerr sheet name in module var.
+&apos;//		3/16/21.	wmk. 11:44
+&apos;//---------------------------------------------------------------
+
+public function fsGetPubSheetName() as String
+
+&apos;//	Usage.	sTarget = fsGetPubSheetName()
+&apos;//			
+&apos;//		sTarget = reserved string var for return of name
+&apos;//
+&apos;// Entry.	gsPubTerrSheet module var declared
+&apos;//
+&apos;//	Exit.	sTarget = gsPubTerrSheet
+&apos;//				if gsPubTerrSheet is empty on entry, it will be
+&apos;//				set to &quot;Terrxxx_PubTerr&quot; where xxx is taken from
+&apos;//				the end of the sheet title in A1
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	3/16/21.		wmk.	original code
+&apos;//
+&apos;//	Notes. The gsPubTerrSheet module var holds the name of the PubTerr
+&apos;// sheet in the territory workbook. A territory workbook has the
+&apos;// standardized name %Terrxxx% where xxx is the territory id
+&apos;// (e.g. QTerr125 for territory 125).
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim sRetValue As String
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	sRetValue = gsPubTerrSheet
+	
+	&apos;// check, if gsPubTerrSheet not set, set it from
+	&apos;// territory id.
+	if len(sRetValue) = 0 then
+		sRetValue = fsGetTerrID()
+		if len(sRetValue) = 0 then
+			GoTo ErrorHandler
+		endif
+		gsPubTerrSheet = &quot;Terr&quot; + sRetValue + &quot;_PubTerr&quot;
+		sRetValue = gsPubTerrSheet
+	endif
+	
+NormalExit:
+	fsGetPubSheetName = sRetValue
+	exit function
+	
+ErrorHandler:
+	sRetValue = &quot;&quot;
+	msgbox(&quot;fsGetPubSheetName - unprocessed error&quot;)
+	GoTo NormalExit
+
+end function 	&apos;// end fsGetPubSheetName	3/16/21.	11:44

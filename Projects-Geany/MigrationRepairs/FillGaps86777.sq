@@ -1,0 +1,42 @@
+echo "-- * FillGaps86777.psq.sql- module description."  > SQLTemp.sql
+echo "-- * 3/5/23.	wmk."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * ---------------------"  >> SQLTemp.sql
+echo "-- * 3/5/23.	wmk.	original code."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Notes. FillGaps86777 adds new records to Terr86777 from a diffs file of"  >> SQLTemp.sql
+echo "-- * records extracted from SPCA_mm-dd.db. The diffs are obtained by using"  >> SQLTemp.sql
+echo "-- * the parcel IDs from Terr86777 then selecting any records from SCPA_mm-dd.db"  >> SQLTemp.sql
+echo "-- * Datammdd with street constraints where the Account#,s are not in the"  >> SQLTemp.sql
+echo "-- * parcel IDs from Terr86777. The import .csv should be named something like"  >> SQLTemp.sql
+echo "-- * Diffsmmdd.csv."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ".open '$pathbase/DB-Dev/Terr86777.db'"  >> SQLTemp.sql
+echo "CREATE TABLE Diffs0113 ( \"Account #\" TEXT NOT NULL, \"Owner 1\" TEXT,"  >> SQLTemp.sql
+echo " \"Owner 2\" TEXT, \"Owner 3\" TEXT, \"Mailing Address 1\" TEXT,"  >> SQLTemp.sql
+echo " \"Mailing Address 2\" TEXT, \"Mailing City\" TEXT, \"Mailing State\" TEXT, "  >> SQLTemp.sql
+echo " \"Mailing Zip Code\" TEXT, \"Mailing Country\" TEXT, "  >> SQLTemp.sql
+echo " \"Situs Address (Property Address)\" TEXT, \"Situs City\" TEXT, "  >> SQLTemp.sql
+echo " \"Situs State\" TEXT, \"Situs Zip Code\" TEXT, \"Property Use Code\" TEXT, "  >> SQLTemp.sql
+echo " \"Neighborhood\" TEXT, \"Subdivision\" TEXT, \"Taxing District\" TEXT, "  >> SQLTemp.sql
+echo " \"Municipality\" TEXT, \"Waterfront Code\" TEXT, \"Homestead Exemption\" TEXT, "  >> SQLTemp.sql
+echo " \"Homestead Exemption Grant Year\" TEXT, \"Zoning\" TEXT, \"Parcel Desc 1\" TEXT, "  >> SQLTemp.sql
+echo " \"Parcel Desc 2\" TEXT, \"Parcel Desc 3\" TEXT, \"Parcel Desc 4\" TEXT, "  >> SQLTemp.sql
+echo " \"Pool (YES or NO)\" TEXT, \"Total Living Units\" TEXT, \"Land Area S. F.\" TEXT, "  >> SQLTemp.sql
+echo " \"Gross Bldg Area\" TEXT, \"Living Area\" TEXT, \"Bedrooms\" TEXT, \"Baths\" TEXT, "  >> SQLTemp.sql
+echo " \"Half Baths\" TEXT, \"Year Built\" TEXT, \"Last Sale Amount\" TEXT, "  >> SQLTemp.sql
+echo " \"Last Sale Date\" TEXT, \"Last Sale Qual Code\" TEXT, \"Prior Sale Amount\" TEXT, "  >> SQLTemp.sql
+echo " \"Prior Sale Date\" TEXT, \"Prior Sale Qual Code\" TEXT, \"Just Value\" TEXT, "  >> SQLTemp.sql
+echo " \"Assessed Value\" TEXT, \"Taxable Value\" TEXT, "  >> SQLTemp.sql
+echo " \"Link to Property Detail Page\" TEXT, \"Value Data Source\" TEXT, "  >> SQLTemp.sql
+echo " \"Parcel Characteristics Data\" TEXT, \"Status\" TEXT, \"DownloadDate\" TEXT, "  >> SQLTemp.sql
+echo " PRIMARY KEY(\"Account #\") );"  >> SQLTemp.sql
+echo ".mode csv"  >> SQLTemp.sql
+echo ".separator |"  >> SQLTemp.sql
+echo ".headers off"  >> SQLTemp.sql
+echo ".import '/home/vncwmk3/Territories/FL/SARA/86777/RawData/SCPA/SCPA-Downloads/Terr211/Diffs0113.csv' Diffs0113 "  >> SQLTemp.sql
+echo "INSERT OR IGNORE INTO Terr86777"  >> SQLTemp.sql
+echo "SELECT * from Diffs0113;"  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo "-- * END FillGaps86777.sql;"  >> SQLTemp.sql

@@ -1,0 +1,48 @@
+&apos;// PickACell.bas
+&apos;//---------------------------------------------------------------
+&apos;// PickACell - Select any cell to bring sheet into focus.
+&apos;//		10/12/20.	wmk.	21:45
+&apos;//---------------------------------------------------------------
+
+public sub PickACell()
+
+&apos;//	Usage.	macro call or
+&apos;//			call PickACell()
+&apos;//
+&apos;// Entry.	user in a spreadsheet with data in column &quot;A&quot;, starting
+&apos;//			in cell $A$6
+&apos;//
+&apos;//	Exit.	cell $A$6 selected just to anchor Frame objects
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	10/12/20.	wmk.	original code
+
+&apos;// local variables.
+dim oDocument   as object
+dim oDispatcher as object
+
+&apos;//	code.
+	ON ERROR GOTO ErrorHandler
+
+	oDocument   = ThisComponent.CurrentController.Frame
+	oDispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+	&apos;// move to cell $A$6
+dim args1(0) as new com.sun.star.beans.PropertyValue
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$A$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+
+NormalExit:
+	exit sub
+
+ErrorHandler:
+	msgbox(&quot;PickACell - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end PickACell	10/11/20

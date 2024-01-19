@@ -1,0 +1,51 @@
+cid,name,type,notnull,dflt_value,pk
+0,Account #,TEXT,1,,1
+1,Owner 1,TEXT,0,,0
+2,Owner 2,TEXT,0,,0
+3,Owner 3,TEXT,0,,0
+4,Mailing Address 1,TEXT,0,,0
+5,Mailing Address 2,TEXT,0,,0
+6,Mailing City,TEXT,0,,0
+7,Mailing State,TEXT,0,,0
+8,Mailing Zip Code,TEXT,0,,0
+9,Mailing Country,TEXT,0,,0
+10,Situs Address (Property Address),TEXT,0,,0
+11,Situs City,TEXT,0,,0
+12,Situs State,TEXT,0,,0
+13,Situs Zip Code,TEXT,0,,0
+14,Property Use Code,TEXT,0,,0
+15,Neighborhood,TEXT,0,,0
+16,Subdivision,TEXT,0,,0
+17,Taxing District,TEXT,0,,0
+18,Municipality,TEXT,0,,0
+19,Waterfront Code,TEXT,0,,0
+20,Homestead Exemption,TEXT,0,,0
+21,Homestead Exemption Grant Year,TEXT,0,,0
+22,Zoning,TEXT,0,,0
+23,Parcel Desc 1,TEXT,0,,0
+24,Parcel Desc 2,TEXT,0,,0
+25,Parcel Desc 3,TEXT,0,,0
+26,Parcel Desc 4,TEXT,0,,0
+27,Pool (YES or NO),TEXT,0,,0
+28,Total Living Units,TEXT,0,,0
+29,Land Area S. F.,TEXT,0,,0
+30,Gross Bldg Area,TEXT,0,,0
+31,Living Area,TEXT,0,,0
+32,Bedrooms,TEXT,0,,0
+33,Baths,TEXT,0,,0
+34,Half Baths,TEXT,0,,0
+35,Year Built,TEXT,0,,0
+36,Last Sale Amount,TEXT,0,,0
+37,Last Sale Date,TEXT,0,,0
+38,Last Sale Qual Code,TEXT,0,,0
+39,Prior Sale Amount,TEXT,0,,0
+40,Prior Sale Date,TEXT,0,,0
+41,Prior Sale Qual Code,TEXT,0,,0
+42,Just Value,TEXT,0,,0
+43,Assessed Value,TEXT,0,,0
+44,Taxable Value,TEXT,0,,0
+45,Link to Property Detail Page,TEXT,0,,0
+46,Value Data Source,TEXT,0,,0
+47,Parcel Characteristics Data,TEXT,0,,0
+48,Status,TEXT,0,,0
+49,DownloadDate,TEXT,0,,0

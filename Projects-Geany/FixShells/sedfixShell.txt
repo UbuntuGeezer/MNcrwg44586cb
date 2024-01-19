@@ -1,0 +1,4 @@
+/\/home\/vncwmk3/s?/home/vncwmk3?$folderbase?
+/media\/ubuntu\/Windows/s?/media/ubuntu/Windows/Users/Bill?$folderbase?
+/folderbase\/Territories/s?folderbase/Territories?pathbase?
+/pathbase=$pathbase/s?pathbase=$pathbase?pathbase=$folderbase?

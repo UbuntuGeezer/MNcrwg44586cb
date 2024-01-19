@@ -1,0 +1,66 @@
+# MakeSyncNOMAPTerr.tmp - MakeSyncNOMAPTerr template for territory xxx.
+#	7/2/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 7/2/23.	wmk.	original makefile; adapted from MakeSyncTerrToSpec.
+# Legacy mods.
+# 1/27/23.	wmk.	./DoSed.sh corrected in main recipe.
+# Legacy mods.
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# 10/4/22.  wmk.    (automated) fix *pathbase for CB system.
+# 12/30/22.	wmk.	comments tidied.
+# Legacy mods.
+# 4/24/22.	wmk.	code generalized for FL/SARA/86777;*pathbase*, 
+#			 *congterr*, *conglib* env vars introduced.
+# 4/26/22.	wmk.	*..path* env vars stripped of trailing '/.
+# 5/4/22.	wmk.	(automated) path corrections.
+# 5/29/22.	wmk.	duplicate ifndef blocks .PHONY, .ONESHELL deleted; main
+#			 recipe simplified to use AnySQLtoSH *make*.
+# Legacy mods.
+# 7/19/21.	wmk.	original code.
+# 8/20/21.	wmk.	sed fix to <filename> in primary recipe.
+# 10/12/21.	wmk.	MAJOR REVISION; .sql > .sq > .sh.
+# 12/28/21.	wmk.	chmod 700 added to recipe so .sh will execute.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : ;
+.ONESHELL : ;
+
+prepath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terrxxx
+ procpath = $(codebase)/Procs-Dev
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# SyncNOMAPTerr.sh primary target.
+#=====================================================================================
+$(prepath)/SyncNOMAPTerr.sh : $(prepath)/SyncNOMAPTerr.sql
+	cd $(altproj);./DoSed.sh $(prepath) SyncNOMAPTerr
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+
+$(prepath)SyncNOMAPTerr.sql : ;
+	if ! test -f $@;then; \
+	 echo " ** missing SyncNOMAPTerr.sql for MakeSyncNOMAPTerr **";exit 1;fi
+	
+#====================================================================================
+# end MakeSyncNOMAPTerr

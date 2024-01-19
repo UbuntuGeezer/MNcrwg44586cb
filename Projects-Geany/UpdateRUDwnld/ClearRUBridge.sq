@@ -1,0 +1,12 @@
+echo "-- ClearRUBridge.psq - Clear RUBridge table in territory 273."  > SQLTemp.sql
+echo "-- *	7/9/22.	wmk."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * ---------------------"  >> SQLTemp.sql
+echo "-- * 10/20/21.	wmk.	original code."  >> SQLTemp.sql
+echo "-- * 7/9/22.	wmk.	*pathbase support."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ".open '$pathbase/RawData/RefUSA/RefUSA-Downloads/Terr273/Terr273_RU.db'"  >> SQLTemp.sql
+echo "DELETE FROM Terr273_RUBridge;"  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo "-- * end ClearRUBridge.sql;"  >> SQLTemp.sql

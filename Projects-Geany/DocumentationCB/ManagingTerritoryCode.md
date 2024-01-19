@@ -1,0 +1,81 @@
+Managing Territory Code - Managing Territory Code documentation.<br>
+1/15/23.	wmk.
+###Modification History.
+<pre><code>1/15/23.    wmk.   original document.
+</code></pre>
+<h3 id="IX">Documentation Sections.</h3>
+<pre><code><a href="#1.0">link</a> 1.0 Territory Code - overall description.
+<a href="#2.0">link</a> 2.0 Dependencies - project dependencies.
+<a href="#3.0">link</a> 3.0 Code Segment Organization - code organization by function.
+<a href="#4.0">link</a> 4.0 GitHub Code Tracking - GitHub projects for tracking code.
+<a href="#5.0">link</a> 5.0 Significant Notes - important stuff not documented elsewhere.
+</code></pre>
+<h3 id="1.0">1.0 Territory Code.</h3>
+The Territories system code is termed the "code segment". It consists of shell
+files, SQL queries, Basic spreadsheet macros and Make files for building and maintaining
+the Territories system. Much of the code segment is organized into \*geany\*
+projects for maintenance and use. Some of the code segment is distributed into
+the Territory raw data folders, mostly for correcting publisher territory-specific
+download anomalies.
+<a href="#IX">Index</a>
+<h3 id="2.0">2.0 Dependencies.</h3>
+Environment variables serve as pointers to the data segment file folders which
+are processed by various pieces of code. Following are the principal environment
+variables:<pre><code>    folderbase = base folder for the Territories system
+    pathbase = path to base folder for the congregation territory files
+    codebase = path to the base folder for the code segment files
+    congterr = 10+ character congregation territory identifier
+    rupath = path to RefUSA raw territory data
+    scpath = path to SCPA raw territory data
+    U\_DISK = path to the base folder for removable USB drives 
+    system_log = path to the system log file
+    TODAY = date stamp for new database records</code></pre>
+In addition to the environment variables, the following folders are defined
+on the *codebase* path:<pre><code>    Procs-Dev = folder for Territories system shell files
+    Projects-Geany = \*geany\* projects base folder
+    Projects-Geany/ArchivingBackups = project folder for archiving Territories files</code></pre>
+<a href="#IX">Index</a>
+<h3 id="3.0">3.0 Code Segment Organization.</h3>
+The code segment is primarily organized into projects within the *codebase*
+folders. This section documents the major groupings of source code. In the
+following discussion, RefUSA refers to Reference USA territory data, while
+SCPA refers to Sarasota County territory data. Each territory data format is
+unique enough to require its own code segment processes. As a general rule,
+any project within the Projects-Geany folders that contains "RU" as part of
+its name has code that manages RefUSA data; any project within the
+Projects-Geany folders that contains "SC" as part of its name has the code that
+manages SCPA data. Many of the projects within the Projects-Geany folders are
+utility projects that are utilized by either the "RU" or "SC" projects.
+"SC" as part of its name
+<a href="#IX">Index</a>
+<h3 id="4.0">4.0 GitHub Code Tracking.</h3>
+GitHub and its associated utility \*git\* are used for tracking all changes to
+the code segment that is not intermixed with the publisher territory data files.
+(Code segment files that are intermingled with the publisher territory data
+files are not tracked, but historically archived by utilities within the
+ArchivingBackups project).
+
+The GitHub project for code segment tracking is *TerritoriesCB*. The project
+source code is all contained under the folder ~/GitHub/TerritoriesCB. All
+folders under this main folder are part of the TerritoriesCB project. The
+*codebase* environment variable points to the this GitHub path.
+
+This GitHub project repository is a clone of the repository on the *github.com*
+website. *UbuntuGeezer* is the owner of this repository on the website. This
+repository is password-protected with an expiring password saved in the GitHub
+root directory. \*git\* utility operations that reference the *github.com*-resident
+repository must supply the current password for remote access.
+
+The TerritoriesCB repository has two branches; master - the original code from
+the initial development system, Chromebook - the code segment that is specific
+to the Chromebook system. From the Chromebook system all changes are made in
+the Chromebook branch. This prevents changes specific to the Chromebook from
+corrupting the original master code segment (generic to GNU/Ubuntu).
+
+The TerritoriesCB repository has the potential to be organized for different
+release levels of code. Currently there are no other systems on which the 
+Territories system is installed, so release tracking is not necessary. This may
+become a need in the future.
+<a href="#IX">Index</a>
+<h3 id="5.0">5.0 Significant Notes.</h3>
+<a href="#IX">Index</a>

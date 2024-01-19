@@ -1,0 +1,6 @@
+/pathbase/ s?TX/HDLG/99999?FL/SARA/86777?g
+/TXHDLG99999/ s?TXHDLG99999?FLSARA86777?g
+2 a# 5/30/22.    wmk.   (automated) pathbase corrected to FL/SARA/86777.
+
+
+

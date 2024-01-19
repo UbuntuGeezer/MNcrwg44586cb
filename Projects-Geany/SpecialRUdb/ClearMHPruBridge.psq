@@ -1,0 +1,19 @@
+-- ClearMHPruBridge.psq/sql - Clear all records from MHP RU Bridge table.
+--		4/24/22.
+-- *
+-- * ClearMHPruBridge clears all records from MHP territory Bridge table.
+-- * This is necessary for MHP territories for RegenSpecDB.sh to work correctly.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 4/24/22.	wmk.	code generalized for FL/SARA/86777;*pathbase*, 
+-- *			 *congterr*, *conglib* env vars introduced.
+-- * Legacy mods.
+-- * 11/13/21.	wmk.	original code.
+-- *
+-- *;
+
+.open '$pathbase/RawData/RefUSA/RefUSA-Downloads/Terrxxx/Terrxxx_RU.db'
+DELETE FROM Terrxxx_RUBridge;
+.quit
+-- ** end ClearMHPruBridge.sql

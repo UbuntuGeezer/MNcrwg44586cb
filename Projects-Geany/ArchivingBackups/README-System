@@ -1,0 +1,42 @@
+README-System - ArchivingBackups System documentation.
+	7/1/21.	wmk.
+
+Modification History.
+---------------------
+7/1/21.		wmk.	original documentation.
+
+Project Description.
+--------------------
+The ArchivingBackups project is a central information point regarding
+the file archiving and backup provisions. Currently there is no "make" 
+file. The "System" portion of the project relates to backing up and
+restoring the ubuntu-live-user (transient ubuntu) system. Currently the
+transient ubuntu system is extremely depenedent on the Windows HDD file
+system. In the event of a Windows HDD failure
+or accessibility issues (e.g. read-only file system), the backup and
+restore procedures here are essential.
+
+See also: README, README-Projects, README-Territories.
+
+
+Supporting Code and Utilities.
+------------------------------
+The System portion is supported by several shell files that perform
+backup and restore operations specific to the ubuntu-live-user system.
+The shell files for the system backup and restore reside in the
+GitHub/ShellFiles folder and are:
+
+PJDUMP - dump files from any GitHub project to flash drive using git
+  clone operation.
+
+ReloadSSH - reload the .ssh system files for facilitating SSH protocol
+  transfers to/from GitHub.
+
+Reload-rclone - reload the rclone configuration files that facilitate
+  rclone transfers to/from GoogleDrive gcloud: (vnc.wmk3@gmail).
+
+SETBACK - set ($)BACKUP_PATH env var to mounted flash drive to use for
+  backups or restores.
+
+
+

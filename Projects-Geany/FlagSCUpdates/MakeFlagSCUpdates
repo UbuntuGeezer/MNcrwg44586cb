@@ -1,0 +1,78 @@
+# MakeFlagSCUpdates.tmp - template for make MakeFlagSCUpdates.
+#	6/5/23.	wmk.
+#
+# Build Results: Updt305M.csv  and Updt305P.csv	generated as "update"
+#   records for MultiMail and PolyTerr dbs respectively, with new
+#   records to be written for each type.
+#
+# update happens if SCPA-Downloads/SCPADiff_mm-dd.db is newer than 
+#		SCPA-Downloads/Updtxxx.csv for all territories xxx.
+#
+# Modification History.
+# ---------------------
+# 6/5/23.	wmk.	OBSOLETE check added.
+# Legacy mods.
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# 10/4/22.  wmk.    (automated) fix *pathbase for CB system.
+# 10/5/22.	wmk.	comments tidied.
+# Legacy mods.
+# 5/1/22.	wmk.	*pathbase* support.
+# 7/1/22.	wmk.	eliminate dup .PHONY declaration.
+# Legacy mods.
+# 3/1/21.	wmk.	original code; initially set up to only do Terr 104
+#					for testing/debugging.
+# 3/3/21.	wmk.	fixed for PreProcess during Build.
+# 3/11/21.	wmk.	code reduction/simplification.
+# 5/27/21.	wmk.	modified to use env var HOME to determine ($)folderbase
+#					path.
+# 7/22/21.	wmk.	remove superfluous "s; compartmentalize build sections.
+# 11/3/21.	wmk.	'&' added to main target for both updating with single
+#					execution of recipe.
+#
+# Dependencies. - run "sed" make preprocessor after editing sed Build command.
+# 305  run Build "sed" to change 305 to territory and set download date.
+
+.NOTPARALLEL : ;
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+vpath %.csv $(pathbase)/RawData/SCPA/SCPA-Downloads/Terr305
+SCDwnldPtr = $(pathbase)/RawData/SCPA/SCPA-Downloads/
+ projpath = $(codebase)/Projects-Geany/FlagSCUpdates
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+.PHONY  : $(SCDwnldPtr)SCPADiff_05-28.db AddDiffTbl
+.ONESHELL : ;
+
+# primary target phony
+#==================================================================
+#Updt305M.csv Updt305P.csv &: $(SCDwnldPtr)SCPADiff_05-28.db
+AddDiffTbl :
+	if test -f $(pathbase)/$$scpath/Terr305/OBSOLETE;then \
+	 echo " ** Territory 305 OBSOLETE - MakeFlagSCUpdates exiting...";exit 2;fi
+	cd $(altproj);./DoSed.sh $(projpath) FlagSCUpdate
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/FlagSCUpdate.sh;then \
+	 echo "** FlagSCUpdate.sh generation failed **";exit 1;fi
+	$(projpath)/FlagSCUpdate.sh 05 28
+	
+# no "make" dependencies always makes.
+$(SCDwnldPtr)SCPADiff_05-28.db :
+	if ! test -f $(SCDwnldPtr)SCPADiff_05-28.db;then \
+	 echo "** SCPADiff_05-28.db missing for MakeFlagSCUpdates **";exit 1;fi
+#==================================================================

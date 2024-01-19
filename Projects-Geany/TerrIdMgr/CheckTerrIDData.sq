@@ -1,0 +1,18 @@
+echo "-- * CheckTerrIDData.psq/sql - Check TerrID database for territory 964;"  > SQLTemp.sql
+echo "-- * 6/2/23.	wmk."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * ---------------------"  >> SQLTemp.sql
+echo "-- * 6/2/23.	wmk.	original code."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Notes."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ".open '$pathbase/DB-Dev/TerrIDData.db'"  >> SQLTemp.sql
+echo ".mode list"  >> SQLTemp.sql
+echo ".output '$TEMP_PATH/FoundTerritory.txt'"  >> SQLTemp.sql
+echo "SELECT TerrID from Territory"  >> SQLTemp.sql
+echo "WHERE TerrID IS '964'"  >> SQLTemp.sql
+echo ";"  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo "-- * END CheckTerrDefined.sql;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql

@@ -1,0 +1,216 @@
+&apos;//BridgeToEdit2.bas
+&apos;//---------------------------------------------------------------
+&apos;// BridgeToEdit2 - Admin-Bridge sheet to Admin-Edit formatted sheet.
+&apos;//		2/15/21.	wmk.	22:30
+&apos;//---------------------------------------------------------------
+
+public sub BridgeToEdit2()
+
+&apos;//	Usage.	macro call or
+&apos;//			call BridgeToEdit2()
+&apos;//
+&apos;// Entry.
+&apos;//	OwningParcel  UnitAddress  Resident1 Resident2 Phone1 Phone2 RUPhone SubTerr CongTerr DoNotCall RSO Foreign  RecordDate
+&apos;//			A			B			C		D		  E		 F		G		H		I		   J     K     L		M
+&apos;//
+&apos;//	Exit.	produces an &quot;Admin-Edit&quot; formatted sheet with the following fields:
+&apos;//	OwningParcel  UnitAddress  Resident1 Resident2 Phone1 Phone2 RUPhone
+&apos;//			A			B			C		D		  E		 F		G	
+&apos;// truepeople     411     whitepages SubTerr CongTerr DoNotCall RSO Foreign  RecordDate
+&apos;//		H			I			J		 K		  L			M	   N    O       P
+&apos;//
+&apos;// Calls. GenELinkM, SetSearchWidths
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/8/20.		wmk.	original code.
+&apos;//
+&apos;//	Notes.
+&apos;// MultiMail/SplitProps table fields.
+&apos;//		9/7/20.
+&apos;//0|OwningParcel|TEXT|1||0
+&apos;//1|UnitAddress|TEXT|1||0
+&apos;//2|Resident1|TEXT|0||0
+&apos;//3|Resident2|TEXT|0||0
+&apos;//4|Phone1|TEXT|0||0
+&apos;//5|Phone2|TEXT|0||0
+&apos;//6|RefUSA-Phone|TEXT|0||0
+&apos;//7|SubTerritory|TEXT|0||0
+&apos;//8|CongTerrID|TEXT|0||0
+&apos;//9|DoNotCall|INTEGER|0|0|0
+&apos;//10|RSO|INTEGER|0|0|0
+&apos;//11|Foreign|INTEGER|0|0|0
+&apos;//12|RecordDate|REAL|0|0|0
+&apos;//13|DeletePending|INTEGER|0|0|0
+&apos;// Method.
+&apos;//		Insert 3 columns at H
+&apos;// 	Set column headings &quot;search/truepeople&quot;, &quot;search/411&quot;, &quot;search/whitepages
+&apos;//     Select all active rows
+&apos;//     run GenELineM to generate hyperlinks
+&apos;//		H1 = &quot;Admin-Edit formatted sheet&quot; 
+
+&apos;//	constants.
+const COL_PARCEL=0		&apos;// &quot;OwningParcel&quot; column index
+const COL_A=0
+const COL_B=1
+const COL_C=2	
+const COL_D=3
+const COL_E=4
+const COL_F=5
+const COL_G=6			&apos;// column G index
+const COL_H=7			&apos;// column H index
+const COL_I=8			&apos;// column I index
+const COL_J=9			&apos;// column J index
+const COL_K=10			&apos;// column K index
+const COL_L=11			&apos;// column L index (DoNotCall)
+const COL_M=12			&apos;// column M index (RSO)
+const COL_N=13			&apos;// column N index (Foreign)
+const ROW_1=0
+const ROW_2=1
+const ROW_3=2
+const ROW_4=3
+const ROW_HEADING=4		&apos;// headings row index
+const LJUST=1		&apos;// left-justify HoriJustify				&apos;// mod052020
+const CJUST=2		&apos;// center HoriJustify						&apos;// mod052020
+const RJUST=3		&apos;// right-justify HoriJustify				&apos;// mod052320
+const MDYY=30		&apos;// &apos;M/D/YY&apos; format value
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+dim oMrgRange	As Object	&apos;// merge range
+
+dim oCell	As Object		&apos;// cell working on
+dim i		As Integer		&apos;// loop index
+dim sPropID	As String		&apos;// property ID
+dim sSubTerr	As String	&apos;// subterritory
+dim sCongTerr	As String	&apos;// cong terr ID
+dim lRowCount	As Long		&apos;// row count of addresses
+dim dDate		As Double	&apos;// date value
+dim sCityStZip	As String	&apos;// concatenated City, State, Zip
+dim sNotes		As String	&apos;// notes field
+
+
+	&apos;// code.
+	ON ERROR GoTo ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	
+	&apos;// extract row count for looping
+	oCell =	oSheet.getCellByPosition(COL_B, ROW_2)
+	lRowCount = oCell.Value
+
+	&apos;//     Insert 3 columns at H
+	oSheet.Columns.insertByIndex(COL_H,3)
+	
+	&apos;//	Clear K1 (former H1 sheet type)
+	oCell =	oSheet.getCellByPosition(COL_K, ROW_1)
+	oCell.String = &quot;&quot;
+	
+	&apos;// set H1 to &quot;Admin-Edit formatted sheet&quot;
+	oCell =	oSheet.getCellByPosition(COL_H, ROW_1)
+	oCell.String = &quot;Admin-Edit formatted sheet&quot;
+	
+	
+	&apos;// set column headings
+	oCell = oSheet.getCellByPosition(COL_H, ROW_HEADING-1)
+	oCell.String = &quot;search&quot;
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_H, ROW_HEADING)
+	oCell.String = &quot;truepeople&quot;
+	oCell.HoriJustify = CJUST
+
+	oCell = oSheet.getCellByPosition(COL_I, ROW_HEADING-1)
+	oCell.String = &quot;search&quot;
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_I, ROW_HEADING)
+	oCell.String = &quot;411&quot;
+	oCell.HoriJustify = CJUST
+
+	oCell = oSheet.getCellByPosition(COL_J, ROW_HEADING-1)
+	oCell.String = &quot;search&quot;
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_J, ROW_HEADING)
+	oCell.String = &quot;whitepages&quot;
+	oCell.HoriJustify = CJUST
+
+	
+	BoldHeadings()		&apos;// set bold headings
+	SetSearchWidths()
+	SelectActiveRows()	&apos;// [Banking Library]
+	GenELinkm()
+if true then
+	GoTo NormalExit
+endif
+&apos;//-------------------------------------------------------
+	&apos;//		concatenate City State Zip B3 + &quot;FL&quot; + C3
+	sCityStZip = fsConcatCityToZip()
+
+	&apos;//		Change col A heading to &quot;id&quot;
+	oCell = oSheet.getCellByPosition(COL_A, ROW_HEADING)
+	oCell.String = &quot;id&quot;
+	oCell.HoriJustify = CJUST
+
+
+	&apos;//		move data from entire column E to B
+	oMrgRange = oRange
+	oMrgRange.StartColumn = COL_E
+	oMrgRange.EndColumn = COL_E
+	oMrgRange.StartRow = ROW_HEADING + 1
+	oMrgRange.EndRow = ROW_HEADING + lRowCount -1
+dim oTarget as new com.sun.star.table.CellAddress
+	oTarget.Sheet = oRange.Sheet
+	oTarget.Column = COL_B
+	oTarget.Row = ROW_HEADING + 1
+	oSheet.moveRange(oTarget,oMrgRange)
+
+	lThisRow = ROW_HEADING
+	for i = 0 to lRowCount-1
+		lThisRow = lThisRow + 1
+		
+		&apos;// store city, state, zip
+		oCell = oSheet.getCellByPosition(COL_E, lThisRow)
+		oCell.String = sCityStZip
+&apos;//		  for each entry set col A = &quot;&quot;
+		oCell = oSheet.getCellByPosition(COL_A, lThisRow)
+		oCell.String = &quot;&quot;
+&apos;//       for each entry if DoNotCall (J) &quot;Do NotCall&quot; into F
+        sNotes = &quot;&quot;
+		oCell = oSheet.getCellByPosition(COL_L, lThisRow)
+		if len(trim(oCell.String)) &gt; 0 then
+			sNotes = &quot;DoNotCall &quot; 
+		endif
+		
+&apos;//       for each entry if RSO (K) &quot;RSO&quot; into F
+		oCell = oSheet.getCellByPosition(COL_M, lThisRow)
+		if len(trim(oCell.String)) &gt; 0 then
+			sNotes = sNotes + &quot;RSO &quot;
+		endif
+
+&apos;//       for each entry if Foreign (L) &quot;Foreign&quot; into F
+		oCell = oSheet.getCellByPosition(COL_N, lThisRow)
+		if len(trim(oCell.String)) &gt; 0 then
+			sNotes = sNotes + &quot;Foreign&quot;
+		endif
+		oCell = oSheet.getCellByPosition(COL_F, lThisRow)
+		oCell.String = sNotes
+		
+	next i	&apos;// end loop setting row data
+&apos;//----------------------------------------------------------------
+
+NormalExit:
+	exit sub
+
+ErrorHandler:
+	msgbox(&quot;BridgeToEdit2 - unprocessed error.&quot;)
+	GoTo NormalExit
+
+end sub		&apos;// end BridgeToEdit2		2/15/20	22:30

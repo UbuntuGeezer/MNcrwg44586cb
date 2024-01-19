@@ -1,0 +1,50 @@
+# MakeDeactivateMasterTerr.tmp - *make* file for DeactivateMasterTerr build.
+#	6/2/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 6/4/23.	wmk.	original code.
+#
+# DeactivateMasterTerr will deactivate a territory by killing all of its records
+# PolyTerri.db and MultiMail.db databases.
+# It builds DeactivateMasterTerr.sh to accomplish this.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/TerrIdMgr
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	cd $(altproj);./DoSed.sh $(projpath) DeactivateMasterTerr
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/DeactivateMasterTerr.sh;then \
+	 echo "** DeactivateMasterTerr.sh generation failed **";exit 1;fi
+	echo "** run DeactivateMasterTerr.sh to delete territory **"
+	$(projpath)/DeactivateMasterTerr.sh 965
+	echo "Territory 965 deactivated within PolyTerri and Multimail db,s."
+	
+#==================================================================
+# end MakeDeactivateMasterTerr.tmp

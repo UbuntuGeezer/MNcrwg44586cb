@@ -1,0 +1,18 @@
+#begin preamble.LastChance.txt
+#	9/15/21.	wmk.
+#
+# Modification History.
+# ----------------------
+# 7/8/21.	wmk.	original code.
+# 9/15/21.	wmk.	SC_SUFFX assignment corrected.
+TID=$P1
+NAME_BASE=Terr
+Q_NAME=Q$NAME_BASE
+DB_SUFFX=.db
+RU_SUFFX=_RUBridge
+SC_SUFFX=_SCBridge
+RU_DB=_RU.db
+SC_DB=_SC.db
+#end preamble.LastChance.txt
+str=${TID:0:1}
+if [ "$str" != "6" ];then exit 0;fi

@@ -1,0 +1,96 @@
+&apos;// SelectNewRows.bas
+&apos;//---------------------------------------------------------------
+&apos;// SelectNewRows - Select active rows containing data.
+&apos;//		10/15/20.	wmk.	12:45
+&apos;//---------------------------------------------------------------
+
+public sub SelectNewRows()
+
+&apos;//	Usage.	macro call or
+&apos;//			call SelectNewRows()
+&apos;//
+&apos;// Entry.	user in a spreadsheet with data in column &quot;A&quot;, starting
+&apos;//			in cell $A$2
+&apos;//
+&apos;//	Exit.	cells $A$2 througn $A$n selected as though user highlighted
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	10/15/20.	wmk.	original code; adapted from SelectActiveRows
+&apos;//
+&apos;//	Notes. SelectNewRows will loop starting at $A$2 until a row is 
+&apos;// found with no data in column A. A2 is assumed non-empty
+
+&apos;// local variables.
+dim oDocument   as object
+dim oDispatcher as object
+
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+dim oCell		As Object		&apos;// current scan cell
+dim bMoreRows	As Boolean
+dim nActiveRows	As Integer	&apos;// active row counter
+
+&apos;//	code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+
+	oDocument   = ThisComponent.CurrentController.Frame
+	oDispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+if true then
+  GoTo Skip1
+endif
+	&apos;// loop looking ahead and advancing until empty cell found
+&apos;	dim args2(0) as new com.sun.star.beans.PropertyValue
+	args2(0).Name = &quot;By&quot;
+	args2(0).Value = 1
+Skip1:
+
+	bMoreRows = true
+	nActiveRows = 0
+	lThisRow = 0		&apos;// current row index at A1, so start at A2
+	do while bMoreRows
+		lThisRow = lThisRow + 1
+		oCell = oSheet.getCellByPosition(0, lThisRow)
+		bMoreRows = (len(oCell.String) &gt; 0)
+		if bMoreRows then
+			nActiveRows = nActiveRows + 1
+		endif	&apos;// end next row has data conditional
+	loop
+
+
+	&apos;// move to cell $A$2
+	dim args1(0) as new com.sun.star.beans.PropertyValue
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$A$2&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	if nActiveRows &gt; 0 then
+	dim args2(0) as new com.sun.star.beans.PropertyValue
+		args2(0).Name = &quot;By&quot;
+		args2(0).Value = nActiveRows
+		oDispatcher.executeDispatch(oDocument, &quot;.uno:GoDownSel&quot;, &quot;&quot;, 0, args2())
+	endif
+Skip2:
+
+NormalExit:
+	exit sub
+
+ErrorHandler:
+	msgbox(&quot;SelectNewRows - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end SelectNewRows	10/15/20

@@ -1,0 +1,395 @@
+&apos;// GenELinkM.bas
+&apos;//---------------------------------------------------------------------
+&apos;// GenELinkM - Generate hyperlink(s) for selected Admin-Edit terr range.
+&apos;//		7/13/21.	wmk.	10:41
+&apos;//---------------------------------------------------------------------
+
+public sub GenELinkM()
+
+&apos;//	Usage.	macro call or
+&apos;//			call GenELinkM()
+&apos;//
+&apos;// Entry.	Admin-Edit sheet is active; user has selected a range of
+&apos;//			cells in desired row(s) to
+&apos;//			extract the address field from the COL_ADDR column index
+&apos;//			and create a hyperlink to look up phone/address information
+&apos;//
+&apos;//	Exit.	each row selected has a hperlink added in the COL_HLINK,
+&apos;//			COL_HLINK1 and COL_HLINK2 columns in the form:
+&apos;//			HYPERLINK(&quot;&lt;url&gt;&quot;) that will allow the end-user to click
+&apos;//			on the hyperlink url and be taken to a search webpage
+&apos;//
+&apos;// Calls.	sGen2PhoneURL, sGen2411URL, sGen2WhtPgesURL
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/4/20.		wmk.	original code; adapted from GenMLinkM
+&apos;// 9/8/20.		wmk.	documentation updated to latest format information
+&apos;//						column range is now H-J; column B contains full address
+&apos;//						error handling modified to just skip empty address row
+&apos;//						ForceRecalc called to set HYPERLINKs
+&apos;// 2/9/21.		wmk.	Changed to call sGen2PhoneURL to pass unit; const
+&apos;//						COL_UNIT added for unit handling.
+&apos;// 2/10/21.	wmk.	Changed to call sGen2411URL, sGen2WhtPgesURL
+&apos;//						to pass unit.
+&apos;// 7/13/21.	wmk.	eliminate non-error msgboxes for batch processing.
+&apos;//
+&apos;//	Notes. GenELinkM accommodates territory extracted using ImportRefUSA
+&apos;//	on raw data downloaded into a .csv from ReferenceUSA.com
+&apos;// The import goes through several phases.
+&apos;//	The 1st phase is to an Admin-Import spreadsheet by taking the ReferenceUSA
+&apos;// data and running the ImportRefUSA utility on it.
+
+&apos;// The second phase is to an Admin-Bridge spreadsheet that has the
+&apos;// data in columns compatible with MultiMail.db SplitProps table import.
+
+&apos;// The third phase is, using the Admin-Bridge sheet, an Admin-Edit sheet
+&apos;// is generated that is simplified for data entry/checking. The Admin-Edit
+&apos;// sheet contains the hyperlinks to search truepeople, 411, and whitepages.
+&apos;// GenELinkM is used to place the hyperlinks in the Admin-Edit sheet.
+&apos;//	If there is newer information in the searches, the address records can be
+&apos;// edited to either add/change names/phone numbers.
+
+&apos;// The fourth phase is the Admin-TSExport sheet that is set up to export
+&apos;// the territory in fields compatible with Territory Servant app. The
+&apos;// Admin-TSExport sheet is the essential information the publisher will
+&apos;// get when they have the territory checked out through Territory Servant.
+
+&apos;// On territory completion, the spreadsheet will follow the reverse process.
+&apos;// The spreadsheet will be moved directly to the Admin-Edit sheet.
+&apos;// If the publisher noted changes in name(s), phone(s) or status (e.g. DoNotCall)
+&apos;//	the spreadsheet will then be edited to reflect the changes.
+
+&apos;// Once updated if necessary on the return cycle, the spreadsheet will
+&apos;// migrate upwards to the Admin-Bridge spreadsheet. From there, any
+&apos;// changed records can be found and replaced in the MultiMail SplitProps
+&apos;// table. Once updated, the spreadsheet will go back through the phases
+&apos;// and supplied to the territory servant as an updated territory.
+&apos;//
+&apos;//	Method. for each row, extract address field from COL_GULLADDR
+&apos;//		use sGen2PhoneURL to generate url from address
+&apos;//     add HYPERLINK(&quot;&lt;url&gt;&quot;) to create hyperlink
+&apos;//		store hyperlink in row at COL_HLINK, COL_HLINK1, COL_HLINK2
+
+&apos;// Notes2. Due to mods to the bridge sheet format, the address column
+&apos;// now only contains the street address, and a new column was added
+&apos;// next to it containing the unit. The SitusAddress column may/may not
+&apos;// have a unit. So this version does not need to parse the situs. Instead
+&apos;// it will parse the UnitAddress field (COL_B) which will never contain
+&apos;// a unit. It will set the Unit to the unit passed as a parameter.
+
+&apos;//	constants.
+const COL_CITY=1
+const ROW_CITY=2
+
+&apos;//	constants.
+const COL_UNITADDR=1		&apos;// unit address
+const COL_UNIT=2			&apos;// unit
+const COL_HLINK=7			&apos;// truepeoplesearch (H)
+const COL_HLINK1=8			&apos;// 411 search (I)
+const COL_HLINK2=9			&apos;// whitepages search (J)
+const YELLOW=16776960		&apos;// decimal value of YELLOW color
+
+&apos;// cell formatting constants.
+&apos;const LJUST=1		&apos;// left-justify HoriJustify
+&apos;const CJUST=2		&apos;// center HoriJustify
+&apos;const RJUST=0		&apos;// right-justify HoriJustify
+&apos;const YELLOW=16776960		&apos;// decimal value of YELLOW color
+&apos;const TXT_HLINK=&quot;HYPERLINK(&quot;&quot;&quot;	&apos;// HYPERLINK prefix
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+
+&apos;// processing variables.
+dim nRowsProcessed As Integer	&apos;// count of rows processed
+dim nRowCount		As Integer	&apos;// # rows to process
+dim sAddress As String		&apos;// address field from current row
+dim sUnit	As String		&apos;// unit field from current row
+dim sURL	As String		&apos;// url generated from sAddress, sUnit
+dim sHLink	As String		&apos;// HYPERTEXT link to store
+dim i		As Integer		&apos;// loop counter
+
+&apos;// XCell sheet objects
+dim oCellAddr as object		&apos;// address field
+dim oCellUnit As Object		&apos;// unit field
+dim oCellHLink as object	&apos;// hyperlink field
+dim oCity 	As object		&apos;// city for sheet
+dim sCity	As String		&apos;// city from sheet
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	
+	&apos;// extract city applying to sheet
+	oCity = oSheet.getCellByPosition(COL_CITY, ROW_CITY)
+	sCity = trim(oCity.String)
+	if len(sCity) = 0 then
+		sCity = &quot;Venice&quot;
+	endif
+	nRowsProcessed = 0		&apos;// clear processed count
+
+	&apos;// set row processing from oRange information
+	lThisRow = oRange.StartRow - 1		&apos;// start at -1 since increment first
+	nRowCount = oRange.EndRow - lThisRow	&apos;// set row count to process
+	for i = 1 to nRowCount
+		lThisRow = lThisRow + 1		&apos;// advance current row
+		oCellAddr = oSheet.getCellByPosition(COL_UNITADDR, lThisRow)
+		sAddress = trim(oCellAddr.String)		&apos;// set cell address text
+		if len(sAddress) = 0 then
+&apos;			msgBox(&quot;GenELinkM  - empty address field; skipping..&quot;) &apos;//
+			oCellAddr.CellBackColor = YELLOW
+			GoTo Nextfor
+		endif	&apos;// null string - alert user, mark row and bail
+		oCellUnit = oSheet.getCellByPosition(COL_UNIT, lThisRow)
+		sUnit = trim(oCellUnit.String)			&apos;// unit for call(s)
+		
+		&apos;// Generate truepeople.. URL
+		sURL = sGen2PhoneURL(sAddress, sUnit, sCity)
+		sHLink = &quot;=&quot;+TXT_HLINK + sURL + CHR(34)+&quot;;&quot;+CHR(34) _
+	 + &quot;Click here to search&quot; + CHR(34) + &quot;)&quot;
+&apos;msgbox(&quot;Double quote = &quot; + ASC(&quot;&quot;&quot;&quot;) )
+&apos;msgbox(&quot;Generated URL =&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sURL + &quot;&apos;&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;Generated Hypertext link = &quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sHLink )
+&apos;		oCellHLink.String = sHLink
+		oCellHLink = oSheet.getCellByPosition(COL_HLINK, lThisRow)
+		oCellHLink.setFormula(sHLink)
+		
+		&apos;// Generate 411.. URL
+		sURL = sGen2411URL(sAddress, sUnit, sCity)
+		sHLink = &quot;=&quot;+TXT_HLINK + sURL + CHR(34)+&quot;;&quot;+CHR(34) _
+	 + &quot;Click here to search&quot; + CHR(34) + &quot;)&quot;
+&apos;msgbox(&quot;Generated URL =&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sURL + &quot;&apos;&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;Generated Hypertext link = &quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sHLink )
+		oCellHLink = oSheet.getCellByPosition(COL_HLINK1, lThisRow)
+		oCellHLink.setFormula(sHLink)
+
+		&apos;// Generate whitepages.. URL
+		sURL = sGen2WhtPgesURL(sAddress, sUnit, sCity)
+		sHLink = &quot;=&quot;+TXT_HLINK + sURL + CHR(34)+&quot;;&quot;+CHR(34) _
+	 + &quot;Click here to search&quot; + CHR(34) + &quot;)&quot;
+&apos;msgbox(&quot;Generated URL =&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sURL + &quot;&apos;&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;Generated Hypertext link = &quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sHLink )
+		oCellHLink = oSheet.getCellByPosition(COL_HLINK2, lThisRow)
+		oCellHLink.setFormula(sHLink)
+		
+Nextfor:
+		nRowsProcessed = nRowsProcessed + 1
+
+	next i
+	
+	ForceRecalc()
+&apos;	msgbox(&quot;GenELinkM  - &quot; + nRowsProcessed + &quot; rows processed&quot;)
+		
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+   msgbox(&quot;GenELinkM  - unprocessed error.&quot;)
+   GoTo NormalExit
+
+end sub		&apos;// end GenELinkM 	7/13/21. 10:41
+&apos;// GenELinkM.bas
+&apos;//---------------------------------------------------------------------
+&apos;// GenELinkM - Generate hyperlink(s) for selected Admin-Edit terr range.
+&apos;//		9/8/20.	wmk.	11:25
+&apos;//---------------------------------------------------------------------
+
+public sub GenELinkMOld()
+
+&apos;//	Usage.	macro call or
+&apos;//			call GenELinkM()
+&apos;//
+&apos;// Entry.	Admin-Edit sheet is active; user has selected a range of
+&apos;//			cells in desired row(s) to
+&apos;//			extract the address field from the COL_ADDR column index
+&apos;//			and create a hyperlink to look up phone/address information
+&apos;//
+&apos;//	Exit.	each row selected has a hperlink added in the COL_HLINK,
+&apos;//			COL_HLINK1 and COL_HLINK2 columns in the form:
+&apos;//			HYPERLINK(&quot;&lt;url&gt;&quot;) that will allow the end-user to click
+&apos;//			on the hyperlink url and be taken to a search webpage
+&apos;//
+&apos;// Calls.	sGenPhoneURL, sGen411URL, sGenWhtPgesURL
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/4/20.		wmk.	original code; adapted from GenMLinkM
+&apos;// 9/8/20.		wmk.	documentation updated to latest format information
+&apos;//						column range is now H-J; column B contains full address
+&apos;//						error handling modified to just skip empty address row
+&apos;//						ForceRecalc called to set HYPERLINKs
+&apos;//
+&apos;//	Notes. GenELinkM accommodates territory extracted using ImportRefUSA
+&apos;//	on raw data downloaded into a .csv from ReferenceUSA.com
+&apos;// The import goes through several phases.
+&apos;//	The 1st phase is to an Admin-Import spreadsheet by taking the ReferenceUSA
+&apos;// data and running the ImportRefUSA utility on it.
+
+&apos;// The second phase is to an Admin-Bridge spreadsheet that has the
+&apos;// data in columns compatible with MultiMail.db SplitProps table import.
+
+&apos;// The third phase is, using the Admin-Bridge sheet, an Admin-Edit sheet
+&apos;// is generated that is simplified for data entry/checking. The Admin-Edit
+&apos;// sheet contains the hyperlinks to search truepeople, 411, and whitepages.
+&apos;// GenELinkM is used to place the hyperlinks in the Admin-Edit sheet.
+&apos;//	If there is newer information in the searches, the address records can be
+&apos;// edited to either add/change names/phone numbers.
+
+&apos;// The fourth phase is the Admin-TSExport sheet that is set up to export
+&apos;// the territory in fields compatible with Territory Servant app. The
+&apos;// Admin-TSExport sheet is the essential information the publisher will
+&apos;// get when they have the territory checked out through Territory Servant.
+
+&apos;// On territory completion, the spreadsheet will follow the reverse process.
+&apos;// The spreadsheet will be moved directly to the Admin-Edit sheet.
+&apos;// If the publisher noted changes in name(s), phone(s) or status (e.g. DoNotCall)
+&apos;//	the spreadsheet will then be edited to reflect the changes.
+
+&apos;// Once updated if necessary on the return cycle, the spreadsheet will
+&apos;// migrate upwards to the Admin-Bridge spreadsheet. From there, any
+&apos;// changed records can be found and replaced in the MultiMail SplitProps
+&apos;// table. Once updated, the spreadsheet will go back through the phases
+&apos;// and supplied to the territory servant as an updated territory.
+&apos;//
+&apos;//	Method. for each row, extract address field from COL_GULLADDR
+&apos;//		use sGenPhoneURL to generate url from address
+&apos;//     add HYPERLINK(&quot;&lt;url&gt;&quot;) to create hyperlink
+&apos;//		store hyperlink in row at COL_HLINK, COL_HLINK1, COL_HLINK2
+
+&apos;//	constants.
+const COL_CITY=1
+const ROW_CITY=2
+
+&apos;//	constants.
+const COL_FULLADDR=1		&apos;// full concatenated address
+const COL_HLINK=7			&apos;// truepeoplesearch (H)
+const COL_HLINK1=8			&apos;// 411 search (I)
+const COL_HLINK2=9			&apos;// whitepages search (J)
+const YELLOW=16776960		&apos;// decimal value of YELLOW color
+
+&apos;// cell formatting constants.
+&apos;const LJUST=1		&apos;// left-justify HoriJustify
+&apos;const CJUST=2		&apos;// center HoriJustify
+&apos;const RJUST=0		&apos;// right-justify HoriJustify
+&apos;const YELLOW=16776960		&apos;// decimal value of YELLOW color
+&apos;const TXT_HLINK=&quot;HYPERLINK(&quot;&quot;&quot;	&apos;// HYPERLINK prefix
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+
+&apos;// processing variables.
+dim nRowsProcessed As Integer	&apos;// count of rows processed
+dim nRowCount		As Integer	&apos;// # rows to process
+dim sAddress As String		&apos;// address field from current row
+dim sURL	As String		&apos;// url generated from sAddress
+dim sHLink	As String		&apos;// HYPERTEXT link to store
+dim i		As Integer		&apos;// loop counter
+
+&apos;// XCell sheet objects
+dim oCellAddr as object		&apos;// address field
+dim oCellHLink as object	&apos;// hyperlink field
+dim oCity 	As object		&apos;// city for sheet
+dim sCity	As String		&apos;// city from sheet
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	
+	&apos;// extract city applying to sheet
+	oCity = oSheet.getCellByPosition(COL_CITY, ROW_CITY)
+	sCity = trim(oCity.String)
+	if len(sCity) = 0 then
+		sCity = &quot;Venice&quot;
+	endif
+	nRowsProcessed = 0		&apos;// clear processed count
+
+	&apos;// set row processing from oRange information
+	lThisRow = oRange.StartRow - 1		&apos;// start at -1 since increment first
+	nRowCount = oRange.EndRow - lThisRow	&apos;// set row count to process
+	for i = 1 to nRowCount
+		lThisRow = lThisRow + 1		&apos;// advance current row
+		oCellAddr = oSheet.getCellByPosition(COL_FULLADDR, lThisRow)
+		sAddress = trim(oCellAddr.String)		&apos;// set cell address text
+		if len(sAddress) = 0 then
+			msgBox(&quot;GenELinkM  - empty address field; skipping..&quot;) &apos;//
+			oCellAddr.CellBackColor = YELLOW
+			GoTo Nextfor
+		endif	&apos;// null string - alert user, mark row and bail
+
+		&apos;// Generate truepeople.. URL
+		sURL = sGenPhoneURL(sAddress, sCity)
+		sHLink = &quot;=&quot;+TXT_HLINK + sURL + CHR(34)+&quot;;&quot;+CHR(34) _
+	 + &quot;Click here to search&quot; + CHR(34) + &quot;)&quot;
+&apos;msgbox(&quot;Double quote = &quot; + ASC(&quot;&quot;&quot;&quot;) )
+&apos;msgbox(&quot;Generated URL =&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sURL + &quot;&apos;&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;Generated Hypertext link = &quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sHLink )
+&apos;		oCellHLink.String = sHLink
+		oCellHLink = oSheet.getCellByPosition(COL_HLINK, lThisRow)
+		oCellHLink.setFormula(sHLink)
+		
+		&apos;// Generate 411.. URL
+		sURL = sGen411URL(sAddress, sCity)
+		sHLink = &quot;=&quot;+TXT_HLINK + sURL + CHR(34)+&quot;;&quot;+CHR(34) _
+	 + &quot;Click here to search&quot; + CHR(34) + &quot;)&quot;
+&apos;msgbox(&quot;Generated URL =&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sURL + &quot;&apos;&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;Generated Hypertext link = &quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sHLink )
+		oCellHLink = oSheet.getCellByPosition(COL_HLINK1, lThisRow)
+		oCellHLink.setFormula(sHLink)
+
+		&apos;// Generate whitepages.. URL
+		sURL = sGenWhtPgesURL(sAddress, sCity)
+		sHLink = &quot;=&quot;+TXT_HLINK + sURL + CHR(34)+&quot;;&quot;+CHR(34) _
+	 + &quot;Click here to search&quot; + CHR(34) + &quot;)&quot;
+&apos;msgbox(&quot;Generated URL =&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sURL + &quot;&apos;&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;Generated Hypertext link = &quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sHLink )
+		oCellHLink = oSheet.getCellByPosition(COL_HLINK2, lThisRow)
+		oCellHLink.setFormula(sHLink)
+		
+Nextfor:
+		nRowsProcessed = nRowsProcessed + 1
+
+	next i
+	
+	ForceRecalc()
+	msgbox(&quot;GenELinkM  - &quot; + nRowsProcessed + &quot; rows processed&quot;)
+		
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+   msgbox(&quot;GenELinkM  - unprocessed error.&quot;)
+   GoTo NormalExit
+
+end sub		&apos;// end GenELinkM 	9/8/20.

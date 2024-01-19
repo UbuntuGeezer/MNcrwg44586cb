@@ -1,0 +1,163 @@
+SPECIAL - Special download documentation for territory xxx.
+	4/26/22.	wmk. [this file is copied to Terrxxx]
+	
+Modification History.
+---------------------
+4/26/22.	wmk.	modified documenting *pathbase* support.
+Legacy mods.
+7/19/21.	wmk.	original document.
+7/21/21.	wmk.	added Setup section.
+8/15/21.	wmk.	Setup section clarified.
+8/17/21.	wmk.	generic modified for territory 607.
+9/5/21.		wmk.	MakeSpecials added to downstream makefile list.
+9/11/21.	wmk.	added SELECT clause in Special Databases section.
+9/18/21.	wmk.	edited for territory 607.
+10/11/21.	wmk.	AddZips documentation added for letter-writing terrs.
+10/24/21.	wmk.	reverted back to xx x for general use.
+10/29/21.	wmk.	added TheEsplanade.db to db list.
+10/31/21.	wmk.	edited for territory xx x.
+11/13/21.   wmk.    BayIndiesMHP, BayLakeMHP, RidgewoodMHP added to db list.
+12/28/21.	wmk.	CountryClubMHP added to db list.
+1/18/22.	wmk.	documentation updated with new build contigencies.
+
+Special Databases.
+------------------
+With the support of <state> <county> <congno> Territory systems, a new system-wide
+envionment var has been defined. *pathbase* uses the *folderbase* environment var
+to define the territory path base as $folderbase/Territories/<state>/<county>/<congno>
+where <state> is the 2-character state abbreviation, <county> is the 4-character
+county abbreviaion, and <congno> is the congregation number.
+
+Territory xxx depends upon 2 special download databases resident in the folder
+*pathbase*/RawData/.../RefUSA-Downloads/Special:
+
+** special RU dbs.**
+--* InnerDr.db - all Inner Dr addresses in Colonial Manor
+--* OuterDr.db - all Outer Dr addresses in Colonial Manor
+
+Following is a sample SELECT clause for territory xxx:
+Terr 267 set in all CongTerrID fields in both databases.
+
+non-MHP Special select.
+WITH a AS (SELECT OwninigParcel AS Acct
+ FROM db11.Terr237_SCBridge)
+INSERT INTO Spec_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+CongTerrID IS '267';
+DETACH db29;
+
+Since a special download database is only the RU data for a given street/area,
+it may not contain any records for a given territory that depends upon it, since
+the RU data is only "occupied" addresses.
+
+
+Dependencies.
+-------------
+RegenSpecDB.sh - shell to rebuild and populate the Specxxx_RU.db from the latest special
+  download databases listed above. This shell is tailored to each territory
+  xxx and resides in ~/RefUSA-Downloads/Terrxxx folder.
+
+
+Processing.
+-----------
+When an update is done to territory xxx, RegenSpecDB.sh will be invoked
+by the UpdateRUDwnld make/build. RegenSpecDB.sh will rebuild the local
+Specxxx_RU.db by copying the Bridge records from the special download
+databases that belong to territory xxx. The Specxxx_RU.db will then be
+ready for use whenever it is needed.
+
+The Specxxx_RU.db entries need to be integrated into the Terrxxx_RU.db prior
+to running the BridgesToTerr makefile on territory xxx. The shell SyncTerrToSpec
+merges the Bridge records from Specxxx_RU.db into the Terrxxx_RU.db After the
+merge has been completed, if duplicate records are present, only the lastest 
+are retained.
+
+The make for the UpdateRUDwnld project has been modified to include both the
+RegenSpecDB and SyncToTerrSpec shell executions if they are present in the
+Terrxxx RU download folder.
+
+
+Setup.
+------
+The SpecialRUdb project contains all the tools necessary to take a special
+download from RefUSA-Downloads/Special and move the .csv records into
+a database named after the .csv. A special download, say vvvvv.csv is
+the extracted records from a RefUSA polygon for given street or area.
+
+CAUTION: The RegenSpecDB.sql for Mobile Home Park,s (MHPs) has been
+implemented to depend upon the UnitAddress,s in the Terrxxx_SC.db. This
+makes the RegenSpecDB processing identical for MHPs and letter/phone
+territories. PRIOR TO EXECUTING RegenSpecDB.sh 'Export RU Data to SC'
+must be run to set up the initial Terrxxx_SC.db from an existing MHP,s
+Terrxxx_RU.db.
+
+RU-Downloads/Special
+The creation of the /Special/vvvvv.db involves several steps.
+	SpecialRUdb Project:
+	Build menu; enter territory ID and vvvvv name into "sed" item
+	execute "sed" from the build menu
+	execute "Make" from the build menu, creating vvvvv.db
+	[the tables created in vvvvv.db are documented in SpecialRUdb/README]
+
+RU-Downloads/Terrxxx
+	copy files SPECIAL, RegenSpecDB.sq, SyncTerrToSpec.sq, MakeRegenSpecDB.tmp,
+	  MakeSyncTerrToSpec.tmp, SpecxxxRU.sql, MakeSpecTerrQuery, MakeSpecials to Terrxxx
+	  folder by running the shell InitSpecial.sh from the SpecialRUdb project
+
+	edit SPECIAL in the territory download folder to document the special
+	  databases and procedures for generating the territory
+
+	edit SpecxxxRU.sql to properly extract the RU data from the <special-db>
+	  that applies to territory xxx
+	edit MakeSpecTerrQuery to run on territory xxx
+	run "make" in the territory download folder to execute the query and
+	  generate the initial Specxxx_RU.db database
+
+	edit the names of any Special databases into the RegenSpecDB.sq file
+	  ATTACH statement(s) to complete customizing the process for the territory.
+	run "make" in the territory download folder to generate RegenSpecDB.sh shell
+	  the MakeRegenSpecDB makefile
+	use "sed" to change "<filename>" to "RegenSpecDB" in RegenSpecDB.sh
+	[RegenSpecDB.sh will be run by the UpdateRUDwnld project]
+
+	edit SetSpecTerrs.sql setting the territory ID and special db names
+	edit MakeSetTerrs makefile setting the territory ID
+
+	run "make" in the territory download folder to generate SetSpecTerrs.sh shell
+	  with the  MakeSetSpecTerrs makefile
+	use "sed" to change "<filename>" to "SetSpecTerrs" in SetSpecTerrs.sh
+
+	run "make" in the territory download folder to generate SyncTerrToSpec.sh shell
+	  using the MakeSyncTerrToSpec makefile
+	use "sed" to change "<filename>" to "SyncTerrToSpec" in SyncTerrsToSpec.sh
+
+	[letter-writing territory]
+	if this is a letter territory, code AddZips.sql to add zip codes to all
+	 UnitAddress fields in Bridge tables used by this territory. The code
+	 for this may be cloned from Terr626/AddZips.sql and should be saved
+	 in the Terrxxx folder
+	copy the MakeAddZips makefile from Terr 626 and edit for this territory
+	run make -f MakeAddZips to make the AddZips.sh shell
+
+	run RegenSpecDB.sh in the Terrxxx folder
+
+	run SetSpecTerrs.sh in the Terrxxx folder
+
+	run SyncTerrToSpec.sh in the Terrxxx folder
+
+	[letter-writing territory]
+	run AddZips.sh to add the zip codes to all UnitAddress fields
+
+	edit MakeSpecials and remove .PHONY qualifier to activate makefile
+	ensure territory ID and database(s) names are all set for downstream call
+	 whenever any upstream database is updated
+	if MakeSpecials is for a letter-writing territory, incude the prerequisite
+	 and Make for AddZips.sh after the SyncTerrToSpec.sh call to add the
+	 zip codes to the UnitAddresses in all the Bridge tables referenced
+	 by the territory
+
+Following the "make" operation, RegenSpecDB.sh, SetSpecTerrs, and SyncTerrToSpec.sh
+are ready to be run, in order, from the territory download folder. This
+will complete the setup of all the "special" database files that can
+now be automatically used by UpdateRUDwnld when regenerating the territory
+records after either the special or territory downloads.

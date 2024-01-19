@@ -1,0 +1,37 @@
+###Territory Setup.<br>
+The following steps should be performed in order when setting up a special
+territory to use one or more special databases:<br>
+
+####{SpecialSCdb) project:<br>
+<pre><code>
+	create parent special database using SpecialSCdb build procedures (see above)
+</code></pre>
+####{NewTerritory} project:<br>
+<pre><code>
+	follow README steps to create new territory folders if non-existent
+</code></pre>
+####Terminal: {SpecialSCdb} folder:<br>
+<pre><code>		
+	if "older" Special handling code is present in the territory folder
+	run ClearSpecial.sh xxx, where xxx is the territory ID.]
+
+	run InitSpecial.sh xxx, where xxx is territory ID
+</code></pre>
+####Terminal: SCPA/Terrxxx folder:<br>
+<pre><code>		
+	edit SpecxxxSC.sql to extract records from special database(s)
+	replace $P1 with territory ID in MakeSpecTerrQuery
+	edit the SELECT from SpecxxxSC.sql to edit RegenSpecDB.sqL to match
+	edit the <special-db> in MakeRegenSpecDB with Special db name
+	edit SPECIAL and document the special dbs required for this territory
+	 and the records needed from each
+	edit the <special-db> in SetSpecTerrs.sql checking for anomalies and
+	 setting territory IDs, RecordTypes (clone from another territory
+	 like 288)
+	check SyncTerrToSpec.sq for territory ID
+	check MakeSyncTerrToSpec setting territory ID and <special-db>
+	edit MakeSpecials with the <special-db>
+
+	[run make -f MakeSpecials --dry-run to check setup]
+	run make -f MakeSpecials to setup SC special territory data.
+</code></pre>

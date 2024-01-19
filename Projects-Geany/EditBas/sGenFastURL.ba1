@@ -1,0 +1,161 @@
+&apos;// sGenFastURL.bas
+&apos;//---------------------------------------------------------------
+&apos;// sGenFastURL - Generate fastpeoplesearch.com phone look-up url.
+&apos;//		2/21/21.	wmk.	00:07
+&apos;//---------------------------------------------------------------
+
+public function sGenFastURL(psAddr As String,_
+				psUnit As String, psCity As String) as String
+
+&apos;//	Usage.	sURL = sGenFastURL( sAddr, sUnit, sCity )
+&apos;//
+&apos;//		sAddr = street address
+&apos;//		sUnit = unit/apt number
+&apos;//		sCity = situs city
+&apos;//
+&apos;// Entry.
+&apos;//
+&apos;//	Exit.	sURL = url of whitepages.com to search for phone number
+&apos;//           by following the url in any browser; pattern is as follows:
+&apos;//  &quot;https://www.fastpeoplesearch.com/address/413-Andros-unit_Venice-FL/?&quot;
+&apos;//
+&apos;// Calls.	ParseSitus, ParseUnit.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	2/9/21.		wmk.	original code; adapted from sGenPhoneURL adding
+&apos;//						unit parameter and ParseUnit call.
+&apos;// 2/16/21.	wmk.	change to use ParseAddress to fully parse
+&apos;//						address field since need street suffix for
+&apos;//						fastpeople search hyperlink
+&apos;// 2/19/21.	wmk.	add HWY, RTE, TPK, CWY, EXT, BYP to known
+&apos;//						street types.
+&apos;// 2/20/21.	wmk.	bug fix; all street field separators must be &quot;-&quot;
+&apos;//						instead of spaces; fixed bug failing to include
+&apos;//						street name if no street type suffix; fixed bug
+&apos;//						where unit not trimmed prior to adding.
+&apos;//	Notes. For now, City assumed to be &quot;Venice&quot;, State assumed to be &quot;FL&quot;
+&apos;// Modify to accept City as 2nd parameter; caller will obtain from
+&apos;// a fixed cell, say A4, in spreadsheet, or from Situs-City field
+&apos;// if using SCPA data.
+
+&apos;//	constants.
+const csURLBase=&quot;https://www.fastpeoplesearch.com/address/&quot;
+&apos;// insert house number here
+const csSep=&quot;-&quot;
+&apos;// insert street name here
+&apos;const csSep here
+&apos;// insert unit here
+const csSep2=&quot;_&quot;
+&apos;// insert city here
+&apos;const csSep here
+&apos;// insert state here
+
+
+&apos;//	local variables.
+dim sRetValue 	As String	&apos;// returned value
+dim sState		As String	&apos;// state from address
+dim sCity		As String	&apos;// city from address
+
+dim sAddr		As String	&apos;// copy of passed situs
+dim sFullUnit	As String	&apos;// full unit from bridge field
+dim sSCUnit		As String	&apos;// parsed SC unit or just full unit
+dim sBldUnit	As String	&apos;// parsed building/mailing unit
+dim sBldg		As String	&apos;// parsed&quot;BLD&quot; or &quot;BLDG&quot; or empty
+dim sBldNum		As String	&apos;// parsed building number
+
+dim sUnit		As String	&apos;// bldg/mailing unit #, if present
+dim sStreet		As String	&apos;// street here
+dim sNumber		As String	&apos;// number here
+dim sTokens()		As String	&apos;// address tokens array
+dim sSeps			As String	&apos;// addres token delimiter(s)
+
+dim i				As Integer	&apos;// loop index
+dim nTokens		As Integer
+dim bHasStreetDir	As Boolean
+dim sStreetCompass	As String
+dim sStreetType		As String
+dim bHasStreetType	As Boolean
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	sRetValue = &quot;&quot;
+	
+	&apos;// set actual values from situs
+	sAddr = psAddr
+&apos;	ParseSitus(sAddr, sNumber, sStreet, sUnit)
+	sSeps = &quot; &quot;
+	redim preserve sTokens(0)
+	ParseAddress(sAddr, sSeps, sTokens())
+	&apos;// flesh out address elements from tokens.
+	sNumber = sTokens(0)
+	sStreet = &quot;&quot;
+	nTokens = UBound(sTokens)
+	
+	&apos;// account for direction N S E W NW NE SW SE as last field
+	bHasStreetDir = instr(&quot;N S E W NW NE SW SE&quot;,sTokens(nTokens)) &gt; 0
+	if bHasStreetDir then
+	   sStreetCompass = &quot;-&quot; &amp; sTokens(nTokens)
+	   sStreetType = UCase(sTokens(nTokens-1))
+	else
+	   sStreetCompass = &quot;&quot;
+	   sStreetType = UCase(sTokens(nTokens))
+	endif
+	
+	bHasStreetType = _
+	 instr(&quot;AVE ST RD DR CIR LN TERR WAY CT RTE EXT HWY TPK CWY BYP&quot;,_
+	 	 sStreetType) &gt; 0
+	
+	for i = 1 to nTokens
+		sStreet = sStreet + sTokens(i)
+		if i &lt; nTokens then
+		   sStreet = sStreet &amp; &quot;-&quot;
+		endif
+	next i
+	
+&apos;	if bHasStreetType then
+&apos;	   sStreet = sStreet &amp; &quot;-&quot; &amp; sStreetType
+&apos;	endif
+	
+	&apos;// parse unit to get building/mailing unit.
+	sFullUnit = trim(psUnit)
+	if len(sFullUnit) &gt; 0 then
+	   ParseUnit(sFullUnit, sSCUnit, sBldUnit, sBldg, sBldNum)
+	   sUnit = sBldUnit
+	   if len(sBldUnit) = 0 then
+	      sUnit = sSCUnit
+	   else
+	      sUnit = sBldUnit
+	   endif
+	else
+	   sUnit = &quot;&quot;
+	endif
+
+	&apos;// default city to Venice.
+	if len(psCity) = 0 then
+		sCity = &quot;Venice&quot;
+	else
+		sCity = psCity
+	endif
+	sState = &quot;FL&quot;
+	
+	&apos;// generate url from extracted information.
+&apos;	sRetValue = csURLBase + sNumber + csSep _
+&apos;	          + sStreet + sStreetCompass
+	sRetValue = csURLBase + sNumber + csSep _
+	          + sStreet					&apos;// compass already there..
+	if len(sUnit) &gt; 0 then
+&apos;	   sRetValue = sRetValue + csSep + sUnit
+	   sRetValue = sRetValue + &quot;-Apt-&quot; + sUnit
+	endif
+	sRetValue = sRetValue + csSep2 + sCity + csSep _
+	              + sState
+	
+NormalExit:
+	sGenFastURL = sRetValue
+	exit function
+	
+ErrorHandler:
+   msgbox(&quot; sGenFastURL - unprocessed error.&quot;)
+   GoTo NormalExit
+end function 	&apos;// end sGenFastURL	2/20/21.	00:07

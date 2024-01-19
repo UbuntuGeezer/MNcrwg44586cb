@@ -1,0 +1,4 @@
+# sedFixTidytxt - add modification date to header of <special>Tidy.sql.
+# 3/3/23.	wmk.
+1a-- * 3/2/23.     wmk.    (automated) remove set RecordDate code.
+

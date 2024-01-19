@@ -1,0 +1,2 @@
+# sedadddate.txt - add mod date and comment at line 2.
+2a# 6/3/22.     wmk.   (automated) restore path vars, MHP, LETTER flags.

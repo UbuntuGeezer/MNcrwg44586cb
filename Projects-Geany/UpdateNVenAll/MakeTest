@@ -1,0 +1,13 @@
+# MakeTest - test make capabilities for pushd/popd.
+
+.PHONY : Always
+.ONESHELL :
+
+Always:
+	pwd=$$PWD
+	echo "PWD = $$PWD"
+	cd $$HOME
+	echo "PWD = $$PWD"
+	cd $$pwd
+	echo "PWD = $$PWD"
+		

@@ -1,0 +1,67 @@
+# MakeReplaceSQL.tmp - Makefile (template) for MakeReplaceSQL.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+#   7/6/22. wmk.
+#
+# This makefile is edited by DoSed.sh with <basmodule> <xbafile> substituted
+# throughout. <basmodule> will be the name of a .bas source file with no
+# filename extension; <xbafile> will be the complete name of an XBA file with
+# the .xba filename extension.
+#
+# Modification History.
+# ---------------------
+# 7/6/22.	wmk	original code.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(pathbase)
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : Always JustDoIt
+.ONESHELL : ;
+
+ projpath = $(codebase)/Projects-Geany/EditSQL
+
+# <filepath>/<filebase>.sql
+#=======================================================
+Always : JustDoIt
+	cd $(projpath)
+	# delete 1st and last lines of new .sql
+	#sed -i "/\-\-begin <sqlmodule>.sql/d;/\/\*\*\//d" <sqlfile>.a
+	sed -i -f sedAddDate.txt <sqlfile>.sql
+	cp <sqlfile>.sql <sqlfile>.a
+	mawk -f awkSplit1.txt <sqlfile>.a > <sqlfile>.s1
+	mawk -f awkSplit2.txt <sqlfile>.a > <sqlfile>.s2
+	cat <sqlfile>.s1 <sqlmodule>.sql <sqlfile>.s2 \
+	 > new<sqlfile>.sql
+	#mawk "/-- \*\* <sqlmodule>/{f=1;print;while(getline < \"<sqlfile>.a\")\
+	# {print}}/\/\*\*\//{f=0}!f" <sqlmodule>.sql > new<sqlfile>.sql
+	mv <sqlfile>.sql old<sqlfile>.sql
+	mv new<sqlfile>.sql ./<sqlfile>.sql
+	echo "module <sqlmodule>.sql replaced into local <sqlfile>..."
+	echo "use PutSQLSource.sh to copy the new <sqlfile> over original after changes checked."
+
+#=======================================================
+JustDoIt: ;

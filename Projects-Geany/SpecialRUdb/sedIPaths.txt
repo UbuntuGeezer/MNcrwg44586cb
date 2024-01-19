@@ -1,0 +1,6 @@
+/.PHONY/ iprojpath = $(pathbase)/Projects-Geany/UpdateMHPDwnld
+/.PHONY/ ibasepath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads
+/.PHONY/ ishellpath = $(pathbase)/Procs-Dev
+/.ONESHELL/ aLETTER=1
+/.ONESHELL/ aMHP=0
+

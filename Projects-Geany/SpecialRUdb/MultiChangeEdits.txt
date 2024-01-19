@@ -1,0 +1,8 @@
+# 12/28 multiple changes.
+
+# 12/28/21.	wmk.	notify-send conditional; change to use $ USER env var.
+
+if [ "$USER" == "ubuntu" ];then
+
+if [ "$USER" != "vncwmk3" ];then
+

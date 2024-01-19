@@ -1,0 +1,66 @@
+-- IntegrateOldDiffs.sql - Integrate older RU records into newer download.
+--	9/8/21.	wmk.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 4/25/22.	wmk.	modified for general use;*pathbase* support.
+-- * Legacy mods.
+-- * 7/6/21.	wmk.	original SQL.
+-- * 9/8/21.	wmk.	add code to eliminate duplicate ? records on same
+-- *					UnitAddress after merge.
+
+-- * subquery list.
+-- * --------------
+-- * IntegrateOldDiffs - Integrate older RU records into newer download.
+-- *;
+
+-- ** IntegrateOldDiffs **********
+-- *	9/8/21.	wmk.
+-- *----------------------------
+-- *
+-- * IntegrateOldDiffs - Integrate older RU records into newer download.
+-- *
+-- * Entry DB and table dependencies.
+-- *	junk.db
+-- *	Terrxxx_RU.db - as db12,
+-- *	TerrxxxOldDiffs.csv - .csv records of older Bridge entries to
+-- *	  integrate into Terrxxx_RU.db.Terrxxx_RUBridge
+-- *
+-- * Exit DB and table results.
+-- *	Terrxxx_RU.db - as db12,
+-- *	  updated with records from TerrxxxOldDiffs.csv
+-- *
+-- * Modification History.
+-- * 7/6/21.	wmk.	original SQL.
+-- * 9/8/21.	wmk.	add code to eliminate duplicate ? records on same
+-- *					UnitAddress after merge.
+-- *
+-- * Notes. IntegrateOldDiffs integrates the TerrxxxOldDiffs.csv Bridge
+-- * records back into the current Terrxxx_RUBridge table, leaving the
+-- * RecordDate intact from the old record, but changing the Resident1
+-- * field to "?" indicating that the address is valid, but there was no
+-- * RefUSA record for it with the latest download. (Note: if the DoNotCall
+-- * status changed, it will not be picked up here.)
+-- *;
+
+.open '$pathbase/DB-Dev/junk.db'
+.cd '$pathbase/RawData/RefUSA/RefUSA-Downloads'
+ATTACH './Terrxxx/Terrxxx_RU.db'
+ AS db12;
+-- pragma db12.table_info(Terrxxx_RUBridge);
+
+.headers ON
+.separator ,
+.mode csv
+.import './Terrxxx/TerrxxxOldDiffs.csv' Terrxxx_RUBridge
+UPDATE db12.Terrxxx_RUBridge
+SET UnitAddress = trim(UnitAddress);
+DELETE FROM db12.Terrxxx_RUBridge
+WHERE rowid NOT IN (SELECT MAX(rowid) from Terrxxx_RUBridge
+		GROUP BY UnitAddress, Unit, Resident1);
+DETACH db12;
+--DETACH db12;
+
+.quit
+
+-- ** END IntegrateOldDiffs **********;

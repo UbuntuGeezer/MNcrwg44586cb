@@ -1,0 +1,49 @@
+#!/bin/bash
+# FlashBacks - Update flash drive with all incremental dumps.
+#	12/22/21.	wmk.
+#
+# Usage.	bash FlashBacks.sh
+#
+# Exit. All incremental dumps updated on after user mounted flash drive.
+#
+# Modification History.
+# ---------------------
+# 10/17/21.	wmk.	original code.
+# 10/30/21.	wmk.	LOGMSG corrected to include flash drive name.
+# 12/22/21.	wmk.	notify-send conditional.
+# This shell will exit if not interactive from Terminal.
+if [ "$HOME" = "/home/ubuntu" ]; then
+ folderbase=/media/ubuntu/Windows/Users/Bill
+else 
+ folderbase=$HOME
+fi
+# handle case where called from Make.
+if [ -z "$system_log" ]; then
+  system_log=$folderbase/ubuntu/SystemLog.txt
+  TEMP_PATH="$folderbase/temp"
+  bash ~/sysprocs/LOGMSG "   FlashBacks initiated from Make."
+  echo "   FlashBacks initiated."
+else
+  bash ~/sysprocs/LOGMSG "   FlashBacks initiated."
+  echo "   FlashBacks initiated."
+fi
+#begin proc body
+read -p "Insert flash drive and enter mount name: "
+flash_name=$REPLY
+if test -d "$U_DISK/$flash_name";then
+ ~/sysprocs/LOGMSG "  FlashBacks copying to $U_DISK/$flash_name."
+ echo "FlashBacks copying to $U_DISK/$flash_name."
+ cp -ru $folderbase/Territories/*.tar $U_DISK/$flash_name
+ cp -ru $folderbase/Territories/log*  $U_DISK/$flash_name
+else
+ ~/sysprocs/LOGMSG "  FlashBacks - unable to locate drive $flash_name - abandoned."
+ echo "FlashBacks - unable to locate drive $flash_name - abandoned."
+ exit 1
+fi
+#end proc body
+if [ "$USER" != "vncwmk3" ];then
+ notify-send "FlashBacks" "  complete."
+fi
+~/sysprocs/LOGMSG "  FlashBacks complete."
+echo "  FlashBacks complete"
+# end FlashBacks

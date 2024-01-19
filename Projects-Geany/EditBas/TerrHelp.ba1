@@ -1,0 +1,71 @@
+&apos;// TerrHelp.bas
+&apos;//---------------------------------------------------------------
+&apos;// TerrHelp -Help info for Territories.
+&apos;//		7/15/21.	wmk. 06:26
+&apos;//---------------------------------------------------------------
+
+public sub TerrHelp()
+
+&apos;//	Usage.	macro call or
+&apos;//			call TerrHelp()
+&apos;//
+&apos;// Entry.	User invoked macro or hit Shift-F7 for help with TerrKeys.cfg
+&apos;// 		active
+&apos;//
+&apos;//	Exit.	Help msgbox displayed.
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	1/14/21.	wmk.	original code
+&apos;// 7/15/21.	wmk.	help menu corrections to Ctrl-8 and Shft-F7;
+&apos;//						switch to &amp; concatenation from +.
+&apos;//
+&apos;//	Notes. TerrKeys.cfg is stored on the ~/TerrData path and has the
+&apos;// following keys defined:
+&apos;//	
+&apos;//		Ctrl-4 - invokes macro to generate PubTerr sheets from query	
+&apos;//		Ctrl-6 - invokes SetGridLand macro to prompt user for setting
+&apos;//				 Page format controls Grid:Yes and Landscape:Yes
+&apos;//		Ctrl-7 - invokes SaveToXlsx macro to save current sheet in
+&apos;//				 .xlsx format
+&apos;//		Ctrl-8 - invokes ExportAsPDF macro to export current sheet
+&apos;//				 as a PDF	
+&apos;//		Shft-F7 - this menu
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	msgBox (&quot;Hotkeys are stored in the file TerrKeys.cfg on the path&quot;_
+	 &amp;chr(13)&amp;chr(10) &amp; &quot;~/Territories/TerrData&quot; &amp; chr(13)&amp;chr(10)_
+	 &amp; &quot;and may be loaded from Tools/Customize/Keyboard...&quot; &amp;chr(13)&amp;chr(10)_
+	 &amp;chr(13)&amp;chr(10) &amp; &quot;     Ctrl-4      Generate territory sheets from query&quot;_
+	 &amp;chr(13)&amp;chr(10) &amp; &quot;     Ctrl-6      Set Page Grid and Landscape controls&quot;_
+	 &amp;chr(13)&amp;chr(10) &amp; &quot;     Ctrl-7      Save sheet to .xlsx file&quot;_
+	 &amp;chr(13)&amp;chr(10) &amp; &quot;     Ctrl-8      Export sheet to PDF file&quot;_
+	 &amp;chr(13)&amp;chr(10) &amp; &quot;     Shift-F7    This Help menu&quot; &amp;chr(13)&amp;chr(10),_
+	  0, &quot;Territories Help&quot;)
+if 1 = 0 then
+	msgBox (&quot;Hotkeys are stored in the file TerrKeys.cfg on the path&quot;_
+	 +chr(13)+chr(10) + &quot;~/Territories/TerrData&quot; + chr(13)+chr(10)_
+	 + &quot;and may be loaded from Tools/Customize/Keyboard...&quot; +chr(13)+chr(10)_
+	 +chr(13)+chr(10) + &quot;     Ctrl-6      Set Page Grid and Landscape controls&quot;_
+	 +chr(13)+chr(10) + &quot;     Ctrl-7      Save sheet to .xlsx file&quot;_
+	 +chr(13)+chr(10) + &quot;     Ctrl-8      Export sheet to PDF file&quot;_
+	 +chr(13)+chr(10) + &quot;Shift-F7    Help&quot; +chr(13)+chr(10),_
+	  0, &quot;Territories Help&quot;)
+endif
+
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;TerrHelp - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end TerrHelp	7/15/21.	06:26

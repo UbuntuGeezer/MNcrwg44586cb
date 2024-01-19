@@ -1,0 +1,87 @@
+&apos;// SaveSheetAsCSV.bas
+&apos;//---------------------------------------------------------------
+&apos;// SaveSheetAsCSV - Save current sheet as .csv file.
+&apos;//		10/12/20.	wmk.	20:40
+&apos;//---------------------------------------------------------------
+
+public sub SaveSheetAsCSV()
+
+&apos;//	Usage.	macro call or
+&apos;//			call SaveSheetAsCSV()
+&apos;//
+&apos;// Entry.	user has sheet selected that desires saved as .csv file
+&apos;//			Note: best if save with only row headings, then data
+&apos;//			as opposed to more heading information rows
+&apos;//
+&apos;//	Exit.	sheet saved on current URL path as &lt;sheet-name&gt;.csv
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	10/12/20.		wmk.	original code; cloned from macro recording
+&apos;//
+&apos;//	Notes.
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim oDoc		As Object	&apos;// ThisComponent
+dim oSel		As Object	&apos;// current selection
+dim oRange		As Object	&apos;// selection RangeAddress
+dim iSheetIx	As Integer	&apos;// selected sheet index
+dim oSheet		As Object	&apos;// sheet object
+dim sSheetName	As String	&apos;// name of this sheet
+dim sDocURL	As String		&apos;// URL this string
+dim sNewURL		As String		&apos;// new URL to save under
+dim nURLLen		As Integer		&apos;// URL length
+dim sURLBase	As String		&apos;// URL base string
+
+rem ----------------------------------------------------------------------
+rem define variables
+dim document   as object
+dim dispatcher as object
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	sSheetName = oDoc.Sheets(iSheetIx).Name
+	
+	&apos;// set up for save as .csv
+	&apos;// it is known that the URL will end in &quot;Terrxxx.ods&quot; (11 chars)
+	sDocURL = ThisComponent.getURL()
+	nURLlen = len(sDocURL)
+	sURLBase = left(sDocURL, nURLLen-11)
+	sNewURL = sURLBase + sSheetName + &quot;.csv&quot;
+	
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dim args1(2) as new com.sun.star.beans.PropertyValue
+args1(0).Name = &quot;URL&quot;
+&apos;args1(0).Value = &quot;file:///media/ubuntu/Windows/Users/Bill/Documents/Cong-Files/Territories/csvs-Dev/Terr102_Bridge.csv&quot;
+args1(0).Value = sNewURL
+args1(1).Name = &quot;FilterName&quot;
+args1(1).Value = &quot;Text - txt - csv (StarCalc)&quot;
+args1(2).Name = &quot;FilterOptions&quot;
+args1(2).Value = &quot;44,34,76,1,,0,false,true,true,false,false&quot;
+
+dispatcher.executeDispatch(document, &quot;.uno:SaveAs&quot;, &quot;&quot;, 0, args1())
+
+
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SaveSheetAsCSV - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end SaveSheetAsCSV		10/12/20

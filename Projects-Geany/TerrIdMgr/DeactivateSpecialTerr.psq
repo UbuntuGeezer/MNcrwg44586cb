@@ -1,0 +1,17 @@
+-- * DeactivateSpecialTerr.psq/sql - Deactivate records in <spec-db>.db for terr.
+-- *	5/29/23.	wmk.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 1/30/23.	wmk.	original code.
+-- *
+-- * Notes. DeactivateSpecialTerr sets the 'DelPending' field = 1 for all
+-- * records in <spec-db>.Spec_RUBridge, <spec-db>.Spec_SCBridge special
+-- * database(s) for territory xxx. 
+-- *
+-- * This prevents any MakeSpecials *make from picking up any obsoleted publisher
+-- * records, while preserving the records for archiving.
+-- *;
+
+.quit
+-- * END DeactivateSpecialTerr.sql;

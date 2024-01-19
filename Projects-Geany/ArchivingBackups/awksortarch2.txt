@@ -1,0 +1,19 @@
+# awksortarch2 - sort names and numbers
+BEGIN{ cnt = 0; namecnt = 0; oldname = "" }
+{if( NR == 1 )oldname = $1; 
+ 
+ newname = $1
+ if( oldname == newname){
+   nums[cnt] = $2
+   cnt++ };
+ 
+ if( oldname != newname){
+   m = asort(nums,snums,"@val_num_asc")
+   for( i = 0; i <=cnt-1; i++) print oldname "." i ".tar"
+   cnt = 0
+   };
+
+ oldname = newname
+ 
+ }
+END{ for( i = 0; i <= cnt; i++)print oldname "." i ".tar"}

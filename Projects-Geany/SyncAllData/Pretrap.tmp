@@ -1,0 +1,18 @@
+# Pretrap.tmp - template preamble for shells using error handling.
+#	5/28/23.	wmk.
+# set *MYPROC = process name to display in error handling.
+# Note. Posttrap.tmp MUST be used with this.
+#jumpto function definition
+function jumpto
+{
+    label=$1
+    cmd=$(sed -n "/$label:/{:a;n;p;ba};" $0 | grep -v ':$')
+    eval "$cmd"
+    exit
+}
+export thisid=$$
+export MYPROC=$0
+if [ -z "$build_log" ];then
+ export build_log=$TEMP_PATH/BuildLog.txt
+fi
+trap 'previous_command=$this_command;this_command=$BASH_COMMAND;' DEBUG

@@ -1,0 +1,3 @@
+#
+~/sysprocs/LOGMSG '   Fix101SC initiated from make.'
+echo '  Fix101SC.sh initiated from make.'

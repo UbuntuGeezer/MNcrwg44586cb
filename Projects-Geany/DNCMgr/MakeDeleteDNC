@@ -1,0 +1,45 @@
+# MakeDeleteDNCs.tmp - *make* file for DeleteDNC.sh build.
+#	6/8/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 6/1/23.	wmk.	original code.
+# 6/8/23.	wmk.	adminpreamble added to *make recipe; "run" message changed.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/DNCMgr
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	cd $(altproj);./DoSed.sh $(projpath) DeleteDNC adminpreamble.sh
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/DeleteDNC.sh;then \
+	 echo "** DeleteDNC.sh generation failed **";exit 1;fi
+	echo "** log in then run DeleteDNC.sh to archive DoNotCalls **"
+	
+#==================================================================
+# end MakeDeleteDNC.tmp

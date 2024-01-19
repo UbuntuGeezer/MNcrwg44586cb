@@ -1,0 +1,186 @@
+README - DoBizssWithCalc project documentation.
+	9/27/21.	wmk.
+	
+Modification History.
+---------------------
+9/25/21.	wmk.	original document; adapted from {DoTerrsWithCalc}.
+9/27/21.	wmk.	Basic Macros section updated.
+
+Document Sections.
+------------------
+Project Description - overall project description.
+Dependencies - project dependencies.
+Basic Macros - Basic code essential to project.
+Significant Notes - notes and cautions about the project.
+Internal Documentation - ProcessBQTerrs.ods usage and internal macros.
+
+
+
+Project Description.
+--------------------
+DoBizsWithCalc implements the code required to process QTerrxxx.csv
+files by placing a list of the territory IDs in a Calc spreadsheet. Then
+The user can execute a macro from the Territories macro Library to
+process the list by opening each file and running the necessary additional
+macros to process the QTerrxxx.csv into a Terrxxx_BizTerr.ods and
+Terrxxx_SBizTerr.ods.
+
+The goal is to be able to use DoBizssWithCalc as a repeated process to
+generate territories from a list of territory IDs (such as what is in
+Territory Master). This will enable batch processing of territories
+whose QTerrxxx.csv's have been updated awaiting Calc processing into
+business territories.
+
+
+Dependencies.
+-------------
+ProcessBQTerrs.ods - LibreOffice/OpenOffice spreadsheet stored with
+ project, but not visible in Geany
+
+(See Basic Macros section)
+ 
+ 
+Basic Macros.
+-------------
+This project depends upon the business-specific macros described below.
+
+AddHdrToQBTerr - Add Biz header to raw sheet data
+BizBridgeToBiz - Bridge sheet to BizTerr sheet
+DoBizTerrWithCalc - engine for ProcessBQTerrs.ods
+InsertQBizHdr - header for Biz Bridge sheet
+OpenBQTerr.bas - Open QTerrxxx.csv from Working-Files for territory xxx.
+QGetToBizBridge - move raw sheet data to Bridge sheet
+QToBizTerr -
+QodsToBizTerr - 
+SaveQcsvODS - Save QTerrxxx.csv to QTerrxxx.ods in Working-Files folder.
+SetBizColWidths - set spreadsheet column widths for Biz terr
+SetBizHeadings - set spreadsheet headings for Biz terr
+fSetBizSheetName - set sheet name in Biz terr sheet header.
+fOpenBQTerr - shortcut to OpenBQTerr for testing.
+fQGetToBizBridge - shortcut to QGetToBizBridge for testing.
+
+
+Significant Notes.
+------------------
+Much of the prototype code development is initially done in macros defined
+in ProcessBQTerrs.ods. This is done to avoid having to continually export
+the Territories Library in order to preserve code changes over Calc crashes.
+It also provides a localized platform that is relatively benign while 
+debugging.
+
+The drawback is that any code that jumps into the Territories Library,
+then returns may lose continuity due to Territories Library vars being
+released. This has the side-effect that code may have to be migrated
+into the Territories Library in order to be accurately tested for
+functionality.
+
+The territory generation process is segmented due to the anomalies of
+execution that occur when using the Uno interfaces. Basic has the limitation
+of having "layered" access to the various Uno interfaces. That has the
+benifit of limiting potential disaster, but has the drawback of shackling
+Basic from direct access to some of the more advanced workbook/spreadsheet
+features available to C++ code.
+
+Basic is also "interpretive" so variables, even with module-wide scope,
+are "lost" whenever the code leaves the Basic module (like for an Uno 
+external reference). This requires "segmenting" the various stages of
+territory generation by closing objects (like sheets and workbooks) when
+a stage of processing is complete, then re-opening objects (like sheets
+or workbooks) when the next stage is entered. It aint pretty, but it works.
+
+It should also be noted that a seemingly innocuous call to 'msgbox' for
+debugging can cause the code to lose its Frame references, causing code
+which follows the 'msgbox' reference to fail. If there is a need to see
+variable content while debugging code, it is best to do so via breakpoints
+set in the code with viewing in the var view window.
+
+
+Internal Documentation.
+-----------------------
+ProcessBQTerrs
+
+ProcessBQTerrs.ods is the "workhorse" spreadsheet for processing biz
+territory QTerrxxx.csv files into business territory spreadsheets.
+The source for the QTerrxxx.csv is the Terrxxx_RU.db database which
+was constructed from the business polygon download of RefUSA Business
+data.
+
+The ProcessBQTerrs.ods has a single worksheet "Territory List". This
+sheet is the "engine" that drives the automated production of business
+territory spreadsheets. It consists of a list of business territories
+to be processed, along with 'calculation links' in the form of cells
+with function references that fire off the processing.
+
+The list to process is one or more lines starting with line 6, the first
+line past the sheet header. The list is terminated by a line consisting
+of "$" in the first column. Lines beginning with "#" are treated as
+comments and skipped by processing.
+
+Each line to be processed has a territory ID in column A (leftmost cell).
+The Main sub loops through the Territory List lines invoking the macros
+within the Territories Library to build the business territory workbooks
+for each territory in the list.
+
+Once a territory has been processed, its cell text is changed to have a
+"#" prefix turning it into a comment. This provides a running tally of
+which territories have been processed. If a processing error occurs, it
+is then a simple matter to locate the territory ID having issues, since
+it will not have been "commented" out.
+
+Cells that trigger processing do so by invoking a function reference
+either to a Territories Library function, or to a ProcessBQTerrs internal
+function definition. These function references are held "dormant" by
+preceding the '=' reference with a single quote ('). This causes Calc to
+treat the cell as text instead of a function reference. It also makes
+the function reference visible in the spreadsheet. (e.g. '=Main1() )
+
+These function reference cells have a cell immediately to their left
+with the text "RUN ...>" that serves as a visible pointer to any cell
+that contains a function reference. When the function reference is
+activated by removing its leading ', the function reference becomes
+hidden (not visible), but the cell at its left remains as a reminder
+that the function reference is there.
+
+
+Internal Macros/Subs
+
+Main is the real "engine" of ProcessBQTerrs. As with any workbook that
+has internal macros, it is automatically created in the macros module.
+The Main sub has been coded to loop through the list of territories in
+the Territory List sheet.
+
+As with any "sub" that is defined within the workbook macros module,
+Main is accessible through the Tools>Macros>Run Macro... menu item in
+Calc. This method may be used to invoke the processing of business
+territories.
+
+A shortcut has been provided to bypass having to run Main from the Tools
+menu. The function Main1 has been provided as an internal macro/function
+for ProcessBQTerrs. This function is merely a "front-end" for calling
+Main directly from a cell reference. By placing =Main1() in a cell, this
+is an expression that forces Calc to evaluate the function Main1. All
+Main1 does is invoke Main, without returning any result. It thus is an
+alias for invoking Main as a macro.
+
+
+Main subs/macros - DoTerrWithCalc - called with xxx territory ID
+  to take territory xxx QTerrxxx.csv and make a territory workbook
+  Terrxxx_PubTerr.ods
+
+DoTerrWithCalc uses the QTerrxxx.csv file as its basis for
+generating the resultant territory. The QTerrxxx.csv file was generated
+by runniing a query on the territories SQL database to extract the
+records for territory xxx. Once that has been done, the SQL processing
+is left behind, and LibreOffice/OpenOffice Calc is used to finish
+generating the territory in spreadsheet and PDF formats for the publishers
+to use.
+
+The sub/macro QGetToBridge takes the download data from the .csv file
+and creates the Bridge sheet which contains all the base records for the
+territory. The Bridge worksheet is taken as input to the BridgeToTerr sub
+that creates a territory worksheet in the QTerrxxx.ods workbook.
+
+Once the territory worksheet has been created in QTerrxxx.ods, it is
+exported to the Terrxxx_PubTerr.ods. From there, it is further saved as
+an Excel formatted workbook and a PDF formatted file for ease of use
+by publishers.

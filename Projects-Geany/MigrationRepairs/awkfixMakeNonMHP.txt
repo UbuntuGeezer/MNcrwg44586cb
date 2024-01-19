@@ -1,0 +1,8 @@
+# awkfixMakeNonMHP.txt MakeSpecials path fixes. 6/3/22.
+basepath = $(pathbase)
+specpath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Special
+shellpath = $(pathbase)/Procs-Dev
+MHP = 0
+LETTER = 0
+# end MakeSpecials path fixes.
+

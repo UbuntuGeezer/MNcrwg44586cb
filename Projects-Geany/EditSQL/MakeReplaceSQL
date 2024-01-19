@@ -1,0 +1,80 @@
+# MakeReplaceSQL.tmp - Makefile (template) for MakeReplaceSQL.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#   7/6/22. wmk.
+#
+# This makefile is edited by DoSed.sh with <basmodule> <xbafile> substituted
+# throughout. <basmodule> will be the name of a .bas source file with no
+# filename extension; <xbafile> will be the complete name of an XBA file with
+# the .xba filename extension.
+#
+# Modification History.
+# ---------------------
+# 7/6/22.	wmk	original code.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(pathbase)
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : Always JustDoIt
+.ONESHELL : ;
+
+ projpath = $(codebase)/Projects-Geany/EditSQL
+
+# <filepath>/<filebase>.sql
+#=======================================================
+Always : JustDoIt
+	cd $(projpath)
+	# delete 1st and last lines of new .sql
+	#sed -i "/\-\-begin FixFromSC.sql/d;/\/\*\*\//d" Fix226RU.a
+	sed -i -f sedAddDate.txt Fix226RU.sql
+	cp Fix226RU.sql Fix226RU.a
+	mawk -f awkSplit1.txt Fix226RU.a > Fix226RU.s1
+	mawk -f awkSplit2.txt Fix226RU.a > Fix226RU.s2
+	cat Fix226RU.s1 FixFromSC.sql Fix226RU.s2 \
+	 > newFix226RU.sql
+	#mawk "/-- \*\* FixFromSC/{f=1;print;while(getline < \"Fix226RU.a\")\
+	# {print}}/\/\*\*\//{f=0}!f" FixFromSC.sql > newFix226RU.sql
+	mv Fix226RU.sql oldFix226RU.sql
+	mv newFix226RU.sql ./Fix226RU.sql
+	echo "module FixFromSC.sql replaced into local Fix226RU..."
+	echo "use PutSQLSource.sh to copy the new Fix226RU over original after changes checked."
+
+#=======================================================
+JustDoIt: ;

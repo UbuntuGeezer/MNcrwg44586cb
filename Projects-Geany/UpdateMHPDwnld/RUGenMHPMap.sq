@@ -1,0 +1,89 @@
+--RUGenMHPMap.sq - Generate pseudo MHP Map download.csv (template).
+--	7/6/21.	wmk.
+--
+-- * Modification History.
+-- * ---------------------
+-- * 7/5/21.	wmk.	original code.
+-- * 7/6/21.	wmk.	bug fixes where " " preceded "." commands.
+-- *;
+
+-- * subquery list.
+-- * --------------
+-- * RUGenMHPMap - Generate pseudo MHP Map download.csv.
+-- *;
+
+-- ** RUGenMHPMap **********
+-- *	7/6/21.	wmk.
+-- *--------------------------
+-- *
+-- * RUGenMHPMap - Generate pseudo MHP Map download.csv.
+-- *
+-- * Entry DB and table dependencies.
+-- *	Terrxxx_RU.db - as db12; from ./Previous folder
+-- *	  Terrxxx_MHP table - table of known addresses from last download
+-- *		of terrxxx from RU data 
+-- *	RU<MHP-name>_mm-dd.db - as db19, full download of MHP as of mm-dd
+-- *	  <MHP-name> table - full download table
+-- *
+-- * Exit DB and table results.
+-- *	Mapxxx_RU.csv - .csv of download data that corresponds to the
+-- *	  latest full RU download of the MHP.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 7/5/21.	wmk.	original code.
+-- * 7/6/21.	wmk.	bug fixes where " " preceded "." commands; bug
+-- *					fix changing Terrxxx_MHP from ./Previous.
+-- *
+-- * Notes. The Terrxxx_MHP table records are in RU polygon map download
+-- * order so the fields House Number, Pre-Directional, Street, Street Suffix,
+-- * and Post-Directional can be compared directly with the full download
+-- * to obtain the records for all the known addresses in territory xxx.
+-- * A second pass over the full download using only Pre-Directional, Street, 
+-- * Street Suffix, and Post-Directional can be done to find House Number
+-- * fields that are new since the last download, and these records can
+-- * be added.
+-- *;
+
+-- * open junk as main;
+.open '$folderbase/Territories/DB-Dev/junk.db'
+ 
+-- * attach ./Previous/Terr_RU.db as db12;
+ATTACH '$folderbase/Territories'
+	|| 		'/RawData/RefUSA/RefUSA-Downloads/Terrxxx/'
+	|| '/Terrxxx_RU.db'
+	AS db12;
+-- pragma db12.table_info(Terrxxx_MHP);
+
+-- * attach full download of MHP;
+ATTACH '$folderbase/Territories'
+	|| 		'/RawData/RefUSA/RefUSA-Downloads/Special/'
+	|| '/RUvvvv_mm-dd.db'
+	AS db19;
+--	pragma db19.table_info(vvvv);
+
+CREATE TEMP TABLE MHP_Recs
+( "Last Name" TEXT, "First Name" TEXT, "House Number" TEXT,
+ "Pre-directional" TEXT, Street TEXT, "Street Suffix" TEXT,
+  "Post-directional" TEXT, "Apartment Number" TEXT, City TEXT,
+ State TEXT, "ZIP Code" TEXT, "County Name" TEXT,
+ "Phone Number" TEXT );
+with a AS (SELECT "Pre-Directional" AS PreDir, "House Number" AS HouseNo,
+  Street AS StreetName, "Street Suffix" AS StreetType, 
+  "Post-Directional" AS PostDir
+  FROM db12.Terrxxx_MHP)
+ INSERT INTO MHP_Recs
+ SELECT * FROM db19.vvvv 
+  WHERE "Pre-directional"||"House Number"||Street||"Street Suffix"
+	|| "Post-Directional"
+   IN (SELECT PreDir || HouseNo || StreetName || StreetType || PostDir
+    from a);
+.headers ON
+.separator ,
+.mode csv
+.output '$folderbase/Territories/RawData/RefUSA/RefUSA-Downloads/Terrxxx/Mapxxx_RU.csv'
+ SELECT * FROM MHP_Recs;
+ DROP TABLE MHP_Recs;
+.quit
+
+-- ** END RUGenMHPMap **********;

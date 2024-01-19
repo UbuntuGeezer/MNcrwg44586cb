@@ -1,0 +1,48 @@
+# MakeTest.tmp - *make* file for testing error handling.
+#	5/20/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 5/20/23.	wmk.	original code.
+#
+# Entry. *trap called setting up errorhandling to SyncAllData/ErrHandler.sh
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/SyncAllData
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	badcmd
+	cmd=$$previous_cmd ret=$$?
+	if [ $$ret -ne 0 ];then export cmdname=$$previous_cmd;export ec=$$ret;$(projpath)/ErrHandler.sh;fi
+	cd $(altproj);./DoSed.sh $(projpath) shfile
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/shfile.sh;then \
+	 echo "** shfile.sh generation failed **";exit 1;fi
+	echo "** shfile.sh to do-whatever **"
+	
+#==================================================================
+# end MakeTest.tmp

@@ -1,0 +1,178 @@
+&apos;// QodsToBizTerr.bas
+&apos;//-------------------------------------------------------------------
+&apos;// QodsToBizTerr - Take SQL Territory query .csv data to PubTerr sheet.
+&apos;//		12/23/21.	wmk.	16:39
+&apos;//-------------------------------------------------------------------
+	
+public sub QodsToBizTerr(psTerrID As String)
+
+&apos;//	Usage.	call QodsToBizTerr(sTerrID)
+&apos;//
+&apos;//		sTerrID = territory ID to process to PubTerr
+&apos;//
+&apos;// Entry.	~Territories/.../TerrData/Terrxxx/Working-Files/QTerrxxx.ods
+&apos;//			  contains territory records worksheet QTerrxxx and header
+&apos;//			  worksheet TerrxxxHdr to use as base for territory build
+&apos;//		Assume all sheets are closed on entry, then start clean by re-opening
+&apos;//		the workbooks/sheets needed.
+&apos;//
+&apos;//	Exit.	2 new sheets generated; Terrxxx-Bridge and Terrxxx_PubTerr.
+&apos;//			The Terxxx_PubTerr is also copied to a new workbook, which
+&apos;//			the user can save as a &quot;ready-to-go&quot; territory.
+&apos;//
+&apos;// Calls.	PickACell, CopyToEnd, UnprotectSheet,
+&apos;//			*[QGetToBridge] QGetToBizBridge
+&apos;// 		RenameSheet,
+&apos;//			*[BridgeToTerr3] BizBridgeToBiz
+&apos;//			CopyBizToNewWork, fsSetPubSheetName
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;// 9/25/21.	wmk.	original code; adapted from QodsToPubTerr;
+&apos;//						csTerrBase constant changed; sPubTerrBase changed
+&apos;//						to &apos;_BizTerr&apos; from &apos;_PubTerr&apos;; if 1=0 sections
+&apos;//						removed.
+&apos;// 9/26/21.	wmk.	QGetToBridge replaced with QBizGetToBridge;
+&apos;//						BridgeToTerr3 replaced with BizBridgeToBiz;
+&apos;//						entry assumes all workbooks/spreadsheets are closed
+&apos;//						and ready for re-open for processing.
+&apos;// 9/29/21.	wmk.	replace CopyToNewWork with CopyBizToNewWork.
+&apos;// Legacy mods.
+&apos;//	7/11/21.	wmk.	original code; adpated from QToPubTerr3; mod 
+&apos;//				 history retained for reference.
+&apos;// 2/20/21.	wmk.	move forward to use BridgeToTerr3.
+&apos;// 3/16/21.	wmk.	preserve PubTerr sheet name for use
+&apos;//				 by other subs via fsSetPubSheetName.
+&apos;//	7/9/21.		wmk.	oDoc and oSel assignments moved ahead of all other code;
+&apos;//				 PickACell called to anchor focus; code modified to use
+&apos;//				 URL to extract territory ID instead of $D$4.
+&apos;//	7/12/21.	wmk.	depend on BridgeToTerr3 to save QTerrxxx.ods after PubTerr
+&apos;//				 generated; move sheet saving code to CopyToNewWork;
+&apos;//				 remove call to ProtectSheet after Bridge; after
+&apos;//				 BridgeToTerr3, re-open QTerrxxx.ods for subsequent
+&apos;//				 operations.
+&apos;// 12/23/21.	wmk.	updated to use csTerrBase, csBTerrDataPath for
+&apos;//				 multihost support.
+&apos;//
+&apos;//	Notes. QodsToBizTerr opens the Working-Files QTerrxxx.ods, instead of
+&apos;//	expecting it open on entry.
+
+&apos;//	constants.
+const COL_D=3
+const ROW_4=3
+
+&apos;const csTerrBase = &quot;/media/ubuntu/Windows/Users/Bill/Territories/BTerrData/&quot;
+&apos;const csTerrBase = &quot;defined above&quot;
+&apos;const csBTerrDataPath = &quot;defined above&quot;
+
+&apos;//	local variables.
+dim oDoc		As Object
+dim oSel		As Object
+dim oRange		As Object
+dim iSheetIx	As Integer
+dim oSheet		As Object
+dim oCell		As Object
+dim sTerrID		As String
+dim sSheetName	As String
+
+dim oTestDoc	As Object
+dim sBaseName	As String
+dim sBasePath	As String
+dim sTargPath	As String
+dim sFullTargPath	As String
+dim sTargetURL	As String
+
+&apos;// code.
+	ON ERROR GOTO ErrorHandler
+
+	&apos;// open QTerrxxx.ods to process.
+	oTestDoc = ThisComponent
+	sTerrID = psTerrID
+	sBaseName = &quot;QTerr&quot;
+	sBasePath = &quot;/Terr&quot;
+	sTargPath = sBasePath &amp; sTerrID
+
+	&apos;// open QTerrxxx.ods
+    sFullTargPath = csBTerrDataPath &amp; sBasePath &amp; sTerrID &amp; &quot;/Working-Files/&quot;_ 
+		&amp; sBaseName &amp; sTerrID &amp; &quot;.ods&quot;
+		
+dim Args(1)	As new com.sun.star.beans.PropertyValue 
+	sTargetURL = convertToURL(sFullTargPath)
+	Args(1).name = &quot;FilterName&quot;
+	Args(1).Value = &quot;calc8&quot;
+	Args(0).name = &quot;Hidden&quot;
+	Args(0).value = False
+	oTestDoc = StarDesktop.loadComponentFromURL(sTargetURL, &quot;_blank&quot;, 0, Args())
+	PickACell()
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	CopyToEnd()
+	UnprotectSheet()
+&apos;//	QGetToBridge()
+	QGetToBizBridge()
+
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+
+dim sDocURL		As	String
+dim nURLlen		As	Integer
+dim sURLBase	As	String
+dim sFileBase	As	String
+dim sHdrFile	As	String
+
+	&apos;// modify code to get sTerrID from URL ...QTerrxxx.ods
+	sDocURL = ThisComponent.getURL()
+	&apos;// expected URL = ../TerrData/Working-Files/QTerrxxx.ods
+	nURLlen = len(sDocURL)
+	sURLBase = left(sDocURL, nURLLen-12)	&apos;// up to last &apos;/&apos;
+	sFileBase = right(sDocURL,11)	&apos;// Terrxxx.ods
+	sHdrFile = left(sFileBase,7) + &quot;Hdr&quot; + right(sFileBase,4)
+	sTerrID = mid(sFileBase,5,3)
+		
+&apos;	oCell = oSheet.getCellByPosition(COL_D, ROW_4)
+&apos;	sTerrID = trim(oCell.String)
+	sSheetName = &quot;Terr&quot; + sTerrID + &quot;_Bridge&quot;
+	RenameSheet(sSheetName)
+&apos;	ProtectSheet()								&apos;// protect sheet
+
+	CopyToEnd()
+	UnprotectSheet()
+&apos;//	BridgeToTerr3()
+	BizBridgeToBiz()
+
+	&apos;// now re-open QTerrxxx.ods
+    sFullTargPath = csBTerrDataPath &amp; sBasePath &amp; sTerrID &amp; &quot;/Working-Files/&quot;_ 
+		&amp; sBaseName &amp; sTerrID &amp; &quot;.ods&quot;
+		
+dim Args4(1)	As new com.sun.star.beans.PropertyValue 
+	sTargetURL = convertToURL(sFullTargPath)
+	Args4(1).name = &quot;FilterName&quot;
+	Args4(1).Value = &quot;calc8&quot;
+	Args4(0).name = &quot;Hidden&quot;
+	Args4(0).value = False
+	oTestDoc = StarDesktop.loadComponentFromURL(sTargetURL, &quot;_blank&quot;, 0, Args4())
+
+&apos;	sSheetName = &quot;Terr&quot; + sTerrID + &quot;_BizTerr&quot;
+&apos;	RenameSheet(sSheetName)
+&apos;	fsSetPubSheetName(sSheetName)
+&apos;	ProtectSheet()
+
+	CopyBizToNewWork(sSheetName)
+
+	oTestDoc.Close(1)
+
+&apos;dim oQTerrDoc	As Object
+&apos;	oQTerrDoc = ThisComponent.CurrentController.Frame
+&apos;	oQTerrDoc.close(1)
+
+&apos;oPubTerrDoc.close(1)
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;QodsToBizTerr - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub 	&apos;// end QodsToBizTerr	12/23/21.	16:39

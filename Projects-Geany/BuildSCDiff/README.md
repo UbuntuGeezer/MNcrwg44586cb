@@ -1,0 +1,138 @@
+
+README - BuildSCDiff - Build SC differences database.<br>
+	5/26/22.	wmk.
+<h2>Modification History.</h2>
+<pre><code>4/17/21.	wmk.	original document.
+9/30/21.	wmk.	build process fully documented.
+1/2/22.		wmk.	formatted into README.md for .html generation.
+4/29/22.	wmk.	.md changes for *pandoc* utility.
+5/26/22.	wmk.	.md changes back to *markdown* utility; internal links
+			 added to text.
+</code></pre>
+<h2 id="IX">Document Sections.</h2>
+<pre><code>
+<a href="#1.0">link</a> Project Description - overall project description.
+<a href="#2.0">link</a> Dependencies. - files and dependencies for build.
+<a href="#2.0.1">link</a> Build Process Dependencies - process dependencies.
+<a href="#3.0">link</a> Build Process - step-by-step build instructions.
+<a href="#4.0">link</a> Support Shells - build process support .sh files.
+</code></pre>
+<h2 id="1.0">1.0 Project Description.</h2>
+BuildSCDiff builds the "difference" database that collects the "changed" records from the newest SC download, as compared with the previous SC download. This difference database is then used to update the Terr86777 table in the Terr86777db. The difference database may then be used to update Bridge tables in any territories that are "up-to-date" with the last SC download.
+
+*Prior to running the build for BuildSCDiff.** The *ImportSCPA* project should have completed
+with building the latest SCPA_m2-d2.db. See the 
+[ImportSCPA](file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/ImportSCPA/README.html) project documentation.
+**CAUTION:** If the newest difference database is used to update a territory that is not "up-to-date' with the latest SC download, the territory may miss one or more intervening updates. If a territory is not "up-to-date" with the latest SC download (difference), 2 options are available.
+1) Run multiple updates on the territory SCBridge table using the past differences (in sequence) that the territory is out-of-date with;<br>
+OR
+2) Run a single update on the territory using the current Terr86777 data.<br>
+<a href="#IX">Index<a>
+
+<h2 id="2.0">2.0 Dependencies.</h2>
+
+<h3 id="2.0.1">2.0.1 Primary Target Dependencies.</h3>
+The target SCPADiff\_m2-d2.db is built from the BuildSCDiff make and has dependencies on the following databases:
+<pre><code>
+Terr86777.db	- territory master database containing all SC data
+SCPA_m2-d2.db - SCPA download (latest) full database
+SCPA_m1-d1.db - SCPA download (previous) full database
+</code></pre>
+The SCPA\_mm-dd.db databases are built directly from the SCPA full download
+data. Their dependencies are:
+<pre><code>
+	SCPA-Public_mm-dd.xlsx - .xlsx full download from SC site
+	SCPA-Public_mm-dd.csv - .csv of all records from .xlsx download
+</code></pre> See the 
+[ImportSCPA](file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/ImportSCPA/README.html) project documentation.
+<a href="#IX">Index<a>
+<h3 id="2.0.2">2.0.2 Build Process Dependencies.</h3>
+The build process has the following dependencies:
+<pre><code>
+	bashpath -  variable defined pointing to folder with .sh files referenced
+	SCDwnldToDB.sh - shell to process download .csv file to download .db
+</code></pre>	
+SCPADiff\_m2-d2.db will be considered out-of-date if any of the .sql file
+ExtractDownDiff.sql, the preamble file preamble.s, or the postscript files
+hdrAnySQL.sh is newer.
+
+If the hdrAnySQL.sh file is newer, the makefile MakeBuildSCDiff.tmp may
+also be out-of-date. If this is true, a warning will be given the user and
+the build stopped. This is because of the sensitivity of MakeBuildSCDiff.tmp
+to the line count of hdrAnySQL.sh.
+
+preamble.s is a series of shell statements that set up the following
+environment variables that are embedded in the ExtractDownDiff.sql:
+<pre><code>
+	SCPA_DB1="SCPA_m1-d1.db"
+	SCPA_TBL1="Datam1d1"
+	SCPA_DB2="SCPA_m2-d2.db"
+	SCPA_TBL2="Datam2d2"
+	DIFF_DB="SCPADiff_m2-d2.db"
+	DIFF_TBL="Diffm2d2"
+	M2D2="m2-d2"
+</code></pre>	
+<a href="#IX">Index<a>
+<h2 id="3.0">3.0 Build Process.</h2>
+Build Menu Items.
+The following are the "Build" menu items in the BuildSCDiff project:
+<pre><code>
+	sed ExtractDiff Build - edit dates into MakeExtractDiff makefile
+	 (only visible to Geany if a "text" file is in focus)
+
+	Make -
+	
+	Make Custom Target.. -
+	
+	sed - edit dates into preamble.sh, MakeExtractDiff, MakeBuildSCDiff
+	
+	Make dry-run - runs *make* with --dry-run option.
+</code></pre>
+Perform the following steps to create an SCPADiff\_m2-d2.db:
+<pre><code>BuildSCDiff project folder:
+	move to the README file of the project; this will enable editing the
+	 'No filetype commands' section of the Build menu
+	edit the 'sed ExtractDiff Build' Build menu command line with
+	 m1 d1 m2 d2 of the old and new SCPA download dates
+	 
+	edit the 'sed' Build menu command line with m1 d1 m2 d2 of the old
+	 and new SCPA download dates
+**Note.** Do not use the 'sed' Build menu item to run DoSed. It has a
+dependencyn on the environment var *terrdflt* that is not set in Geany.
+
+	run the 'sed ExtractDiffBuild' Build command to modify
+	 MakeExtractDiff makefile to build ExtractDownDiff.sh shell.
+
+**Note.** Do not use the Build Menu "Make* items, since Geany does not
+have the required environment vars set for the builds to execute properly.
+
+Terminal session:
+	cdj BuildSCDiff
+	run DoSed.sh m1 d1  m2 d2 to modify the MakeBuildSCDiff
+	 makefile to build the SCPADiff_m2-d2.db
+
+	 make -f MakeExtractDiff
+	  to make the ExtractDownDiff.sh shell used by MakeBuildSCDiff
+
+	 make -f MakeBuildSCDiff
+	  to build the differences database SCPADiff_m2-d2.db
+</code></pre>	
+The differences database SCPADiff\_m2-d2.db is now available for the UpdateCongTerr project to use in updating the Territories Terr86777 table. There is one more process to be run before the SCPADiff\_m2-d2.db is complete.
+
+The DiffAccts table is now automatically added to the SCPADiff_m2-d2.db
+by the main build recipe *make* MakeSetDiffAcctsTerrIDs and execution of
+the generated SetDiffAcctsTerrIDs.sh
+The DiffAccts table can be queried to produce a TIDList of territories that are now
+out-of-date for an automated UpdateSCBridge>BridgesToTerr>ProcessQTerrs>AddPUbTerrHdr
+rebuild of the affected territories. The UpdateSCBridge project contains the
+makefile MakeGetTIDList that queries the DiffAccts table to produce a TIDList
+of the territories needing rebuild. See the 
+[UpdateSCBridge Project Documentation](file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/UpdateSCBridge/README.html#4.0.1.1) 
+for details.<br>
+<a href="#IX">Index<a>
+<h2 id = "4.0">4.0 Support Shells.</h2>
+<pre><code>FindTerrID.sh - Search Terrxxx_SC.dbs for property ID to get territory ID.
+ (in Procs-Dev folder)
+</code></pre>
+<a href="#IX">Index<a>
+

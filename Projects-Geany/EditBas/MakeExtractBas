@@ -1,0 +1,67 @@
+# MakeExtractBas.tmp - Makefile (template) for MakeExtractBas.
+$(error out-of-date)
+#   8/19/23. wmk.	(automated) path corrections.
+#
+# MakeAnySHtoSQL takes a <file base>.sh file and move it through the
+# reverse process to de-shell it into a .sql file of straight SQL. An
+# intermediate file <file base>.sq is the SQL shell echo,s stripped out
+# of the .sh file.
+#
+# Modification History.
+# ---------------------
+# 8/19/23.	wmk.	edited for MNcrwg44586; use *currpwd in place of
+#		 pushd/popd.
+#
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+# Legacy mods.
+# 3/7/22.	wmk.	original makefile; adapted from MakeAnySHtoSQL.
+# 3/8/22.	wmk.	completion message added; add conversion for &amp; to
+#			 ampersand (&).
+# 4/24/22.	wmk.	*pathbase* env var included.
+# 5/4/22. wmk.	(automated) path corrections.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB/MNcrwg44586
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/MN/CRWG/44586
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : Always JustDoIt
+.ONESHELL : ;
+
+ projpath = $(codebase)/Projects-Geany/AnySHtoSQL
+
+# <filepath>/<filebase>.sql
+#=======================================================
+Always : JustDoIt
+	export awkdate=
+	export awktime=
+	currpwd=$$PWD
+	cd /home/vncwmk3/GitHub/Libraries-Project/MNcrwg44586/Basic/Module1
+	$(AWK) -v awkdate=  -v awktime= 'BEGIN {p =0 }; \
+	 /PubToSuper.bas/ {print $0;p = 1; next }; \
+	 /\/\*\*\// { awkdate = "$1" ; awktime = "$2" ;p = 0; next }; \
+	 p { print } ' Module1.xba > PubToSuper.ba1
+	 #echo "end sub     &apos;// end PubToSuper.bas   $$awkdate   $$awktime" >> PubToSuper.ba1
+	 #exit 1
+	 sed "s?&apos;?\'?g;s?&quot;?\"?g;s?&amp;?&?g" PubToSuper.ba1 > PubToSuper.bas;
+	 echo "PubToSuper.bas available for editing"
+	cd $$currpwd
+#=======================================================
+JustDoIt: ;

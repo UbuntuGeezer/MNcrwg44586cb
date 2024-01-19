@@ -1,0 +1,49 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=EditBas
+base_path=/home/vncwmk3/Territories/Projects-Geany/EditBas/
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=0
+
+[build-menu]
+NF_03_LB=sed
+NF_03_CM=./DoSed.sh Module1Common  Module1.xba
+NF_03_WD=/home/vncwmk3/Territories/FL/SARA/86777/Projects-Geany/EditBas
+NF_00_LB=Extract XBA Code
+NF_00_CM=make -f MakeExtractBas
+NF_00_WD=/home/vncwmk3/Territories/FL/SARA/86777/Projects-Geany/EditBas
+XMLFT_01_LB=Delete XBA Code
+XMLFT_01_CM=make -f MakeDeleteXBAbas
+XMLFT_01_WD=/home/vncwmk3/Territories/FL/SARA/86777/Projects-Geany/EditBas
+filetypes=XML;
+XMLFT_00_LB=Replace XBA Code
+XMLFT_00_CM=make -f MakeReplaceBas
+XMLFT_00_WD=/home/vncwmk3/Territories/FL/SARA/86777/Projects-Geany/EditBas
+
+[VTE]
+last_dir=/media/ubuntu/Windows/Users/Bill/Territories/Projects-Geany/Documentation

@@ -1,0 +1,164 @@
+&apos;// ExportTerrAsPDF.bas
+&apos;//--------------------------------------------------------------------
+&apos;// ExportTerrAsPDF - Export territory workbook as PDF.
+&apos;//		12/23/21.	wmk.	23:04
+&apos;//--------------------------------------------------------------------
+
+public sub ExportTerrAsPDF()
+
+&apos;// Entry.	user has _PubTerr sheet selected
+&apos;//
+&apos;//	Exit.	current sheet exported as PDF
+&apos;//
+&apos;// Usage.	macro call or
+&apos;//			call ExportTerrAsPDF()
+&apos;//
+&apos;// Entry.	user has worksheet selected
+&apos;//
+&apos;//	Exit.	copy of worksheet made to .pdf file
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;// 1/14/21.	wmk.	original code; cloned from macro recording.
+&apos;//	7/10/21.	wmk.	dispatch parameter list split for readability.
+&apos;// 12/23/21.	wmk.	modified to use csTerrBase, csTerrDataPath module-wide
+&apos;//				 constants for multihost support.
+&apos;//
+&apos;//	Notes.
+&apos;//
+
+&apos;//	constants.
+&apos;// const csTerrBase = &quot;defined above&quot;
+&apos;// const csTerrDataPath = &quot;defined above&quot;
+
+&apos;//	local variables.
+rem ----------------------------------------------------------------------
+rem define variables
+dim document   as object
+dim dispatcher as object
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dim args1(2) as new com.sun.star.beans.PropertyValue
+args1(0).Name = &quot;URL&quot;
+args1(0).Value = &quot;file://&quot; &amp; csTerrBase &amp; &quot;/Untitled.pdf&quot;
+args1(1).Name = &quot;FilterName&quot;
+args1(1).Value = &quot;calc_pdf_Export&quot;
+args1(2).Name = &quot;FilterData&quot;
+args1(2).Value = Array(Array(&quot;UseLosslessCompression&quot;,0,false,_ 
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_ 
+	Array(&quot;Quality&quot;,0,90,com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;ReduceImageResolution&quot;,0,true,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;MaxImageResolution&quot;,0,300,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;UseTaggedPDF&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;SelectPdfVersion&quot;,0,0,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;ExportNotes&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;ViewPDFAfterExport&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;ExportBookmarks&quot;,0,true,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;SinglePageSheets&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;OpenBookmarkLevels&quot;,0,-1,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;UseTransitionEffects&quot;,0,true,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;IsSkipEmptyPages&quot;,0,true,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;ExportPlaceholders&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;IsAddStream&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;ExportFormFields&quot;,0,true,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;FormsType&quot;,0,0,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;AllowDuplicateFieldNames&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;HideViewerToolbar&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;HideViewerMenubar&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;HideViewerWindowControls&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;ResizeWindowToInitialPage&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;CenterWindow&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;OpenInFullScreenMode&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;DisplayPDFDocumentTitle&quot;,0,true,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;InitialView&quot;,0,0,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;Magnification&quot;,0,0,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;Zoom&quot;,0,100,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;PageLayout&quot;,0,0,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;FirstPageOnLeft&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;InitialPage&quot;,0,1,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;Printing&quot;,0,2,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;Changes&quot;,0,4,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;EnableCopyingOfContent&quot;,0,true,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;EnableTextAccessForAccessibilityTools&quot;,0,true,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;ExportLinksRelativeFsys&quot;,0,true,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;PDFViewSelection&quot;,0,0,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;ConvertOOoTargetToPDFTarget&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;ExportBookmarksToPDFDestination&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;SignPDF&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;_OkButtonString&quot;,0,&quot;&quot;,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;Watermark&quot;,0,&quot;&quot;,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;EncryptFile&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;PreparedPasswords&quot;,0,,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;RestrictPermissions&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;PreparedPermissionPassword&quot;,0,_
+	Array(),_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;Selection&quot;,0,,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;SignatureLocation&quot;,0,&quot;&quot;,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;SignatureReason&quot;,0,&quot;&quot;,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;SignatureContactInfo&quot;,0,&quot;&quot;,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;SignaturePassword&quot;,0,&quot;&quot;,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;SignatureCertificate&quot;,0,,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;SignatureTSA&quot;,0,&quot;&quot;,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE),_
+	Array(&quot;UseReferenceXObject&quot;,0,false,_
+	 com.sun.star.beans.PropertyState.DIRECT_VALUE))
+
+dispatcher.executeDispatch(document, &quot;.uno:ExportToPDF&quot;, &quot;&quot;, 0, args1())
+
+end sub			&apos;// end ExportTerrAsPDF		12/23/21.	23:04

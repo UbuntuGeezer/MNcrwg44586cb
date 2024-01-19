@@ -1,0 +1,137 @@
+2,3c2,3
+< # RestartIncRURaw.sh  - Set up for fresh incremental archiving of RawDataRU.
+< # 	12/24/21.	wmk.
+---
+> # RestartIncProcs.sh  - Set up for fresh incremental archiving of Procs-Dev folder.
+> #	3/17/22.	wmk.
+5c5
+< #	Usage. bash RestartIncRURaw.sh
+---
+> #	Usage. bash RestartIncProcs.sh
+8,9c8
+< #	~/Territories/RawData - base directory for Terrxxx folders with
+< #	  raw data territory information
+---
+> #	~/Territories/Procs-Dev - base directory for procs
+14,17c13,16
+< #	/Territories/RawDataRU.nnn.tar files all deleted after warning;
+< #	/Territories/log/RawDataRU.snar-0 deleted after warning;
+< #	/Territories/log/RawRUlevel.txt deleted; this sets up next run of
+< #	IncDumpRawData to start at level 0;
+---
+> #	/Territories/Procs.nnn.tar files all deleted after warning;
+> #	/Territories/log/Procs.snar-0 deleted after warning;
+> #	/Territories/log/Procslevel.txt deleted; this sets up next run of
+> #	IncDumpProcs to start at level 0;
+21c20,21
+< # 9/8/21.	wmk.	original shell; adapted from RestartIncRawDataRU.
+---
+> # 9/17/21.	wmk.	original shell; adapted from RestartIncRawData;
+> #					jumpto function and references removed.
+24c24,27
+< # Notes. The entire incremental dump collection for RawData/RefUSA will be
+---
+> # 3/14/22.	wmk.	<state> <county> <congno> support with terrdata 
+> #			 environment var; HOME changed to USER in host check.
+> #
+> # Notes. The entire incremental dump collection for RawData will be
+27,35c30
+< # function definition
+< function jumpto
+< {
+<     label=$1
+<     cmd=$(sed -n "/$label:/{:a;n;p;ba};" $0 | grep -v ':$')
+<     eval "$cmd"
+<     exit
+< }
+< if [ "$HOME" = "/home/ubuntu" ]; then
+---
+> if [ "$USER" = "ubuntu" ]; then
+48,49c43,44
+<   bash ~/sysprocs/LOGMSG "   RestartIncRURaw initiated from Make."
+<   echo "   RestartIncRURaw initiated."
+---
+>   bash ~/sysprocs/LOGMSG "   RestartIncProcs initiated from Make."
+>   echo "   RestartIncProcs initiated."
+51,52c46,47
+<   bash ~/sysprocs/LOGMSG "   RestartIncRURaw initiated from Terminal."
+<   echo "   RestartIncRURaw initiated."
+---
+>   bash ~/sysprocs/LOGMSG "   RestartIncProcs initiated from Terminal."
+>   echo "   RestartIncProcs initiated."
+54c49
+< echo " **WARNING - proceeding will remove all prior RU RawData incremental dump files!**"
+---
+> echo " **WARNING - proceeding will remove all prior Procs incremental dump files!**"
+57,58c52,54
+< if [ "$ynreply" == "y" ];then
+<   echo "  Proceeding to remove prior incremental dump files..."
+---
+> if [ "$ynreply" != "y" ];then
+>   ~/sysprocs/LOGMSG "  User halted RestartIncProcs."
+>   echo " Stopping RestartIncProcs - secure Procs incremental backups.."
+60,63c56
+<   ~/sysprocs/LOGMSG "  User halted RestartIncRURaw."
+<   echo " Stopping RestartIncRURaw - secure RawData incremental backups.."
+<   exit 0
+< fi
+---
+>   echo "  Proceeding to remove prior incremental dump files..."
+65,68c58,61
+< if [ $local_debug = 1 ]; then
+<  pushd ./
+<  cd ~/Documents		# write files to Documents folder
+< fi
+---
+>  if [ $local_debug = 1 ]; then
+>   pushd ./
+>   cd ~/Documents		# write files to Documents folder
+>  fi
+70,82c63,73
+< pushd ./ > $TEMP_PATH/scratchfile
+< cd $folderbase/Territories
+< if test -f ./log/RawRUlevel.txt;then
+<  rm ./log/RawRUlevel.txt
+<  echo "0" > ./log/RawRUnextlevel.txt
+< fi
+< if test -f ./log/RawDataRU.snar-0; then
+<  rm ./log/RawDataRU.snar-0
+< fi
+< if test -f RawDataRU.0.tar; then
+<  rm RawDataRU*.tar
+< fi
+< popd > $TEMP_PATH/scratchfile
+---
+>  cd $folderbase/Territories
+>  if test -f ./log/Procslevel.txt;then
+>   rm ./log/Procslevel.txt
+>   echo "0" > ./log/Procsnextlevel.txt
+>  fi
+>  if test -f ./log/Procs.snar-0; then
+>   rm ./log/Procs.snar-0
+>  fi
+>  if test -f Procs.0.tar; then
+>   rm Procs.*.tar
+>  fi
+84c75
+< if [ $local_debug = 1 ]; then
+---
+>  if [ $local_debug = 1 ]; then
+85a77,82
+>  fi
+>  if [ "$USER" != "vncwmk3" ];then
+>   notify-send "RestartIncProcs" "complete."
+>  fi
+>  ~/sysprocs/LOGMSG "  RestartIncProcs complete."
+>  echo "  RestartIncProcs complete"
+87,94c84
+< jumpto EndProc
+< EndProc:
+< if [ "$USER" != "vncwmk3" ];then
+<  notify-send "RestartIncRURaw" " $1 complete."
+< fi
+< ~/sysprocs/LOGMSG "  RestartIncRURaw $P1 complete."
+< echo "  RestartIncRURaw $P1 complete"
+< # end RestartIncRURaw
+---
+> # end RestartIncProcs

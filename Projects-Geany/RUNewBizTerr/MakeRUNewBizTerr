@@ -1,0 +1,78 @@
+# MakeRUNewBizTerr.tmp - MakeRUNewBizTerr template.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	9/24/21.	wmk.
+#
+# Modification History.
+# ---------------------
+# 9/24/21.	wmk.	original makefile; adapted from MakeRUNewTerritory
+#
+# The primary target of MakeRUNewTerritory is Terr521_RU.db in the
+# RU download folder for the business territory. If InitialRUFix.sh is not
+# present or out-of-date, it also will be built in the territory's folder.
+
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : Dummy ;
+.ONESHELL : ;
+
+incroot = $(pathbase)/include/
+vpath %.i $(pathbase)/include
+targpath = $(pathbase)/BRawData/RefUSA/RefUSA-Downloads/Terr521
+ bashpath = $(codebase)/Procs-Dev
+
+#include pathRUdefs.inc
+# postpath var defined in above .inc
+
+# [vpath.db]Terr521_RU.db primary target
+# [vpath.csv]Map521_RU.csv prerequisite
+#=================================================
+$(targpath)/Terr521_RU.db : $(targpath)/Map521_RU.csv
+	if test -f $(postpath)/Terr521_RU.db;then  \
+	 echo "** Terr521_RU.db exists - MakeRUNewBTerritory abandoned **"; \
+	 exit 1;fi
+	$(bashpath)/RUNewBTerr_db.sh 521
+#	$(targpath)/InitialRUFix.sh
+#	$(bashpath)/RUTidyTerr_db.sh 521
+#	$(bashpath)/MissingIDs.sh 521
+	
+$(targpath)/Map521_RU.csv : ;
+
+#--- InitialRUFix.sh primary target.
+$(targpath)/InitialRUFix.sh : $(targpath)/InitialRUFix.sql
+	$(bashpath)/AnySQLtoSQ.sh $(targpath)/ InitialRUFix
+	cat $(bashpath)/hdrAnySQL_1.sh $(targpath)/InitialRUFix.sq \
+	 $(bashpath)/hdrAnySQL_2.sh > $@
+	sed -i 's?<filename>?InitialRUFix?g' $@
+	echo "Terr521/InitialRUFix.sh built"
+
+
+$(targpath)/InitialRUFix.sql : InitialRUFix.psq
+	sed 's?xxx?521?g' InitialRUFix.psq > $@
+	echo "InitialRUFix.sql copied to $(targpath)/"
+	
+InitialRUFix.psq : ;
+
+Dummy : ;
+
+#=================================================

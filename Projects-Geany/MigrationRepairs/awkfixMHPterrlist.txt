@@ -1,0 +1,4 @@
+/update/ {print;
+ while(getline tmp < "/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/FixMakes/defpathbase.txt") print tmp}
+//
+

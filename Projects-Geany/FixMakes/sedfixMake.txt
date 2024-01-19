@@ -1,0 +1,7 @@
+{/path =/ s?\/$??g}
+{/path)\// s?path)\/?path)?g}
+{/path)/ s?path)?path)/?g}
+{s?folderbase)/Territories?pathbase)?g}
+s?\$(HOME),/home/ubuntu?\$(USER),ubuntu?g
+1a#   5/4/22. wmk.	(automated) path corrections.
+

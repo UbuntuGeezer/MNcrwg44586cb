@@ -1,0 +1,41 @@
+# MakeAddZips.tmp - templateMakefile for SC AddZips.sh.
+#	12/25/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 12/25/22.	wmk.	original code.
+#
+# MakeAddZips makes the AddZips.sh shell to add zip codes to the UnitAddress
+# fields in the Bridge records, since letter-writing territories may cross
+# zip code boundaries.
+
+ifeq ($(USER),ubuntu)
+ folderbase = /media/ubuntu/Windows/Users/Bill
+else
+ folderbase = $(HOME)
+endif
+
+ifndef codebase
+ codebase = /home/vncwmk3/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $folderbase/Territories/FL/SARA/86777
+endif
+
+basepath = $(pathbase)/RawData/SCPA/SCPA-Downloads
+shellpath = $(codebase)/Procs-Dev/
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# Terryyy/AddZips.sh
+#=====================================================================
+$(basepath)Terryyy/AddZips.sh : $(basepath)/Terryyy/AddZips.sql
+	cd $(altproj);./DoSed.sh $(basepath)/Terryyy AddZips
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+
+$(basepath)Terryyy/AddZips.sql :
+	if ! test -f $@;then \
+		echo " ** missing AddZips.sql for AddZips.sh build **";exit 1;fi 
+
+#=====================================================================
+# end MakeAddZips

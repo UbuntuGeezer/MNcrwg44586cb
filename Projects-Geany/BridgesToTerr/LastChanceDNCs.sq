@@ -1,0 +1,125 @@
+echo "--LastChanceDNCs.sql - Last chance correction of DNCs in QTerr$P1.SCBridge table;"  > SQLTemp.sql
+echo "-- * 5/7/22.	wmk.	(automated) *pathbase* integration."  >> SQLTemp.sql
+echo "-- this file will be converted to shell commands to write SQLTemp.sql;"  >> SQLTemp.sql
+echo "-- 4/24/22.	wmk."  >> SQLTemp.sql
+echo "-- Modification History."  >> SQLTemp.sql
+echo "-- ---------------------"  >> SQLTemp.sql
+echo "-- 4/24/22.	wmk.	*pathbase* env var included."  >> SQLTemp.sql
+echo "-- Legacy mods."  >> SQLTemp.sql
+echo "-- 7/8/21.	wmk.	original query script"  >> SQLTemp.sql
+echo "-- 9/15/21.	wmk.	modified to only use DNC records with DelPending <> 1;"  >> SQLTemp.sql
+echo "--					env var set statements commented out;"  >> SQLTemp.sql
+echo "-- 10/5/21.	wmk.	ensure that Unit with blank(s) only treated as no unit;"  >> SQLTemp.sql
+echo "--TID=$P1"  >> SQLTemp.sql
+echo "--NAME_BASE=Terr"  >> SQLTemp.sql
+echo "--Q_NAME=Q$NAME_BASE"  >> SQLTemp.sql
+echo "--DB_SUFFX=.db"  >> SQLTemp.sql
+echo "--RU_SUFFX=_RUBridge"  >> SQLTemp.sql
+echo "--SC_SUFFX_SCBridge"  >> SQLTemp.sql
+echo "--RU_DB=_RU.db"  >> SQLTemp.sql
+echo "--SC_DB=_SC.db"  >> SQLTemp.sql
+echo "--#proc body here"  >> SQLTemp.sql
+echo "--pushd ./ >> $TEMP_PATH/bitbucket.txt"  >> SQLTemp.sql
+echo "--cd $pathbase/Procs-Dev"  >> SQLTemp.sql
+echo "-- * Begin LastChanceDNCs - Attach databases;"  >> SQLTemp.sql
+echo ".cd '$pathbase/TerrData'"  >> SQLTemp.sql
+echo ".cd './$NAME_BASE$TID/Working-Files'"  >> SQLTemp.sql
+echo ".open $Q_NAME$TID$DB_SUFFX"  >> SQLTemp.sql
+echo "ATTACH '$pathbase/DB-Dev'"  >> SQLTemp.sql
+echo " ||		'/TerrIDData.db'"  >> SQLTemp.sql
+echo " AS db4;"  >> SQLTemp.sql
+echo "--"  >> SQLTemp.sql
+echo "-- * Start fresh, clearing all DNC fields;"  >> SQLTemp.sql
+echo "UPDATE $Q_NAME$TID"  >> SQLTemp.sql
+echo "SET DONOTCALL = \"\", "  >> SQLTemp.sql
+echo " RSO = \"\", "  >> SQLTemp.sql
+echo " \"FOREIGN\" = \"\" "  >> SQLTemp.sql
+echo ";"  >> SQLTemp.sql
+echo "-- * Set DNCs in newly created QTerrxxx records."  >> SQLTemp.sql
+echo "-- *   in _SCBridge first;"  >> SQLTemp.sql
+echo "WITH a AS (SELECT * FROM DONOTCALLS "  >> SQLTemp.sql
+echo "WHERE TERRID IS \"$TID\""  >> SQLTemp.sql
+echo " AND DelPending IS NOT 1)"  >> SQLTemp.sql
+echo "UPDATE $Q_NAME$TID"  >> SQLTemp.sql
+echo "SET DONOTCALL = "  >> SQLTemp.sql
+echo "case"  >> SQLTemp.sql
+echo "when LENGTH(trim(Unit)) > 0"  >> SQLTemp.sql
+echo " then"  >> SQLTemp.sql
+echo "  CASE "  >> SQLTemp.sql
+echo "  WHEN Unit IN (SELECT Unit FROM a "  >> SQLTemp.sql
+echo "    where propid is OWNINGPARCEL"  >> SQLTemp.sql
+echo "    AND UPPER(TRIM(UnitAddress))"  >> SQLTemp.sql
+echo "     IS UPPER(TRIM($Q_NAME$TID.UnitAddress))"  >> SQLTemp.sql
+echo "  	AND Unit IS $Q_NAME$TID.Unit)"  >> SQLTemp.sql
+echo "   THEN 1"  >> SQLTemp.sql
+echo "  ELSE DONOTCALL"  >> SQLTemp.sql
+echo "  END"  >> SQLTemp.sql
+echo "else"  >> SQLTemp.sql
+echo "    case"  >> SQLTemp.sql
+echo "    when OwningParcel IN (SELECT PropID FROM a "  >> SQLTemp.sql
+echo "       where Unit isnull or Length(Unit) = 0"  >> SQLTemp.sql
+echo "       and upper(trim(UnitAddress))"  >> SQLTemp.sql
+echo "        IN (select upper(trim(UnitAddress)) FROM a))"  >> SQLTemp.sql
+echo "     then 1"  >> SQLTemp.sql
+echo "    else DONOTCALL"  >> SQLTemp.sql
+echo "    end"  >> SQLTemp.sql
+echo "end,"  >> SQLTemp.sql
+echo " \"FOREIGN\" = "  >> SQLTemp.sql
+echo "case"  >> SQLTemp.sql
+echo "when LENGTH(Unit) > 0"  >> SQLTemp.sql
+echo " then"  >> SQLTemp.sql
+echo "  CASE "  >> SQLTemp.sql
+echo "  WHEN Unit IN (SELECT Unit FROM a "  >> SQLTemp.sql
+echo "    where propid is OWNINGPARCEL"  >> SQLTemp.sql
+echo "    AND UPPER(TRIM(UnitAddress))"  >> SQLTemp.sql
+echo "     IS UPPER(TRIM($Q_NAME$TID.UnitAddress))"  >> SQLTemp.sql
+echo "  	AND Unit IS $Q_NAME$TID.Unit)"  >> SQLTemp.sql
+echo "   THEN  (SELECT \"foreign\" from a "  >> SQLTemp.sql
+echo "  			WHERE Unit IS $Q_NAME$TID.Unit"  >> SQLTemp.sql
+echo "    AND UPPER(TRIM(UnitAddress))"  >> SQLTemp.sql
+echo "     IS UPPER(TRIM($Q_NAME$TID.UnitAddress))"  >> SQLTemp.sql
+echo "    )"  >> SQLTemp.sql
+echo "  ELSE \"Foreign\""  >> SQLTemp.sql
+echo "  END"  >> SQLTemp.sql
+echo "else"  >> SQLTemp.sql
+echo "  case"  >> SQLTemp.sql
+echo "  when OwningParcel IN (SELECT PropID FROM a "  >> SQLTemp.sql
+echo "       where Unit isnull or Length(Unit) = 0)"  >> SQLTemp.sql
+echo "   then (select \"Foreign\" from a "  >> SQLTemp.sql
+echo "      where propid is OwningParcel"  >> SQLTemp.sql
+echo "       and upper(trim(UnitAddress))"  >> SQLTemp.sql
+echo "        IN (select upper(trim(UnitAddress)) FROM a))"  >> SQLTemp.sql
+echo "  else \"Foreign\""  >> SQLTemp.sql
+echo "  end"  >> SQLTemp.sql
+echo "end,"  >> SQLTemp.sql
+echo "RSO = "  >> SQLTemp.sql
+echo "case"  >> SQLTemp.sql
+echo "when LENGTH(Unit) > 0"  >> SQLTemp.sql
+echo " then"  >> SQLTemp.sql
+echo "  CASE "  >> SQLTemp.sql
+echo "  WHEN Unit IN (SELECT Unit FROM a "  >> SQLTemp.sql
+echo "    where propid is OWNINGPARCEL"  >> SQLTemp.sql
+echo "    AND UPPER(TRIM(UnitAddress))"  >> SQLTemp.sql
+echo "     IS UPPER(TRIM($Q_NAME$TID.UnitAddress))"  >> SQLTemp.sql
+echo "  	AND Unit IS $Q_NAME$TID.Unit)"  >> SQLTemp.sql
+echo "   THEN  (SELECT RSO from a "  >> SQLTemp.sql
+echo "  			WHERE Unit IS $Q_NAME$TID.Unit"  >> SQLTemp.sql
+echo "    AND UPPER(TRIM(UnitAddress))"  >> SQLTemp.sql
+echo "     IS UPPER(TRIM($Q_NAME$TID.UnitAddress))"  >> SQLTemp.sql
+echo "    )"  >> SQLTemp.sql
+echo "  ELSE RSO"  >> SQLTemp.sql
+echo "  END"  >> SQLTemp.sql
+echo "else"  >> SQLTemp.sql
+echo "  case"  >> SQLTemp.sql
+echo "  when OwningParcel IN (SELECT PropID FROM a "  >> SQLTemp.sql
+echo "       where Unit isnull or Length(Unit) = 0)"  >> SQLTemp.sql
+echo "   then (select RSO from a "  >> SQLTemp.sql
+echo "      where propid is OwningParcel"  >> SQLTemp.sql
+echo "      and upper(trim(UnitAddress))"  >> SQLTemp.sql
+echo "        IN (select upper(trim(UnitAddress)) FROM a))"  >> SQLTemp.sql
+echo "   else RSO"  >> SQLTemp.sql
+echo "  end"  >> SQLTemp.sql
+echo "end"  >> SQLTemp.sql
+echo "WHERE OWNINGPARCEL IN (SELECT PROPID FROM a); "  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo "-- end LastChanceDNCs ***;"  >> SQLTemp.sql

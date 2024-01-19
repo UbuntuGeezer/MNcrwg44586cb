@@ -1,0 +1,54 @@
+# MakeSetDBCsvDate - *make* file for SetDBCsvDate.sh
+#	6/6/23.	wmk.
+#
+# Entry.  *projpath/preamble1.sh is preamble for SetDBCsvDate.sh
+#
+# Modification History.
+# ---------------------
+# 2/6/23.	wmk.	original code.
+# 2/18/23.	wmk.	end message spacing improved.
+# 6/6/23.	wmk.	duplicate header line removed.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/SyncAllData
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always : $(projpath)/SetDBcsvDate.sql
+	cd $(altproj);./DoSed.sh $(projpath) SetDBcsvDate
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/SetDBcsvDate.sh;then \
+	 echo "** SetDBCsvDate.sh generation failed **";exit 1;fi
+	echo "  ** run SetDBcsvDate.sh <db-name> to get last download date **"
+	#. $(projpath)/SetCSVDate.sh <db-name>
+	#echo " .csv file date: '$csvdate'"
+	#$(projpath)/SetDBcsvDate.sh <db-name>
+
+$(projpath)/SetDBcsvDate.sql :
+	if ! test $@;then \
+	 echo " ** SetDBcsvDate.sql missing for SetDBcsvDate build **";exit 1;fi
+
+#==================================================================
+# end MakeSetDBCsvDate.tmp

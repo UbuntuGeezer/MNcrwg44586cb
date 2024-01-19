@@ -1,0 +1,12 @@
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+================================================="
+$(prepath)/<shell-name>.sh : $(prepath)/<shell-name>.sql
+	cd $(altproj);./DoSed.sh $(prepath) <shell-name>
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+
+
+$(prepath)/<shell-name>.sql :;
+	if ! test -f $@;then \
+	 echo " ** missing <shell-name>.sql for build <shell-name>.sh **";exit 1;fi
+
+================================================== 

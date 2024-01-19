@@ -1,0 +1,129 @@
+&apos;// SetPhoneWidths.bas
+&apos;//---------------------------------------------------------------
+&apos;// SetPhoneWidths - Set column widths on phone columns.
+&apos;//		9/11/20.	wmk.	22:15
+&apos;//---------------------------------------------------------------
+
+public sub SetPhoneWidths()
+
+&apos;//	Usage.	macro call or
+&apos;//			call SetPhoneWidths()
+&apos;//
+&apos;// Entry.	User in RefUSA/Admin formatted territory sheet
+&apos;//
+&apos;//	Exit.	columns K,L widths set to 1.0&quot; (2540)
+&apos;//			column M width set to 1.1&quot; (2794)
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	8/30/20.		wmk.	original code
+&apos;// 9/2/20.		wmk.	preserve and restore user cell selection on entry
+&apos;//						and exit; error handling added
+&apos;//	9/11/20.	wmk.	code simplified; constants implemented
+&apos;//
+&apos;//	Notes. UNO Dispatcher exits this module, corrupting any module-wide
+&apos;//	vars. Only way to preserve user cell selection on entry is in local
+&apos;//	vars this sub.
+&apos;//
+
+&apos;//	constants.
+const COL_K=10			&apos;// column K index
+const COL_L=11			&apos;// column L index 
+const COL_M=12			&apos;// column M index
+
+const	ONE_INCH=2540
+const	K_WIDTH=1.0
+const	L_WIDTH=1.0
+const	M_WIDTH=1.1
+
+&apos;//	local variables.
+dim oDocument   as object
+dim oDispatcher as object
+dim oDoc	As Object	&apos;// ThisComponent
+dim oSel	As Object	&apos;// current cell selection on entry
+dim oRange	As Object	&apos;// RangeAddress selected
+dim oSheet	As Object	&apos;// current sheet
+dim oCols	As Object	&apos;// columns this sheet
+dim iSheetIx	As Integer	&apos;// this sheet index
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	
+	&apos;// preserve user cell selection
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	oCols = oSheet.Columns
+
+	oCols(COL_K).setPropertyValue(&quot;Width&quot;, K_WIDTH*ONE_INCH)
+	oCols(COL_L).setPropertyValue(&quot;Width&quot;, L_WIDTH*ONE_INCH)
+	oCols(COL_M).setPropertyValue(&quot;Width&quot;, M_WIDTH*ONE_INCH)
+	
+if true then
+	GoTo EndOldCode
+endif
+&apos;//---------------------------------------------------------
+	oDocument   = ThisComponent.CurrentController.Frame
+	oDispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+	&apos;// set column widths for K, L, to 1.0&quot; (2540)
+	&apos;//							 M to 1.1&quot; (2794)
+
+	&apos;// set up arguments for uno:GoToCell interface
+	dim args1(0) as new com.sun.star.beans.PropertyValue
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$K$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+
+rem ----------------------------------------------------------------------
+&apos;dim args1(0) as new com.sun.star.beans.PropertyValue
+	args1(0).Name = &quot;ColumnWidth&quot;
+	args1(0).Value = 2540
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args1())
+
+	&apos;// set up arguments for uno:GoToCell interface
+&apos;	dim args1(0) as new com.sun.star.beans.PropertyValue
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$L$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+
+rem ----------------------------------------------------------------------
+&apos;dim args1(0) as new com.sun.star.beans.PropertyValue
+	args1(0).Name = &quot;ColumnWidth&quot;
+	args1(0).Value = 2540
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args1())
+
+	&apos;// set up arguments for uno:GoToCell interface
+&apos;	dim args1(0) as new com.sun.star.beans.PropertyValue
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$M$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+
+rem ----------------------------------------------------------------------
+&apos;dim args1(0) as new com.sun.star.beans.PropertyValue
+	args1(0).Name = &quot;ColumnWidth&quot;
+	args1(0).Value = 2790
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args1())
+&apos;//---------------------------------------------------------------------------
+EndOldCode:
+
+NormalExit:
+	SetSelection(oRange)	&apos;// restore user cell selection
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SetPhoneWidths - unprocessed error.&quot;)
+	
+end sub		&apos;// end SetPhoneWidths	9/2/20

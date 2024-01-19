@@ -1,0 +1,8 @@
+# sedSQtoSQL.txt *sed* directives to convert SQ to SQL.
+#	6/6/22.
+s?^echo "??g
+s?" >> SQLTemp.sql??g
+s?"  >> SQLTemp.sql??g
+s?" > SQLTemp.sql??g
+s?"  > SQLTemp.sql??g
+s?\\"?"?g

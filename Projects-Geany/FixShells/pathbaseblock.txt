@@ -1,0 +1,10 @@
+# pathbase block.
+# 5/30/22.
+if [ -z "$pathbase" ];then
+ if [ ! -z "$congpath" ];then
+  export pathbase=$folderbase/Territories/$congpath
+ else
+  export pathbase=$folderbase/Territories
+ fi
+fi
+# end pathbase block.

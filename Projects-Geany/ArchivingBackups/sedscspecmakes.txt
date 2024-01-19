@@ -1,0 +1,4 @@
+# sedscspecmakes.txt - *sed directives for fixing Special/Make.<spec-db>.Terr makefiles.
+#	5/5/23.	wmk.
+s?_RU.db?_SC.db?g
+1a# 5/5/23.     wmk.    (automated) correct _RU.db,s to _SC.db.

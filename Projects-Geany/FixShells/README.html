@@ -1,0 +1,136 @@
+<p>README.md - FixShells project documentation.<br>
+5/30/22.    wmk.</p>
+
+<h2>Modification History.</h2>
+
+<pre><code>
+5/15/22.    wmk.   original document.
+5/30/22.    wmk.   links added; Setup section expanded.
+</code></pre>
+
+<h3 id="IX">Document Sections.</h3>
+
+<pre><code>
+<a href="#1.0">link</a> 1.0 Project Description - overall project description.
+<a href="#2.0">link</a> 2.0 Setup - Usage instructions.
+</code></pre>
+
+<h3 id="1.0">1.0 Project Description.</h3>
+
+<p>FixShells is a "reliability" mod project that goes through a folder's
+<em>.sh</em> files and tidies up <em>path</em> variable definitions. The single build
+uses <em>sed</em>, <em>awk</em> and <em>cat</em> to modify the .sh file in the specified
+folder (typically a Geany project folder). The paths containing
+"FL/SARA/86777" are changed to contain "TX/HDLG/99999".</p>
+
+<p>The project will also be used when creating new congregation Territory
+systems. There are over 1,000 <em>.sh</em> files within a Territory system, many
+of which have path dependencies on the <em>folderbase</em>, <em>basepath</em> and
+<em>congterr</em> environment variables. Whenever these system-wide environment
+variables are changed, the downstream makefiles and shell files will be
+affected. FixShells, especially the FixAllShells shell, facilitates rapidly
+editing all affected <em>.sh</em> files.</p>
+
+<p>The <em>.sh</em> file header is modified with the automated revision date. The
+shell body is modified to ensure that the vars <em>folderbase</em>, <em>pathbase</em>,
+and <em>AWK</em> are defined properly for the shell.</p>
+
+<p><strong>sed operations</strong><br>
+The <em>sedfixShell1.txt</em> file has the <em>sed</em> directives that FixShell.sh
+uses when fixing shells. Generally this file contains "basic" fixes
+that are more readily accomplished by <em>sed</em> rather than <em>awk</em>. More
+extensive fixes can be done by supplying <em>awk</em> directives. See the 
+<a href="#3.0">Tailoring the Fixes</a> section below.</p>
+
+<p><strong>awk operations</strong><br>
+The <em>awkfixShell1.txt</em> file has the <em>awk</em> directives that FixShell.sh
+uses when fixing shells. Generally this file contains "advanced" fixes
+that are more readily accomplishted by <em>awk</em> rather than <em>sed</em>. See the
+<a href="#3.0">Tailoring the Fixes</a> section below.</p>
+
+<p><strong>cat operations</strong><br>
+After the <em>Make</em> file has been split and modified by <em>sed</em> and <em>awk</em>, the
+pieces are rejoined using the <em>cat</em> utility. The original file is preserved
+as <em>makefile</em>.back with the modified file assuming the name <em>makefile</em>.<br>
+<a href="#IX">Index</a></p>
+
+<h3 id="2.0">2.0 Setup.</h3>
+
+<p>There are no <em>make</em> files for the FixShells project. Two shell files handle
+all of the operations. <em>FixShell</em> fixes one shell (.sh) file. <em>FixAllShells</em>
+fixes all of the shell files on a given path. When specifying a single shell
+file the ".sh" file suffix is not specified, and assumed. The "fix all" shell
+looks for all files with ".sh" suffix on the specified path.</p>
+
+<p>FixShell - Fix one shell file.</p>
+
+<blockquote>
+  <p>Usage.   bash FixShell.sh  &lt; shpath > &lt; shfile ><br></p>
+
+<blockquote>
+  <p>&lt; shpath > = full path to shell file<br>
+&lt; shfile > = filename to fix (sans .sh suffix)<br></p>
+</blockquote>
+
+<p></blockquote></p>
+
+<p>FixAllShells - Fix all shells on path.</p>
+
+<blockquote>
+  <p>Usage.   bash FixAllShells.sh &lt; shpath ><br></p>
+
+<blockquote>
+  <p>&lt; shpath > = full path to shell files<br>
+<a href="#IX">Index</a></p>
+</blockquote>
+
+<p></blockquote></p>
+
+<h3 id="3.0">3.0 Tailoring the Fixes.</h3>
+
+<p>FixShells may be tailored to any specific need in fixing shell files. The
+<em>sedfixShell1.txt</em> file contains the <em>sed</em> utility directives for fixing
+the shells. The <em>awkfixShell1.txt</em> file contains the <em>awk</em> utility
+directives for fixing the shells. </p>
+
+<p>Either file may contain all or no directives for the shell repair, but
+it is advised that at least one of these make provision for including a
+line with the "fix date" (e.g. 5/30/22). This will allow any subsequent
+runs of the FixShells to identify files that have already been "fixed"
+and not run the same fixes twice. At present, the "fix date" is hardwired
+into the <em>FixShell.sh</em> and <em>sedfixShell1.txt</em> files. If one is changed,
+both should be changed.</p>
+
+<p><strong>sed Fixes.</strong>
+(maybe provide a link here to custom fixes that can provide info on
+local fixes...)
+The header of the <em>.sh</em> file has a new line inserted from the file
+<em>sedfixShell1.txt</em> file. This contains the automated modification date. To
+avoid modifying the same file twice (and ruining the previous mods) the
+file header is checked for the automated modification date being present.</p>
+
+<p>All makefile path var definitions  of the form "..path =" that are ended
+with '/' are modified to drop the trailing '/'. Then all path vars that
+are referenced with "..path)" have a '/' appended to the reference.
+This edits the makefile definitions and references of ..path vars to
+be consistent.</p>
+
+<p>In addition, at line 2 of the makefile a "date modified" line is added
+for future reference.</p>
+
+<p>After the first <em>awk</em> operation, <em>sed</em> is used to remove the "ifndef"
+and "ifeq" conditionals in the last 2 lines of the extraction file.</p>
+
+<p><strong>awk Fixes.</strong>
+The <em>awk</em> (mawk) utility is used to break the <em>.sh</em> file into segments, insert
+lines from files, then rejoining the segments to produce the final <em>.sh</em> file.</p>
+
+<p>for rebuilding into the final makefile. The first segment contains all of 
+the lines up to the beginning of the "if" conditional defining <em>folderbase</em>.
+(It assumes that a <em>folderbase</em> definition is present). The second segment
+contains all of the lines from the .PHONY directive to the end of the file.
+(It depends upon ".PHONY" being present in the <em>Make</em> file). If the .PHONY
+directive is not in the file when FixMake begins, it inserts it so that the
+utility may continue.
+<br>
+<a href="#IX">Index</a></p>

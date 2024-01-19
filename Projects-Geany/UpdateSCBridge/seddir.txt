@@ -1,0 +1,4 @@
+s/xxx/642/g
+s/mm-dd/03-19/g
+s/mmdd/0319/g
+s?Xfolderbase?/home/vncwmk3?g

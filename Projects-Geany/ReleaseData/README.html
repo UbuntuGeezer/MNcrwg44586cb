@@ -1,0 +1,415 @@
+<p>README.md - ReleaseData project documentation.<br>
+7/20/23.    wmk.</p>
+
+<h3>Modification History.</h3>
+
+<pre><code>10/28/21.   wmk.    original document.
+10/29.21.   wmk.    Super Territories segment added to File Contents.
+10/30/21.   wmk.    documentation of README and RELEASE_NOTES files.
+11/16/21.   wmk.    file description improvements.
+11/17/21.   wmk.    Macro Library section added.
+1/24/22.    wmk.    add documentation for PUB_NOTES_yyy.html files.
+2/5/22.     wmk.    minor text corrections.
+2/15/22.    wmk.    Distribution section added.
+4/28/22.    wmk.    .md formatting adjusted for *pandoc* utility.
+6/16/22.    wmk.    .md formatting reverted to *markdown* utility; links added.
+2/5/23.     wmk.    BuildDates documentation hyperlink added; readability
+             improvements when editing .md file.
+7/20/23.    wmk.    BuildDates documentation corrected.
+</code></pre>
+
+<h3 id="IX">Document Sections.</h3>
+
+<pre><code><a href="#1.0">link</a> 1.0 Project Description - overall project description.
+<a href="#2.0">link</a> 2.0 Build Results - targets built by the project Build procedures.
+<a href="#3.0">link</a> 3.0 Setup - step-by-step instructions for the project build.
+<a href="#4.0">link</a> 4.0 File Contents - full description of the release territory files.
+<a href="#5.0">link</a> 5.0 Distribution - how releases are distributed for use.
+<a href="#6.0">link</a> 6.0 Macro Library - custom keyboard and macro library release information.
+</code></pre>
+
+<h3 id="1.0">1.0 Project Description.</h3>
+
+<p>ReleaseData assembles a collection of TerrrData archive files in manageable groups
+of files. Manageable implies meeting two criteria: 1) sized to facilitate being
+attached to emails without exceeding attachment size limits, 2) compressed and
+grouped for easy extraction on the host computer receiving the released files.</p>
+
+<p>The data files assembled by ReleaseData are limited to the actual .xlsx and .pdf
+publisher territory files. If the documentation file PUB_NOTES_xxx.htlml
+exists for any given territory, it will be released as part of the territory
+data. None of the build files or processes that created the publisher
+territories are included. Along with the publisher territory files, an
+auxliary file named BuildDates.xlsx is released. This file is an Excel
+spreadsheet containing the territory numbers, build names, and the date each
+territory was generated.<pre><code>
+    for example: 
+        Terr150 Terr150_PubTerr.xlsx 2021-10-28
+</code></pre>For details on how the BuildDates.xlsx is made see the
+<a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/Build
+Dates/README.html">BuildDates</a>
+project documentation.</p>
+
+<p>For each territory three files are included in the release. The files are
+Terrxxx_PubTerr.xlsx, Terrxxx_SuperTerr.xlsx, and Terrxxx_PubTerr.pdf
+where xxx is the territory number. The files with the .xlsx name extension are
+Excel spreadsheets, the file with the .pdf name extension is a printable PDF
+file.</p>
+
+<p>A fourth file may be included with a territory. If present, 
+PUB_NOTES_xxx contains notes for territory xxx that the publisher should be
+aware of, and will be included in the release.</p>
+
+<p>The archive collection of territories is assembled in the Territories folder
+/ReleaseData. This folder is organized with subfolders that follow the naming
+convention 'Release_mm-dd-yy' where mm-dd-yy are the month, day and year the
+release was built. The *tar utility is used to create the archive files, which
+have the filename extension '.tar'. These are lovingly referred to as
+"tarballs".</p>
+
+<p>MakeReleaseData.tmp is the template makefile for the *make utility to perform
+the build. The integrator will be required to preset the year in the makefile,
+setting the 2-digit year in the var 'relyear'. All other makefile requirements
+will be set by the DoSed shell parameters.</p>
+
+<p><strong>Important Note.</strong> Prior to using the *ReleaseData* build to generate a new
+release of the territories, it is important to ensure that the publisher
+territories have been constructed with data that is synchronized throughout
+the data segment. The project
+<a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/SyncAllData/README.html">SyncAllData</a>
+is used to ensure synchronization.
+<br><a href="#IX">Index</a></p>
+
+<h3 id="2.0">2.0 Build Results.</h3>
+
+<p>Following are the results of the ReleaseData build process:</p>
+
+<pre><code>
+    Folder Territories/ReleaseData/Release_mm-dd-yy created if nonexistent
+
+    in the above folder, the following files are created:
+
+        Terr100-199.tar - dump of publisher territories 100-199
+        Terr200-249.tar - dump of publisher territories 200-249
+        Terr250-299.tar - dump of publisher territories 250-299
+        Terr300-399.tar - dump of publisher territories 300-399
+        Terr600-699.tar - dump of publisher territories 600-699.
+
+    In addition the above .tar files, the following files are included
+    in the release:
+
+        BuildDates.xlsx  - spreadsheet itemizing each territory's build date
+        README - ReleaseData project documentation
+        RELEASE_NOTES - release-specific notes
+</code></pre><br><a href="#IX">Index</a>
+<h3 id="3.0">3.0 Setup.</h3>
+Following is the build procedure for the ReleaseData project:
+
+**Note.** Projects-Geany/BuildDates should be run prior to this build to ensure
+BuildDates.xlsx is up-to-date.
+
+**Note.** The Build menu item *Batch Move PUBNOTES* can be run prior to this
+build to move all PUB\_NOTES\_xxx.html files to the TerrData folders. The
+project shell BldNotesTIDList.sh can be used to build the NotesTIDList.txt file
+that is processed by the *Batch Move PUBNOTES* build item.
+
+ReleaseData Build menu:
+<pre><code>
+        edit 'sed' command line with month and day of the data release
+        run 'sed' from the Build menu
+        [run 'Make Dry-run' from the Build menu to verify parameters set
+         correctly]
+        run 'Make' from the Build menu to transfer all of the release data
+         to the ReleaseData/ folder in territories
+</code></pre>
+
+<p>Once the build has gone through the *make process, the administrator should
+update the BUILD_NOTES.md/.html file with the notes pertaining to this build.
+This will be useful when the build is downloaded to a client system.</p>
+
+<p>Extraction on target client system:<pre><code>
+        ensure a directory structure exists that will be obvious as to its
+         content of territory files (a good one is any that has 'Territories'
+         as its lowest level folder 
+        download the tarball files for the ReleaseData into the 'Territories'
+         folder for extraction (or alternatively into a 'Downloads' folder)
+        use an extraction utility that can handle .tar file formats and, if 
+         necessary specify parameter(s) that will retain directory structure
+         when the files are extracted</p>
+
+<pre><code>    The territory data will now be stored in subdirectories Terrxxx for
+     each territory xxx. Each territory will have 3 files:
+
+    Terrxxx_PubTerr.xlsx - publisher territory (Excel)
+    Terrxxx_SuperTerr.xlsx - super territory (Excel)
+    Terrxxx.PubTerr.pdf - publisher territory (PDF)
+</code></pre>
+
+<p></code></pre><br><a href="#IX">Index</a></p>
+
+<h3 id="4.0">4.0 File Contents.</h3>
+
+<p>The target files built by MakeRelease are: </p>
+
+<pre><code>
+    AddressLookupInstructions.html
+    BuildDates.xlsx
+    README
+    RELEASE_NOTES
+    RELEASE_NOTES.html
+    RELEASE_NOTES.md
+    Terr100-199.tar
+    Terr200-249.tar
+    Terr250-299.tar
+    Terr300-399.tar
+    Terr600-699.tar</code></pre>
+
+<p>Three file types make up the publisher files for any given territory. They
+are named Terrxxx_PubTerr.xlsx, Terrxxx_SuperTerr.xlsx, and
+Terrxxx_PubTerr.pdf where 'xxx' is the territory number. The Territory servant
+may distribute any of these files to a publisher for working the territory.</p>
+
+<p>Terrxxx_PubTerr.xlsx and Terrxxx_PubTerr.pdf contain the following information:</p>
+
+<p>All the addresses, names, and phone numbers from 2 sources,
+   Sarasota County Property Search, and RefUSA address search.</p>
+
+<p>The files are formatted as follows:<pre><code>    </p>
+
+<pre><code>5 lines of header information with basic information about the territory,
+ and the date the publisher territory was generated. Included in this
+ infomation is the city and zip code of the addresses. (See Letter-writing
+ Territories below for exceptions).
+
+line 6 through whatever contain the territory addresses and names with
+the following column headings:
+UnitAddress, Unit, H, Name(s), Phone1, RefUSA, DNC, FL, Personal Notes
+</code></pre>
+
+<p></code></pre> <br />
+The files are tagged as "landscape format" with "grid", so if printed as much
+information as possible will fit on the page. On most systems the "Personal
+Notes" column ends up on its own page.</p>
+
+<p><em>Column Descriptions.</em></p>
+
+<pre><code> 
+    UnitAddress - the street address
+    Unit - for multiple-dwelling buildings, or apartments, the unit #
+    H - a '*' in this column indicates "homestead"; that is, the owner
+     is claiming homestead exemption with the county, so considers this
+     their permanent address
+    Name(s) - name or names of residents; only county records will have
+     multiple names in one record (see "Name Grouping" below)
+     if this is a DoNotCall 'DO NOT CALL' will appear in the Name(s) column
+    Phone1 - left empty if the publisher wishes to add a phone # found
+     via one of the people search engines
+    RefUSA - the phone number listed with RefUSA for this address; if there
+     is no phone number in RefUSA it will read "Not Available"
+    DNC - if set to '1' this is a DoNotCall
+    FL - if set to '1' this is a Foreign-Language DoNotCall</code></pre>
+
+<p>If the record information came from the Sarasota County Property search, the
+record text will be in all uppercase (e.g. 800 THE ESPLANADE N).<br>
+If the record information came from the RefUSA search, the record text will
+be in mixed case (e.g. 800 The Esplanade N).</p>
+
+<p><strong>Name Grouping</strong>.</p>
+
+<p>Resident names are grouped in two ways. If the county data lists multiple
+owners, all of the owner names appear in one cell, in uppercase, and separated
+with commas (e.g. SMITH JOSEPH, SMITH MARY). If the property is owned by a
+trust, often the secondary name(s) will be trustees. If the property is H='*'
+homestead, likely one or more RefUSA names will match the trustees.</p>
+
+<p>For RefUSA records, the names are one per record. If multiple residents are in
+the RefUSA data for the same address, each resident will have their own line
+of data.</p>
+
+<p>If a given address has territory records on more than one line, the first line
+of information is the first one encountered for the address. That line will be
+highlighted in green. Subsequent lines that belong with the same address will
+have the Unit column highlighted in blue. This makes it much easier to see all
+the residents for one address. If there is county data for the address likely
+(but not always) it will be the first line for the address, will have data in 
+all uppercase, and highlighted green.</p>
+
+<p><strong>Letter Writing Territories.</strong></p>
+
+<p>Letter/phone territories are numbered in the 600s and are formatted somewhat
+differently from other territories. The territory information in the header may
+contain multiple zip codes, since that is the way that Territory Servant is set
+up. When Territory Servant is allowed to randomly assign addresses to a letter
+writing territory, the addresses may cross multiple zip codes. When a letter
+writing territory spans zip codes, each address line contains the zip code at
+the end to avoid using the wrong zip code. Letter writing territories have the
+same column headings as other territories. Otherwise, the formatting and 
+highlighting are the same as for regular territories.</p>
+
+<p><strong>Super Territories.</strong></p>
+
+<p>Super Territories are included with every regular and letter writing
+territory. They are always in spreadsheet (Excel) files, and are best
+used from a laptop, notebook, or desktop computer since most mobile
+devices that can use spreadsheets do not have the full spreadsheet
+functionality of following hyperlinks. (Hyperlinks are special cells that
+can redirect the user to a web page or another file).</p>
+
+<p>All Super Territories have the filename Terrxxx_SuperTerr.xlsx, where
+'xxx' is the territory number. The spreadsheet file has two tabs, 
+Terrxxx_PubTerr and Terrxxx_Search. The first tab, Terrxxx_PubTerr,
+contains identical information to that in the Terrxxx_PubTerr.xlsx
+spreadsheet. It is the "standard" publisher territory information.</p>
+
+<p>The second tab, Terrxxx_Search, has the column headers rearranged along
+with some additional columns. The columns in this sheet are:
+H, Address, Unit, Name, Phone1, RefUSA, fastpeople, truepeople, 411, DNC, FL
+The fastpeople, truepeople and 411 columns contain hyperlinks to enable
+quick lookup for each address. (See the Hyperlinks segment below).</p>
+
+<p>The following are the individual column descriptions/explanations:</p>
+
+<p>H - "homestead"; if a '*' is present, this address and the associated Name(s)
+    are listed as homestead in the Sarasota County Property records. This 
+    implies that this address is the permanent address of the owners, so
+    the named person(s) should receive mail at that address year-round.</p>
+
+<p>Address - the street address of the location.</p>
+
+<p>Unit - for addresses with units (condos, apartments, duplexes, etc) this
+    is the unit #</p>
+
+<p>Name - the name(s) of the residents; if uppercase (e.g. DOE JOHN) it is
+    the owner name(s) from the SCPA county data; if mixed case (e.g. John Doe)
+    it is the name from the RefUSA data. Note that names in the county
+    are usually lastname first, from RefUSA are firstname first.</p>
+
+<p>Phone1 - left blank; may be filled in by using hyperlink data. (See the 
+    Hyperlinks segment below).</p>
+
+<p>RefUSA - contains either the RefUSA listed phone number or "Not Available"</p>
+
+<p>fastpeople - contains a hyperlink for searching www.fastpeoplesearch.com
+    for this address; If you are using Excel, clicking on this cell will
+    transfer you into your web browser to the 411.com website, with the
+    address pre-loaded for you. (Some other spreadsheet packages like
+    OpenOffice/Calc may require you to shift-click on the cell).</p>
+
+<p>truepeople - contains a hyperlink for searching www.truepeoplesearch.com
+    for this address; If you are using Excel, clicking on this cell will
+    transfer you into your web browser to the 411.com website, with the
+    address pre-loaded for you. (Some other spreadsheet packages like
+    OpenOffice/Calc may require you to shift-click on the cell).</p>
+
+<p>411 - contains a hyperlink for searching www.411.com for this address; If
+    you are using Excel, clicking on this cell will transfer you into your
+    web browser to the 411.com website, with the address pre-loaded for
+    you. (Some other spreadsheet packages like OpenOffice/Calc may require
+    you to shift-click on the cell).</p>
+
+<p>DNC - if '1' this address/unit is in our Do Not Call list; As an added
+    protection, the system places "DO NOT CALL" in the Name column.</p>
+
+<p>FL - if '1', this is a foreign-language do-not-call</p>
+
+<p><strong>Hyperlinks.</strong></p>
+
+<p>In general a hyperlink is a special-case text that is a link to an external
+source of information. Probably most are familiar with them in the JW
+publications as blue-highlighted fields that may contain Bible verse links
+or publication links (e.g. <font color="#000080">Is 55:8, w 02 23-24.</font>). In
+the super territories they are links that your browser can follow directly to web
+site information.</p>
+
+<p>Hyperlinks to the 3 search engines, fastpeoplesearch, truepeoplesearch,
+and 411 allow the user to jump directly into the desired search engine
+without the tedium of typing in the address in the search engine search
+dialog box. One "click" gets you directly there.</p>
+
+<p>Most spreadsheet applications like Excel follow the convention of showing
+hyperlinks as highlighted blue. In the Terrxxx_Search sheets the hyperlinks
+are not highlighted, since they are "layered" under the text "Click here to
+search".</p>
+
+<p>Whatever column the "Click here to search" appears in, the hyperlink will
+link out to your browser for the search engine listed in the column header
+(e.g. fastpeople will link to fastpeoplesearch.com). The underlying
+hyperlink supplies the search engine with a preloaded address field that
+will send it directly to that information.</p>
+
+<p>Many search engines are now protected with a layer of security that
+precludes "robot" software from overloading the search engine. The first
+time you visit one of these sites in your browser session, you may be required
+to go through a verification to prove to the site that you are "human".
+This usually involves checking a checkbox "I am human" and/or identifying
+a series of pictures that follow a certain pattern (e.g. boats). Once you
+have "passed", as long as your browser session remains active, you will
+not have to repeat the "not-a-robot" verification for a given search engine.</p>
+
+<p>Once through the "not-a-robot" verification you will be connected directly
+to the address information for the site. By switching back and forth
+between your browser window and your spreadsheet window, you can easily
+compare information. The browser tab for the search engine/address will
+remain active until you close it. Keep in mind that if you continue
+clicking hyperlinks in the Super Territory, a new browser tab will be
+opened every time you click a link. You may wish to do some periodic
+"housekeeping" by closing browser tabs you are finished with.</p>
+
+<p>THIS IS THE COOL STUFF: With a browser tab that is the web page for the search
+information for a given address, all Windows-type operations may be performed on
+the fields in the browser web page. This means that you can "copy" and "paste"
+information from the web page back into your Terrxxx_Search sheet. You can cut
+and paste additional phone numbers, names, or any other information into your
+sheet for future reference. By saving the Terrxxx_SuperTerr.xlsx file, your
+additions will be there whenever you wish to use them in the future.
+<br><a href="#IX">Index</a></p>
+
+<h3 id="5.0">5.0 Distribution.</h3>
+
+<p>Once the build is complete, the entire set of files for the build are in the
+development system folder ~/Territories/ReleaseData/Release_mm-dd-yy where mm,
+dd, yy are the month, day, and year of the release. From there, the release is
+ready for distribution.</p>
+
+<p>The ReleaseData project folder has a shell <em>CopyToCloud.sh</em> that will upload all
+of the release files to the folder CongInfoExchange/Terrritories/Release_mm-dd-yy
+on the project coordinator's Google Drive. From there, the release files may be
+downloaded onto the territory servants' computers.</p>
+
+<p>The list of files included in the release are documented at the beginning of the
+<a href="#4.0">File Contents</a> section above. The territory tarballs included in
+the release may be extracted into folders and territories for distribution to
+publishers. The <em>BuildDates.xlsx</em> file contains all of the build dates for the
+territories, and will serve as a guide to the territories servants as to which
+territories may need to be updated before distribution to publishers.
+<br><a href="#IX">Index</a></p>
+
+<h3 id="6.0">6.0 Macro Library.</h3>
+
+<p><strong>WARNING: THIS SECTION IS FOR TECH-HEADS.</strong> (If you are not a "tech-head" this
+is your introduction to the TechHead foreign language).</p>
+
+<p>A macro library has been created for spreadsheet power-users that contains
+macros that take the Release territories and massages them into finalized
+publisher territories. The library name is "Release" and is an Apache OpenOffice
+Calc library that can be imported into the installed LibreOfficeCalc on any
+system.</p>
+
+<p>The macro library is system-independent. It will run on either a Windows or
+GNU/Linux system that has Apache Open Office/LibreOffice and Java Runtime
+Environment (JRE) installed. Along with the macro library is a custom keyboard
+configuration file that maps the user keyboard to the Release macro library. This
+provides power-users with shortcut keys to manage the territory spreadsheets.</p>
+
+<p>When included in a release, the macro library is contained in its own tarball.
+This will require separate extraction on the target system, followed by
+integration into the installed version of Calc. This is not a process for the
+faint-of-heart. (Eventually tools will be developed to assist in this process.)</p>
+
+<p>The macro library is maintained in the $folderbase/TerrRelease and the 
+$folderbaseDocuments/GitHub/TerrRelease folders. To the <em>git</em> utility the 
+GitHub/TerrRelease folder is 'origin', the ~Bill/TerrRelease folder is 'devel'.</p>
+
+<p>Detailed documentation on the macro library is contained in a separate document,
+<a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/ReleaseData/README-MACRO LIBRARY.html">README_MACRO-LIBRARY</a>.
+.<br><a href="#IX">Index</a></p>

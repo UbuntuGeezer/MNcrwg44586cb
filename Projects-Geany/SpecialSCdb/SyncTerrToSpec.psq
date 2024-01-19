@@ -1,0 +1,110 @@
+-- * SyncTerrToSpec.psq- Synchronize Terrxxx_SC.db with new Specxxx_SC.db records.
+-- *	5/10/23.	wmk.
+-- *
+-- * Entry.	Specxxx_SC.db is records from all SC/Special databases affecting
+-- *	territory xxx
+-- *		Terrxxx_SC.db is records from Terr86777 for territory xxx
+-- *
+-- * Exit.
+-- * Modification History.
+-- * ---------------------
+-- * 5/10/23.	wmk.	original code; edited by InitSpecial for territory xxx.
+-- * Legacy mods.
+-- * 11/2/21.	wmk.	original code.
+-- * 5/8/23.	wmk.	*pathbase support added; header standardized with
+-- *			 Entry, Exit, Modification History, Notes sections added;
+-- *			 algorithm corrected for SC handling.
+-- * 5/10/23.	wmk.	residual '129's replaced with 'x xx'.
+-- *
+-- * Notes. Synchronizing the Terr_SC.db with the Spec_SC.db involves updating
+-- * the records within Terr_SC.db with the newer records from Spec_SC.db.
+-- * Unlike RefUSA data where all the Spec_RU.db records are appended, then
+-- * the duplicate older records discarded, for consistency in the way that
+-- * SC data is handled, the _SCBridge records will be updated from the
+-- * Spec_SC.db records using the UpdateSCBridge algorithm. (Instead of
+-- * updating from Terr86777.db). This is done by stealing the
+-- * UpdtSpecSCBridge.psq code and running it using the Spec_SC.db
+-- * records (instead of the Terr86777 records).
+-- * MakeUpdateSCBridge from the UpdateSCBridge project and using it
+-- * as the MakeSyncTerrToSpec makefile within the SC territory folder.
+-- * copy and edit this SQL template to territory SC download folder.
+-- *
+-- * 5/10/23 Note. If "Special" status is new to this territory, there will be
+-- * "older" records in the Terrxxx_SCBridge table that may have UnitAddress,s
+-- * and Unit,s that are not in agreement with the Spec_SCBridge records for the
+-- * same parcel. Since the Spec_SCBridge records have been "tidied", the
+-- * UnitAddress and Unit fields are unconditionally copied over the exsiting
+-- * Terrxxx_SCBridge fields to bring them up-to-date with the Spec_SCBridge
+-- * records.
+-- *;
+.cd '$pathbase'
+.cd './RawData/SCPA/SCPA-Downloads/Terrxxx'
+--.trace 'Procs-Dev/SQLTrace.txt'
+-- open Terrxxx_SC.db and attach Specxxx_SC.db;
+.open 'Terrxxx_SC.db'
+
+-- * RegenSpecDB has generated Specxxx_SC.db from all the
+-- * /Special/<specdb>.db,s for this territory;
+ATTACH 'Specxxx_SC.db' AS db29;
+--pragma db29.table_info(Spec_SCBridge;
+
+--CREATE TABLE Spec_SCBridge ( 
+-- "OwningParcel" TEXT NOT NULL, "UnitAddress" TEXT NOT NULL, "Unit" TEXT, 
+-- "Resident1" TEXT, "Phone1" TEXT, "Phone2" TEXT, "RefUSA-Phone" TEXT, 
+-- "SubTerritory" TEXT, "CongTerrID" TEXT, "DoNotCall" INTEGER DEFAULT 0, 
+-- "RSO" INTEGER DEFAULT 0, "Foreign" INTEGER DEFAULT 0, 
+-- "RecordDate" REAL DEFAULT 0, "SitusAddress" TEXT, "PropUse" TEXT, 
+-- "DelPending" INTEGER DEFAULT 0, "RecordType" TEXT);
+
+-- * unconditionally update the UnitAddress, Unit fields for all parcels having
+-- * records in Spec_SCBridge;
+WITH a AS (SELECT OwningParcel PropID, UnitAddress StreetAddr, Unit SpecUnit
+ FROM db29.Spec_SCBridge)
+UPDATE Terrxxx_SCBridge
+SET UnitAddress = (SELECT StreetAddr FROM a
+ WHERE PropID IS OwningParcel),
+Unit = (SELECT SpecUnit FROM a
+ WHERE PropID IS OwningParcel)
+WHERE OwningParcel IN (SELECT PropID FROM a); 
+
+-- * select records from Spec_SCBridge giving special names to
+-- * OwningParcel, Resident1, Phone2, RecordDate. If any of these
+-- * fields differ from the Terrxxx_SCBridge record with the matching
+-- * OwningParcel, update the Terrxxx_SCBridge record from the
+-- * Spec_SCBridge record;
+WITH a AS (SELECT "OwningParcel" PropID, "UnitAddress", "Unit", 
+ "Resident1" WhosThere, "Phone1", "Phone2" Hstead, "RefUSA-Phone", 
+ "SubTerritory", "CongTerrID", "DoNotCall", 
+ "RSO", "Foreign", 
+ "RecordDate" RecDate, "SitusAddress", "PropUse", 
+ "DelPending", "RecordType"
+FROM db29.Spec_SCBridge)
+UPDATE Terrxxx_SCBridge
+SET Resident1 = (SELECT WhosThere FROM a
+  WHERE PropID IS OwningParcel),
+Phone2 = (SELECT Hstead FROM a
+  WHERE PropID IS OwningParcel),
+RecordDate = (SELECT RecDate FROM a
+  WHERE PropID IS OwningParcel)
+WHERE OwningParcel IN (Select OwningParcel FROM a
+  WHERE WhosThere IS NOT Resident1
+     OR Hstead IS NOT Phone2
+     OR RecDate IS NOT RecordDate);
+.quit
+     
+--==================================================================;
+DROP TABLE IF EXISTS Terrxxx_SCBridge;
+CREATE TABLE Terrxxx_SCBridge
+( "OwningParcel" TEXT NOT NULL, "UnitAddress" TEXT NOT NULL, "Unit" TEXT,
+ "Resident1" TEXT, "Phone1" TEXT, "Phone2" TEXT, "RefUSA-Phone" TEXT,
+ "SubTerritory" TEXT, "CongTerrID" TEXT, "DoNotCall" INTEGER DEFAULT 0,
+ "RSO" INTEGER DEFAULT 0, "Foreign" INTEGER DEFAULT 0,
+ "RecordDate" REAL DEFAULT 0, "SitusAddress" TEXT, "PropUse" TEXT,
+ "DelPending" INTEGER DEFAULT 0, "RecordType" TEXT);
+ATTACH 'Specxxx_SC.db' AS db29;
+-- insert records from Specxxx_SC.db.Spec_SCBridge into;
+--   Terrxxx_SC.db.Terr129_SCBridge;
+INSERT INTO Terrxxx_SCBridge
+ SELECT * FROM db29.Spec_SCBridge;
+.quit
+-- end SyncTerrToSpec.sql;

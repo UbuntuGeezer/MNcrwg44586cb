@@ -1,0 +1,68 @@
+&apos;// SetColWidths.bas
+&apos;//---------------------------------------------------------------
+&apos;// SetColWidths - Set sheet column headings in row 5.
+&apos;//		9/21/20.	wmk.	14:30
+&apos;//---------------------------------------------------------------
+
+public sub SetColWidths( pnColWidths() As Integer )
+
+&apos;//	Usage.	macro call or
+&apos;//			call SetColWidths( nColWidths() )
+&apos;//
+&apos;//		sColWidths = array of column headings to set
+&apos;//
+&apos;// Entry.	user in sheet where column widths are to be set
+&apos;//
+&apos;//	Exit.	starting with column index 0, columns widths will be set
+&apos;//			from array values
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/21/20.		wmk.	original code
+&apos;//
+&apos;//	Notes.
+
+&apos;//	constants.
+const ROW_HEADING=4		&apos;// row index of heading row
+const CJUSt=2			&apos;// centered
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisCol as long		&apos;// current column selected on sheet
+dim oCols	As Object		&apos;// .Columns array current sheet
+
+dim oCell	As Object		&apos;// cell working on
+dim i		As Integer		&apos;// loop index
+dim	nColLimit	As Integer	&apos;// column limit 0-based
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	nColLimit = UBound(pnColWidths)
+	if nColLimit &lt; 0 then
+		GoTo NormalExit
+	endif	&apos;// end no column headings conditional
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	oCols = oSheet.Columns
+	
+	for i = 0 to nColLimit
+		oCols(i).setPropertyValue(&quot;Width&quot;, pnColWidths(i))
+	next i
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SetColWidths - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end SetColWidths		9/21/20

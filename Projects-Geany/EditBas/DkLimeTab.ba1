@@ -1,0 +1,57 @@
+&apos;// DkLimeTab.bas
+&apos;//---------------------------------------------------------------
+&apos;// DkLimeTab - Change current worksheet tab color to DkLime.
+&apos;//		2/12/21.	wmk.	17:45
+&apos;//---------------------------------------------------------------
+
+public sub DkLimeTab()
+
+&apos;//	Usage.	macro call or
+&apos;//			call DkLimeTab()
+&apos;//
+&apos;// Entry.	user has worksheet selected
+&apos;//
+&apos;//	Exit.	worksheet tab color changed to YELLOW
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	2/6/20.		wmk.	original code; cloned from YellowTab
+&apos;// 2/12/21.	wmk.	DKLIME const corrected
+&apos;//
+&apos;//	Notes.
+&apos;//
+
+&apos;//	constants.
+const YELLOW=16776960			&apos;// YELLOW color value
+const DKLIME=6207774			&apos;// DK LIME color value
+
+&apos;//	local variables.
+rem ----------------------------------------------------------------------
+rem define variables
+dim document   as object
+dim dispatcher as object
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dim args1(0) as new com.sun.star.beans.PropertyValue
+args1(0).Name = &quot;TabBgColor&quot;
+args1(0).Value = DKLIME
+
+dispatcher.executeDispatch(document, &quot;.uno:SetTabBgColor&quot;, &quot;&quot;, 0, args1())
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;DkLimeTab - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end DkLimeTab	2/12/21

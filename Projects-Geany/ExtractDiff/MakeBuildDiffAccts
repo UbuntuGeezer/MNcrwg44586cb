@@ -1,0 +1,79 @@
+# MakeBuildDiffAccts.tmp - Makefile for BuildDiffAccts.sh
+#	11/21/22.	wmk.
+# Exit. target file = ExtractDownDiff.sh shell to extract differences db.
+#
+# Modification History.
+# ---------------------
+# 11/21/22.	wmk.	*codebase support checked.
+# Legacy mods.
+# 6/30/22.	wmk.	original code; adapted from MakeExtractDiff.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#
+# Dependencies.
+# -------------
+# cat is used to generate the shell file that builds the database. It has
+# the dependency on hdrAnySQL_1.sh and hdrAnySQL_2 for inserting shell
+# preamble and  postscript sections around the SQL that performs the
+# difference query. 
+
+# var definitions.
+#==================================================================
+# makefile setup section.
+# set folderbase contignent upon ($)HOME system information.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase=$(folderbase)/Territories/FL/SARA/86777
+endif
+
+SHELL = /bin/bash
+.SUFFIXES:
+.SUFFIXES: .s .db .csv .sql .sh
+
+# path defaults by filetype.
+vpath %.db $(pathbase)/RawData/SCPA/SCPA-Downloads
+vpath %.csv $(pathbase)/RawData/SCPA/SCPA-Downloads
+vpath %.xlsx $(pathbase)/RawData/SCPA/SCPA-Downloads
+
+# path variables for use inside recipes.
+maindbpath = $(pathbase)/DB-Dev
+scdwnldpath = $(pathbase)/RawData/SCPA/SCPA-Downloads
+sqltoshpath = $(codebase)/Projects-Geany/AnySQLtoSH
+includepath = $(codebase)/include
+ bashpath = $(codebase)/Procs-Dev
+targpath = "$(codebase)/Projects-Geany/ExtractDiff
+srcdir = $(codebase)/Projects-Geany/ExtractDiff
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+.ONESHELL : ;
+.PHONY : err placeholder Always;
+#====================================================================
+
+
+
+# primary target recipe.
+# recipe for BuildDiffAccts.sh
+#====================================================================
+#$(srcdir)/BuildDiffAccts.sh  :  $(srcdir)/BuildDiffAccts.sql
+Always :  $(srcdir)/BuildDiffAccts.sql
+	cd $(altproj);./DoSed.sh $(srcdir) BuildDiffAccts
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	echo "** Now run BuildDiffAccts.sh after running ExtractDownDiff.sh **"
+
+$(srcdir)/BuildDiffAccts.sql : ;
+	if ! test -f $@;then \
+	 echo "** missing BuildDiffAccts.sql for BuildDiffAccts.sh build **";exit 1;fi
+	 
+#====================================================================

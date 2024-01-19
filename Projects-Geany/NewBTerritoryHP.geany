@@ -1,0 +1,53 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=NewBTerritory
+base_path=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/NewBTerritory/
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=2
+FILE_NAME_0=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FNewBTerritory%2FREADME;0;4
+FILE_NAME_1=431;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FNewBTerritory%2FDoSed.sh;0;4
+FILE_NAME_2=1012;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FNewBTerritory%2FMakeNewBTerr.tmp;0;4
+FILE_NAME_3=1727;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProcs-Dev%2FMakeBTerrData.sh;0;4
+FILE_NAME_4=2538;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProcs-Dev%2FMakeBRawData.sh;0;4
+
+[VTE]
+last_dir=/home
+
+[build-menu]
+NF_00_LB=_Make
+NF_00_CM=make -f MakeNewBTerr
+NF_00_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/NewBTerritory
+NF_01_LB=Make Custom _Target...
+NF_01_CM=make 
+NF_01_WD=
+NF_03_LB=sed
+NF_03_CM=./DoSed.sh  521
+NF_03_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/NewBTerritory
+EX_01_LB=Make Dry Run
+EX_01_CM=make --dry-run -f MakeNewBTerr
+EX_01_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/NewBTerritory

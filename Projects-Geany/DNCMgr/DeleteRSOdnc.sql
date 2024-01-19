@@ -1,0 +1,69 @@
+-- * DeleteRSOdnc.psq/sql - Delete DoNotCall for given RSO id.
+-- * 6/14/23.	wmk.
+-- *
+-- * Entry.	/DB-Dev/TerrIDData.DeletedDNCs = table or archived DoNotCalls
+-- *				TerrIDData.DoNotCalls = table of DoNotCalls
+-- *	*TODAY environment var set
+-- *
+-- * Dependencies. < rsoid > 
+-- *	DoSedDelRSO.sh
+-- *
+-- * Exit.	/DB-Dev/TerrIDData.DeletedDNCs = updated with DoNotCall
+-- *	matching -1 removed from DoNotCalls table 
+-- *	DoNotCalls table record marked for deletion
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 6/14/23.	wmk.	original code; adapted from DeleteDNC.
+-- * Legacy mods.
+-- * 6/1/23.	wmk.	adapted from ArchiveDNCs.psq.
+-- * 6/8/23.	wmk.	bug fix - was deleting where DelPending <> 1; changed
+-- *			 to only set DelPending on record.
+-- * Legacy mods
+-- * 5/31/23.	wmk.	original code.
+-- * 6/1/23.	wmk.	bug fix check for DelPending <> 1.
+-- *
+-- * Notes. The archiving process takes all of the DoNotCalls for a given territory
+-- * ID and places them in the DeletedDNCs table.
+-- *;
+
+.open '/home/vncwmk3/Territories/FL/SARA/86777/DB-Dev/TerrIDData.db'
+
+--CREATE TABLE DoNotCalls (
+-- TerrID TEXT NOT NULL DEFAULT '000', Name TEXT, 
+-- UnitAddress TEXT NOT NULL DEFAULT ' ', Unit TEXT, Phone TEXT, 
+-- Notes TEXT, RecDate TEXT, RSO INTEGER, Foreign INTEGER, PropID TEXT, 
+-- ZipCode TEXT, DelPending INTEGER, DelDate TEXT, Initials TEXT, 
+-- LangID INTEGER, 
+-- FOREIGN KEY (TerrID) 
+-- REFERENCES Territory(TerrID) 
+-- ON UPDATE CASCADE 
+-- ON DELETE SET DEFAULT);
+
+--CREATE TABLE DeletedDNCs (
+-- TerrID TEXT NOT NULL DEFAULT '000', Name TEXT, UnitAddress TEXT NOT NULL, 
+-- Unit TEXT, Phone TEXT, Notes TEXT, RecDate TEXT, RSO INTEGER, 
+-- Foreign INTEGER, PropID TEXT, ZipCode TEXT, DelPending INTEGER, 
+-- ArchDate TEXT, Initials TEXT );
+
+-- * add records into Deleted DNCs;
+INSERT INTO DeletedDNCs
+SELECT TerrID, Name, UnitAddress, Unit, Phone, Notes, RecDate, RSO,
+"Foreign", PropID, ZipCode, '0', '$TODAY', 'wmk'
+FROM DoNotCalls
+WHERE RSO IS '-1'
+ AND DelPending <> 1; 
+
+-- * Set DelPending on DeleteDoNotCalls records;
+UPDATE DoNotCalls
+SET DelPending = 1,
+DelDate = '$TODAY'
+WHERE RSO IS '-1';
+
+--INSERT INTO DNCLog(Timestamp,LogMsg)
+--VALUES(CURRENT_TIMESTAMP,'DNC for RSO -1 deleted.');
+INSERT INTO DNCLog(Timestamp,LogMsg)
+SELECT CURRENT_TIMESTAMP,'DNC for RSO -1 deleted.' || initials FROM Admin;
+.quit
+
+-- * END DeleteRSOdnc.sql;

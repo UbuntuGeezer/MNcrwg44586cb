@@ -1,0 +1,3 @@
+#test99.tmp
+ifeq ($(HOME),/home/ubuntu)
+endif

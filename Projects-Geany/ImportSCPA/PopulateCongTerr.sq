@@ -1,0 +1,53 @@
+echo "-- PopulateCongTerr.psq/sql - Populate new Terr86777.Terr86777 table."  > SQLTemp.sql
+echo "-- * 5/1/22.	wmk."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * 4/27/22.	wmk.	original code."  >> SQLTemp.sql
+echo "-- * 5/1/22.	wmk.	modified to use db8.AuxSCPAData.AcctsAll table instead"  >> SQLTemp.sql
+echo "-- *			 of VeniceNTerritory.db.NVenAccts for consitency with ExtractDiff."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * PopulateCongTerr.sql regenerates table Terr86777 by adding all records"  >> SQLTemp.sql
+echo "-- *  from SCPA_05-26.db.Data0526"  >> SQLTemp.sql
+echo "-- * into Terr86777.Terr86777 where \"Account#\" in Data0526 in"  >> SQLTemp.sql
+echo "-- * AuxSCPAData.db.AcctsAll table."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ".open '$pathbase/DB-Dev/Terr86777.db'"  >> SQLTemp.sql
+echo "ATTACH '$pathbase'"  >> SQLTemp.sql
+echo "    || '/DB-Dev/VeniceNTerritory.db'"  >> SQLTemp.sql
+echo "    AS db2;"  >> SQLTemp.sql
+echo "ATTACH '$pathbase'"  >> SQLTemp.sql
+echo "    || '/DB-Dev/AuxSCPAData.db'"  >> SQLTemp.sql
+echo "    AS db8;"  >> SQLTemp.sql
+echo "ATTACH '$pathbase'"  >> SQLTemp.sql
+echo "	|| '/RawData/SCPA/SCPA-Downloads/SCPA_05-26.db'"  >> SQLTemp.sql
+echo "	AS db29;"  >> SQLTemp.sql
+echo "DROP TABLE IF EXISTS Terr86777;"  >> SQLTemp.sql
+echo "CREATE TABLE Terr86777"  >> SQLTemp.sql
+echo "( \"Account #\" TEXT NOT NULL, \"Owner 1\" TEXT, \"Owner 2\" TEXT,"  >> SQLTemp.sql
+echo " \"Owner 3\" TEXT, \"Mailing Address 1\" TEXT, \"Mailing Address 2\" TEXT,"  >> SQLTemp.sql
+echo " \"Mailing City\" TEXT, \"Mailing State\" TEXT, \"Mailing Zip Code\" TEXT,"  >> SQLTemp.sql
+echo " \"Mailing Country\" TEXT, \"Situs Address (Property Address)\" TEXT,"  >> SQLTemp.sql
+echo " \"Situs City\" TEXT, \"Situs State\" TEXT, \"Situs Zip Code\" TEXT,"  >> SQLTemp.sql
+echo " \"Property Use Code\" TEXT, \"Neighborhood\" TEXT, \"Subdivision\" TEXT,"  >> SQLTemp.sql
+echo " \"Taxing District\" TEXT, \"Municipality\" TEXT, \"Waterfront Code\" TEXT,"  >> SQLTemp.sql
+echo " \"Homestead Exemption\" TEXT, \"Homestead Exemption Grant Year\" TEXT,"  >> SQLTemp.sql
+echo " \"Zoning\" TEXT, \"Parcel Desc 1\" TEXT, \"Parcel Desc 2\" TEXT,"  >> SQLTemp.sql
+echo " \"Parcel Desc 3\" TEXT, \"Parcel Desc 4\" TEXT, \"Pool (YES or NO)\" TEXT,"  >> SQLTemp.sql
+echo " \"Total Living Units\" TEXT, \"Land Area S. F.\" TEXT,"  >> SQLTemp.sql
+echo " \"Gross Bldg Area\" TEXT, \"Living Area\" TEXT, \"Bedrooms\" TEXT,"  >> SQLTemp.sql
+echo " \"Baths\" TEXT, \"Half Baths\" TEXT, \"Year Built\" TEXT,"  >> SQLTemp.sql
+echo " \"Last Sale Amount\" TEXT, \"Last Sale Date\" TEXT,"  >> SQLTemp.sql
+echo " \"Last Sale Qual Code\" TEXT, \"Prior Sale Amount\" TEXT,"  >> SQLTemp.sql
+echo " \"Prior Sale Date\" TEXT, \"Prior Sale Qual Code\" TEXT, \"Just Value\" TEXT,"  >> SQLTemp.sql
+echo " \"Assessed Value\" TEXT, \"Taxable Value\" TEXT, "  >> SQLTemp.sql
+echo " \"Link to Property Detail Page\" TEXT, \"Value Data Source\" TEXT, "  >> SQLTemp.sql
+echo " \"Parcel Characteristics Data\" TEXT, \"Status\" TEXT, \"DownloadDate\" TEXT, "  >> SQLTemp.sql
+echo " PRIMARY KEY(\"Account #\") );"  >> SQLTemp.sql
+echo "WITH a AS (SELECT Account FROM db8.AcctsAll)"  >> SQLTemp.sql
+echo "INSERT INTO Terr86777"  >> SQLTemp.sql
+echo " SELECT * FROM db29.Data0526"  >> SQLTemp.sql
+echo "  WHERE \"Account#\" IN (SELECT Account FROM a);"  >> SQLTemp.sql
+echo "UPDATE Terr86777"  >> SQLTemp.sql
+echo "SET DownloadDate = \"$TODAY\";"  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo "-- END PopulateCongTerr.psq/sql;"  >> SQLTemp.sql

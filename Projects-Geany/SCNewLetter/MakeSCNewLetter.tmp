@@ -1,0 +1,130 @@
+# MakeSCNewLetter.tmp - Makefile for SCNewLetter build (template).
+#	2/20/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 2/20/23.	wmk.	*codebase support completed; *pathbase corrected; comments tidied.
+# Legacy mods.
+# 5/4/22.   wmk.	(automated) path corrections.
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# Legacy mods.
+# 9/20/21.	wmk.	original makefile (MakeRUNewLetter).
+# 9/21/21.	wmk.	adapted to MakeSCNewLetter.
+# 10/11/21.	wmk.	modified to eliminate headers row in .csv.
+# 10/23/21. wmk.	code added to define TerrData folders and header .ods;
+#					DefineNewLetter PHONY added.
+#
+# Notes. This makefile is edited by DoSed substituting <terrid> for y yy.
+
+
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+#					DefineNewLetter PHONY added.
+#
+# Notes. This makefile is edited by DoSed substituting <terrid> for y yy.
+
+.PHONY : DefineSCFolder  DefineTerrData  DefineRUNewLetter  InitSCLetter
+
+# Note. Because DefineTerrData is PHONY, it will always be built, hence
+# make will spin off a bash child to process it. This, in turn, can cause
+# Working-Files folder to not be found. ONESHELL forces DefineTerrData to
+# run before the NewLetter.sql query gets fired up.
+.ONESHELL :
+
+targbase = $(pathbase)/RawData/SCPA/SCPA-Downloads
+targpath = $(targbase)/Terryyy
+ bashpath = $(codebase)/Procs-Dev
+projbase = $(codebase)/Projects-Geany
+ projpath = $(codebase)/Projects-Geany/SCNewLetter
+
+# (targpath)/Terryyy_SC.db - primary target
+# ====================================================================
+$(targpath)/Terryyy_SC.db : DefineSCFolder  $(targpath)/Lettyyy_TS.csv \
+ DefineTerrData   DefineRUNewLetter
+	if test -f $(targpath)/OBSOLETE;then
+	 echo "** Territory yyy OBSOLETE - MakeSCNewLetter exiting...";exit 2;fi
+	sed -i '{:a;/AreaName/ d;ta}' $(targpath)/Lettyyy_TS.csv
+	sqlite3 < $(projpath)/NewLetter.sql
+	$(bashpath)/MakeEmptyRUMap.sh yyy
+	cd $(projbase)/RUNewTerritory
+	./DoSed.sh yyy
+	$(MAKE) -f MakeRUNewTerritory
+	echo "REMINDER: edit SPECIAL files in RefUSA-Downloads/Terryyy..."
+
+$(targpath)/Lettyyy_TS.csv :
+	if test -f $(targpath)/OBSOLETE;then
+	 echo "** Territory yyy OBSOLETE - MakeSCNewLetter exiting...";exit 2;fi
+	if ! test $@;then \
+	 echo "** Run Calc to generate Lettyyy_TS.csv **";exit 1;fi
+
+#---
+$(projpath)/NewLetter.sql : ;
+
+
+
+#=====================================================================
+
+
+# DefineSCFolder - define SCPA-Downloads/Terrxxx folder.
+#=====================================================================
+DefineSCFolder :
+	if ! test -d $(targpath)/;then  cd $(targbase) ; mkdir Terryyy
+	 $(bashpath)/MvDwnPDF.sh yyy;cd ./Terryyy;mkdir Previous;fi
+
+#=====================================================================
+
+
+# DefineTerrData - define TerrData folders and initialize header .csv 
+#  and .ods files.
+#=====================================================================
+DefineTerrData :
+	cd $(pathbase)/TerrData
+	if ! test -d "./Terryyy";then \
+	mkdir Terryyy;fi
+	cd ./Terryyy
+	if ! test -d "./Working-Files";then \
+	mkdir Working-Files;fi
+	echo "** RUN GenTerrHdr.sh on TIDData.db to create TerryyyHdr.ods **"
+	#sleep 120
+
+#=====================================================================
+
+
+#InitSCLetter - initialize auxiliary files in SC-Downloads/Terrxxx folder.
+#=========================================================================
+InitSCLetter : 
+	$(projpath)/InitLetter.sh yyy
+
+#=========================================================================
+
+
+#DefineRUNewLetter - define RU-Downloads/Terrxxx folder and empty
+# Terrxxx_RU.db with all associated SPECIAL files for letter territory.
+#=====================================================================
+DefineRUNewLetter :
+	cd $(projbase)/RUNewLetter;	./DoSed.sh yyy
+	$(MAKE) -f $(projbase)/RUNewLetter/MakeRUNewLetter
+	cd $(projbase)/SpecialRUdb; ./InitSpecial.sh yyy
+
+#=====================================================================

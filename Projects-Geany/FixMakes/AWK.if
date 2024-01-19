@@ -1,0 +1,5 @@
+
+ifndef AWK
+ AWK = mawk
+endif
+

@@ -1,0 +1,126 @@
+# MakeReleaseData.tmp - Makefile template for ReleaseData build project.
+#	2/5/23.	wmk.
+#
+# Entry.	DoSed edits MakeReleaseData.tmp > MakeReleaseData
+#
+# Results.	ReleaseData/Release_mm-dd-yy folder contains collection of
+#			.tar publisher territory files for release
+#			extracted from Terrxxx_PubTerr.xlsx files.
+#			 Also containg BuildDates.ods, README, RELEASE_NOTES.
+#
+# Modification History.
+# ---------------------
+# 2/5/23.	wmk.	*relyear updated to 23 for 2023.
+# Legacy mods.
+# 4/28/22.	wmk.	ifndef relyear added; change all *..base* vars to
+#			 *..path* for consistency.
+# 5/4/22.	wmk.	(automated) path corrections.
+# 5/7/22.	wmk.	*TAR* explicitly defined.	
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+# Legacy mods.
+# 10/28/21.	wmk.	original makefile.
+# 10/30/21.	wmk.	RELEASE_NOTES added to file list.
+# 11/25/21.	wmk.	add CopyToCloud reminder.
+# 11/27/21.	wmk.	add AddressLookupInstructions.html to file list.
+# 12/20/21.	wmk.	add PUB_NOTES*.html to file list.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+ifndef TAR
+ TAR=tar
+endif
+
+.PHONY : ReleaseIt  BldReleaseDir
+.ONESHELL : ;
+
+relpath = $(pathbase)/ReleaseData
+srcpath = $(pathbase)/TerrData
+projpath = $(codebase)/Projects-Geany/ReleaseData
+
+# MUST be set by integrator...
+#$(error ** relyear var must be set to two-digit year **)
+ifndef relyear
+ relyear = 23
+endif
+
+# $(terrpath)/BuildDates.txt primary target
+#===========================================================
+ReleaseIt :  BldReleaseDir
+	~/sysprocs/LOGMSG "  Build ReleaseData/Release_07-20-$(relyear) initiated."
+	cd $(srcpath); $(TAR) --create \
+	 --file=$(relpath)/Release_07-20-$(relyear)/Terr100-199.tar \
+	 Terr1??/Terr???*.xlsx  Terr1??/Terr???_PubTerr.pdf Terr1??/PUB_NOTES*.html
+	cd $(srcpath); $(TAR) --create \
+	 --file=$(relpath)/Release_07-20-$(relyear)/Terr200-249.tar \
+	 Terr20?/Terr???*.xlsx  Terr20?/Terr???_PubTerr.pdf \
+	  Terr20?/PUB_NOTES*.html \
+	 Terr21?/Terr???*.xlsx  Terr21?/Terr???_PubTerr.pdf \
+	  Terr21?/PUB_NOTES*.html \
+	 Terr22?/Terr???*.xlsx  Terr22?/Terr???_PubTerr.pdf \
+	  Terr22?/PUB_NOTES*.html \
+	 Terr23?/Terr???*.xlsx  Terr23?/Terr???_PubTerr.pdf \
+	  Terr23?/PUB_NOTES*.html \
+	 Terr24?/Terr???*.xlsx  Terr24?/Terr???_PubTerr.pdf \
+	  Terr24?/PUB_NOTES*.html 
+	cd $(srcpath); $(TAR) --create \
+	 --file=$(relpath)/Release_07-20-$(relyear)/Terr250-299.tar \
+	 Terr25?/Terr???*.xlsx  Terr25?/Terr???_PubTerr.pdf \
+	  Terr25?/PUB_NOTES*.html \
+	 Terr26?/Terr???*.xlsx  Terr26?/Terr???_PubTerr.pdf \
+	  Terr26?/PUB_NOTES*.html \
+	 Terr27?/Terr???*.xlsx  Terr27?/Terr???_PubTerr.pdf \
+	  Terr27?/PUB_NOTES*.html \
+	 Terr28?/Terr???*.xlsx  Terr28?/Terr???_PubTerr.pdf \
+	  Terr28?/PUB_NOTES*.html \
+	 Terr29?/Terr???*.xlsx  Terr29?/Terr???_PubTerr.pdf \
+	  Terr29?/PUB_NOTES*.html 
+	cd $(srcpath); $(TAR) --create \
+	 --file=$(relpath)/Release_07-20-$(relyear)/Terr300-399.tar \
+	 Terr3??/Terr???*.xlsx  Terr3??/Terr???_PubTerr.pdf \
+	  Terr3??/PUB_NOTES*.html 
+	cd $(srcpath); $(TAR) --create \
+	 --file=$(relpath)/Release_07-20-$(relyear)/Terr600-699.tar \
+	 Terr6??/Terr???*.xlsx  Terr6??/Terr???_PubTerr.pdf \
+	  Terr6??/PUB_NOTES*.html 
+	cp $(projpath)/README  $(relpath)/Release_07-20-$(relyear)
+	cp $(projpath)/AddressLookupInstructions.html  $(relpath)/Release_07-20-$(relyear)
+	sed '{s?mm?07?g;s?dd?20?g;s?yr?$(relyear)?g}' \
+	  $(relpath)/NextRelease/RELEASE_NOTES.md > $(relpath)/Release_07-20-$(relyear)/RELEASE_NOTES.md
+	if test -f $(srcpath)/BuildDates.xlsx;then \
+	 cp $(srcpath)/BuildDates.xlsx  $(relpath)/Release_07-20-$(relyear);fi
+	 ~/sysprocs/LOGMSG "  Build ReleaseData/Release_07-20-$(relyear) complete."
+	 echo "Build ReleaseData complete."
+	 echo "** Edit RELEASE_NOTES.md with current release information **"
+	 echo "** Use CopyToCloud.sh to upload the current release to the cloud **"
+	
+	
+BldReleaseDir :
+	if ! test -d $(relpath)/;then \
+	 cd $(pathbase); mkdir ReleaseData; \
+	fi
+	if ! test -d "$(relpath)/Release_07-20-$(relyear)" ;then  \
+	 cd $(relpath); mkdir Release_07-20-$(relyear); \
+	fi
+	
+#===========================================================
+# end MakeBuildDates

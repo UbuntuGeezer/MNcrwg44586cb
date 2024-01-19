@@ -1,0 +1,156 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=SpecialRUdb
+base_path=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/SpecialRUdb/
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=90
+FILE_NAME_0=597;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FAll6MakeSpecials.sh;0;4
+FILE_NAME_1=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FAll6Terrs.txt;0;4
+FILE_NAME_2=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FAllFix6MakeSpecials.sh;0;4
+FILE_NAME_3=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FCatSpecDwnld.sh;0;4
+FILE_NAME_4=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FClearMHPruBridge.psq;0;4
+FILE_NAME_5=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FClearSpecial;0;4
+FILE_NAME_6=7;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FClearSpecial.sh;0;4
+FILE_NAME_7=3414;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FCloneSpecial.sh;0;4
+FILE_NAME_8=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FCollectMoveOuts.sql;0;4
+FILE_NAME_9=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FCountTerrIDList.sql;0;4
+FILE_NAME_10=137;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FCycleAllSpecRU.sh;0;4
+FILE_NAME_11=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FCyclePrevSpecRU.sh;0;4
+FILE_NAME_12=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FCycleSpecialRU.sh;0;4
+FILE_NAME_13=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FDBList;0;4
+FILE_NAME_14=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FDBList.txt;0;4
+FILE_NAME_15=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FDBList_Full.txt;0;4
+FILE_NAME_16=1782;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FDoFixSed.sh;0;4
+FILE_NAME_17=2474;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FDoSed.sh;0;4
+FILE_NAME_18=12;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FFix6MakeSpecials.sh;0;4
+FILE_NAME_19=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FFixRUMenu.i;0;4
+FILE_NAME_20=0;Pascal;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FFixRUMenu.inc;0;4
+FILE_NAME_21=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2Fgetdbnames.txt;0;4
+FILE_NAME_22=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FGetSpecTIDList.sql;0;4
+FILE_NAME_23=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FGibbsRdQueries.sql;0;4
+FILE_NAME_24=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FInitSpecial;0;4
+FILE_NAME_25=12784;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FInitSpecial.sh;0;4
+FILE_NAME_26=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FInitSpecial.sh.bdy;0;4
+FILE_NAME_27=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMake.CapriIslesBlvd.csv;0;4
+FILE_NAME_28=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMakeClearMHPruBridge.tmp;0;4
+FILE_NAME_29=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMakeFixDownload;0;4
+FILE_NAME_30=1827;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMakeFixDownload.tmp;0;4
+FILE_NAME_31=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMakeRegenSpecDB;0;4
+FILE_NAME_32=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMakeRegenSpecDB.tmp;0;4
+FILE_NAME_33=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMakeSetMHPSpecTerrs;0;4
+FILE_NAME_34=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMakeSetMHPSpecTerrs.tmp;0;4
+FILE_NAME_35=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMakeSetNewBridgeTerrs;0;4
+FILE_NAME_36=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMakeSetSpecTerrs.tmp;0;4
+FILE_NAME_37=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMakeSpecialRUdb;0;4
+FILE_NAME_38=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMakeSpecialRUdb.back;0;4
+FILE_NAME_39=5124;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMakeSpecialRUdb.tmp;0;4
+FILE_NAME_40=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMakeSpecials;0;4
+FILE_NAME_41=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMakeSpecials.back;0;4
+FILE_NAME_42=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMakeSpecTerrQuery;0;4
+FILE_NAME_43=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMakeSyncTerrToSpec.tmp;0;4
+FILE_NAME_44=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMHPQuery.sql;0;4
+FILE_NAME_45=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMoreQueries.sql;0;4
+FILE_NAME_46=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMovSpecDwnld.sh;0;4
+FILE_NAME_47=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMovSpecDwnldHP.sh;0;4
+FILE_NAME_48=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMultiChangeEdits.txt;0;4
+FILE_NAME_49=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FMvSpecDwnld.sh;0;4
+FILE_NAME_50=0;Pascal;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FpathRUdefs.inc;0;4
+FILE_NAME_51=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FREADME;0;4
+FILE_NAME_52=0;HTML;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FREADME.html;0;4
+FILE_NAME_53=0;Markdown;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FREADME.md;0;4
+FILE_NAME_54=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FRebldAllRUSpecials.sh;0;4
+FILE_NAME_55=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FRegenAllSpecRU.sh;0;4
+FILE_NAME_56=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FRegenSpecDB.MHP.sql;0;4
+FILE_NAME_57=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FRegenSpecDB.sql;0;4
+FILE_NAME_58=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FRemakeSetSpecs.sh;0;4
+FILE_NAME_59=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FRemakeTerrSpecials;0;4
+FILE_NAME_60=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FRUSpecTerr_1.sh;0;4
+FILE_NAME_61=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FRUSpecTerr_2.sh;0;4
+FILE_NAME_62=2251;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FRUSpecTerr_db.sh;0;4
+FILE_NAME_63=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FRUSpecTerr_db.sq;0;4
+FILE_NAME_64=29;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FRUSpecTerr_db.sql;0;4
+FILE_NAME_65=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2Fsedative.txt;0;4
+FILE_NAME_66=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2Fsedatives.txt;0;4
+FILE_NAME_67=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FsedDBs.txt;0;4
+FILE_NAME_68=1352;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FSedFix1109.sh;0;4
+FILE_NAME_69=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FsedIPaths.txt;0;4
+FILE_NAME_70=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FsedISpecPath.txt;0;4
+FILE_NAME_71=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FsedMakeSpecials.txt;0;4
+FILE_NAME_72=1305;ASM;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FSetNewBridgeTerrs.s;0;4
+FILE_NAME_73=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FSetNewBridgeTerrs.sh;0;4
+FILE_NAME_74=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FSetNewBridgeTerrs.sq;0;4
+FILE_NAME_75=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FSetNewBridgeTerrs.sql;0;4
+FILE_NAME_76=3403;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FSetSpecialDNCs.sh;0;4
+FILE_NAME_77=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FSetSpecTerrs.MHP.sql;0;4
+FILE_NAME_78=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FSetSpecTerrs.sql;0;4
+FILE_NAME_79=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FSpec101RU.sql;0;4
+FILE_NAME_80=0;Markdown;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FSPECIAL.md;0;4
+FILE_NAME_81=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FSpecialxxx.dblist.txt;0;4
+FILE_NAME_82=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2Fspecpathdefs.i;0;4
+FILE_NAME_83=0;Pascal;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2Fspecpathdefs.inc;0;4
+FILE_NAME_84=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FSpecxxxRU..MHP.sql;0;4
+FILE_NAME_85=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FSpecxxxRU.MHP.sql;0;4
+FILE_NAME_86=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FSpecxxxRU.sql;0;4
+FILE_NAME_87=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FSyncTerrToSpec.sq;0;4
+FILE_NAME_88=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FSyncTerrToSpec.sql;0;4
+FILE_NAME_89=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FTIDList.txt;0;4
+FILE_NAME_90=11;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FUpdateSpecTerrIDs.sh;0;4
+FILE_NAME_91=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FSpecialRUdb%2FUsefulQueries.sql;0;4
+
+[VTE]
+last_dir=/home/vncwmk3/Territories/FL/SARA/86777/RawData/RefUSA/RefUSA-Downloads/Special
+
+[build-menu]
+NF_00_LB=_Make
+NF_00_CM=make -f MakeSpecialRUdb
+NF_00_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/SpecialRUdb
+NF_02_LB=Make _Object
+NF_02_CM=make %e.o
+NF_02_WD=
+NF_03_LB=sed
+NF_03_CM=./DoSed.sh   ''  ParkBlvdS
+NF_03_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/SpecialRUdb
+EX_01_LB=Make Dry-Run
+EX_01_CM=make --dry-run -f MakeSpecialRUdb
+EX_01_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/SpecialRUdb
+EX_00_LB=Tidy Refreshed DB
+EX_00_CM=./TapronCenterDrTidy.sh  2021-11-09
+EX_00_WD=/home/vncwmk3/Territories/FL/SARA/86777/RawData/RefUSA/RefUSA-Downloads/Special
+NF_01_LB=Make Custom _Target...
+NF_01_CM=make 
+NF_01_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/SpecialRUdb
+NoneFT_02_LB=FixSed
+NoneFT_02_CM=./DoFixSed.sh AvenidaEstancias
+NoneFT_02_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/SpecialRUdb
+filetypes=None;
+NoneFT_01_LB=Cycle Special DB
+NoneFT_01_CM=./CycleSpecialRU.sh  CountryClubMHP
+NoneFT_01_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/SpecialRUdb
+NoneFT_00_LB=Update Special TerrIDs
+NoneFT_00_CM=./UpdateSpecTerrIDs.sh  <special-db>
+NoneFT_00_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/SpecialRUdb

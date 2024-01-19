@@ -1,0 +1,101 @@
+&apos;// ExportTerrHdr.bas
+&apos;//---------------------------------------------------------------
+&apos;// ExportTerrHdr - Export territory header to QTerrxxx.ods.
+&apos;//		2/12/21.	wmk.
+&apos;//---------------------------------------------------------------
+
+public sub ExportTerrHdr()
+
+&apos;//	Usage.	macro call or
+&apos;//			call ExportTerrHdr()
+&apos;//
+&apos;//		&lt;parameters description&gt;
+&apos;//
+&apos;// Entry.	User in workbook TerrxxxHdr (either .csv or ods)
+&apos;//
+&apos;//	Exit.	Workbook saved as .ods if not already
+&apos;//			Sheet TerrxxxHdr copied to workbook QTerrxxx at end sheet
+&apos;//			TerrxxxHdr tab dark lime
+&apos;//			Sheet protected
+&apos;//
+&apos;// Calls.	DkLimeTab, ProtectSheet
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	2/12/21.		wmk.	original code
+&apos;//
+&apos;//	Notes. This macro takes the TerrxxxHdr sheet and copies it to the
+&apos;// end sheet of the QTerrxxx workbook. This sets up QTerrxxx for 
+&apos;// running the QtoPubTerr macro building the territory workbook.
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim sDocURL		As String	&apos;// document URL
+dim nURLlen		As Integer	&apos;// URL length
+dim sURLBase	As String	&apos;// base of new URL
+dim sNewURL		As String	&apos;// new full URL for file save
+dim sFileBase	As String	&apos;// current filename sans leading Q
+dim sQTerrFile	As String	&apos;// extrapolated QTerr filename QTerrxxx.
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	sDocURL = ThisComponent.getURL()
+	&apos;// expected URL = ../TerrData/Working-Files/QTerrxxx.csv
+	nURLlen = len(sDocURL)
+	sURLBase = left(sDocURL, nURLLen-12)	&apos;// up to last &apos;/&apos;
+	sFileBase = right(sDocURL,14)	&apos;// TerrxxxHdr.ods
+	&apos;// transform TerrxxxHdr.ods to QTerrxxx
+	sQTerrFile = &quot;Q&quot; + left(sFileBase,7)
+	
+rem ----------------------------------------------------------------------
+rem define variables
+dim document   as object
+dim dispatcher as object
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dim args1(2) as new com.sun.star.beans.PropertyValue
+args1(0).Name = &quot;DocName&quot;
+&apos;args1(0).Value = &quot;QTerr287&quot;
+args1(0).Value = sQTerrFile
+args1(1).Name = &quot;Index&quot;
+args1(1).Value = 32767
+args1(2).Name = &quot;Copy&quot;
+args1(2).Value = true
+
+dispatcher.executeDispatch(document, &quot;.uno:Move&quot;, &quot;&quot;, 0, args1())
+
+	sDocURL = ThisComponent.getURL()
+
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;ExportTerrHdr - unprocessed error&quot;)
+	GoTo NormalExit
+rem ----------------------------------------------------------------------
+rem define variables
+&apos;dim document   as object
+&apos;dim dispatcher as object
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+&apos;dim args1(2) as new com.sun.star.beans.PropertyValue
+args1(0).Name = &quot;DocName&quot;
+args1(0).Value = &quot;QTerr287&quot;
+args1(1).Name = &quot;Index&quot;
+args1(1).Value = 32767
+args1(2).Name = &quot;Copy&quot;
+args1(2).Value = true
+
+dispatcher.executeDispatch(document, &quot;.uno:Move&quot;, &quot;&quot;, 0, args1())
+
+	
+end sub		&apos;// end ExportTerrHdr

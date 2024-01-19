@@ -1,0 +1,20 @@
+-- * GetSegDefs - get segment definitions from TerrIDDat.SegDefs table.
+-- * 2/25/23.	wmk.
+-- *
+-- * Notes.
+-- * TerrIDData.TerrID, dbName, sqldef.
+-- * open TerrIDData.db
+-- * set up output parameters, .mode .separator, .headings, .output file
+-- * select segdefs from SegDefs table based on criteria
+-- *  ! select all for dbName
+-- *  terrid - select for territory TerrID
+-- * SegSelect table is written to by separate query to set up for this query
+-- * SegSelect.Type, .Filter
+-- *		Type = 'terrid' or 'dbname'
+-- *		Filter = territory ID or dbName for selection
+-- *
+-- * CREATE TABLE SegSelect(
+-- *  Type TEXT,
+-- *  Filter TEXT
+-- * );
+

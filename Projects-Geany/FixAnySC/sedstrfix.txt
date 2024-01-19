@@ -1,0 +1,4 @@
+s?\$\"?%\"?g
+s?\"\$?\"%?g
+s?'%pathbase?\'$pathbase?g
+1a-- * 4/25/22.	wmk.	(automated) ($)string repairs.

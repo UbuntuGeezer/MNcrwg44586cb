@@ -1,0 +1,43 @@
+#MakeSCNewTerritory.tmp - MakeSCNewTerritory template.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	3/17/22.	wmk.
+#
+# Entry.	($)HOME = home path on current host.
+#
+# Modification History.
+# ---------------------
+# 5/8/21.	wmk.	original code.
+# 6/17/21.	wmk.	multihost support.
+# 8/27/21.	wmk.	bug fix empty path; superfluous "s removed.
+# 9/10/21.	wmk.	make abandoned if Terrxxx_SC.db already exists.
+# 12/30/21.	wmk.	replace HOME with USER for multihost.
+
+.ONESHELL : ;
+
+.NOTPARALLEL : ;
+
+ifeq ($(USER),ubuntu)
+ folderbase=/media/ubuntu/Windows/Users/Bill
+else
+ folderbase=$(HOME)
+endif
+
+incroot = $(folderbase)/Territories/include/
+vpath %.i $(folderbase)/Territories/include
+
+include pathSCdefs.inc
+# postpath var defined in .inc above
+
+# Terryyy_SC.db primary target - resident on vpath for .db filetypes.
+#====================================================================
+Terryyy_SC.db : Mapyyy_SC.csv
+	if test -f $(postpath)Terryyy_SC.db;then  \
+	 echo "** Terryyy_SC.db exists - MakeSCNewTerritory.tmp abandoned **"; \
+	 exit 1;fi
+	bash $(bashpath)SCNewTerr_db.sh yyy
+	bash $(bashpath)SCTidyTerr_db.sh yyy
+
+Mapyyy_SC.csv : ;
+
+#=====================================================================

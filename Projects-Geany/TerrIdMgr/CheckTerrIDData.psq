@@ -1,0 +1,18 @@
+-- * CheckTerrIDData.psq/sql - Check TerrID database for territory yyy;
+-- * 6/2/23.	wmk.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 6/2/23.	wmk.	original code.
+-- *
+-- * Notes.
+-- *;
+.open '$pathbase/DB-Dev/TerrIDData.db'
+.mode list
+.output '$TEMP_PATH/FoundTerritory.txt'
+SELECT TerrID from Territory
+WHERE TerrID IS 'yyy'
+;
+.quit
+-- * END CheckTerrDefined.sql;
+

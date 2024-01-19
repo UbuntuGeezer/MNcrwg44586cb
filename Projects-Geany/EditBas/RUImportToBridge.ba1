@@ -1,0 +1,384 @@
+&apos;// RUImportToBridge.bas
+&apos;//------------------------------------------------------------------------------
+&apos;// RUImportToBridge - Convert RU/Admin-Import spreadsheet to Admin-Bridge sheet.
+&apos;//		10/23/20.	wmk.	05:00
+&apos;//------------------------------------------------------------------------------
+
+public sub RUImportToBridge()
+
+&apos;//	Usage.	macro call or
+&apos;//			call RUImportToBridge()
+&apos;//
+&apos;// Entry.	user in Admin-Import format spreadsheet (from ImportRefUSA)
+&apos;//Last Name [A], First Name [B], Full Name [C], House Number [D],
+&apos;//Pre-directional [E], Street [F], Street Suffix [G], Post-directional [H],
+&apos;//Apartment Number [I], Full Address [J], Phone1 [K],
+&apos;//Phone2 [L], RefUSA Phone [M], truepeople [N], 411 [O], whitepages [P],
+&apos;//DoNotCall [Q], RSO [R], Foreign [S]
+&apos;//
+&apos;//	Exit.	produces an &quot;Admin-Bridge&quot; formatted sheet with the x..Props columns:
+&apos;//	OwningParcel  UnitAddress  Unit		  Resident1	 Phone1 Phone2 RefUSA-Phone
+&apos;//	 A (from A)	  B (from K)  C (from I)  D (from C)	E	 F		G	
+&apos;//
+&apos;//  SubTerrItory CongTerrID DoNotCall RSO Foreign  RecordDate	 SitusAddress
+&apos;//		H				I		   J     K     L	M (header C2)	N (from N)
+&apos;//
+&apos;//  Property Use	DelPending
+&apos;//		  O				P
+&apos;//
+&apos;//		along with 4 header rows, populated with the Admin-Bridge header information.
+&apos;//&lt;Area-CommonName&gt;			Property ID	&lt;OwnerParcel&gt;			Admin-Bridge formatted sheet
+&apos;//Units shown:	63	9/16/20	Owner		&lt;OwnerName1&gt;
+&apos;//City	Venice	34285	Streets/Addrs	&lt;Streets-Address(s)&gt;
+&apos;//SubTerritory		CongTerrID
+&apos;//
+&apos;//sheet columns and header modified to match Admin-Bridge spec
+&apos;//			for updating MultiMail.db/SplitProps table
+&apos;//
+&apos;//
+&apos;// Calls.	ForceRecalc, SetTerrWidths, BoldHeadings, SetUnitAddrWidth,
+&apos;//			fsAddrToSCFormat, SetBridgeHeadings(), SetBridgeColWidths
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/7/20.		wmk.	original code
+&apos;// 9/8/20.		wmk.	fix bug where formula in C2 being lost
+&apos;// 9/16/20.	wmk.	mod to set SubTerritory to formula =$B$4
+&apos;//						and CongTerrID to formula =$D$4; this will
+&apos;//						allow the user to set values in B4 and D4
+&apos;//						that will be part of the Bridge records
+&apos;//	9/17/20.	wmk.	field added &quot;SitusAddress&quot;; by adding
+&apos;//						this field, &quot;bridge&quot; records can be used
+&apos;//						in either the MultiMail or PolyTerri .db
+&apos;//						records for queries and other operations;
+&apos;//						field added &quot;DelPending&quot; last to match TerrProps
+&apos;//						table
+&apos;//	9/23/20.	wmk.	added PropUse field so addresses can be properly
+&apos;//						handled when generating territories
+&apos;// 9/27/20.	wmk.	documentation added; code compatibility with new
+&apos;//						InsertTerrHdr code; columns added to match new
+&apos;//						bridge format columns
+&apos;//	10/22/20.	wmk.	Change Bridge to support &quot;Unit&quot; field in place
+&apos;//						of Resident1; Resident2 to Resident1; remove dead
+&apos;//						code; set $B$4 formula to =&quot;&quot; if empty
+&apos;//
+&apos;//	Notes. This sub/utility is run on the Admin-Import sheet coming in from
+&apos;//	ImportRefUSA, after the raw RefUSA download has been processed.
+&apos;// updated with changes. This sheet is morphed into an Admin-Bridge
+&apos;// sheet that is then used to produce a .csv with the &quot;bridge&quot; fields
+&apos;// necessary to produce SplitProps or TerrProps records compatible
+&apos;// with the MulitiMail or PolyTerri tables containing territory
+&apos;// records, 1 per address.
+&apos;// is the SubTerritory name (e.g. ANDROS). That .csv will then be used
+&apos;// to create a &lt;ST&gt;Update.db containing 1 table &quot;PropsUpdt&quot;. That .db
+&apos;// and table will be used with SQL and a SELECT..UNION..SELECT that will
+&apos;// form the union of any new records and the entire MultiMail/SplitProps
+&apos;// records. (CREATE TEMP TABLE &lt;table-name&gt; AS SELECT..UNION..SELECT)
+&apos;//
+&apos;// MultiMail/SplitProps table fields.
+&apos;//		10/22/20.					Column
+&apos;//0|OwningParcel|TEXT|1||0				A
+&apos;//1|UnitAddress|TEXT|1||0				B
+&apos;//2|Unit|TEXT|0||0						C
+&apos;//3|Resident1|TEXT|0||0				D
+&apos;//4|Phone1|TEXT|0||0					E
+&apos;//5|Phone2|TEXT|0||0					F
+&apos;//6|RefUSA-Phone|TEXT|0||0				G
+&apos;//7|SubTerritory|TEXT|0||0				H
+&apos;//8|CongTerrID|TEXT|0||0				I
+&apos;//9|DoNotCall|INTEGER|0|0|0			J
+&apos;//10|RSO|INTEGER|0|0|0					K
+&apos;//11|Foreign|INTEGER|0|0|0				L
+&apos;//12|RecordDate|REAL|0|0|0				M
+&apos;//13|SitusAddress|TEXT|0||0			N
+&apos;//14|PropertyUse|TEXT|0||0				O
+&apos;//15|DeletePending|INTEGER|0|0|0		P
+&apos;//
+&apos;//	Method. code RUImportToBridge to take import spreadsheet and move downward
+&apos;// to Bridge format:
+&apos;// Preserve Header information
+&apos;// Remove column N (search/truepeople);
+&apos;// Re-title columns N, O &quot;SubTerritory&quot; &quot;CongTerrID&quot;
+&apos;// Insert column 0 “OwningParcel”; set col 0 heading to &quot;OwningParcel&quot;
+&apos;// fill column 0 with OwningParcel from header;
+&apos;// Remove column B; set col B heading (from &quot;Last Name&quot;) to &quot;UnitAddress&quot;
+&apos;// Set column C heading to &quot;Unit&quot;
+&apos;// Move data from column J (&quot;Full Address&quot;) to column B (&quot;UnitAddress&quot;)
+&apos;// Remove columns C-H; set col D heading (from &quot;Full Address&quot;) to &quot;Resident1&quot;
+&apos;// Move data from old column I (now E) to column C (Unit)
+
+&apos;//	constants.
+const COL_PARCEL=0		&apos;// &quot;OwningParcel&quot; column index
+const COL_A=0
+const COL_B=1
+const COL_C=2	
+const COL_D=3
+const COL_E=4
+const COL_F=5
+const COL_G=6			&apos;// column G index
+const COL_H=7			&apos;// column H index
+const COL_I=8			&apos;// column I index
+const COL_J=9			&apos;// column J index
+const COL_K=10			&apos;// column K index (DoNotCall)
+const COL_L=11			&apos;// column L index (RSO)
+const COL_M=12			&apos;// column M index (RecordDate)
+const COL_N=13			&apos;// column N index
+const COL_O=14			&apos;// column O index
+const COL_P=15			&apos;// column P index
+const COL_S=18
+const ROW_1=0
+const ROW_2=1
+const ROW_3=2
+const ROW_4=3
+const ROW_6=5
+const ROW_HEADING=4		&apos;// headings row index
+const LJUST=1		&apos;// left-justify HoriJustify				&apos;// mod052020
+const CJUST=2		&apos;// center HoriJustify						&apos;// mod052020
+const RJUST=3		&apos;// right-justify HoriJustify				&apos;// mod052320
+const MDYY=30		&apos;// &apos;M/D/YY&apos; format value
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+dim oMrgRange	As Object	&apos;// merge range
+
+dim oCell	As Object		&apos;// cell working on
+dim i		As Integer		&apos;// loop index
+dim sPropID	As String		&apos;// property ID
+dim sSubTerr	As String	&apos;// subterritory
+dim sCongTerr	As String	&apos;// cong terr ID
+dim lRowCount	As Long		&apos;// row count of addresses
+dim dDate		As Double	&apos;// date value
+dim sFullAddr	As String	&apos;// full address (col B)
+dim sSCAddr		As String	&apos;// county address (col N)
+
+	&apos;// code.
+	ON ERROR GoTo ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+
+	&apos;// B2.Value = row count
+	ForceRecalc()
+	oCell =	oSheet.getCellByPosition(COL_B, ROW_2)
+	lRowCount = oCell.Value
+
+	&apos;// move the whole stinking header to column S
+	&apos;// so it&apos;s out of the way
+	&apos;// move A1 through H4 to S1
+	oMrgRange = oRange
+	oMrgRange.StartColumn = COL_A
+	oMrgRange.EndColumn = COL_H
+	oMrgRange.StartRow = ROW_1
+	oMrgRange.EndRow = ROW_4
+dim oTarget as new com.sun.star.table.CellAddress
+	oTarget.Sheet = oRange.Sheet
+	oTarget.Column = COL_S
+	oTarget.Row = ROW_1
+	oSheet.moveRange(oTarget,oMrgRange)
+	
+	&apos;// Remove column N (search/truepeople)
+	oSheet.Columns.removeByIndex(COL_N, 1)
+
+	&apos;// Re-title columns N, O &quot;SubTerritory&quot; &quot;CongTerrID&quot;
+	oCell = oSheet.getCellByPosition(COL_N, ROW_HEADING-1)
+	oCell.String = &quot;&quot;
+	oCell = oSheet.getCellByPosition(COL_N, ROW_HEADING)
+	oCell.String = &quot;SubTerritory&quot;
+	oCell.HoriJustify = CJUST
+	
+	oCell = oSheet.getCellByPosition(COL_O, ROW_HEADING-1)
+	oCell.String = &quot;&quot;
+	oCell = oSheet.getCellByPosition(COL_O, ROW_HEADING)
+	oCell.String = &quot;CongTerrID&quot;
+	oCell.HoriJustify = CJUST
+	
+	&apos;// Insert column 0 “OwningParcel”; set col 0 heading to &quot;OwningParcel&quot;
+	oSheet.Columns.insertByIndex(COL_A, 1)
+	oCell = oSheet.getCellByPosition(COL_A, ROW_HEADING)
+	oCell.String = &quot;OwningParcel&quot;
+	oCell.HoriJustify = CJUST
+	
+	&apos;// Remove column 1; set col 1 heading (from &quot;Last Name&quot;) to &quot;UnitAddress&quot;
+	oSheet.Columns.removeByIndex(COL_B, 1)
+	oCell = oSheet.getCellByPosition(COL_B, ROW_HEADING)
+	oCell.String = &quot;UnitAddress&quot;
+	oCell.HoriJustify = CJUST
+	
+	&apos;// Set column 2 heading to &quot;Unit&quot;
+	oCell = oSheet.getCellByPosition(COL_C, ROW_HEADING)
+	oCell.String = &quot;Unit&quot;
+	oCell.HoriJustify = CJUST
+
+	&apos;// Move data from column J (&quot;Full Address&quot;) to column B (&quot;UnitAddress&quot;)
+	oMrgRange = oRange
+	oMrgRange.StartColumn = COL_J
+	oMrgRange.EndColumn = COL_J
+	oMrgRange.StartRow = ROW_6
+	oMrgRange.EndRow = ROW_6 + lRowCount-1
+&apos;dim oTarget as new com.sun.star.table.CellAddress
+	oTarget.Sheet = oRange.Sheet
+	oTarget.Column = COL_B
+	oTarget.Row = ROW_6
+	oSheet.moveRange(oTarget,oMrgRange)
+
+	&apos;// remove columns D - H
+	oSheet.Columns.removeByIndex(COL_D, COL_H-COL_D+1)
+	
+	&apos;// insert &quot;Resident1&quot; column at D
+	oSheet.Columns.insertByIndex(COL_D, 1)
+	oCell = oSheet.getCellByPosition(COL_D, ROW_HEADING)
+	oCell.String = &quot;Resident1&quot;
+	oCell.HoriJustify = CJUST
+
+	&apos;// move all column C name entries to column D
+	oMrgRange = oRange
+	oMrgRange.StartColumn = COL_C
+	oMrgRange.EndColumn = COL_C
+	oMrgRange.StartRow = ROW_6
+	oMrgRange.EndRow = ROW_6 + lRowCount-1
+&apos;dim oTarget as new com.sun.star.table.CellAddress
+	oTarget.Sheet = oRange.Sheet
+	oTarget.Column = COL_D
+	oTarget.Row = ROW_6
+	oSheet.moveRange(oTarget,oMrgRange)	
+
+	&apos;// Move data from old column I [now E] (&quot;Apartment Number&quot;) to column C (Unit)
+	oMrgRange = oRange
+	oMrgRange.StartColumn = COL_E
+	oMrgRange.EndColumn = COL_E
+	oMrgRange.StartRow = ROW_6
+	oMrgRange.EndRow = ROW_6 + lRowCount-1
+&apos;dim oTarget as new com.sun.star.table.CellAddress
+	oTarget.Sheet = oRange.Sheet
+	oTarget.Column = COL_C
+	oTarget.Row = ROW_6
+	oSheet.moveRange(oTarget,oMrgRange)
+
+	&apos;// remove old columns I, J (now E, F)
+	oSheet.Columns.removeByIndex(COL_E, 2)
+	
+	&apos;// set E, F column headings to Phone1, Phone2
+	oCell = oSheet.getCellByPosition(COL_E, ROW_HEADING)
+	oCell.String = &quot;Phone1&quot;
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_F, ROW_HEADING)
+	oCell.String = &quot;Phone2&quot;
+	oCell.HoriJustify = CJUST
+	
+	
+	&apos;// set &quot;RecordDate&quot; heading on col M
+	oCell = oSheet.getCellByPosition(COL_M, ROW_HEADING)
+	oCell.String = &quot;RecordDate&quot;
+	oCell.HoriJustify = CJUST
+	
+	&apos;// move L1 - S4 header info back to A1
+	oMrgRange = oRange
+	oMrgRange.StartColumn = COL_L
+	oMrgRange.EndColumn = COL_S
+	oMrgRange.StartRow = ROW_1
+	oMrgRange.EndRow = ROW_4
+&apos;dim oTarget as new com.sun.star.table.CellAddress
+	oTarget.Sheet = oRange.Sheet
+	oTarget.Column = COL_A
+	oTarget.Row = ROW_1
+	oSheet.moveRange(oTarget,oMrgRange)
+
+	&apos;// fill column 0 with OwningParcel from header;
+	&apos;// fill column A with property id from E1
+	&apos;// add SitusAddress in each column N from FullAddress (column B)
+	&apos;// B2.Value = row count
+	oCell =	oSheet.getCellByPosition(COL_E, ROW_1)
+	sPropID = oCell.String
+	lThisRow = ROW_HEADING
+	for i = 0 to lRowCount-1
+		lThisRow = lThisRow + 1
+		oCell =	oSheet.getCellByPosition(COL_A, lThisRow)
+		oCell.setFormula(&quot;=$E$1&quot;)
+		
+		&apos;// convert full address col B to SC address col N
+		oCell =	oSheet.getCellByPosition(COL_B, lThisRow)
+		sFullAddr = oCell.String
+		sSCAddr = fsAddrToSCFormat(sFullAddr)
+		oCell =	oSheet.getCellByPosition(COL_N, lThisRow)
+		oCell.String = sSCAddr
+		
+	next i	
+
+	&apos;// fill column H with SubTerritory from B4; set formula so
+	&apos;// user may change dynamically
+	oCell =	oSheet.getCellByPosition(COL_B, ROW_4)
+	if Len(oCell.String) = 0 then
+	   oCell.SetFormula(&quot;=&quot; + CHR(34) + CHR(34))
+	endif
+	sSubTerr = oCell.String
+	lThisRow = ROW_HEADING
+	for i = 0 to lRowCount-1
+		lThisRow = lThisRow + 1
+		oCell =	oSheet.getCellByPosition(COL_H, lThisRow)
+		oCell.setFormula(&quot;=$B$4&quot;)
+	next i	
+	
+	&apos;// fill column I with CongTerrID from D4; set formula so
+	&apos;// user may change dynamically
+	oCell =	oSheet.getCellByPosition(COL_D, ROW_4)
+	sCongTerr = oCell.String
+	lThisRow = ROW_HEADING
+	for i = 0 to lRowCount-1
+		lThisRow = lThisRow + 1
+		oCell =	oSheet.getCellByPosition(COL_I, lThisRow)
+		oCell.setFormula(&quot;=$D$4&quot;)
+	next i	
+	SetTerrWidths()		&apos;// also RecordDate
+
+	&apos;// fill column M with RecordDate from C2
+	oCell =	oSheet.getCellByPosition(COL_C, ROW_2)
+	dDate = oCell.Value
+	lThisRow = ROW_HEADING
+	for i = 0 to lRowCount-1
+		lThisRow = lThisRow + 1
+		oCell =	oSheet.getCellByPosition(COL_M, lThisRow)
+		oCell.setValue(dDate)
+		oCell.NumberFormat = MDYY
+		oCell.HoriJustify = CJUST
+	next i	
+
+	SetBridgeHeadings()
+	SetBridgeColWidths()
+	
+	&apos;// set sheet type at H1 &quot;Admin-Bridge formatted sheet&quot;
+	oCell =	oSheet.getCellByPosition(COL_H, ROW_1)
+	oCell.String = &quot;Admin-Bridge formatted sheet&quot;
+
+	&apos;// Reset formula =COUNTA($A$6:$A$1299) in cell C2
+&apos;	oCell = oSheet.getCellByPosition(COL_B, ROW_2)
+&apos;	oCell.setFormula(&quot;=COUNTA(A6:A1299)&quot;)
+&apos;	oCell.HoriJustify = CJUST
+	SetHdrSumFormula()
+		
+	&apos;// Insure all headings Bold.
+	BoldHeadings()
+
+	&apos;// Set UnitAddress column width
+	SetUnitAddrWidth()
+	
+	&apos;// Set SitusAddress column width
+	SetSitusAddrWidth()
+	
+	&apos;// Force recalculation so count shows up correctly
+	ForceRecalc()
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgBox(&quot;RUImportToBridge - unprocessed error.&quot;)
+	GoTo NormalExit
+end sub		&apos;// end RUImportToBridge		10/23/20

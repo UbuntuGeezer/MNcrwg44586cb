@@ -1,0 +1,2 @@
+s?<filename>?SCSpecTerr_db?g
+s?<filepath>?/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/SpecialSCdb?g

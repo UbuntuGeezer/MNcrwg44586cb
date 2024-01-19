@@ -1,0 +1,54 @@
+# MakeMigrateGeany.tmp - MigrateGeany makefile template for *CBtoHPgeany.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	5/28/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 5/28/22.	wmk.	modified for TX to FL migration.
+# Legacy mods.
+# 4/1/22.	wmk.	original code; adapted from *MigrateGeany* project
+#			 to *CBtoHPgeany project.
+# 4/3/22.	wmk.	change *host* to *c onvtype* to facilitate hosttype
+#			 environment bar
+# 5/15/22.	wmk.	pathbase > *folderbase*/Territories/TX/HDLG/99999.
+#
+# DoSed edits *< source-path >, < proj-name >  and < dest-path > strings in this makefile.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+.ONESHELL  : ;
+
+.PHONY     :  Always 
+
+ projpath = $(codebase)/Projects-Geany/ImportProject
+projbase = $(pathbase)/Projects-Geany
+srcpath = /media/ubuntu/Windows/Users/Bill/Territories/Projects-Geany
+projname = DNCReport
+targpath = DNCReport
+
+# always  make ../*projname*.geany and copy all files
+# to *projname* folder, then edit results .geany
+#======================================================
+Always  : 
+	$(projpath)/BuildCopyList.sh  "$(srcpath)" "$(projname)"
+	$(projpath)/CopyProject.sh    "$(srcpath)" "$(projname)" $(targpath)
+	sed -f sedativeTXtoFL.txt -i ../$(projname).geany
+	echo "ImportProject srcpath projname *make* complete."
+	echo "** NOW check $(projname) *makefiles* for correct paths **"
+	
+#======================================================

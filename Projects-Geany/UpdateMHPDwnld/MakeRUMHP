@@ -1,0 +1,53 @@
+# MakeRUMHP.tmp - template for MakeRUMHP make file.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#   5/4/22. wmk.	(automated) path corrections.
+#	7/4/21.wmk.
+#
+# Dependencies.
+#	MakeRUMHP.tmp placeholder 244 will be edited
+#	 by DoSed1.sh to be a territory ID.
+#	Terrxxx_RUPoly table contains the existing records for the entire MHP.
+#
+# Modification History.
+# ---------------------
+# 7/4/21.	wmk.	original code.
+
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : $(specialpth)make.csv
+.ONESHELL : ;
+
+include pathRUdefs.inc
+
+# Terrxxx_RU.db recipe
+#============================================================
+# DoSed1 run prior with params 244 as <terrid>
+
+$(postpath)/Terr244_RU.db : $(specialpath)/make.csv;
+	sqlite3 < AddMHPTable.sql
+
+$(specialpath)/make.csv : ;
+#============================================================
+
+

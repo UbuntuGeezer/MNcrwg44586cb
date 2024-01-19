@@ -1,0 +1,130 @@
+&apos;// BridgeToSuper1.bas - Bridge sheet to Super territory sheets.
+&apos;// OLDCODE...
+&apos;//---------------------------------------------------------------
+&apos;// BridgeToSuper- Bridge sheet to Super territory sheets.
+&apos;//		3/17/21.	wmk.	10:55
+&apos;//---------------------------------------------------------------
+
+public sub BridgeToSuper1()
+
+&apos;//	Usage.	macro call or
+&apos;//			call BridgeToSuper()
+&apos;//
+&apos;// Entry.	user focused on Bridge sheet for territory
+&apos;//
+&apos;//	Exit.	gsNewSheet = new Search sheet name	
+&apos;//
+&apos;// Calls.	SetSrchSheetName, SuperToUntitled
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	3/14/21.	wmk.	original code
+&apos;//	3/16/21.	wmk.	new Search sheet name stored in public
+&apos;//						var gsNewSheet; SuperToUntitled call added.
+&apos;//	3/17/21.	wmk.	fsGetSrchSheetName, MoveToSheet calls added
+&apos;//						code added to move to Bridge sheet if not 
+&apos;//						already there.
+&apos;//
+&apos;//	Notes. Executes the following sequence:
+&apos;// move to Bridge sheet
+&apos;// copy sheet to end
+&apos;// BridgeToEdit()
+&apos;// copy sheet to end
+&apos;// EditToSearch3
+&apos;// rename sheet &quot;Terrxxx_Search&quot;
+&apos;// moveto sheet TerrxxxPub_Terr
+&apos;// copy to &quot;untitled1&quot;
+&apos;// move back to sheet &quot;TerrxxxSearch&quot;
+&apos;// copy to &quot;untitled2&quot;
+
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim oDoc		As Object		&apos;// current component
+dim oSel		As Object		&apos;// current selection
+dim oSheet		As Object		&apos;// sheet selected
+dim sCurrName	As String		&apos;// current sheet name
+dim bIsBridge	As String		&apos;// sheet is Bridge type
+dim oRange		As Object		&apos;// RangeSelection 
+dim iSheetIx	As Integer		&apos;// current sheet index
+dim iBridgePos	As Integer		&apos;// &quot;Bridge&quot; string index
+dim sNewName	As String		&apos;// new sheet name
+dim sTerrID		As String		&apos;// territory ID
+dim sBridgeName	As String		&apos;// Bridge sheet name
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	sCurrName = oSheet.getName()
+	
+	if InStr(sCurrName, &quot;Bridge&quot;) = 0 then
+		&apos;// move to Bridge sheet.
+		sTerrId = fsGetTerrID()
+		sBridgeName = &quot;Terr&quot; + sTerrID + &quot;_Bridge&quot;
+		MoveToSheet(sBridgeName)
+		oSel = oDoc.getCurrentSelection()
+		oRange = oSel.RangeAddress
+		iSheetIx = oRange.Sheet
+		oSheet = oDoc.Sheets(iSheetIx)
+	endif 		&apos;// end not in Bridge sheet
+	
+	&apos;// verify sheet type by sheet name
+	sCurrName = oSheet.getName()
+	bIsBridge = InStr(sCurrName, &quot;Bridge&quot;) &gt; 0
+	
+	if bIsBridge then
+		msgbox(&quot;Sheet is type Bridge... proceeding&quot;)
+	else
+		msgbox(&quot;Sheet not recogonized as Bridge..&quot;)
+		GoTo ErrorHandler
+	endif
+	
+if not true then
+  GoTo NormalExit
+endif
+
+	&apos;// copy sheet to end and run BridgeToEdit
+	CopyToEnd()
+	UnprotectSheet()
+	BridgeToEdit()
+
+	&apos;// rename &quot;Bridge&quot; portion to &quot;Edit&quot; with random number to avoid conflicts.
+	iBridgePos = InStr(sCurrName,&quot;Bridge&quot;)
+	sNewName = left(sCurrName,iBridgePos-1) + &quot;Edit&quot; + INT(100*RND())
+	RenameSheet(sNewName)
+
+	&apos;// copy Edit sheet to end and convert to Search sheet.
+	ProtectSheet()
+	CopyToEnd()
+	UnprotectSheet()
+	EditToSearch3()
+dim iEditPos As Integer		&apos;// &quot;Edit&quot; position
+	iEditPos = Instr(sNewName,&quot;Edit&quot;)
+	sNewName = left(sNewName, iEditPos-1) + &quot;Search&quot; + INT(100*RND())
+	RenameSheet(sNewName)
+	gsNewSheet = sNewName	&apos;// preserve name
+	fsSetSrchSheetName(sNewName)
+	
+if not true then
+  msgbox(&quot;gsNewSheet = &apos;&quot; + gsNewSheet + &quot;&apos;&quot;)
+endif
+
+	SelectSrchSheetArea()
+	WrapLong()
+	HltAddrBlocks4()
+	SuperToUntitled			&apos;// copy sheets to untitled sheets
+
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	ON ERROR GOTO
+	msgbox(&quot;In BridgeToSuper - unprocessed error.&quot;)
+	GOTO NormalExit
+	
+end sub		&apos;// BridgeToSuper1	&apos;// 3/17/21.	10:55

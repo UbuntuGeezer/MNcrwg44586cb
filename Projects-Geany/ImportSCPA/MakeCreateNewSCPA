@@ -1,0 +1,79 @@
+# MakeCreateNewSCPA.tmp - makefile for CreateNewSCPA.sh
+#	11/21/22.	wmk.
+#
+# Exit. CreateNewSCPA.sql > CreateNewSCPA.sh
+#
+# Modification History.
+# ---------------------
+# 11/21/22.	wmk.	Chromebook paths verified.
+# Legacy mods.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+# 4/26/22.	wmk.	*pathbase* support; *..path* vars trailing '/' removed.
+# Legacy mods.
+# 8/26/21.	wmk.	original code.
+# 11/3/21.	wmk.	CreateNewSCPA.sq prerequisite changed to
+#					CreateNewSCPA.sql; CreateNewSCPA.sh now primary target,
+#					as opposed to CreateNewSCPA.sq.
+# 12/2/21.	wmk.	WARNING added if Data0528.csv does not exist.
+# 1/2/22.	wmk.	multihost code added.
+# 2/5/22.	wmk.	chmod added to recipe to ensure .sh executable.
+# 3/20/22.	wmk.	intermediate messages added.
+#
+# Notes. CreateNewSCPA.sh will be considered out-of-date if
+# CreateNewSCPA.sql is newer. CreateNewSCPA.sq will be rebuilt
+# in the process.
+# 05 and 28 were chosen for the month/day for compatibility with the
+# CreateNewSCPA.sh proc (see DoSed.sh).
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+ procpath = $(codebase)/Procs-Dev
+scpafolder = $(pathbase)/RawData/SCPA/SCPA-Downloads
+thisproj = $(codebase)/Projects-Geany/ImportSCPA
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+#CreateNewSCPA.sh primary target
+#====================================================================
+$(thisproj)/CreateNewSCPA.sh : $(thisproj)/CreateNewSCPA.sql \
+ $(scpafolder)/Data0528.csv
+	cd $(altproj);./DoSed.sh $(thisproj) CreateNewSCPA
+	make -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(scpafolder)/Data0528.csv;then \
+	 	echo "** WARNING - Data0528.csv file missing for $@ **";exit 1;fi
+	$@
+	cd $(thisproj)
+	echo "** Now run $@ to create the new SCPA_05-28.db **"
+	echo "CreateNewSCPA complete."
+
+$(thisproj)/CreateNewSCPA.sql : $(thisproj)/CreateNewSCPA.psq;
+	echo "** run DoSed to make CreateNewSCPA.sql **"
+	exit 1
+
+$(thisproj)/CreateNewSCPA.psq : 
+	if ! test -f $(thisproj)/CreateNewSCPA.psq;then \
+	 echo '** missing CreateNewSCPA.psq **;exit 1;fi
+
+#$(thisproj)/preamble.CreateNewSCPA.sh : ;
+#	if ! test -f $(thisproj)/preamble.CreateNewSCPA.sh;then \
+#	  echo "**  preamble.CreateNewSCPA.sh not found for CreateNewSCPA.sh recipe! **";exit 1;fi
+
+$(scpafolder)/Data0528.csv : ;
+	if ! test -f $(scpafolder)/Data0528.csv;then \
+	echo "** WARNING - Data0528.csv file missing for CreateNewSCPA.sh **";exit 1;fi
+
+# end MakeCreateNewSCPA.

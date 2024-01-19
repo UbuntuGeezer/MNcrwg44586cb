@@ -1,0 +1,129 @@
+README - RUNewLetter project documentation.
+	10/15/21.	wmk.
+
+Modification History.
+---------------------
+9/20/21.	wmk.	original document.
+10/11.21.	wmk.	udpated Method section referring to SpecRUdb project.
+10/15/21.	wmk.	updated Project Description WARNING.
+10/22/21.	wmk.	AddZips, MakeAddZips added to documentation.
+10/29/21.	wmk.	Setup section added.
+
+Document Sections.
+------------------
+Project Description - overall project description.
+Dependencies - project build dependencies.
+Method - project build flow.
+Setup - step-by-step build instructions.
+
+
+Project Description.
+--------------------
+WARNING: BEFORE RUNNING THE BUILD FOR THIS PROJECT: be sure to go through
+the steps and run the SCNewLetter project build AND create an empty
+Terrxxx_RU.db by initializing and using an empty Mapxxx_RU.csv.
+
+The RUNewLetter project creates a database that emulates the database
+created by the RUNewTerritory_db.sh within Terryyy RefUSA-Download folder.
+Since letter-writing territories span zip codes and areas throughout the
+congregation territory, the RU build is a special case of the SPECIAL
+build process for any RU territory.
+
+Rather than starting from a Map download and adding records from the
+Special dbs, the starting point is an empty Map download with records
+being placed in the Terrxxx_RU.db via the SyncTerrToSpec process
+embedded in MakeSpecials.
+
+Dependencies.
+-------------
+
+NewLetter.sql - SQL to create new Terryyy_RU.db and populate from Letteryyy_TS.csv
+
+Terryyy_RU.db - empty new database with same structure as any Terryyy_RU.db
+
+MakeSpecials - makefile to build the Specyyy_RU.db then use it to populate
+  the Terryyy_RU.db
+
+AddZips.sql - template for AddZips.sql specifically for Terryyy; DoSed will
+  copy this to the Territory RU-Downloads folder with the territory edited in
+
+MakeAddZips - makefile for AddZips.sql to AddZips.sh for Terryyy; DoSed will
+  copy this to the Territory RU-Downloads folder with the Territory edited in
+  
+  
+Method.
+-------
+The primary letter writing territory data comes from the territory PDF
+file. This file is first processed into an SC letter writing territory
+in the SCPA-Downloads/Terrxxx folder.
+
+To ensure accuracy, all letter writing RU territory data is taken from
+Special RU data downloads, since the letter writing addresses are scattered
+all over the congregation territory.
+
+To create a new letter-writing RU territory follow the instructions for
+the RefUSA-Downloads/Terryyy portion in the SpecialRUdb project build
+documentation file SPECIAL. In particular, the MakeSpecials makefile will be
+principally responsible for integrating the RefUSA-Downloads/Special database
+extractions with the Terryyy_RU.db.Terryyy_RUBridge records.
+
+The Terryyy_RUBridge records table should initially be empty, since there
+is no expedient way to download scattered letter writing address data. The
+MakeSpecials makefile will build Specyyy_RU.db from the Special databases,
+then insert those records into Terryyy_RU.db.Terryyy_RUBridge using the
+SyncTerrToSpec shell.
+
+Becuase of these dependencies, the entire RU letter-writing territories
+process depends heavily on 1) the accuracy of /RefUSA-Downloads/Special
+databases with RU record extractions of areas/streets, 2) the accuracy
+of the RegenSpecDB.sq query in gathering the records from the Special
+databases, and 3) the accuracy of the recipe in MakeSpecials for building
+both the Specyyy_RU.db and synchronizing its records with the Terryyy_RUBridge
+records in Terryyy_RU.db.
+
+Since the Special databases are nearly mirrors in SC and RU /Special folders,
+the RegenSpecDB.sq code for RU can be cloned from the SC version with a 
+few modifications.
+
+Setup.
+------
+Perform the following steps to build the RUNewLetter project for a territory:
+
+Projects-Geany/SCNewLetter - perform the build for this first, creating an
+	empty Terrxxx_RU.csv for generating an empty Terrxxx_RU.db.
+
+
+RUNewLetter Build menu:
+
+	edit 'sed' Build menu command line and set the territory ID as parameter
+	run 'sed' from the Build menu; this sets up the MakeRUNewLetter makefile
+	[run 'Make Dry-run' from the Build menu to test the makefile]
+	run 'Make' from the Build menu to generate the Terrxxx_RU.db
+
+Terminal: SpecialRUdb project folder:
+
+	"freshen" the SPECIAL db processing files by:
+	  run ./ClearSpecial.sh <terrid> to remove older versions of files
+	   SPECIAL, SpecxxxRU.sql, RegenSpecDB.sql, SetSpecTerrs.sql,
+	   SyncTerrToSpec.sql, MakeSpecials
+
+	 run ./InitSpecial.sh <terrid> to load the critical files to the
+	  RefUSA-Downloads/Terrxxx folder
+
+Terminal: RefUSA-Downloads/Terrxxx folder:  
+	 use gedit to edit the above files to match territory ID; only MakeSpecials
+	  needs to be edited, but it isn't a bad idea to edit the others with
+	  the date and territory ID
+
+	run make -f MakeSpecials --dry-run to validate the makefile execution
+	run make -f MakeSpecials to initialize the Specxxx_RU.db and
+	 Terrxxx_RU.db databases
+
+	check MissingIDs.csv for records missing property IDs; if the file
+	 length is > 0 bytes, investigate whether those records are legiitmately
+	 ignored; if not, edit FixyyyRU.sql with fixes, then use the FixAnyRU
+	 project to build FixyyyRU.sql.sh; run FixyyyRU.sh to fix the records
+
+The Specxxx_RU.db and Terrxxx_RU.db are now up-to-date and ready for use
+with the BridgesToTerr project.
+	 

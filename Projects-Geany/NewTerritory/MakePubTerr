@@ -1,0 +1,68 @@
+# MakePubTerr.tmp - make file template for creating new publisher territory.
+#	4/27/23.	wmk.
+#
+# Entry. user must have defined territory in TerrIDData.db.Territory table.
+#
+# Modification History.
+# ---------------------
+# 2/20/23.	wmk.	multiple path corrections.
+# 4/27/23.	wmk.	documentation improvements; path standards revised
+# Legacy mods.
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# Legacy mods.
+# 6/17/21.	wmk.	original code (multihost included).
+# 7/2/21.	wmk.	superfluous "s removed.
+# 8/27/21.	wmk.	updated and cleaned up; bug fix in bashpath.
+# 8/28/21.	wmk.	added reminder to create Terr843Hdr.ods.
+# 4/1/22.	wmk.	*state* *county* *congno* support added; HOME changed
+#			 to USER in host check.
+#
+# Notes. Project "sed" command should be used to change terrid to xxx in
+#  MakeNewTerr make file.
+#  This makefile adopts the *standard* that vars ending in *path* have no
+#  trailing '/'; vars ending in *base* also have no trailing '/'
+
+ifeq ($(USER),ubuntu)
+  folderbase=/media/ubuntu/Windows/Users/Bill/
+else
+  folderbase = $(HOME)/
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+   pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+.ONESHELL : ;
+.NOPARALLEL : ;
+.PHONY : Always ;
+
+bashpath = $(codebase)/Procs-Dev
+projpath = $(codebase)/Projects-Geany/NewTerritory
+RUpath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads
+SCpath = $(pathbase)/RawData/SCPA/SCPA-Downloads
+
+# primary targets $(RUpath)/TErr947 $(SCPath)/TErr947
+#=========================================================
+#$(RUpath)/Terr947 $(SCpath)/Terr947 &: 
+Always : 
+	if test -f $$TEMP_PATH/FoundTerrID.txt;then rm $$TEMP_PATH/FoundTerrID.txt;fi 
+	$(projpath)/CheckTerrDefined.sh 947;if [ $$? -ne 0 ];then \
+	 $(projpath)/NewTerrHdr.sh 947;fi
+	$(bashpath)/MakeRawData.sh 947
+	echo " " > $$pathbase/$$rupath/Terr947/PUB_NOTES_947.md
+	$(bashpath)/MakeTerrData.sh 947
+
+#==========================================================	
+
+	
+#junk.txt .ONESHELL :     MakeNewTerr
+#	bash $(bashpath)/MakeRawData.sh 843
+#	bash $(bashpath)/MakeTerrData.sh 843
+#	bash $(bashpath)/GenTerrHdr.sh 843
+
+#MakePubTerr :

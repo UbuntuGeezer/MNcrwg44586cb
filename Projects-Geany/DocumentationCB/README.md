@@ -1,0 +1,248 @@
+README - DocumentationCB project documentation.<br>
+8/17/23.    wmk.
+###Modification History.
+<pre><code>11/16/22.   wmk.   original document.
+1/15/23.    wmk.    Hardware and Software Limitations sections expanded.
+8/17/23.    wmk.    Two Ways of Organizing Territories section added.
+</code></pre>
+<h3 id="IX">Document Sections.</h3>
+<pre><code><a href="#1.0">link</a> 1.0 Project Description - overall project description.
+<a href="#2.0">link</a> 2.0 System Limitations - Chromebook system limiations.
+<a href="#3.0">link</a> 3.0 Two Ways of Organizing Territories - different approaches for different needs.
+<a href="#4.0">link</a> 4.0 Chromebook Territories System - Chromebook system details.
+<a href="#5.0">link</a> 5.0 Front-end Data - .csv file for generating publisher terrtories.
+</code></pre>
+<h3 id="1.0">1.0 Project Description.</h3>
+The DocumentationCB project contains the information about the 
+Chromebook/chromeos-specific Territories system. The Chromeook (CB) system is a
+child project cloned from the Linux-host based original system. As with the 
+original host system, the Territories system is organized into two segments;
+the data segment and the code segment. The data segment contains all of the
+congregation territory and publisher territory data. The code segment contains
+all of the supporting code for the data segment. Some code of the is resident
+within the publisher territory folders, but is still considered to be in the
+code segment. 
+
+Before reading further, it may be helpful to skip ahead to the section
+<a href="#3.0">"Two Ways of Organizing Territories"</a>. This is an overview of the two different
+approaches to organizing publisher territories. Afer reading that section
+the overall design and implementation of this Territory system will be
+much better understood. This document assumes familiarity with the original
+host system, but understanding the way the previous system organized territory
+data is all that is really necessary.
+
+The data segment remains mostly unchanged from the original host system, except
+for adjustmemts to some file paths in code that resides
+in the data segment. The code segment is heavily modified from the original
+due to constraints imposed by chromeos Linux and limited system-resident
+file space.
+
+Specific documentation on the data segment is contained on this link:
+[Data Segment](file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/DocumentationCB/Managing Territory Data.html
+)<br>
+Specific documentation on the code segment is contained on this link:
+[Code Segment](file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/DocumentationCB/Managing Territory Code.html
+)<br><a href="#IX">Index</a>
+<h3 id="2.0">2.0 System Limitations.</h3>
+**Hardware Limitations.**<br>
+The Chromebook system only has 32G of on-board "disk" space. Due to this constraint
+a large Territories subsystem will consume nearly 75% of the available SDD drive
+space. Caution must be exercised when updating with county download data to
+avoid overwhelming available space. Also, only the current county download data
+should be kept resident on the SDD system. There simply is not enough room for
+prior download data to remain on the system.
+
+**Software Limitations.**<br>
+The Chromebook "off-the'shelf" system only has partial "Linux" support. User shell
+files are not supported, as they are considered potentially compromising to the
+underlying chromeos system. The only way the Territories system can run on the
+Chromebook is to place the Chromebook in "developer mode". Note that the Chromebook
+documentation states that any software warranties are voided by running in
+developer mode.
+
+Developer mode is initiated by entering ctrl-D at system startup when the OS
+verification prompt is issued. **WARNING** If the system has not been previously
+initialized for developer mode, all files will be wiped from the system before
+developer mode is started.
+
+Once developer mode has initialized the Terminal app will allow the user access
+to all of the system folders, while adding a "Linux files" file system. Terminal
+runs within a "virtual machine" container in the chromeos system. This makes it
+a bit tricky to access the Chromebook/MyFiles folders, but it is possible. For
+the most part it is sufficient to build and manage the Linux files system for
+apps like the Territories system.
+
+The user may use the GNU/Linux tools to install additional packages on the
+Chromebook system (e.g. LibreOffice). When such packages are installed, in
+order for them to "see" files in the chromeos system, the folder(s) in which
+the files reside must be "Linux-shared" through the Files app. A prime
+example of this is files that are stored on a removable USB drive. Until
+"shared" with the "Linux files" system, the Terminal application, nor
+any of the Linux apps, will have access to the USB drive files.
+
+<h4>File and Path Naming Limitations.</h4>
+Wherever possible it is wise to avoid filenames and pathnames that contain
+spaces (' '). While normal usage provides methods to specify either of these
+containing spaces, this type of name provides special challenges when
+encountered in shell files or environment variables. 
+
+\*bash\* command processing was not originally intended to support file or
+path names with embedded spaces. In the distant past \*bash\* was modified
+to provide a syntactic hook for embedding spaces in these names. Within
+a \*bash\* command line, the escape sequence '\ ' allows bash to leave an
+embedded space intact when the command is interpreted. This works fine
+for any command line field, but becomes really problematic if the command
+is assigning a value to an environment variable. **WARNING** Never use
+an escaped space within an environment variable definition (e.g. svar=USB\ Drive).
+
+GNU/Linux apps do not distinguish upper/lower case within file or path names.
+While the chromeos file system does distinguish upper/lower case names within
+its file system, to GNU/Linux apps like \*git\* and \*tar\* do not. Any
+GNU/Linux apps that do not make case distinctions will give priority to
+the uppercase name and ignore the lowercase name (usually with a warning).
+
+**Shell vs. Function Handling.** Wnen it is desired to have a shell that
+processes a path containing embedded spaces that also works for paths not
+containing embedded spaces, one of the best choices is to implement the shell
+both as a ".sh" executable file, and as a function definition within a file
+that will be loaded into the Terminal session via the \*source\* command.
+This is especially useful when it would have been desirable to pass the
+path containing an embedded space as a shell parameter. In this case, the
+".sh" shell can handle all the cases where no embedded space is present.
+A separate function definition that mimics the ".sh" shell may be defined
+that handles what would have been passed with an embedded space as a special
+case.
+
+This provides differentiation for the user by using the same name for the
+".sh" file and for the defined function. For example, suppose the shell file
+name is "FindFileInTars.sh". The user can define the same named function as
+"function FindFileInTars(){". The shell that handles all cases with no embedded
+spaces is invoked with "./FindFileInTars.sh p1 p2 etc.", while the function
+that handles cases with embedded spaces is invoked with 
+"FindFileInTars p1 p2 etc."
+
+The function FindFileInTars in the above example can use most of the code from
+the ".sh" file, but modified to handle the embedded space(s). One of the easiest
+ways is to use a different parameter list with keyword(s) that will trigger
+commands that have the embedded space already present. As noted before, it
+will not work to place an escaped embedded space within an environment variable.
+
+All such defined functions may be placed within a single file 
+(e.g. functions.sh). To activate the functions for a given Terminal session,
+use the command:<pre><code>    source  < file-name ></code></pre>where 
+< file-name > is the name of the file containing the function definitions.
+<h4> Linux File System Path Hiding.</h4>
+The "Linux files" absolute folder paths are not visible to the Chromebook user
+interface since they are "containerized". They are visible to Chromebook via
+URLs that contain a "file://" definition with the container path. The container
+path is of the general form 
+"/media/fuse/crostini_< 40-character-hash >_termina_peguin/< Linux-files-path >".
+The easiest way to determine the path to a Linux file is to use the Chromebook
+\*Files\* app to open an existing ".html" file from the "Linux files" folders.
+This will open the file in a Chrome web browser tab which, in turn, will have
+the full file path in the web browser URL line. The "file://" URL may then be
+copied (up to the < Linux-files-path >) and pasted where needed to supply the
+"containerized" path to the Linux file.
+
+This technique is most often used when defining hyperlinks to ".html" files
+referenced with other ".html" files. It may also be used whenever a Chromebook
+app needs to access a "Linux-files" shared file.
+
+
+Developer mode requirement, Linux file sharing, absolute file path hiding..
+ 
+Be sure to include notes about the *source* command behavior when the same function
+is defined in more than one .sh shell file. The latest definition takes precedence
+when multiple *source* .sh files are active.<br><a href="#IX">Index</a>
+<h3 id="3.0">3.0 Two Ways of Organizing Territories.</h3>
+The two principal ways of organizing publisher territories are "map-based" and
+"address-based". The traditional way that territories have been organized is
+map-based. Publishers checked out a territory map and worked house-to-house
+within the boundaries outlining the territory. Since map-based territories
+have been used for years it is assumed that the reader understands that type of
+territory organization. This section focuses on address-based territories.
+
+With the increase of apartment complexes and gated communities within
+congregation territories has come the need for address-based organization.
+Address-based territories are lists of addresses, rather than maps. This type
+of organization especially lends itself to letter-writing and telephone
+territories.
+
+This Territory system is entirely address-based. The publisher territories it
+produces consist of lists of addresses, rather than maps. However, this system
+has been implemented to transform map-based territories into address-based
+territories by importing the address data contained within a set of map
+boundaries. The imported data is then transformed into numbered territories
+which correspond exactly to the congregation publisher territory numbers. The
+publishers are then given the numbered territory in the form of an address list.
+
+**Data Acquisition.**<br>
+The disadvantage of address-based territories is that the individual address
+data is quite cumbersome by comparison to looking at a map. All that a map-based
+territory needs is the street names and outer boundaries. Address-based
+territories need every individual address within the territory boundaries. To
+avoid the need to redefine an entire new set of publisher territories, this
+Territory system is set up to acquire data by using online map-based systems and
+extracting all addresses within the outlined map area.
+
+The various map-based systems available online typically allow the user to draw
+a polygon around a map area, then obtain the address data from within the area
+defined by the polygon. The data acquired in this manner is then downloaded from
+the host system into a Comma Separated Values (.csv) file on the user's system.
+
+**Data Transformation.**<br>
+Once the data has been downloaded onto the user's system, it can be massaged
+into whatever form the user desires. This Territory system moves downloaded
+map address data into a format usable for producing publisher territories. For
+the purposes of this discussion the portion of the Territory system that handles
+the majority of this work is termed the "back-end" software. The portion that
+handles the actual territory generation is termed the "front-end" software.
+
+The back-end software moves the data through a series of transformations using
+SQL databases and spreadsheets as the data is merged and organized from various
+sources. The end result of the back-end software is a .csv file of addresses for
+each territory that serves as input for the front-end software.
+
+The front-end software consists of a spreadsheet and supporting macros that take
+the .csv data produced by the back-end software and produces the publisher-ready
+territory in either spreadsheet or PDF format. There are samples of the
+publisher-ready territories; Sample\_PubTerr.xls Sample\_SuperTerr.xlsx, and
+Sample\_PubTerr.pdf in the DocumentationCB project folder. In addition the file
+AddressLookupInstructions.html is the instructions sheet given to publishers.
+<br><a href="#IX">Index</a>
+<h3 id="4.0">4.0 Chromebook Territories System.</h3>
+The Chromebook Territories system, like the *origin* system, is divided into
+two segments. The data segment contains all of the congregation and publisher
+territory information stored in a combination of SQL databases, spreadsheets
+and supporting files. The code segment contains shell files, SQL queries and
+supporting files for importing and managing the territory data, including
+generating publisher territories for distribution.
+
+Recommended reading is the
+[TerritoriesCB](file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/README.html) project documentation.<br><a href="#IX">Index</a>
+<h3 id="5.0">5.0 Front-end Data.</h3>
+Publisher territories are generated by running the ProcessQTerrs12.ods workbook
+to process the front-end data for the territory. The front-end data is comprised
+of a .csv file where each line is an address record. Each territory has its own
+file of front-end data. The filename for any given territory's front-end data is
+QTerrxxx.csv, where 'xxx' is the territory number.
+
+The Territories file system is organized with the downstream folder /TerrData as
+the parent folder for all publisher territories. Under that parent folder are
+separate folders, one per territory, that contain the publisher territory files.
+Each territory has 3 files that are distributed for publisher use: Terrxxx\_PubTerr.xlsx,
+Terrxxx\_SuperTerr.xlsx, and Terrxxx\_PubTerr.pdf. These three files are all
+produced from the front-end data by the ProcessQTerrs.ods spreadsheet and
+associated macros.
+
+The front-end data for any given territory is obtained from the Working-Files
+folder in the TerrData/Terrxxx folder. The file containing the data is
+named QTerrxxx.csv for territory 'xxx'. As long as the fields in each .csv
+record are in the correct order with the correct data, the publisher territory
+can be successfully generated. Following is a comma-separated list of the record
+fields in order:
+<pre><code>OwningParcel, UnitAddress, Unit, Resident1, Phone1, Homestead,
+RefUSA-Phone, Subterritory, Territory, DoNotCall, RSO, Foreign, RecordDate,
+SitusAddress, PropUse, DelPending
+</code><pre>
+<br><a href="#IX">Index</a>

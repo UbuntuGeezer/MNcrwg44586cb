@@ -1,0 +1,35 @@
+echo "-- * LatestDwnldDate.psq/sql - module description."  > SQLTemp.sql
+echo "-- * 2/6/23.	wmk."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Entry. /DB-Dev/Terr86777.db has latest county download data"  >> SQLTemp.sql
+echo "-- *		//home/vncwmk3/Territories/FL/SARA/86777/RawData/RefUSA/RefUSA-Downloads/Special/TheEsplanade.Spec_RUBridge has field \"OwningParcel\" present"  >> SQLTemp.sql
+echo "-- *		 (i.e. is a Bridge table)"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Exit. *TEMP_PATH/LatestDwnldDate = MAX(DownloadDate) in Terr86777.Terr86777"  >> SQLTemp.sql
+echo "-- *		 set of records that is in TheEsplanade.Spec_RUBridge "  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * ---------------------"  >> SQLTemp.sql
+echo "-- * 2/6/23.	wmk.	original code."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Notes. LatestDwnldDate extracts the latest *DownloadDate* field from"  >> SQLTemp.sql
+echo "-- * Terr86777.Terr86777 records whose *Account #\" field is in the set"  >> SQLTemp.sql
+echo "-- * of Spec_SCBridge.OwningParcel fields of some <spec-db>.db."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * LatestDwnldDate.psq depends upon *sed editing the *db-path*,"  >> SQLTemp.sql
+echo "-- * *db-name*, and db-table placeholders to be the path, db name and table"  >> SQLTemp.sql
+echo "-- * of the database having the records of interest in Terr86777.db."  >> SQLTemp.sql
+echo "-- * (Note. The *sed that performs this edit is in preamble1.sh"  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ".open '$pathbase/DB-Dev/Terr86777.db'"  >> SQLTemp.sql
+echo "ATTACH '/home/vncwmk3/Territories/FL/SARA/86777/RawData/RefUSA/RefUSA-Downloads/Special'"  >> SQLTemp.sql
+echo " || '/TheEsplanade'"  >> SQLTemp.sql
+echo " AS db19;"  >> SQLTemp.sql
+echo ".mode csv"  >> SQLTemp.sql
+echo ".headers off"  >> SQLTemp.sql
+echo ".output '$TEMP_PATH/LatestDwnldDate.txt'"  >> SQLTemp.sql
+echo "WITH a AS (SELECT OwningParcel PropID FROM db19.Spec_RUBridge)"  >> SQLTemp.sql
+echo "SELECT MAX(DownloadDate), \" TheEsplanade\" FROM Terr86777"  >> SQLTemp.sql
+echo " WHERE \"Account #\" IN (SELECT PropID FROM a);"  >> SQLTemp.sql
+echo "-- * END LatestDwnldDate.sql;"  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql

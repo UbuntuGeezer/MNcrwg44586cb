@@ -1,0 +1,103 @@
+# MakeSCNewTerritory.tmp - MakeSCNewTerritory template.
+#	5/23/23.	wmk.
+#
+# Entry.	($)HOME = home path on current host.
+#
+# Modification History.
+# ---------------------
+# 1/14/23.	wmk.	*fullbuild var introduced; comments tidied.
+# 5/23/23.	wmk.	*pathbase corrected.
+# Legacy mods.
+# 4/25/22.	wmk.	checked for FL/SARA/86777
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# Legacy mods.
+# 5/8/21.	wmk.	original code.
+# 6/17/21.	wmk.	multihost support.
+# 8/27/21.	wmk.	bug fix empty path; superfluous "s removed.
+# 9/10/21.	wmk.	make abandoned if Terrxxx_SC.db already exists.
+# 12/30/21.	wmk.	replace HOME with USER for multihost.
+
+.ONESHELL : ;
+
+.NOTPARALLEL : ;
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase=/media/ubuntu/Windows/Users/Bill
+ else
+  folderbase=$(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+ifndef fullbuild
+ fullbuild = 0
+endif
+
+incroot = $(pathbase)/include
+vpath %.i $(pathbase)/include
+
+include pathSCdefs.inc
+# postpath var defined in .inc above
+
+bashpath = $(codebase)/Procs-Dev
+projpath = $(codebase)/Projects-Geany/SCNewTerritory
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# Terr807_SC.db primary target - resident on vpath for .db filetypes.
+#====================================================================
+ifeq ($(fullbuild),0)
+Terr807_SC.db : Map807_SC.csv
+	if test -f $(postpath)/Terr807_SC.db;then  \
+	 echo "** Terr807_SC.db exists - MakeSCNewTerritory.tmp abandoned **"; \
+	 exit 1;fi
+	$(bashpath)/SCNewTerr_db.sh 807
+	$(bashpath)/SCTidyTerr_db.sh 807
+
+Map807_SC.csv : ;
+	if ! test -f $(postpath)/Map807_SC.csv;then \
+	 echo " ** Map807_SC.csv missing for Terr807_SC.db build **";exit 1;fi
+
+else
+Terr807_SC.db : $(postpath)/Full807_SC.csv  $(projpath)/SCNewImport.sh \
+ $(projpath)/SCNewImport.sql
+	if test -f $(postpath)/Terr807_SC.db;then  \
+	 echo "** Terr807_SC.db exists - MakeSCNewTerritory.tmp abandoned **"; \
+	 exit 1;fi
+	echo " *makefile now needs to run query SCNewImport.sql"
+	echo "  to add new records to Terr807_SC.db from Fullxxx_SC.csv"
+	if ! test $(postpath)/SCNewImport.sh;then \
+	 echo " ** missing SCNewImport.sh for Terr807_SC.db build **";exit 1;fi
+	echo "ready for *make to run SCNewImport.sh..."
+	# $(projpath)/SCNewImport.sh
+	
+	#$(bashpath)/SCNewTerr_db.sh 807
+	#$(bashpath)/SCTidyTerr_db.sh 807
+
+$(postpath)/Full807_SC.csv : ;
+	if ! test -f $@;then \
+	 echo " ** Full807_SC.csv missing for Terr807_SC.db build **";exit 1;fi
+
+
+$(projpath)/SCNewImport.sh : $(projpath)/SCNewImport.sql
+	cd $(altproj);./DoSed.sh $(projpath) SCNewImport
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+		
+
+$(projpath)/SCNewImport.sql : ;
+	if ! test -f $@;then \
+	 echo " ** SCNewImport.sql missing for Terr807_SC.db build **";exit 1;fi
+
+endif
+
+#-----
+
+#=====================================================================

@@ -1,0 +1,55 @@
+#!/bin/bash
+# GenBatchTerrs(.sh) - Generate publisher territories from batch list.
+# 8/23/23.	wmk.
+#
+# Usage. bash  GenBatchTerrs 
+#
+# Entry. *codebase/Projects-Geany/UpdatePubTerrs/autoload.csv = file containing
+#			list of territories to regenerate.
+#
+# Exit.	soffice called with autoload.csv file and ProcessQTerrs12.ods for
+#			territories regeneration.
+#
+# Modification History.
+# ---------------------
+# 8/23/23.	wmk.	ver2.0 support for MNcrwg44586.
+# Legacy mods.
+# 2/2/23.	wmk.	original code.
+#
+# Notes. Calc is invoked loading 2 spreadsheets, autoload.csv and
+# ProcessQTerrs12.ods. It is left to the user to use Sheet*Move/Copy to copy
+# the autoload.csv sheet to sheet 0 of ProcessQTerrs12.ods. From there the user
+# then edits the leading "'" from the "'=MAIN1()" cell to run the macros to
+# regeerate the publisher territories.
+#
+if [ -z "$folderbase" ];then
+ if [ "$USER" == "ubuntu" ]; then
+  folderbase=/media/ubuntu/Windows/Users/Bill
+ else
+  folderbase=$HOME
+ fi
+fi
+export pathbase=$folderbase/Territories/MN/CRWG/44586
+export codebase=$folderbase/GitHub/TerritoriesCB/MNcrwg44586
+if [ -z "$system_log" ]; then
+  system_log=$folderbase/ubuntu/SystemLog.txt
+  ~/sysprocs/LOGMSG "  UpdatePubTerrs - initiated from Make"
+  echo "  UpdatePubTerrs - initiated from Make"
+else
+  ~/sysprocs/LOGMSG "  UpdatePubTerrs - initiated from Terminal"
+  echo "  UpdatePubTerrs - initiated from Terminal"
+fi 
+TEMP_PATH=$HOME/temp
+#	Environment vars:
+if [ -z "$TODAY" ];then
+ . ~/GitHub/TerritoriesCB/Procs-Dev/SetToday.sh
+#TODAY=2022-04-22
+fi
+#procbodyhere
+echo "  GenBatchTerrs initiated."
+~/sysprocs/LOGMSG "  GenBatchTerrs initiated."
+soffice  $codebase/Projects-Geany/UpdatePubTerrs/autoload.csv \
+ $codebase/Projects-Geany/DoTerrsWithCalc/ProcessQTerrs12.ods
+#endprocbody
+echo "  GenBatchTerrs complete."
+~/sysprocs/LOGMSG "  GenBatchTerrs complete."

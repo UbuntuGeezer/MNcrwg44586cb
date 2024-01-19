@@ -1,0 +1,68 @@
+# MakeGetUpdateList.tmp - template for make MakeGetUpdateList.
+$(error out-of-date)
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	5/1/22.	wmk.
+#
+# Notes. DoSed modifies this makefile changing y yy to the territory id
+# @ @ to the month and z z to the day of the download; also changes the
+# string t errbase to point to the folderbase.
+# 
+# Modification History.
+# ---------------------
+# 5/1/22.	wmk.	original makefile.
+#
+# GetUpdateList.sh unconditionally built and executed.
+# Notes.! prior to running "make" on this project
+#    edit the "sed" command in the Build menu, set an empty territory number in
+#	   1st s command, enter mm and dd of the download in the 2nd and 3rd s commands
+# following definitions now in pathSCDefs.inc:
+# dirbase = /media/ubuntu/Windows/Users/Bill/Territories/RawData/SCPA/SCPA-Downloads/Terryyy/
+# vpath %.db /media/ubuntu/Windows/Users/Bill/Territories/RawData/SCPA/SCPA-Downloads/Terryyy
+# vpath %.csv /media/ubuntu/Windows/Users/Bill/Territories/RawData/SCPA/SCPA-Downloads/Terryyy
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+incroot = $(folderbase)/Territories/include
+vpath %.i $(folderbase)/Territories/include
+
+#var folderbase set above for pathSCdefs.inc.
+include pathSCdefs.inc
+
+# phony targets are always considered to be out-of-date.
+.PHONY  : JustDoIt NeverMake AlwaysMakeIt
+
+.ONESHELL : ;
+.NOTPARALLEL : ;
+
+ifndef AWK
+   AWK = mawk
+endif
+
+ projpath = $(codebase)/Projects-Geany/UpdateSCBridge
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# *projpath*/MakeGetUpdateList.sh recipe.
+#========================================================
+JustDoIt :
+	cd $(altproj);./DoSed.sh $(projpath) GetSCUpdateList
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if test -f $(projpath)/GetSCUpdateList.sh;then \
+	  $(projpath)/GetSCUpdateList.sh;fi
+	echo "TIDList generated."
+
+#========================================================

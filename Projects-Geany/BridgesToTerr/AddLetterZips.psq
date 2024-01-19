@@ -1,0 +1,29 @@
+--TID=$P1
+--NAME_BASE=Terr
+--Q_NAME=Q$NAME_BASE
+--DB_SUFFX=.db
+--RU_SUFFX=_RUBridge
+--SC_SUFFX_SCBridge
+--RU_DB=_RU.db
+--SC_DB=_SC.db
+-- * Begin AddLetterDNCs - Attach databases;
+.cd '$pathbase/RawData/SCPA/SCPA-Downloads'
+.cd './$NAME_BASE$TID'
+.open $NAME_BASE$TID$SC_DB
+ATTACH '$pathbase/DB-Dev'
+ ||		'/Terr86777.db'
+ AS db2;
+WITH a AS (SELECT "Account #" AS Acct,
+ "situs zip code" AS Zip
+  FROM Terr86777)
+UPDATE $NAME_BASE$TID$SC_SUFFX
+SET UnitAddress =
+case
+when OWNINGPARCEL IN (SELECT Acct FROM a)
+ then UnitAddress || '  '
+  || (SELECT Zip FROM a
+      WHERE Acct IS OwningParcel)
+ELSE UnitAddress
+end
+WHERE CONGTERRID LIKE '6%';
+.quit

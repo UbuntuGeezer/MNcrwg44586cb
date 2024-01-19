@@ -1,0 +1,2 @@
+/.PHONY/ ispecpath = $(basepath)/Special
+

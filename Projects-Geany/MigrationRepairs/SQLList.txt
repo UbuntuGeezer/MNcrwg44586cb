@@ -1,0 +1,6 @@
+AddZips.sql
+InitialRUFix.sql
+RegenSpecDB.sql
+SetSpecTerrs.sql
+Spec642RU.sql
+SyncTerrToSpec.sql

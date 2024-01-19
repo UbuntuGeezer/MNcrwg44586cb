@@ -1,0 +1,49 @@
+# MakeSpecTerrQuery - makefile to create Specxxx_SC.db for SC territory xxx.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	8/30/21.
+# MakeSpecTerrQuery takes SpecxxxSC.sql and converts it to shell echo
+# commands in file SpecxxxSC.sq to generate SQLTemp.sql
+#
+# Modification History.
+# ---------------------
+# 8/13/21.	wmk.	original makefile.
+# 8/30/21.	wmk.	sed added to fix <filename> in .sh.
+# Note. edit xxx in this makefile to match territory ID.
+
+ifeq ($(HOME),/home/ubuntu)
+ folderbase=/media/ubuntu/Windows/Users/Bill
+else
+ folderbase=$(HOME)
+endif
+
+countybase = SCPA/SCPA-Downloads
+ procpath = $(codebase)/Territories/Procs-Dev
+targpath = $(folderbase)/Territories/RawData/SCPA/SCPA-Downloads/Terrxxx
+
+# Specxxx_SC.db primary target
+#==============================================================
+$(targpath)/Specxxx_SC.db : $(targpath)/CreateSpecSC.sh
+	echo "target $(targpath)/Specxxx_SC.db $(countybase)"
+	bash $(targpath)/CreateSpecSC.sh
+	#sqlite3 < $(targpath)/SQLTemp.sql
+
+$(targpath)/SpecxxxSC.sh : $(targpath)/SpecxxxSC.sql
+	echo "target SpecxxxSC.sh $(countybase)"
+	echo 's/\"/\\\"/g' > sedatives.txt
+	echo 's/^/echo \"/g' >> sedatives.txt
+	echo 's/$$/\" >> SQLTemp.sql/g' >> sedatives.txt
+	echo '1s/>>/>/g' >> sedatives.txt
+	sed -f sedatives.txt $(targpath)/SpecxxxSC.sql > $@
+	# now use cat to build shell around .sh just generated
+
+# this is phony - will always force make SQLTemp.sql
+$(targpath)/SpecxxxSC.sql : ;
+
+$(targpath)/CreateSpecSC.sh : $(targpath)/SpecxxxSC.sh $(targpath)/SpecxxxSC.sql
+	echo "target CreateSpecSC.sh $(countybase)"
+	cat $(procpath)/hdrAnySQL_1.sh $(targpath)/SpecxxxSC.sh $(procpath)/hdrAnySQL_2.sh > $@
+	sed -i 's?<filename>?CreateSpecSC?g' $@
+	echo "$(targpath)/CreateSpecSC.sh build complete."
+
+#==============================================================

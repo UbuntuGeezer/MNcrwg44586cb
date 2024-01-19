@@ -1,0 +1,21 @@
+echo "-- * GetStreets.psq/sql - Get street names from Terr638_RU.db;"  > SQLTemp.sql
+echo "-- *	12/19/22.	wmk."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * ---------------------"  >> SQLTemp.sql
+echo "-- * 12/19/22.	wmk.	original code."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Notes."  >> SQLTemp.sql
+echo ".open '$pathbase/DB-Dev/StreetNames.db'"  >> SQLTemp.sql
+echo "ATTACH '$pathbase/RawData/RefUSA/RefUSA-Downloads'"  >> SQLTemp.sql
+echo " || '/Terr638/Terr638_RU.db'"  >> SQLTemp.sql
+echo " AS db12;"  >> SQLTemp.sql
+echo "--PRAGMA db12.table_info(\"Streets\");"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "	INSERT INTO Streets"  >> SQLTemp.sql
+echo "	SELECT DISTINCT TRIM(SUBSTR(UnitAddress, INSTR(UnitAddress,' ')))"  >> SQLTemp.sql
+echo "	  StreetName, '638', '', ''"  >> SQLTemp.sql
+echo "	FROM db12.Terr638_RUBridge"  >> SQLTemp.sql
+echo "	ORDER BY StreetName;"  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo "-- ** END GetStreets.psq/sql."  >> SQLTemp.sql

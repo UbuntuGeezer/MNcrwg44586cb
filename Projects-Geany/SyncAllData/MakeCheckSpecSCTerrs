@@ -1,0 +1,47 @@
+# MakeCheckSpecSCTerrs - makefile for CheckSpecSCTerrs.sh.
+#	5/14/23.	wmk.
+#
+# Dependencies.
+#		*pathbase/DB-Dev/Terr86777.db - master county data for cong territory
+#		*pathbase/*scpath/SCPADiff_mm-dd.db - differences from latest download mm dd.
+#
+# Modification History.
+# ---------------------
+# 2/4/23.	wmk.	original code.
+# 5/14/23.	wmk.	main recipe killed with *error call.
+#
+# Notes. DoSed sets the month (m m) and (d d) fields in this makefile.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/SyncAllData
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+
+.PHONY  : Always
+.ONESHELL : ;
+
+# primary target $(projpath)/CheckSpecSCTerrs.sh
+#==================================================================
+Always : ;
+	$( error ** cannot use *make to build CheckSpecSCTerrs ** )
+	$(projpath)/CheckSpecSCTerrs.sh
+	
+#==================================================================
+# end MakeCheckSpecSCTerrs

@@ -1,0 +1,2 @@
+/pathbase=$folderbase\/Territories$/ s?Territories?Territories/FL/SARA/86777?g
+2a# 10/4/22.    wmk.   (automated) fix *pathbase for CB system.

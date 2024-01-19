@@ -1,0 +1,10 @@
+# awkpass2.txt pass 2 on pass 1 of 'all_dncs_report.csv'
+#	6/7/23.	wmk.
+BEGIN{cnt=-1}
+END{for (i=0;i<=cnt;i++)print accum[i]}
+{if( substr($0,1,1) == "L" || substr($0,1,1) == "B"){
+  cnt++
+  accum[cnt] = $0}
+ else
+  accum[cnt] = accum[cnt] substr($0,2,150) 
+}

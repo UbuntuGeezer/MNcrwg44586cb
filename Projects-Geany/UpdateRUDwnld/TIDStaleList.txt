@@ -1,0 +1,16 @@
+# TIDStaleList.txt 1/10/22.
+# all date back to 6/2021.
+#132
+#220
+222
+260
+270
+284
+304
+309
+312
+313
+314
+316
+998
+# end TIDStaleList.txt

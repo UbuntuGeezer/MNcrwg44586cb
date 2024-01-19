@@ -1,0 +1,65 @@
+&apos;// SaveQSearchTerr.bas
+&apos;//---------------------------------------------------------------
+&apos;// SaveQSearchTerr - Save current territory sheet to search file.
+&apos;//		2/6/21.	wmk.	16:00
+&apos;//---------------------------------------------------------------
+
+public sub SaveQSearchTerr()
+
+&apos;//	Usage.	macro call or
+&apos;//			call SaveQSearchTerr()
+&apos;//
+&apos;// Entry.	ThisComponent.URL = &quot;file://&lt;filepath to this Doc&gt;
+&apos;//			filename assumed to be &quot;QTerrxxx.ods&quot;
+&apos;//
+&apos;//	Exit.	file save to entry URL modified to &apos;Terrxxx_Search.ods&apos;
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	10/13/20.		wmk.	original code
+&apos;//
+&apos;//	Notes.
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim document   as object
+dim dispatcher as object
+dim sDocURL		As String	&apos;// document URL
+dim nURLlen		As Integer	&apos;// URL length
+dim sURLBase	As String	&apos;// base of new URL
+dim sNewURL		As String	&apos;// new full URL for file save
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	sDocURL = ThisComponent.getURL()
+	nURLlen = len(sDocURL)
+	sURLBase = left(sDocURL, nURLLen-4)
+	sNewURL = sURLBase + &quot;_PubSearch.ods&quot;
+
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dim args1(1) as new com.sun.star.beans.PropertyValue
+args1(0).Name = &quot;URL&quot;
+&apos;args1(0).Value = &quot;file:///media/ubuntu/Windows/Users/Bill/Documents/Cong-Files/Territories/csvs-Dev/QTerr102.ods&quot;
+args1(0).Value = sNewURL
+args1(1).Name = &quot;FilterName&quot;
+args1(1).Value = &quot;calc8&quot;
+
+dispatcher.executeDispatch(document, &quot;.uno:SaveAs&quot;, &quot;&quot;, 0, args1())
+
+
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SaveQSearchTerr - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end SaveQSearchTerr		2/6/21

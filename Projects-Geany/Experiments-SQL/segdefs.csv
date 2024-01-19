@@ -1,0 +1,9 @@
+BayIndiesMHP,"WHERE (UnitAddress LIKE '%bimini%' 
+   AND CAST(SUBSTR(UnitAddress,1,instr(Unitaddress,' ') as int)%2 = 0)"
+BayIndiesMHP,"OR (UnitAddress LIKE '%zacapa%'
+   AND CAST(SUBSTR(UnitAddress,1,instr(Unitaddress,' ') as int) >= 871
+   AND CAST(SUBSTR(UnitAddress,1,instr(Unitaddress,' ') as int) <= 895
+   AND CAST(SUBSTR(UnitAddress,1,instr(Unitaddress,' ') as int)%2 = 1)"
+BayIndiesMHP,"OR (UnitAddress LIKE '%dominica%'
+   AND CAST(SUBSTR(UnitAddress,1,instr(Unitaddress,' ') as int) >= 874
+   AND CAST(SUBSTR(UnitAddress,1,instr(Unitaddress,' ') as int) <= 878)"

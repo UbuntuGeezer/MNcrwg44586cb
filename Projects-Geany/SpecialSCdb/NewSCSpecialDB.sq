@@ -1,0 +1,13 @@
+echo "-- * NewSCSpecialDB.psq/sql - Create new SCPA-Downloads/Special/<special-db>.db'"  > SQLTemp.sql
+echo "-- *	12/24/22.	wmk."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * ---------------------"  >> SQLTemp.sql
+echo "-- * 12/24/22.	wmk.	original code."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Notes. run DoSedNewSCdb.sh to replace *spec-db* with special db name."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo ".open '$pathbase/RawData/SCPA/SCPA-Downloads/Special/GardensEdgeDr.db'"  >> SQLTemp.sql
+echo ".read '$codebase/Projects-Geany/SpecialSCdb/BuildPropTerr.sql'"  >> SQLTemp.sql
+echo "-- * more code here."  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql

@@ -1,0 +1,8 @@
+# awkFixMHPMake.txt - *awk* to fix MHP makefiles.
+BEGIN {
+p=1;}
+{
+{/\.ONESHELL/{p=0};p {print}}
+END {
+{while getine < 'MHPawklines.txt' {print}}
+}

@@ -1,0 +1,121 @@
+&apos;// SetSearchWidths.bas
+&apos;//---------------------------------------------------------------
+&apos;// SetSearchWidths - Set column widths on search columns.
+&apos;//		9/11/20.	wmk.	22:45
+&apos;//---------------------------------------------------------------
+
+public sub SetSearchWidths()
+
+&apos;//	Usage.	macro call or
+&apos;//			call SetSearchWidths()
+&apos;//
+&apos;// Entry.	User in RefUSA/Admin formatted territory sheet
+&apos;//
+&apos;//	Exit.	columns H-J widths set to 1.34&quot; (3404)
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/3/20.		wmk.	original code
+&apos;//	9/8/20.		wmk.	change from M-P to H-J columns
+&apos;//	9/11/20.	wmk.	code simplified
+&apos;//
+&apos;//	Notes. UNO Dispatcher exits this module, corrupting any module-wide
+&apos;//	vars. Only way to preserve user cell selection on entry is in local
+&apos;//	vars this sub.
+
+&apos;//	constants.
+const OnePt34=3404		&apos;// 1.34&quot;
+const ONE_INCH=2540
+const COL_H=7
+const COL_I=8
+const COL_J=9
+const SRCH_WIDTH=1.34
+
+&apos;//	local variables.
+dim oDocument   as object
+dim oDispatcher as object
+dim oDoc	As Object	&apos;// ThisComponent
+dim oSel	As Object	&apos;// current cell selection on entry
+dim oRange	As Object	&apos;// RangeAddress selected
+dim iSheetIx	As Integer	&apos;// current sheet index
+dim oSheet	As Object	&apos;// current sheet
+dim oCols	As Object	&apos;// .Columns current sheet
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+		
+	&apos;// preserve user cell selection
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	oCols = oSheet.Columns
+	oCols(COL_H).setPropertyValue(&quot;Width&quot;, SRCH_WIDTH*ONE_INCH)
+	oCols(COL_I).setPropertyValue(&quot;Width&quot;, SRCH_WIDTH*ONE_INCH)
+	oCols(COL_J).setPropertyValue(&quot;Width&quot;, SRCH_WIDTH*ONE_INCH)
+	
+if true then
+	GoTo EndOldCode
+endif
+&apos;//---------------------------------------------------------------------
+	oDocument   = ThisComponent.CurrentController.Frame
+	oDispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+	&apos;// set column widths for N-P to 1.34&quot; (3404)
+
+	&apos;// set up arguments for uno:GoToCell interface
+	dim args1(0) as new com.sun.star.beans.PropertyValue
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$H$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+
+rem ----------------------------------------------------------------------
+dim args2(0) as new com.sun.star.beans.PropertyValue
+	args2(0).Name = &quot;ColumnWidth&quot;
+	args2(0).Value = OnePt34
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args2())
+
+	&apos;// set up arguments for uno:GoToCell interface
+&apos;	dim args1(0) as new com.sun.star.beans.PropertyValue
+&apos;	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$I$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+
+rem ----------------------------------------------------------------------
+&apos;dim args1(0) as new com.sun.star.beans.PropertyValue
+&apos;	args1(0).Name = &quot;ColumnWidth&quot;
+&apos;	args1(0).Value = 2540
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args2())
+
+	&apos;// set up arguments for uno:GoToCell interface
+&apos;	dim args1(0) as new com.sun.star.beans.PropertyValue
+&apos;	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$J$6&quot;
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+
+rem ----------------------------------------------------------------------
+&apos;dim args1(0) as new com.sun.star.beans.PropertyValue
+&apos;	args1(0).Name = &quot;ColumnWidth&quot;
+&apos;	args1(0).Value = 2790
+
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ColumnWidth&quot;, &quot;&quot;, 0, args2())
+&apos;//----------------------------------------------------------------------------
+EndOldCode:
+NormalExit:
+	SetSelection(oRange)	&apos;// restore user cell selection
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SetPhoneWidths - unprocessed error.&quot;)
+	
+end sub		&apos;// end SetSearchWidths	9/11/20

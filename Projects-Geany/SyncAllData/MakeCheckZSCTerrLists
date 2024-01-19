@@ -1,0 +1,52 @@
+# MakeCheckZSCTerrLists.tmp - makefile for CheckZSCTerrLists.sh.
+#	2/20/23.	wmk.
+#
+# Dependencies.
+#		*pathbase/DB-Dev/Terr86777.db - master county data for cong territory
+#		*pathbase/*scpath/SCPADiff_mm-dd.db - differences from latest download mm dd.
+#
+# Modification History.
+# ---------------------
+# 2/20/23.	wmk.	original code.
+#
+# Notes.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/SyncAllData
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+.PHONY  : Always ;
+.ONESHELL : ;
+
+# primary target $(projpath)/CheckZSCTerrLists.sh
+#==================================================================
+$(projpath)/CheckZSCTerrLists.sh : CheckZSCTerrLists.sql
+	cd $(altproj);./DoSed.sh $(projpath) CheckZSCTerrLists
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test $@; then
+	 echo "  ** CheckZSCTerrLists build FAILED - aborting **";exit 1;fi
+	$@
+	ls -lh $$TEMP_PATH/zTIDsc.TheEsplanade.txt > templist
+	mawk \
+	'{if( NR==1 && $$5 > 0 )print "  EMPTY TID count found; check listing on $$TEMP_PATH/zTIDsc.TheEsplanade.txt.";;}' templist
+	echo "  CheckZSCTerrLists complete."
+	
+#==================================================================
+# end MakeCheckZSCTerrLists.tmp

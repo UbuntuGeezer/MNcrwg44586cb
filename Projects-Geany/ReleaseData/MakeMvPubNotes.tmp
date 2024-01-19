@@ -1,0 +1,63 @@
+# MakeMvPubNotes.tmp - Makefile template for ReleaseData build project.
+#	3/5/23.	wmk.
+#
+# Entry.	DoSed1 run editing MakeMvPubNotes.tmp > MakeMvPubNotes
+#
+# Results.	RefUSA-Downloads/Terryyy/PUB_NOTES_yyy.html copied to
+#			  TerrData/Terryyy folder
+#
+# Modification History.
+# ---------------------
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# 3/5/23.	wmk.	*pathbase corrected.
+# Legacy mods.
+# 1/1/22.	wmk.	original makefile.
+# 5/4/22. 	wmk.	(automated) path corrections.
+# 5/7/22.	wmk.	-p option added to cp to preserve dates.
+
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : ReleaseIt  NotesExist
+.ONESHELL : ;
+
+srcpath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terryyy
+targpath = $(pathbase)/TerrData/Terryyy
+projbase = $(pathbase)/Projects-Geany/ReleaseData
+
+# $(terrpath)/BuildDates.txt primary target
+#===========================================================
+ReleaseIt :  NotesExist
+	~/sysprocs/LOGMSG "  MvPubNotes Terryyy initiated."
+	cp -pv $(srcpath)/PUB_NOTES_yyy.html  $(targpath)/
+	~/sysprocs/LOGMSG "  MvPubNotes Terryyy complete."
+	
+	
+NotesExist :
+	if ! test -f $(srcpath)/PUB_NOTES_yyy.html;then \
+	 echo "** Missing /Terryyy/PUB_NOTES_yyy.html - MvPubNotes abandoned.**" \
+	 exit 1; \
+	fi
+
+#===========================================================
+# end MakeMvPubNotes

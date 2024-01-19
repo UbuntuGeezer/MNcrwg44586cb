@@ -1,0 +1,61 @@
+# MakeAddTerr.tmp - *make* file for AddTerr build.
+#	6/2/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 6/2/23.	wmk.	original code.
+#
+# Notes. checks that folders *pathbase/$rupath/Terr947 and
+# *pathbase/$scpath/Terr947 and *pathbase/TerrData/Terr947 are either empty,
+#  or do not exist.
+# (a "deleted" territory will have 2 files, Terr947.zip and OBSOLETE,
+#  a "purged" territory will have no files)
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/TerrIdMgr
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+ newproj = $(codebase)/Projects-Geany/NewTerritory
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	$(projpath)/CheckFolders.sh 947
+	if [ $$? -ne 0 ];then echo "MakeAddTerr exiting...";exit 1;fi
+	echo "MakeAddTerr build moving to $(newproj)..."
+	anchor=$$PWD
+	cd $(newproj)
+	$(newproj)/DoSed.sh 947
+	$(MAKE) -f $(newproj)/MakePubTerr
+	cd $$anchor
+	$(projpath)/FinishAdd.sh 947
+ifeq (1,0)
+	cd $(altproj);./DoSed.sh $(projpath) AddTerr
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/AddTerr.sh;then \
+	 echo "** AddTerr.sh generation failed **";exit 1;fi
+	echo "** run AddTerr.sh to delete territory **"
+	$(projpath)/ArchvTerr.sh 947
+	echo "Territory 947 deleted from $congterr."
+endif
+#==================================================================
+# end MakeAddTerr.tmp

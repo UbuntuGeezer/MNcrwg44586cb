@@ -1,0 +1,117 @@
+<p>README - CBtoHPgeany project documentation.<br>
+    4/1/22. wmk.</p>
+
+<h2>Document Sections.</h2>
+
+<pre><code>Project Description - overall description of project.
+Supporting Files - shells and other files supporting project.
+Setup - step-by-step build instructions.
+</code></pre>
+
+<h2>Project Desciption.</h2>
+
+<p>CBtoHPgeany is a project to facilitate migrating Geany projects from a
+ChromeBook host system to an HP Pavilion system. The ChromeBook system
+is assumed to have created the project in its Linux framework, so that
+all of the pathnames use '/' as the folder separator.</p>
+
+<p>It performs edits on the .geany files from a ChromeBook host, changing the
+folder references to match the HP host. The HP target host may either be
+running Linux/Ubuntu or Windows.
+The designator for the Linux/Ubuntu is <em>HP</em>, for Windows is <em>WHP</em>.</p>
+
+<p>The editing transforms the Geany project files to contain correct
+folder references within the HP file system. The name of the project file
+will have the characters <em>HP</em> appended for conversions to the Linux/Ubuntu
+operating environment or the characters <em>WHP</em> appended for conversions to
+the Windows operating environment on the HP system.</p>
+
+<p><strong>Caution</strong> Migrating project files to the Windows operating environment
+on the HP system will facilitate using a Windows-based Geany to edit and
+manage project files. However, the Windows-based Geany will not be able to
+perform <em>make</em> operations unless a full-blown Microsoft Windows development
+environment has been installed. Any projects so migrated will need to
+be migrated back to the Linux/Ubuntu environment for build and test.</p>
+
+<p><strong>History</strong>
+The ChromeBook Linux environment was the primary development system at
+the time that this project was initiated. A system crash on the ChromeBook
+necessitated the move of all the active projects back to the HP system.
+To facilitate that move, the <em>MigrateGeany</em> project was expanded. This
+project was originally designed for moves from "Kay's Linux System" to
+the "262 Linux System".</p>
+
+<p>The project was then modified to facilitate a mass move from the ChromeBook
+system to the HP Pavilion system. To avoid confusion with prior work the
+<em>MigrateGeany</em> project was cloned into this project <em>CBtoHPgeany</em>. As the
+project name implies, this project is specifically one-direction, migrating from
+ChromeBook Linux to the HP Linux/Ubuntu.</p>
+
+<p>On any given host system, the folder Projects-Geany contains projects
+maintained by Geany. Geany defines a file <proj-name>.geany for each of
+the projects it is managing. The Geany "Preferences" settings determine
+the base Project Files path which Geany will use for storing <em>.geany</em>
+definition files for the projects. The Build commands and folder names
+for any given project are saved in its .geany file. The list of active
+files which are opened automatically by Geany are also saved
+in the <em>.geany</em> file.</p>
+
+<p>Beginning in late March 2022, the names of .geany files for projects that
+must be able to migrate across more than one host system follow this
+naming convention: <em>projectname</em>[<em>host</em>].geany where <em>projectname</em> is 
+the name of the project and [<em>host</em>] is an optional host suffix that will
+indicate which host the .geany applies to. This will allow the same set
+of subfolders to contain the project files by using different prefix
+folders in the applicable <em>.geany</em> files.</p>
+
+<p>Example: MigrateGeany.geany  vs.  MigrateGeanyHP.geany in the
+<em>Territories/Projects-Geany</em> folder</p>
+
+<p>Whenever a Projects-Geany subsystem is migrated from one host system to
+another (e.g. by using tar create/extract), the target system receives
+the Geany projects "as-is" from the source system. As a result, the Build
+commands and active files list entries in may not point to the correct
+folders in the target system.</p>
+
+<p>Each potential target system will have a sedatives&lt; host >.txt file defined
+in CBtoHPgeany to take .geany files from the ChromeBooks system and edit
+the folder paths to match the target system. These shell files are itemized
+and described in the section "Supporting Files" below.</p>
+
+<h2>Supporting Files.</h2>
+
+<p>The current supporting shell files for MigrateGeany are:</p>
+
+<pre><code>
+    Migrate262ToKays.sh - Migrate .geany file from 262 system to Kay's system.
+    MigrateKaysTo262.sh - Migrate .geany file from Kay's system to 262 system.
+    MigrateGeany.sh - Migrate a single .geany file from Chromebooks to any of 
+      the following systems: *HP*, *WHP*.
+    AllMigrateGeany.sh - Migrate batch list of projects from *ProjList.txt*.
+    ProjList.txt - list of project names for batch AllMigrateGeany.
+    DoSed.sh - preprocesing edit shell for MakeMigrateGeany.
+
+*sed* directives files
+    sedativesHP.txt - directives to migrate from ChromeBooks to HP Linux.
+    sedativesWHP.txt - directives to migrate from ChromeBooks to HP Windows.
+</code></pre>
+
+<h2>Setup.</h2>
+
+<p>To perform the migration from ChromeBooks do the following:</p>
+
+<pre><code>CBtoHPgeany Project:
+    Build Menu: edit the *sed* command line parameters with the *project*
+     and *hostname* (e.g. ./DoSed  AnySQLtoSH HP)
+    run *sed* from the Build menu to fix MakeCBtoHPgeany.tmp > MakeCBtoHPgeany
+
+Terminal session:
+    set pathbase with the following command:
+        export pathbase=$folderbase/Territories
+
+    use the command "cdj  MakeCBtoHPgeany" to switch to the project folder
+    run "make  -f MakeDBtoHPgeany" to create the new *project**hostname*.geany
+     file
+</code></pre>
+
+<p>The project file <em>project</em><em>hostname</em>.geany is now ready to use.</p>

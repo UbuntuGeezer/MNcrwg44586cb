@@ -1,0 +1,48 @@
+8c8
+< .shell echo "Opening ./Terr114/Terr114_RU.db" | awk '{print $1}' > SQLTrace.txt
+---
+> .shell echo "Opening ./Terr114/Terr114_RU.db" | awk '{print 114}' > SQLTrace.txt
+12c12
+< .shell echo "SetOwningParcels - Set OwningParcel fields in Terr114_RUBridge." | awk '{print $1}' >> SQLTrace.txt
+---
+> .shell echo "SetOwningParcels - Set OwningParcel fields in Terr114_RUBridge." | awk '{print 114}' >> SQLTrace.txt
+20c20
+< .shell echo "look for direct matches, straight across with SC situs address" | awk '{print $1}' >> SQLTrace.txt
+---
+> .shell echo "look for direct matches, straight across with SC situs address" | awk '{print 114}' >> SQLTrace.txt
+42c42
+< .shell echo "second pass at unit address + unit to match Nvenall.situs.." | awk '{print $1}' >> SQLTrace.txt
+---
+> .shell echo "second pass at unit address + unit to match Nvenall.situs.." | awk '{print 114}' >> SQLTrace.txt
+70c70
+< .shell echo "SetOPStripDir - Set OwningParcels stripping UnitAddress direction." | awk '{print $1}' >> SQLTrace.txt
+---
+> .shell echo "SetOPStripDir - Set OwningParcels stripping UnitAddress direction." | awk '{print 114}' >> SQLTrace.txt
+92c92
+< .shell echo "SetDupOwningParcels - Set OwningParcels and Situs for UnitAddresses with dups" | awk '{print $1}' >> SQLTrace.txt
+---
+> .shell echo "SetDupOwningParcels - Set OwningParcels and Situs for UnitAddresses with dups" | awk '{print 114}' >> SQLTrace.txt
+164c164
+< .shell echo "SetXcptOwningParcels - Set OwningParcel fields from exceptions." | awk '{print $1}' >> SQLTrace.txt
+---
+> .shell echo "SetXcptOwningParcels - Set OwningParcel fields from exceptions." | awk '{print 114}' >> SQLTrace.txt
+253c253
+< .shell echo "* SetDiffXcptOwningParcels - Set UnitAddress exceptions matching." | awk '{print $1}' >> SQLTrace.txt
+---
+> .shell echo "* SetDiffXcptOwningParcels - Set UnitAddress exceptions matching." | awk '{print 114}' >> SQLTrace.txt
+281c281
+< .shell echo " set situs and property use fields" | awk '{print $1}' >> SQLTrace.txt
+---
+> .shell echo " set situs and property use fields" | awk '{print 114}' >> SQLTrace.txt
+294c294
+< .shell echo "* SetDoNotCalls - Flag DoNotCalls in Bridge tables." | awk '{print $1}' >> SQLTrace.txt
+---
+> .shell echo "* SetDoNotCalls - Flag DoNotCalls in Bridge tables." | awk '{print 114}' >> SQLTrace.txt
+336c336
+< .shell echo "* SetRecTypes - Set "P", "M", "C", "A" record types in Bridge table." | awk '{print $1}' >> SQLTrace.txt
+---
+> .shell echo "* SetRecTypes - Set "P", "M", "C", "A" record types in Bridge table." | awk '{print 114}' >> SQLTrace.txt
+382c382
+< .shell echo "SQLTemp.sql finished." | awk '{print $1}' >> SQLTrace.txt
+---
+> .shell echo "SQLTemp.sql finished." | awk '{print 114}' >> SQLTrace.txt

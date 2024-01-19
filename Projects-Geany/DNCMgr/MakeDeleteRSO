@@ -1,0 +1,57 @@
+# MakeDeleteRSO.tmp - *make* file for DeleteRSO.sh build.
+#	6/13/23.	wmk.
+#
+# Entry. environment var *partial = 0, full delete; 1, partial delete.
+#
+# Modification History.
+# ---------------------
+# 6/13/23.	wmk.	original code; adapted from MakeDeleteDNC.
+# Legacy mods.
+# 6/1/23.	wmk.	original code.
+# 6/8/23.	wmk.	adminpreamble added to *make recipe; "run" message changed.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+ifndef partial
+ partial = 0
+endif
+
+ projpath = $(codebase)/Projects-Geany/DNCMgr
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	cat adminpreamble.sh preambledel.sh > joinedpreamble.sh
+	cd $(altproj);./DoSed.sh $(projpath) DeleteRSO joinedpreamble.sh
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/DeleteRSO.sh;then \
+	 echo "** DeleteRSO.sh generation failed **";exit 1;fi
+	echo "** log in then run DeleteRSO.sh [-p] to delete RSO **"
+	$(projpath)/DeleteRSO.sh
+	partial=0
+	if [ $$partial -eq 0 ];then \
+	 $(projpath)/DeleteRSOdnc.sh -1;fi
+
+#==================================================================
+# end MakeDeleteRSO.tmp

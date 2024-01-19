@@ -1,0 +1,112 @@
+&apos;// SaveSheetAsODS.bas
+&apos;//---------------------------------------------------------------
+&apos;// SaveSheetAsODS - Save current sheet as .ods file.
+&apos;//		7/10/21.	wmk.	00:23
+&apos;//---------------------------------------------------------------
+
+public sub SaveSheetAsODS(poDocument As Object, psURL As String)
+
+&apos;//	Usage.	call SaveSheetAsODS(oDocument As Object, sURL)
+&apos;//
+&apos;//		poDocument = ThisComponent of worksheet to be saved
+&apos;//			Sheets().Name = sheet name/file name to save
+&apos;//		psURL = URL to &quot;parent&quot; worksheet and its folder
+&apos;//		 (e.g. &quot;file:///media/ubuntu../Working-Files/QTerrxxx.ods&quot;)
+&apos;//
+&apos;// Entry.	user has sheet selected that desires saved as .ods file
+&apos;//			URL of current workbook assumed to be of form:
+&apos;//			  ..Territories/TerrData/Terrxxx/Working-Files/Untitled x.ods
+&apos;//
+&apos;//	Exit.	sheet saved on path ../ as &lt;sheet-name&gt;.ods
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	7/10/21.		wmk.	original code; adapted from SaveSheetAsCSV
+&apos;//
+&apos;//	Notes. When you pass a &quot;new&quot; workbook (e.g. &quot;Untitled x&quot;) into this
+&apos;// sub, there is no URL associated with it, since it has not been stored
+&apos;// in any file system. This sub must create a URL to save with the workbook
+&apos;// using the &quot;parent&quot; URL passed in along with the file base name. The
+&apos;// .ods suffix will be added by this sub.
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim oDoc		As Object	&apos;// ThisComponent
+dim oSel		As Object	&apos;// current selection
+dim oRange		As Object	&apos;// selection RangeAddress
+dim iSheetIx	As Integer	&apos;// selected sheet index
+dim oSheet		As Object	&apos;// sheet object
+dim sSheetName	As String	&apos;// name of this sheet/filename
+dim sParentURL	As String		&apos;// URL of parent workbook
+dim sNewURL		As String		&apos;// new URL to save under
+dim nURLLen		As Integer		&apos;// URL length
+dim sURLBase	As String		&apos;// URL base string
+dim nWFlength	As	Integer		&apos;// &quot;Working-Files/&quot; string length
+
+rem ----------------------------------------------------------------------
+rem define variables
+dim document   as object
+dim dispatcher as object
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+&apos;	oDoc = poDocument
+&apos;	oDoc = ThisComponent
+	sParentURL = psURL
+	oSel = poDocument.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	sSheetName = poDocument.Sheets(iSheetIx).Name
+	
+	&apos;// now construct a new URL for the target file
+	&apos;// parent URL up through the last &apos;/&apos; (all except last 11 chars)
+	&apos;// &amp; sheet name &amp; .ods
+&apos;dim sNewURL		As	String	
+dim sOldURLpath	As	String
+	sOldURLPath = left(sParentURL, len(sParentURL)-11)	&apos;// sans QTerrxxx.ods
+	sNewURL = sOldURLpath &amp; sSheetName &amp; &quot;.ods&quot;
+
+if 1 = 1 then
+  GoTo NormalExit
+endif
+
+if 1 = 0 then	
+	&apos;// set up for save as .csv
+	&apos;// need to save &quot;Untitled x&quot;
+	&apos;// it is known that the URL will end in &quot;Terrxxx.ods&quot; (11 chars)
+	nURLlen = len(sDocURL)
+	&apos;// URL length -11 (filename) - Working-Files/
+	nWFlength = len(&quot;Working-Files/&quot;)
+	sURLBase = left(sDocURL, nURLLen-11-nWFlength)
+	sNewURL = sURLBase + sSheetName + &quot;.ods&quot;
+endif
+	
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dim args1(1) as new com.sun.star.beans.PropertyValue
+args1(0).Name = &quot;URL&quot;
+&apos;args1(0).Value = &quot;file:///media/ubuntu/Windows/Users/Bill/Documents/Cong-Files/Territories
+&apos;                    /TerrData/Terrxxx/TerrData/Terrxxx_PubTerr.ods&quot;
+args1(0).Value = sNewURL
+args1(1).Name = &quot;FilterName&quot;
+args1(1).Value = &quot;calc8&quot;
+
+dispatcher.executeDispatch(document, &quot;.uno:SaveAs&quot;, &quot;&quot;, 0, args1())
+
+
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SaveSheetAsODS - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end SaveSheetAsODS		7/10/21.	00:23

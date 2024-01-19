@@ -1,0 +1,32 @@
+# MakeRUNewLetter.tmp - Makefile for RUNewLetter build (template).
+#	9/20/21.	wmk.
+#
+# Modification History.
+# ---------------------
+# 9/20/21.	wmk.	original makefile.
+#
+# Notes. This makefile is edited by DoSed substituting <terrid> for y yy.
+
+
+ifeq ($(USER),ubuntu)
+ folderbase = /media/ubuntu/Windows/Users/Bill
+else
+ folderbase = $(HOME)
+endif
+
+targpath = $(folderbase)/Territories/RawData/RefUSA/RefUSA-Downloads/Terryyy
+bashpath = $(folderbase)/Territories/Procs-Dev
+projpath = $(folderbase)/Territories/Projects-Geany/RUNewLetter
+
+# (targpath)/Terryyy_RU.db - primary target
+# ====================================================================
+$(targpath)/Terryyy_RU.db : $(targpath)/Lettyyy_TS.csv
+	sqlite3 < $(projpath)/NewLetter.sql
+
+$(targpath)/Lettyyy_TS.csv : ;
+
+#---
+$(projpath)/NewLetter.sql : ;
+
+
+#=====================================================================

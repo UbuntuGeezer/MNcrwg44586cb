@@ -1,0 +1,60 @@
+&apos;// CenterUnitHstead2.bas
+&apos;//---------------------------------------------------------------
+&apos;// CenterUnitHstead2 - Center Unit and Homestead columns in PubTerr sheet.
+&apos;//		2/14/21.	wmk.
+&apos;//---------------------------------------------------------------
+
+public sub CenterUnitHstead2()
+
+&apos;//	Usage.	macro call or
+&apos;//			call CenterUnitHstead2()
+&apos;//
+&apos;// Entry.	_PubTerr formatted sheet selected
+&apos;//			COL_A is homestead
+&apos;//			COL C is unit
+&apos;//
+&apos;//	Exit.	Unit and Homestead columns centered
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	2/14/21.		wmk.	original code; cloned from CenterUnitHstead
+&apos;//
+&apos;//	Notes. Support for new format simpllfied Pub_Terr sheet.
+&apos;//
+
+&apos;//	constants.
+const COL_A=0
+const COL_B=1
+const COL_C=2
+const COL_E=4
+const CJUST=2		&apos;// center justify
+
+&apos;//	local variables.
+dim oDoc		As Object		&apos;// ThisComponent
+dim oSel		As Object
+dim oRange		As Object
+dim iSheetIx	As Integer
+dim oSheet		As Object
+dim oCols		AS Object
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	oCols = oSheet.Columns
+	oCols(COL_A).setPropertyValue(&quot;HoriJustify&quot;, CJUST)
+	oCols(COL_C).setPropertyValue(&quot;HoriJustify&quot;, CJUST)
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;CenterUnitHstead2 - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end CenterUnitHstead2	2/14/21.

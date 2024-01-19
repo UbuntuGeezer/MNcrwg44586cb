@@ -1,0 +1,52 @@
+README.md - FixTerrSQLs project documentation.<br>
+5/8/22.	wmk.
+##Modification History.
+<pre><code>
+</code></pre>
+<h3 id="IX">Document Sections.<h3>
+<pre><code><a href="#1.0">link</a> 1.0 Project Description.
+<a href="2.0">link</a> 2.0 Setup.
+</code></pre>
+<h3 id="1.0">1.0 Project Description.</h3>
+FixTerrSQLs is a "reliability" project that goes through a list of territories
+then processeS each territory's folder .sql files
+and batch edits them to be consistent with all SQL queries for a given
+Territory system. The most obvious is to ensure the SQL is using the
+environment variable *pathbase* in all file referencing operations like
+.open,.import.,.output and ATTACH. The single build uses *sed*, *awk* and
+*cat* to modifify the .sql files in a specific folder (typically a territory
+download or Geany project folder.
+
+The project will also be used when creating new congregation Territory
+systems. There are over 1,000 .sql queru files within a Territory system, many
+of which have path dependencies on the *folderbase*, *basepath* and
+*congterr* environment variables. Whenever these system-wide environment
+variables are changed, the downstream SQL queries and shell files will be
+affected. FixTerrSQLs, especially the FixAllSQLs shell, facilitates rapidly
+editing all affected SQL queries.<br>
+<a href="#IX">Index</a>
+<h3 id="2.0">2.0 Setup.</h3>
+FixTerrSQLs consists of "stand-alone" shells that fix .sql and .psq files.
+<pre><code>
+FixTerrSQL.sh fixes a single territory folder.
+	Usage. bash FixTerrSQL.sh < terrid > < basepath > [< ru sc >]. < terrid > is the
+	 territory ID; < basepath > is the base path (e.g. *pathbase*/RawData);
+	 [< ru | sc >] where present, is the file downstream folder type ru | sc.
+
+FixTerrPSQ.sh fixes .psq files in single territory folder.
+	Usage. bash FixTerrPSQ.sh < terrid > < basepath > [< ru sc >]. < terrid > is the
+	 territory ID; < basepath > is the base path (e.g. *pathbase*/RawData);
+	 [< ru | sc >] where present, is the file downstream folder type ru | sc.
+
+FixAllTerrSQLs.sh fixes .sql files in all territory folders in the TIDList.txt list files on the < path >.
+	Usage. bash FixAllTerrSQLs.sh <path>
+	 < path > is the full path to the base of the folders
+	  (e.g. *pathbase*/RawData/SCPA/SCPA-Downloads )
+
+FixAllTerrPSQs.sh fixes .psq files in all territory folders in the TIDList.txt list files on the < path >.
+	Usage. bash FixAllTerrSQLs.sh <path>
+	 < path > is the full path to the base of the folders
+	  (e.g. *pathbase*/RawData/SCPA/SCPA-Downloads )
+</code></pre>
+<a href="#IX">Index</a>
+

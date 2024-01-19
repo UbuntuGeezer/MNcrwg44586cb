@@ -1,0 +1,70 @@
+# MakeTestErr - *make* file for TestErr build.
+#	5/20/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 5/10/23.	wmk.	original code.
+#
+# Notes. MakeTestErr tests the *trap capabilities within a makefile.
+#
+# Working example: prior to invoking *make on this makefile enter:
+#	trap 'previous_command=$current_command;current_command=$BASH_COMMAND' ERR
+#	(alternatively..)trap 'echo "in Experiments-Make, error trapped; error = $?' ERR
+#
+# This will set up the *make caller to handle any error returned from
+# *make. Then invoke *make:
+#	make -f MakeTestErr
+#
+# an alternative:
+# there is a shell "DoMake" that presets the trap DEBUG then invokes
+# *make with *PWD/*P1 from the build menu "Make" item. This will work
+# as a generic that can work with any project, as long as the DoMake
+# shell is present.
+#
+# *make will then do its thing.
+# within the *make recipe at any point errors can be checke with:
+#	cmd=$$previous_command ret=$$?
+#	if [ $$ret -ne 0 ];then <handle error>;fi
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/Experiments-Make
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	#. ./SetErrTrap.sh
+	#trap 'echo "within MakeTestErr.. error trapped.. errcode = $?"' ERR
+	if [ 1 -eq 0 ];then exit 0;fi
+	cd $(altproj);./DoSed.sh $(projpath) TestErr1 
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	cmd=$previous_command ret=$$?
+	if [ $$ret -ne 0 ];then echo "Make error - errcode = $$ret";fi 
+	if ! test -f $(projpath)/TestErr1.sh;then 
+	 echo "** TestErr.sh generation failed **";exit 1;fi
+	echo "** execute TestErr.sh to do-whatever **"
+	
+#==================================================================
+# end MakeTestErr

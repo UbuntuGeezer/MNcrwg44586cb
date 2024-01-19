@@ -1,0 +1,195 @@
+# MakeUpdateSCBridge.tmp - template for make MakeUpdateSCBridge.
+$(error out-of-date)
+#	6/7/23.	wmk.
+#
+# Notes. DoSed modifies this makefile changing y yy to the territory id
+# @ @ to the month and z z to the day of the download; also changes the
+# string t errbase to point to the folderbase.
+# 
+# Modification History.
+# ---------------------
+# 2/26/23.	wmk.	modified to integrate with SyncAllData; check for segdefs.csv
+#			 in Terrxxx folder and *make Terrxxx_SC.db from segdefs.
+# 5/13/23.	wmk.	*MYPROJ environment var re-introduced for error messaging.
+# 6/7/23.	wmk.	OBSOLETE territory detection.
+# Legacy mods.
+# 9/22/22.  wmk.   (automated) *codebase env var support.
+# 9/22/22.  wmk.   (automated) CB *codebase env var support.
+# 11/22/22.	wmk.	bug fixes with *codebase. 
+# Legacy mods.
+# 4/25/22.	wmk.	modified for general use;*pathbase* support.
+# 4/30/22.	wmk.	Updt..M.csv Updt..P.csv prerequisites removed; recipe
+#			 checks both Updt..csv files for 0 length.
+# 5/2/22.	wmk.	*pathbase* support added.
+# 5/27/22.	wmk.	dead recipe code removed.
+# 7/1/22.	wmk.	file checks improved.
+# Legacy mods.
+# 3/1/21.	wmk.	original makefile.
+# 4/21/21.	wmk.	.NOPARALLEL target added to avoid parallel makes getting
+#					changes out-of-sequence.
+# 5/27/21.	wmk.	modified for multihost support.
+# 6/18/21.	wmk.	multihost support generalized.
+# 6/19/21.	wmk.	FixSCMenu.inc include eliminated.
+# 6/26/21.	wmk.	old whichsystem code removed; superfluous "s removed.
+# 6/27/21.	wmk.	make recipe for primary target fixed ($)folderbase
+#					in sed command; bug fix where mm and dd being missed
+#					in record date setting UpdateSCBridge.sql.
+# 7/3/21.	wmk.	Spec141SC.sh, Spec141SC.sql prerequisites added to
+#					support territories requiring SPECIAL preprocessing.
+# 8/29/21.	wmk.	projpath var defined; UpdateSCBridge.sql prerequisite added;
+#					.psq filename support integrated.
+# 9/3/21.	wmk.	$ @ substituted for target in UpdateSCBridge.sql recipe.
+# 9/6/21.	wmk.	Fix141SC.sh, Spec141SC.sh recipes updated with AnySQLtoSQ
+#					process.
+# 9/30/21.	wmk.	change to use MM DD In UpdateSCBridge.psq to avoid having
+#					fields like 'Address' having 'dd' changed.
+# 11/3/21.	wmk.	bug fix $ HOME not being properly checked to set folderbase
+# 3/20/22.	wmk.	HOME changed to USER in host check;
+#
+# update happens if SCPA-Downloads/Terr141/Updt141M.csv OR
+#  UPdt141P.csv newer than Terr141_SC.db
+# Notes.! prior to running "make" on this project
+#    edit the "sed" command in the Build menu, set territory number in
+#	   1st s command, enter mm and dd of the download in the 2nd and 3rd s commands
+# following definitions now in pathSCDefs.inc:
+# dirbase = /media/ubuntu/Windows/Users/Bill/Territories/RawData/SCPA/SCPA-Downloads/Terr141/
+# vpath %.db /media/ubuntu/Windows/Users/Bill/Territories/RawData/SCPA/SCPA-Downloads/Terr141
+# vpath %.csv /media/ubuntu/Windows/Users/Bill/Territories/RawData/SCPA/SCPA-Downloads/Terr141
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+incroot = $(pathbase)/include
+vpath %.i $(pathbase)/include
+
+#var folderbase set above for pathSCdefs.inc.
+include pathSCdefs.inc
+
+# phony targets are always considered to be out-of-date.
+.PHONY  : JustDoIt NeverMake AlwaysMakeIt RemakeSpecSC
+
+.ONESHELL : JustDoIt ;
+.NOTPARALLEL : ;
+
+ifndef AWK
+   AWK = mawk
+endif
+
+ifndef MYPROJ
+ MYPROJ = UpdateSCBridge
+endif
+
+projpath = $(codebase)/Projects-Geany/UpdateSCBridge
+altproj  = $(codebase)/Projects-Geany/AnySQLtoSH
+syncpath = $(codebase)/Projects-Geany/SyncAllData
+segspath = $(codebase)/Projects-Geany/SegDefsMgr
+
+# Terr141_SC.db recipe
+#=================================================================
+#var dirbase defined in pathSCdefs.inc.
+#terrbase string substituted by DoSed.
+Terr141_SC.db :  $(dirbase)Updt141M.csv RemakeSpecSC
+	if [ -z "$$MYPROJ" ];then \
+	 export MYPROJ=UpdateSCBridge;fi
+	if test -f $(dirbase)/segdefs.csv;then \
+	 cd $(segspath); \
+	 ./DoSedSegDefs.sh 141 SCPA 05 28; \
+	 $(MAKE) -f $(segspath)/MakeBuildSCFromSegDefs; \
+	 exit 0;fi
+	if  ! test -f  $(dirbase)Updt141M.csv \
+	 && ! test -f  $(dirbase)Updt141P.csv ;then 
+	  echo "UpdateSCBridge 141 - no updates."
+	  exit 0
+	fi
+	if test -f $(prepath)/Spec141SC.sh; then $(prepath)/Spec141SC.sh;fi
+	cd $(altproj);./DoSed.sh $(projpath) UpdateSCBridge Preamble.sh PostScript.sh
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if test -f $(projpath)/UpdateSCBridge.sh;then \
+	 $(projpath)/UpdateSCBridge.sh;fi
+	if test -f $(dirbase)Fix141SC.sh;then $(dirbase)Fix141SC.sh;fi
+	#touch $(dirbase)Fix141SC.sh
+	#bash $(dirbase)Fix141SC.sh
+
+#---
+$(dirbase)Updt141M.csv :
+	if test -f $(dirbase)/OBSOLETE;then \
+	 echo " ** Territory 141 OBSOLETE - MakeUpdateSCBridge exiting...**";exit 2;fi
+	if ! test -f $(dirbase)Updt141M.csv;then \
+	 echo "** Updt141M.csv missing **";\
+	 ~/sysprocs/BLDMSG "** 141 Updt141M.csv missing **";\
+	 echo "  Parent process information:";\
+	 thisid=$$$$;grep PPid /proc/$$thisid/task/$$thisid/status; \
+	 echo "  This process:";ps $$thisid; \
+	 exit 1;fi
+	 
+#var bashpath defined in pathSCdefs.inc.
+#Updt141M.csv Updt141P.csv &: $(scbase)SCPADiff_05-28.db
+#	bash $(bashpath)/FlagSCUpdates.sh 141 05 28
+
+#var scbase defined in pathSCdefs.inc.
+$(scbase)/SCPADiff_05-28.db : ;
+
+#---
+#$(projpath)/UpdateSCBridge.sql
+$(projpath)/UpdateSCBridge.sql : $(projpath)/UpdateSCBridge.psq
+	echo "** UpdateSCBridge.sql needs update by DoSed **"
+	exit 1
+
+#========================================================
+
+
+#Fix141SC.sql, Fix141SC.sh recipe.
+#========================================================
+# include FixSCMenu.inc
+
+$(postpath)/Fix141SC.sh : $(postpath)/Fix141SC.sql
+	cd $(altproj);./DoSed.sh $(postpath) Fix141SC
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	
+
+# if no .sql, touch it so get empty file to read..
+# this will always force Fix141SC.sh to be rebuilt.
+$(postpath)/Fix141SC.sql : 
+	touch $(postpath)/Fix141SC.sql 
+#==============================================
+
+
+# Spec141SC.sh recipe.
+#========================================================
+
+#$(prepath)/Spec141SC.sh : $(prepath)/Spec141SC.sql
+RemakeSpecSC : 
+	cd $(altproj);./DoSed.sh $(prepath) Spec141SC
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+
+# if no .sql, touch it so get empty file to read..
+# this will always force Spec141SC.sh to be rebuilt.
+$(prepath)/Spec141SC.sql : ;
+	touch $(prepath)/Spec141SC.sql 
+#==============================================
+
+pathSCDefs.inc : NeverMake	# this is built by DoSed from pathSCDefs.i
+
+NeverMake : ;
+
+FixSCMenu.inc : FixSCMenu.in
+	echo "s/www/141/g" > sedative.txt
+	sed -f sedative.txt FixSCMenu.in > FixSCMenu.inc
+
+FixSCMenu.in : 
+	sed  -i 's/www/141/g' FixSCMenu.in 
+
+AlwaysMakeIt : ;

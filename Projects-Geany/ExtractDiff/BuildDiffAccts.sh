@@ -1,0 +1,156 @@
+#!/bin/bash
+#hdrAnySQL.sh - Any .sql to .sh shell source.
+# 12/12/22.	wmk.
+#	Usage. bash BuildDiffAccts.sh
+#		
+# Dependencies.
+#	(leave line count the same)
+#
+#
+# Modification History.
+# ---------------------
+# 10/4/22.    wmk.   (automated) fix *pathbase for CB system.
+# 12/11/22.	wmk.	run SetToday.sh to export TODAY env var.
+# 12/12/22.	wmk.	SetTody.sh path corrected.
+# Legacy mods.
+# 4/23/22.	wmk.	modified for FL/SARA/86777.
+# 4/22/22.	wmk.	HOME changed to USER in host check.
+# Legacy mods.
+# 4/6/21.	wmk.	original shell (template)
+# 6/17/21.	wmk.	multihost support.
+# 9/6/21.	wmk.	jumpto function and references removed.
+# 11/9/21.	wmk.	add echo when initiated from make; add $ TODAY definition.
+# 12/3/21.	wmk.	'procbodyhere' replaces proc body here for awk reversal.
+# 4/8/22.	wmk.	HOME changed to USER in host test.	
+P1=$1
+TID=$P1
+TN="Terr"
+if [ -z "$folderbase" ];then
+ if [ "$USER" == "ubuntu" ]; then
+  folderbase=/media/ubuntu/Windows/Users/Bill
+ else
+  folderbase=$HOME
+ fi
+fi
+if [ -z "$pathbase" ];then
+ export pathbase=$folderbase/Territories/FL/SARA/86777
+fi
+if [ -z "$system_log" ]; then
+  system_log=$folderbase/ubuntu/SystemLog.txt
+  ~/sysprocs/LOGMSG "  BuildDiffAccts - initiated from Make"
+  echo "  BuildDiffAccts - initiated from Make"
+else
+  ~/sysprocs/LOGMSG "  BuildDiffAccts - initiated from Terminal"
+  echo "  BuildDiffAccts - initiated from Terminal"
+fi 
+TEMP_PATH=$HOME/temp
+#	Environment vars:
+if [ -z "$TODAY" ];then
+ . ~/GitHub/TerritoriesCB/Procs-Dev/SetToday.sh
+#TODAY=2022-04-22
+fi
+NAME_BASE="Terr"
+SC_DB="_SC.db"
+RU_DB="_RU.db"
+SC_SUFFX="_SCBridge"
+RU_SUFFX="_RUBridge"
+
+#procbodyhere
+
+echo "--BuildDiffAccts.psq/sql - Build DiffAccts table in new SCPADiff_mm-dd.db."  > SQLTemp.sql
+echo "-- 	4/30/22.	wmk."  >> SQLTemp.sql
+echo "--"  >> SQLTemp.sql
+echo "-- * Entry.	starts out in database SCPADiff_mm-dd.db as main"  >> SQLTemp.sql
+echo "-- *		MultiMail.db, PolyTerri.db both attached"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * ---------------------"  >> SQLTemp.sql
+echo "-- * 4/30/22.	wmk.	modified to be integrated into BuildDiffAccts.sh"  >> SQLTemp.sql
+echo "-- * Legacy mods."  >> SQLTemp.sql
+echo "-- * 4/19/21.	wmk.	original code."  >> SQLTemp.sql
+echo "-- * 6/19/21.	wmk.	multihost support added; mm dd in comments."  >> SQLTemp.sql
+echo "-- * 3/19/21.	wmk.	added db#s to attach comments; WARNING added."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Notes. This will yield a table with the PropIDs and Territories"  >> SQLTemp.sql
+echo "-- * affected by this download."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- attach MultiMail.db db3;"  >> SQLTemp.sql
+echo "-- attach PolyTerri.db db5;"  >> SQLTemp.sql
+echo "-- *** WARNING - edit code below with Diffmmdd **;"  >> SQLTemp.sql
+echo ".open '$pathbase/RawData/SCPA/SCPA-Downloads/SCPADiff_04-04.db'"  >> SQLTemp.sql
+echo "ATTACH '$pathbase'"  >> SQLTemp.sql
+echo "	|| '/DB-Dev/MultiMail.db'"  >> SQLTemp.sql
+echo "	AS db3;"  >> SQLTemp.sql
+echo "ATTACH '$pathbase'"  >> SQLTemp.sql
+echo "	|| '/DB-Dev/PolyTerri.db'"  >> SQLTemp.sql
+echo "	AS db5;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "DROP TABLE IF EXISTS DiffAccts;"  >> SQLTemp.sql
+echo "CREATE TABLE DiffAccts "  >> SQLTemp.sql
+echo "( PropID TEXT NOT NULL, TerrID TEXT"  >> SQLTemp.sql
+echo " );"  >> SQLTemp.sql
+echo "DROP TABLE IF EXISTS DiffAccts;"  >> SQLTemp.sql
+echo "CREATE TABLE DiffAccts "  >> SQLTemp.sql
+echo "( PropID TEXT NOT NULL, TerrID TEXT"  >> SQLTemp.sql
+echo " );"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- add PropIDs to DiffAccts table;"  >> SQLTemp.sql
+echo " WITH a AS (SELECT DISTINCT \"Account#\",'' from Diff0404)"  >> SQLTemp.sql
+echo " INSERT INTO DiffAccts"  >> SQLTemp.sql
+echo " SELECT * FROM a;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- now set CongTerrID in props in either SplitProps or TerrProps;"  >> SQLTemp.sql
+echo "UPDATE DiffAccts"  >> SQLTemp.sql
+echo "set TerrID ="  >> SQLTemp.sql
+echo "case"  >> SQLTemp.sql
+echo "when PropID in (select distinct OwningParcel from db3.SplitProps)"  >> SQLTemp.sql
+echo " then (select CongTerrID from db3.SplitProps"  >> SQLTemp.sql
+echo "  where OwningParcel is DiffAccts.PropID)"  >> SQLTemp.sql
+echo "when PropID in (select distinct OwningParcel from db5.TerrProps)"  >> SQLTemp.sql
+echo " then (select CongTerrID from db5.TerrProps"  >> SQLTemp.sql
+echo "   where OwningParcel is DiffAccts.PropID)"  >> SQLTemp.sql
+echo "else TerrID"  >> SQLTemp.sql
+echo "end"  >> SQLTemp.sql
+echo "where length(terrid) = 0;"  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo "--*****************************************************;"  >> SQLTemp.sql
+echo ".cd '$pathbase/Projects-Geany/BuildSCDiff'"  >> SQLTemp.sql
+echo ".output 'MissingTerrIDs.csv'"  >> SQLTemp.sql
+echo ".mode csv"  >> SQLTemp.sql
+echo ".headers ON"  >> SQLTemp.sql
+echo ".delim ,"  >> SQLTemp.sql
+echo "select PropID from DiffAccts"  >> SQLTemp.sql
+echo "where length(TerrID) = 0;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "UPDATE DiffAccts"  >> SQLTemp.sql
+echo "set TerrID ="  >> SQLTemp.sql
+echo "case"  >> SQLTemp.sql
+echo "when PropID in (select distinct OwningParcel from db3.SplitProps)"  >> SQLTemp.sql
+echo " then (select CongTerrID from db3.SplitProps"  >> SQLTemp.sql
+echo "  where OwningParcel is DiffAccts.PropID)"  >> SQLTemp.sql
+echo "when PropID in (select distinct OwningParcel from db5.TerrProps)"  >> SQLTemp.sql
+echo " then (select CongTerrID from db5.TerrProps"  >> SQLTemp.sql
+echo "   where OwningParcel is DiffAccts.PropID)"  >> SQLTemp.sql
+echo "else TerrID"  >> SQLTemp.sql
+echo "end"  >> SQLTemp.sql
+echo "where length(terrid) = 0;"  >> SQLTemp.sql
+echo "-- the following should be done with INNER JOIN on OwningParcel"  >> SQLTemp.sql
+echo "-- and PropID from DiffAccts;"  >> SQLTemp.sql
+echo " WITH a AS (SELECT DISTINCT OwningParcel,"  >> SQLTemp.sql
+echo "  CongTerrID FROM SplitProps WHERE DelPending IS NOT 1)"  >> SQLTemp.sql
+echo " INSERT INTO DiffAccts"  >> SQLTemp.sql
+echo " SELECT * FROM a;"  >> SQLTemp.sql
+echo " "  >> SQLTemp.sql
+echo " -- * eliminate earliest rows, likely from TerrProps;"  >> SQLTemp.sql
+echo "DELETE FROM DiffAccts"  >> SQLTemp.sql
+echo " where rowid NOT IN (SELECT Max(rowid) FROM DiffAccts"  >> SQLTemp.sql
+echo "  GROUP BY PROPId,TerrID);"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+
+#endprocbody - changed from end proc body 12/3/21 for awk reversal.
+# jumpto references removed 9/6/21.
+sqlite3 < SQLTemp.sql
+echo "  BuildDiffAccts complete."
+~/sysprocs/LOGMSG "  BuildDiffAccts complete."
+#end proc

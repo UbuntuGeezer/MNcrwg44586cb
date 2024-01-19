@@ -1,0 +1,39 @@
+-- RegenSpecDB.sq - Regenerate Specxxx_RU.db in RU territory folder (template).
+--	7/19/21.	wmk.
+-- copy and edit this SQL template to territory RU download folder.
+.cd '$folderbase/Territories'
+.cd './RawData/RefUSA/RefUSA-Downloads/Terrxxx'
+--.trace 'Procs-Dev/SQLTrace.txt';
+-- .open 'Specxxx_RU.db';
+--#echo $DB_NAME;
+.open 'Specxxx_RU.db'
+-- drop old version of Special Bridge and recreate;
+DROP TABLE IF EXISTS Spec_RUBridge;
+CREATE TABLE Spec_RUBridge
+( "OwningParcel" TEXT NOT NULL,
+ "UnitAddress" TEXT NOT NULL,
+ "Unit" TEXT, "Resident1" TEXT, 
+ "Phone1" TEXT,  "Phone2" TEXT,
+ "RefUSA-Phone" TEXT, "SubTerritory" TEXT,
+ "CongTerrID" TEXT, "DoNotCall" INTEGER DEFAULT 0,
+ "RSO" INTEGER DEFAULT 0, "Foreign" INTEGER DEFAULT 0,
+ "RecordDate" REAL DEFAULT 0,
+ "SitusAddress" TEXT, "PropUse" TEXT,
+  "DelPending" INTEGER DEFAULT 0,
+ "RecordType" TEXT);
+ -- Now attach Special databases and select/insert their records;
+--.cd './Special';
+.cd '../Special'
+ATTACH '<special1>.db' AS db29;
+INSERT INTO Spec_RUBridge
+SELECT * FROM db29.Spec_RUBridge 
+ WHERE CongTerrID IS 'xxx';
+DETACH db29;
+-- Repeat above block for each Special database.;
+ATTACH '<special2>.db' AS db29;
+INSERT INTO Spec_RUBridge
+SELECT * FROM db29.Spec_RUBridge 
+ WHERE CongTerrID IS 'xxx';
+DETACH db29;
+.quit
+-- end RegenSpecDB_db.sq;

@@ -1,0 +1,4 @@
+/media/ubuntu/Windows/Users/Bill/Territories/Projects-Geany/DNCReport/README
+/media/ubuntu/Windows/Users/Bill/Territories/Projects-Geany/DNCReport/DNCSummary.sql
+/media/ubuntu/Windows/Users/Bill/Territories/Projects-Geany/DNCReport/DNCReport.sh
+/media/ubuntu/Windows/Users/Bill/Territories/Projects-Geany/FixAnySC/DoSed.sh

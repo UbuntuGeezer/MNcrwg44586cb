@@ -1,0 +1,66 @@
+# MakeListTerrSegs.tmp - Make ListTerrSegsDB.sh from ListTerrSegsDB.sql.
+#	2/25/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 2/25/23.	wmk.	modified for use with SegDefsMgr.
+# Legacy mods.
+# 2/10/23.	wmk.	original code; adapted from MakeListTerrStreets.
+#
+# Notes. ListTerrSegs.psq should already have been edited to ListTerrSegs.sql
+# prior to running this makefile (DoSedListTerrStreets.sh)
+
+# use *USER to determine host system.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase=$(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : AlwaysBuild
+.ONESHELL : ;
+
+projpath = $(codebase)/Projects-Geany/SpecialRUdb
+thisproj = $(codebase)/Projects-Geany/SegDefsMgr
+bashpath = $(codebase)/Procs-Dev
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+targpath = $(pathbase)/RawData/<rawpath>/Terr308
+
+# ListTerrSegsDB.sh primary target.
+# $(specpath)/preambleBldSt.sh
+#=======================================================================
+$(thisproj)/ListTerrSegs.sh :  $(thisproj)/ListTerrSegs.sql
+	if test -f $(pathbase)/$$rupath/Terr308/OBSOLETE;then \
+	 echo "** Territory 308 OBSOLETE - MakeListTerrSets exiting...**;exit 2;fi
+	cd $(altproj);./DoSed.sh $(thisproj) ListTerrSegs
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $@;then \
+	 echo " ** ListTerrSegs.sh build FAILED **";exit 1;fi
+	$(thisproj)/ListTerrSegs.sh
+	if test -f  $$TEMP_PATH/Terr308.segdefs.csv;then \
+	 echo "  Territory segdefs on $$TEMP_PATH/Terr308.segdefs.csv...";fi
+	 #cat $$TEMP_PATH/Terr308.segdefs.csv;fi
+	
+$(thisproj)/ListTerrSegs.sql : ;
+	if ! test -f $@;then \
+	 echo "** missing ListTerrSegs.sql for ListTerrSegs.sh build **";exit 1;fi
+
+#=======================================================================
+#	 sed -i 's?\"??g' $$TEMP_PATH/Terr308.segdefs.csv; \
+

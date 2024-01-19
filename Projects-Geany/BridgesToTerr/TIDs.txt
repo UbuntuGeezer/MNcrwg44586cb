@@ -1,0 +1,11 @@
+# TIDList.AvensCohosh.txt - AvensCohosh territory ID list.
+#	5/13/22.	wmk.
+602
+603
+605
+619
+620
+635
+636
+637
+# end TIDList.AvensCohosh.txt

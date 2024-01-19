@@ -1,0 +1,76 @@
+# MakeRUNewLetter.tmp - Makefile for RUNewLetter build (template).
+#	6/5/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 5/4/22.	wmk.	(automated) path corrections.
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# 6/5/23.	wmk.	*pathbase corrected; comments tidied.
+# Legacy mods.
+# 10/14/21.	wmk.	original makefile; modified to create empty Terryyy_RU.db
+# 10/23/21.	wmk.	InitLettSpecial PHONY target added to initialize all the
+#					SPECIAL stuff for the new territory; .ONESHELL added to
+#					force sequential processing.
+#
+# Notes. This makefile is edited by DoSed substituting <terrid> for y yy.
+
+
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+ifeq ($(USER),ubuntu)
+ folderbase = /media/ubuntu/Windows/Users/Bill
+else
+ folderbase = $(HOME)
+endif
+
+.PHONY : InitLettSpecial ;
+
+.ONESHELL : ;
+
+targpath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terryyy
+ bashpath = $(codebase)/Procs-Dev
+projbase = $(folderbase)Territories/Projects-Geany
+ projpath = $(codebase)/Projects-Geany/RUNewLetter
+
+# (targpath)/Terryyy_RU.db - primary target
+# ====================================================================
+$(targpath)/Terryyy_RU.db : $(targpath)/Mapyyy_RU.csv
+	$(bashpath)/RUNewTerr_db.sh yyy
+
+$(targpath)/Mapyyy_RU.csv : 
+	$(bashpath)/MakeEmptyRUMap.sh yyy
+
+#---
+$(projpath)/NewLetter.sql : ;
+
+#=====================================================================
+
+
+# InitLettSpecial - Initialize all SPECIAL files for new letter territory.
+#=========================================================================
+InitLettSpecial :
+	$(projbase)/RUNewLetter/InitLetter.sh yyy
+
+
+#=========================================================================

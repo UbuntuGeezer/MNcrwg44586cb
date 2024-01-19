@@ -1,0 +1,81 @@
+README.md - DoTerrsWithCalc project (MNcrwg44586) documentation.<br>
+8/12/23.	wmk.
+	
+***Modification History.
+<pre><code>
+8/12/23.	wmk.	edited for MNcrwg44586.
+Legacy mods.
+7/8/21.		wmk.	original document.
+7/14/21.	wmk.	internal documentation added.
+</code></pre>
+<a href="IX">Document Sections.</a>
+<a href="#1.0">link</a> 1.0 Project Description - overall project description.
+<a href="#2.0">link</a> 2.0 Dependencies - dependencies.
+<a href="#3.0">link</a> 3.0 Significant Notes - important stuff not documented elsewhere.
+<a href="#4.0">link</a> 4.0 Internal Documentation - information for maintenance/modification.
+<h3 href="1.0"> 1.0 Project Description.</h3>
+DoTerrsWithCalc implements the code required to process QTerrxxx.csv
+files by placing a list of the territory IDs in a Calc spreadsheet. Then
+The user can execute a macro from the Territories macro Library to
+process the list by opening each file and running the necessary additional
+macros to process the QTerrxxx.csv into a Terrxxx_PubTerr.ods and
+Terrxxx_SuperTerr.ods.
+
+The goal is to be able to use DoTerrsWithCalc as a repeated process to
+generate territories from a list of territory IDs (such as what is in
+Territory Master). This will enable batch processing of territories
+whose QTerrxxx.csv's have been updated awaiting Calc processing into
+publisher territories.
+<br><a href="#IX">Index</a>
+<h3 href="2.0">2.0 Dependencies.</h3>
+~/Basic/OpenQTerr.bas - Open Office Basic subroutine/macro present in
+  LibreOffice/Libraries/Territories library
+  
+**Basic Macros.**<br>
+This project depends upon the macros described below.
+<pre><code>
+OpenQTerr.bas - Open QTerrxxx.csv from Working-Files for territory xxx.
+SaveCsvToODS.bas - Save .csv file to .ods workbook.
+QToPubTerr3 - Build PubTerr sheet from download QTerr data.
+QGetToBridge - Build Bridge sheet from download QTerr data.
+BridgeToTerr3 - Build PubTerr sheet from Bridge sheet.
+InsertQTerrHdr - Insert territory sheet header into download data.
+MoveToDocSheet - Move to document/sheet from different document/sheet.
+FinishTerritory - (future) Untitled PubTerr to _PubTerr.ods, _PubTerr.xlsx, _PubTerr.pdf
+SuperTerritory - (future) _PubTerr.xlsx to _SuperTerr.xlsx, _SuperTerr.ods
+</code></pre>
+<br><a href="#IX">Index</a>
+<h3 href="3.0">3.0 Significant Notes.</h3>
+Much of the prototype code development is initially done in macros defined
+in ProcessQTerrs12.ods. This is done to avoid having to continually export
+the Territories Library in order to preserve code changes over Calc crashes.
+
+The drawback is that any code that jumps into the Territories Library,
+then returns may lose continuity due to Territories Library vars being
+released. This has the side-effect that code may have to be migrated
+into the Territories Library in order to be accurately tested for
+functionality.
+<br><a href="#IX">Index</a>
+</h3 href="4.0">4.0 Internal Documentation.</h3>
+Main subs/macros - DoTerrWithCalc - called with xxx territory ID
+>  to take territory xxx QTerrxxx.csv and make a territory workbook
+Terrxxx_PubTerr.ods
+
+DoTerrWithCalc uses the QTerrxxx.csv file as its basis for
+generating the resultant territory. The QTerrxxx.csv file was generated
+by runniing a query on the territories SQL database to extract the
+records for territory xxx. Once that has been done, the SQL processing
+is left behind, and LibreOffice/OpenOffice Calc is used to finish
+generating the territory in spreadsheet and PDF formats for the publishers
+to use.
+
+The sub/macro QGetToBridge takes the download data from the .csv file
+and creates the Bridge sheet which contains all the base records for the
+territory. The Bridge worksheet is taken as input to the BridgeToTerr sub
+that creates a territory worksheet in the QTerrxxx.ods workbook.
+
+Once the territory worksheet has been created in QTerrxxx.ods, it is
+exported to the Terrxxx_PubTerr.ods. From there, it is further saved as
+an Excel formatted workbook and a PDF formatted file for ease of use
+by publishers.
+<br><a href="#IX">Index</a>

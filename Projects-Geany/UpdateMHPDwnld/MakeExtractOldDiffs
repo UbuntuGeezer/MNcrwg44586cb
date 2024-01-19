@@ -1,0 +1,82 @@
+# MakeExtractOldDiffs.tmp - (template) ExtractOldDiffs makefile to build ExtractOldDiffs.sh
+#	7/2/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 6/6/23.	wmk.	*pathbase corrected; superfluous PHONY removed; comments
+#			 tidied.
+# 7/2/23.	wmk.	duplicate recipe for ExtractOldDiffs.sql removed.
+# Legacy mods.
+# 5/4/22.	wmk.	(automated) path corrections.
+# 6/7/22.	wmk.	main recipe simplified to use AnySQLtoSH; cdj corrected to cd.
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# Legacy mods.
+# 8/29/21.	wmk.	original makefile.
+# 9/8/21.	wmk.	modified to rebuild ExtractOldDiffs.sh after DoSed run for
+#			 project; yy y added so makefile can be edited by DoSed for
+#			 building to territory 262.
+# 9/9/21.	wmk.	cloned from UpdateRUDwnld project into UpdateMHPDwnld;
+#			 projpath var edited to UpdateMHPDwnld; MakeUpdateMHPDwnld
+#			 prerequisite added to force rebuild whenever DoSed changes
+#			 MakeUdpateMHPDwnld.
+# 1/23/22.	wmk.	multihost code updated; chmod added to allow execution
+#			 of resultant .sh.
+#
+# Notes. DoSed for the UpdateMHPDwnld project edits the territory ID into the
+# ExtractOldDiffs.psq template to produce ExtractOldDiffs.sql. The resultant
+# .sql file is picked up by this makefile to generate ExtractOldDiffs.sh.
+
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.ONESHELL :
+.PHONY : 
+
+ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+else
+  folderbase = $(HOME)
+endif
+
+ bashpath = $(codebase)/Procs-Dev
+ projpath = $(codebase)/Projects-Geany/UpdateMHPDwnld
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# ExtractOldDiffs.sh
+#==========================================================
+$(projpath)/ExtractOldDiffs.sh : $(projpath)/ExtractOldDiffs.sql
+	cd $(altproj);./DoSed.sh $(projpath) ExtractOldDiffs
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+
+$(projpath)/ExtractOldDiffs.sql : ;
+	$(error ** missing $(prepath)/ExtractOldDiffs.sqL to build ExtractOldDiffs.sql **)
+	
+#	sed 's?262?262?g' $(projpath)/ExtractOldDiffs.psq > $(projpath)/ExtractOldDiffs.sql
+	
+
+$(projpath)/ExtractOldDiffs.psq : ;
+	(warning ** ExtractOldDiffs.psq missing for ExtractOldDiffs.sq build **)
+
+AlwaysMake : ;
+
+#==========================================================

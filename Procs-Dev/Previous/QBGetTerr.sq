@@ -1,0 +1,39 @@
+#procbodyhere
+TID=$1
+if [ 1 -eq 1 ]; then
+TST_STR="(test)"
+else
+TST_STR=""
+fi
+touch $TEMP_PATH/scratchfile
+error_counter=0
+NAME_PRFX="QTerr$TID"
+RU_NAME=Terr$TID
+RU_SUFX=_RU.db
+BR_SUFX=_RUBridge
+DB_END=.db
+CSV_END=.csv
+DB_NAME=$NAME_PRFX$DB_END
+CSV_NAME=$NAME_PRFX$CSV_END
+TBL_NAME1=$NAME_PRFX
+TBL_NAME2=$RU_NAME$BR_SUFX
+#echo $DB_NAME
+echo "-- * QBGetTerr query as batch run." > SQLTemp.sql
+echo ".cd ""$pathbase""" >> SQLTemp.sql
+echo ".cd './BTerrData/Terr$TID/Working-Files'" >> SQLTemp.sql
+#echo ".trace 'Procs-Dev/SQLTrace.txt'" >> SQLTemp.sql
+#-- insert new code here...
+# ATTACH Terrxxx_RU.db;
+echo "ATTACH '$pathbase/BRawData/RefUSA/RefUSA-Downloads'" >> SQLTemp.sql
+echo "||		'/Terr$TID/$RU_NAME$RU_SUFX'" >> SQLTemp.sql
+echo " AS db12;" >> SQLTemp.sql
+echo ".headers ON" >> SQLTemp.sql
+echo ".mode csv" >> SQLTemp.sql
+echo ".separator ," >> SQLTemp.sql
+echo ".output '$pathbase/BTerrData/Terr$TID/Working-Files/$TBL_NAME1.csv'" >> SQLTemp.sql
+echo "SELECT * FROM $RU_NAME$BR_SUFX" >> SQLTemp.sql
+echo "ORDER BY TRIM(SUBSTR(UnitAddress,INSTR(UnitAddress,' ')))," >> SQLTemp.sql
+echo "  CAST(SUBSTR(UnitAddress,1,INSTR(UnitAddress,' ')-1) AS INTEGER);" >> SQLTemp.sql
+#echo " ORDER BY UnitAddress;" >> SQLTemp.sql
+echo ".quit" >> SQLTemp.sql
+#endprocbody

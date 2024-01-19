@@ -1,0 +1,60 @@
+# MakeSetSpecTerrs.tmp - Build SetSpecTerrs.sh for RU territory xxx.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	4/26/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 4/24/22.	wmk.	code generalized for FL/SARA/86777;*pathbase*, 
+#			 *congterr*, *conglib* env vars introduced.
+# 4/26/22.	wmk.	*..path* env vars stripped of trailing '/.
+# Legacy mods.
+# 8/15/21.	wmk.	original code.
+# 8/20/21.	wmk.	sed added to replace <filename> with procname.
+# 12/28/21.	wmk.	chmod 700 added to .sh permissions.
+# 1/1/22.	wmk.	line 8 comment corrected to # from *.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu) 
+  folderbase=/media/ubuntu/Windows/Users/Bill
+ else
+  folderbase=$(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+prepath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terrxxx
+ procpath = $(codebase)/Procs-Dev
+
+# SetSpecTerrs.sh primary target.
+#=====================================================================================
+$(prepath)/SetSpecTerrs.sh : $(prepath)/SetSpecTerrs.sql $(prepath)/SetSpecTerrs.sq
+	cat $(procpath)/hdrAnySQL_1.sh $(prepath)/SetSpecTerrs.sq \
+	 $(procpath)/hdrAnySQL_2.sh > $@
+	sed -i 's?<filename>?SetSpecTerrs?g' $@
+	chmod +x $@
+
+$(prepath)/SetSpecTerrs.sq : $(prepath)/SetSpecTerrs.sql
+	echo 's?\"?\\\\"?g' > sedatives.txt
+	echo "s?^?echo \"?g" >> sedatives.txt
+	echo "s?\$$?\" >> SQLTemp.sql?g" >> sedatives.txt
+	echo "1s?>>?>?g" >> sedatives.txt
+	sed -f sedatives.txt $(prepath)/SetSpecTerrs.sql > $@
+	sed -i 's?%folderbase?\$$folderbase?g' $@
+
+$(prepath)/SetSpecTerrs.sql : ;
+	$(error ** missing $(prepath)/SetSpecTerrs.sql to build SetSpecTerrs.sh **)
+	
+$(procpath)/hdrAnySQL_1.sh : ;
+	$(error ** missing $(prepath)/hdrAnySQL_2.sh to build SetSpecTerrs.sh **)
+
+$(procpath)/hdrAnySQL_2.sh : ;
+	$(error ** missing $(procpath)/hdrAnySQL_2.sh to build SetSpecTerrs.sh **)
+#====================================================================================

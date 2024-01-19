@@ -1,0 +1,7 @@
+# awkfixShell1.txt
+BEGIN {FS="=";p=1}
+{if( $1 == "TEMP_PATH" )
+ p=0
+ if( p )
+  {print}
+}

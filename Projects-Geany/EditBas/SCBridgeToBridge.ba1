@@ -1,0 +1,59 @@
+&apos;// SCBridgeToBridge.bas
+&apos;//-------------------------------------------------------------------
+&apos;// SCBridgeToBridge - Make Admin-Bridge sheet from SCPA.csv download.
+&apos;//		9/21/20.	wmk.	06:45
+&apos;//-------------------------------------------------------------------
+
+public sub SCBridgeToBridge()
+
+&apos;//	Usage.	macro call or
+&apos;//			call SCBridgeToBridge()
+&apos;//
+&apos;// Entry.	user has SCPA.csv download sheet selected
+&apos;//
+&apos;//	Exit.	Sheet has 4-row Admin-Bridge sheet header added; columns bold,
+&apos;//			view frozen at Row5
+&apos;//
+&apos;// Calls.	InsertTerrHdr, SetBridgeColWidths, BoldHeadings, FreezeView
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/21/20.	wmk.	original code
+&apos;//
+&apos;//	Notes.
+
+&apos;//	constants.
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+dim oMrgRange	As Object	&apos;// merge range
+
+dim oCell	As Object		&apos;// cell working on
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	InsertTerrHdr(&quot;Admin-Bridge formatted sheet&quot;)
+	SetBridgeHeadings()
+	SetBridgeColWidths()
+	BoldHeadings()
+	FreezeView()
+
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SCBridgeToBridge - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end SCBridgeToBridge	9/21/20

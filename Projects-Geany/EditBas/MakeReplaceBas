@@ -1,0 +1,68 @@
+# MakeReplaceBas.tmp - Makefile (template) for MakeReplaceBas.
+$(error out-of-date)
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#   5/4/22. wmk.	(automated) path corrections.
+#
+# This makefile is edited by DoSed.sh with PubToSuper Module1 substituted
+# throughout. PubToSuper will be the name of a .bas source file with no
+# filename extension; Module1 will be the complete name of an XBA file with
+# the .xba filename extension.
+#
+# Modification History.
+# ---------------------
+# 3/8/22.	wmk.	original makefile; adapted from MakeExtractBas;
+#			 add ampersand conversion to sed; note & conversion must come
+#			 first to avoid screwing up other XML & fields.
+# 4/24/22.	wmk.	*pathbase* env var included.
+# 5/4/22. wmk.	(automated) path corrections.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : Always JustDoIt
+.ONESHELL : ;
+
+ projpath = $(codebase)/Territories/Projects-Geany/AnySHtoSQL
+
+# <filepath>/<filebase>.sql
+#=======================================================
+Always : JustDoIt
+	cd $(projpath)
+	cp PubToSuper.bas $$TEMP_PATH/scratch.bas
+	sed -i "s?\&?\&amp\;?g;s?'?\&apos\;?g;s?\"?\&quot\;?g" $$TEMP_PATH/scratch.bas
+	# delete 1st and last lines of new .bas
+	sed -i "/\/\ PubToSuper.bas/d;/\/\*\*\//d" $$TEMP_PATH/scratch.bas
+	cp Module1 scratch.xba
+	sed -i "1,4d" scratch.xba
+	# find module.bas in scratch.xba file; read lines from stripped .bas file
+	mawk "/\/\/ PubToSuper.bas/{f=1;print;while(getline < \"$$TEMP_PATH/scratch.bas\")\
+	 {print}}/\/\*\*\//{f=0}!f" scratch.xba > newModule1
+	sed -i '1i newline\;' newModule1
+	sed -i "1r ModuleHdr.xba" newModule1
+	sed -i "1d" newModule1
+	mv Module1 oldModule1
+	mv newModule1 ./Module1
+	echo "module PubToSuper.bas replaced into local Module1..."
+	echo "use PutXBAModule.sh to copy the new Module1 over GitHub/Module1 after changes checked."
+
+#=======================================================
+JustDoIt: ;

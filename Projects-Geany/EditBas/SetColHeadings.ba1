@@ -1,0 +1,67 @@
+&apos;// SetColHeadings.bas
+&apos;//---------------------------------------------------------------
+&apos;// SetColHeadings - Set sheet column headings in row 5.
+&apos;//		9/21/20.	wmk.	07:20
+&apos;//---------------------------------------------------------------
+
+public sub SetColHeadings( psColHeadings() As String )
+
+&apos;//	Usage.	macro call or
+&apos;//			call SetColHeadings( sColHeadings() )
+&apos;//
+&apos;//		sColHeadings = array of column headings to set
+&apos;//
+&apos;// Entry.	user in sheet where row 5 is column headings
+&apos;//
+&apos;//	Exit.	row 5 column headings will be set to array strings
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/21/20.		wmk.	original code
+&apos;//
+&apos;//	Notes.
+
+&apos;//	constants.
+const ROW_HEADING=4		&apos;// row index of heading row
+const CJUSt=2			&apos;// centered
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisCol as long		&apos;// current column selected on sheet
+
+dim oCell	As Object		&apos;// cell working on
+dim i		As Integer		&apos;// loop index
+dim	nColLimit	As Integer	&apos;// column limit 0-based
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	nColLimit = UBound(psColHeadings)
+	if nColLimit &lt; 0 then
+		GoTo NormalExit
+	endif	&apos;// end no column headings conditional
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+
+	for i = 0 to nColLimit
+		oCell = oSheet.getCellByPosition(i, ROW_HEADING)
+		oCell.String = psColHeadings(i)
+		oCell.HoriJustify = CJUST
+	next i
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SetColHeadings - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end SetColHeadings		9/21/20

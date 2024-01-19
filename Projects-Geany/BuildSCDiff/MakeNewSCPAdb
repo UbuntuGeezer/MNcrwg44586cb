@@ -1,0 +1,92 @@
+# MakeNewSCPAdb.tmp - New SCPA db makefile.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	4/27/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 4/27/22.	wmk.	modified for general use; *pathbase* support; all 
+#			 *..path*, *..dir* vars trailing '/' removed.
+# Legacy mods.
+# 3/19/22.	wmk.	original code.
+#
+# Notes. MakeNewSCPAdb takes the Datammdd.csv download and creates
+# a new SCPA_mm-dd.db. From this database, the VeniceNTerritory.db
+# records can then be updated by obtaining the differences between
+# the new SCPA_mm-dd.db and prior data.
+
+#==================================================================
+# makefile setup section.
+# set folderbase contignent upon ($)HOME system information.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase=$(folderbase)/Territories
+endif
+
+SHELL = /bin/bash
+.SUFFIXES:
+.SUFFIXES: .s .db .csv .sql .sh
+
+# path defaults by filetype.
+vpath %.db $(pathbase)/RawData/SCPA/SCPA-Downloads
+vpath %.csv $(pathbase)/RawData/SCPA/SCPA-Downloads
+vpath %.xlsx $(pathbase)/RawData/SCPA/SCPA-Downloads
+
+# path variables for use inside recipes.
+maindbpath = $(pathbase)/DB-Dev
+scdwnldpath = $(pathbase)/RawData/SCPA/SCPA-Downloads
+sqltoshpath = $(pathbase)/Projects-Geany/AnySQLtoSH
+includepath = $(pathbase)/include
+ bashpath = $(codebase)/Procs-Dev
+targpath = "$(pathbase)/Projects-Geany/BuildSCDiff
+srcdir = $(pathbase)/Projects-Geany/BuildSCDiff
+
+.ONESHELL : ;
+.PHONY : err ;
+#--------------------------------------------------------------------
+
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# Recipe to build latest SCPA_05-26.db if out-of-date or
+#  does not exist.
+#=====================================================================
+$(scdwnldpath)/SCPA_05-26.db : $(scdwnldpath)/Data0526.csv \
+ $(srcdir)/SCDwnldToDB.sh
+	#recipe to create/bring SCPA_05-26.db up-to-date with .csv
+	$(targpath)/SCDwnldToDB.sh 05 26
+	
+$(scdwnldpath)/Data0526.csv : $(scdwnldpath)/SCPA-Public_05-26.xlsx
+	#note. if Data0526.csv is not up-to-date with the .xslx file,
+	#this should be considered an error. OpenOffice Calc will need
+	#to be run to export all the .xlsx file data to the .csv file
+	#ls -lh $(scdwnldpath)/SCPA_05-26.csv
+	#ls -lh $(scdwnldpath)/SCPA-Public_05-26.xlsx
+	echo "** WARNING - SCPA-Public.05-26.xlsx newer than Data0526.csv **"
+	echo "** check final SCPA-05-26.db **"
+	
+$(scdwnldpath)/SCPA-Public_05-26.xlsx : ;
+
+#---
+$(srcdir)/SCDwnldToDB.sh : $(srcdir)/SCDwnldToDB.sql
+	cd $(altproj); ./DoSed.sh $(targpath) SCDwnldToDB
+	$(MAKE) $(altproj)/MakeAnySQLtoSH
+	echo "$(srcdir)/SCDwnldToDB.sh resultant?"
+	echo "SCDwnldToDB.sh rebuilt."
+	
+$(srcdir)/SCDwnldToDB.sql :
+	echo "** WARNING - SCDwnldToDB.sql missing.. check build **"
+	touch $(srcdir)/SCDwnldToDB.sql
+
+#===================================================================

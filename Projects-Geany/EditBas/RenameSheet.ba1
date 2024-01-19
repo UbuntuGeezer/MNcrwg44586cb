@@ -1,0 +1,59 @@
+&apos;// RenameSheet.bas
+&apos;//---------------------------------------------------------------
+&apos;// RenameSheet - Rename sheet with new name.
+&apos;//		10/12/20.	wmk.		13:00
+&apos;//---------------------------------------------------------------
+
+public sub RenameSheet( psNewName As String )
+
+&apos;//	Usage.	macro call or
+&apos;//			call RenameSheet(sNewName As String)
+&apos;//
+&apos;//		sNewName = new sheet name
+&apos;//
+&apos;// Entry.	ThisComponent = this XFrame object
+&apos;//
+&apos;//	Exit.	table name changed to psNewName
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	10/12/20.		wmk.	original code
+&apos;//
+&apos;//	Notes.
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+
+rem ----------------------------------------------------------------------
+rem define variables
+dim document   as object
+dim dispatcher as object
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dim args1(0) as new com.sun.star.beans.PropertyValue
+args1(0).Name = &quot;Name&quot;
+&apos;args1(0).Value = &quot;Terr102_Import&quot;
+args1(0).Value = psNewName
+
+dispatcher.executeDispatch(document, &quot;.uno:RenameTable&quot;, &quot;&quot;, 0, args1())
+
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;RenameSheet - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end RenameSheet		10/12/20

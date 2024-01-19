@@ -1,0 +1,11 @@
+MakeRegenSpecDB
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+MakeRegenSpecDB.tmp
+MakeSetSpecTerrs
+MakeSetSpecTerrs.tmp
+MakeSpecTerrQuery
+MakeSpecials
+MakeSpecials.bak
+MakeSyncTerrToSpec
+MakeSyncTerrToSpec.tmp

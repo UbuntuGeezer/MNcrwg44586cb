@@ -1,0 +1,189 @@
+# MakeUpdateLtrDwnld.tmp - template for make MakeUpdateLtrDwnl3/23#	2/5/23.	wmk.
+#	3/25/23.	wmk.
+#
+# Entry. pathRUdefs.inc - include file RU path definitions
+#		pathRUdefs.inc derived from generic ~/include/pathRUdefs.i
+#			via Build dependency
+#		(vpath .db)Terr641_RU.db - territory RU current download
+#		var postpath = postprocessing path to Terr641/Fix641RU.sh
+ # var bashpath(codebase)
+#
+# Dependencies.	env var ($)HOME set to current host system home path
+#
+# Modification History.
+# ---------------------
+# 3/25/23.	wmk.	original makefile; adapted from MakeUpdateRUDwnld.tmp; pushd
+#			 popd placed in $$() execute for *bash; FixXXX prereqs removed.
+# Legacy mods.
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# 10/3/22.	wmk.	include dependencies removed.
+# 10/4/22.	wmk.	SpecAnyRU.sh recipe *error removed; main recipe
+#			 TestForMHPTable path qualfier added; pathbase set for CB.
+# Legacy mods.
+# 5/5/22.	wmk.	imported from //Projects-Geany/UpdateLtrDwnld.
+# 5/7/22.	wmk.	.PHONY, .ONESHELL added.
+# 5/17/22.	wmk.	incroot and vpath statements updated to use *pathbase*;
+#			 duplicate .PHONY and .ONESHELL statements removed.
+# 6/27/22.	wmk.	RUTidyTerr.sh reactivated in old recipe.
+# 7/9/22.	wmk.	*pathbase support!; ForceBuild prerequisite added;	
+#			 old recipe improvements; back up to ./Previous before
+#			 either RegenSpecDB or RUNewTerr_db; bug fix where RUNewTerr_db
+#			 wiping out RegenSpecDB .db; eliminate RUTidyTerr. 
+# Legacy mods.
+# 3/1/21.	wmk.	original code.
+# 3/11/21.	wmk.	support for user-supplied post processor FixxxxRU.sh
+# 3/24/21.	wmk.	trailing RUTidyTerr_db call added to complete "fixed"
+#					records.
+# 3/28/21.	wmk.	modified dependencies to rebuild if the Fix641RU.sh,
+#					Fix641RU.sql or Map641_RU.csv changed.
+# 5/26/21.	wmk.	modified for use with either home or Kay's system;
+#					whichsystem, folderbase vars added.
+# 6/6/21.	wmk.	pathRUdefs.inc changed to NeverMake because of infinite
+#					loop with DoSed.sh doing the same thing.
+# 7/6/21.	wmk.	code added to preserve previous Terrxxx_RU.db in
+#					./Previous folder; multihost code generalized; superfluous
+#					"s removed.
+# 7/16/21.	wmk.	code review; RUTidyTerr_db recipe framed; add support
+#					for Spec641RU.sh and Spec641RU.sql preprocesors for
+#					SPECIAL territories; prepath var added to pathRUdefs.i
+#					pointing to RawData preprocessing path for territory;
+#					multihost support generalized.
+# 7/18/21.	wmk.	Spec641_RU.db updating support for RU territories with
+#					records in ./Special database(s); primary recipe
+#					includes RegenSpecDB.sh and SyncTerrToSpec.sh calls.
+# 8/11/21.	wmk.	RegenSpecDB.sh corrected to CreateSpecRU.sh for RU
+#					territories with records in ./Special database(s).
+# 8/28/21.	wmk.	Terr641RU.db recipe changed to use "if test" instead
+#					of touch; for initial db creation, ensure /Previous
+#					exists by forcing copy.
+# 8/29/21.	wmk.	bug fix; long-standing bug with Fix641RU.sh generation;
+#					uses new proc AnySQLtoSQ when building Fix641RU.sh.
+# 8/30/21.	wmk.	MakeInitialRUFix segment added.
+# 9/1/21.	wmk.	bug fix; use RegenSpecDB.sh if present in folder.
+# 9/4/21.	wmk.	bash call removed from Fix641RU.sh call.
+# 9/18/21.	wmk.	<filename> fixed in InitialRUFix.sh, Fix641RU.sh.
+# 9/19/21.	wmk.	SPECIAL exception exit removed; will now update an
+#					RU download with Special processing. This does depend
+#					upon the databases used by RegenSpecDB being
+#					up-to-date.
+# 10/1/21.	wmk.	bug fix InitialRUFix recipe had InitalFix in some
+#					places.
+# 12/21/21.	wmk.	ensure resultant .sh files are executable with explicit
+#			 chmod +x to set file characteristics.
+# 12/29/21.	wmk.	RUTidyTerr_db.sh recipe updated to include chmod.
+# 1/11/22.	wmk.	Fix641RU.sh sequence corrected to .sql > .sq > .sh.
+# 1/17/22.	wmk.	recipe change to rebuild from MapxxxRU..csv, then check 
+#			 for MakeSpecials and *make* it if present.
+#
+# Note. Will not work if there is no SCBridge data.
+# update happens if RefUSA-Downloads/Terr641/Map641_RU.csv newer than Terr641_RU.db
+# also will happen if either Fix641RU.sql or Fix641RU.sh newer than Terr641_RU.db
+# fatal errors detected: no Map641_RU.csv file, Fix641RU.sh missing or out-of-date
+#  and no Fix641RU.sql file.
+# 8/30/21. Note. var altprojpath defined so this project can "borrow" the
+#  InitialRUFix code from the RUNewTerritory project. This code will build/rebuild
+#  InitialRUFix.sh in the territory download folder if it is not there
+#  or is out-of-date.
+#
+
+.ONESHELL : ;
+.NOTPARALLEL : ;
+.PHONY : WarnUser NeverMake ;
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  export folderbase = /media/ubuntu/Windows/Users/Bill
+#elseif $(USER,vncwmk3)
+# folderbase = /mnt/chromeos/MyFiles
+ else
+  export folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+include pathRUdefs.inc
+
+targpath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terr641
+ projpath = $(codebase)/Projects-Geany/UpdateLtrDwnld
+ altprojpath = $(codebase)/Projects-Geany/RUNewTerritory
+postpath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terr641
+prepath = $(postpath)
+bashpath = $(codebase)/Procs-Dev
+
+# execute new *make* recipe
+# DoOld = 0
+# execute old *make* recipe
+ DoOld = 1
+
+
+ifeq ($(DoOld),1)
+#--------------------------------old recipe ---------------------------
+# Terr641_RU.db (primary target).
+# Note. for letter-writing territories the Mapxxx_RU.csv prerequisite removed.
+#================================================================
+$(postpath)/Terr641_RU.db  :  $(prepath)/MakeSpecials \
+  $(projpath)/ForceBuild
+	if test -f $(postpath)/Terr641_RU.db;then \
+	 cp -p $(postpath)/Terr641_RU.db $(postpath)/Previous; fi
+	$(projpath)/ClearRUBridge.sh 641
+	#exit 1
+	$$(pushd ./ > $$TEMP_PATH/scratchfile)
+	cd $(prepath)
+	$(MAKE) -f $(prepath)/MakeSpecials
+	$$(popd > $$TEMP_PATH/scratchfile)
+	$(bashpath)/MissingIDs.sh 641
+
+#-- $(projpath)/ForceBuild.
+$(projpath)/ForceBuild : ;
+	if ! test -f $@;then
+	 echo "** ForceBuild semaphore file missing! *make* abandoned.";exit 1;fi
+
+#-- $(postpath)/Fix641RU.sh :
+
+#-- $(postpath)/Fix641RU.sql
+#$(postpath)/Fix641RU.sql : ;
+#	if ! test -f $@; then \
+#	 echo " ** missing Fix641RU.sql for Fix641RU.sh build **";exit 1;fi
+	 
+#-- $(prepath)/MakeSpecials.
+$(prepath)/MakeSpecials : ;
+	if ! test -f $@; then \
+	 echo " ** missing MakeSpecials for Terr641_RU.db build **";exit 1;fi
+
+
+#==============================================================
+#---------------------------------new recipe --------------------------
+else
+# this recipe must execute unconditionally - uses PHONY target
+# rebuild Terr641_RU.db from Map641_RU.csv
+# if *MakeSpecials* exists, run it to pick up newer data from
+#   /Special prerequisites; since Terrxxx_RU.db is newer
+#   it needs to be updated regardless of whether any of
+#   the /Special dbs are newer; SyncTerrToSpec will take
+#   care of that
+# process should execute if 1) Map641_RU.csv newer
+#   or 2) any /Special is newer (MakeSpecials)
+
+#$(warn ** executing new recipe for MakeUpdateLtrDwnld **)
+.PHONY : RemakeRUdb
+RemakeRUdb : $(postpath)/Map641_RU.csv
+	echo "** executing new recipe for MakeUpdateLtrDwnld **"
+	exit 1
+	if test -f $(postpath)/Terr641_RU.db;then \
+	 rm $(postpath)/Terr641_RU.db;fi
+	$(bashpath)/RUNewTerr_db.sh 641
+	if test -f $(postpath)/MakeSpecials;then \
+	 $(MAKE) -f $(postpath)/MakeSpecials
+#-------------------- end Terr641_RU.db recipe conditional ---------
+endif
+
+#=============================================================

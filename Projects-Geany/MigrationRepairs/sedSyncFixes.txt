@@ -1,0 +1,6 @@
+# sedSyncFixes.txt - *sed* directives to repair SyncTerrToSpec.sql files.
+2a-- * 6/14/22.   wmk.    (automated) correct duplicate eliminations.
+/--WHERE rowid NOT IN/s?--??
+/WHERE RecordDate NOT IN/d
+/GROUP BY UnitAddress, Unit)/d
+/GROUP BY UnitAddress, Unit, Resident1)/s?--??

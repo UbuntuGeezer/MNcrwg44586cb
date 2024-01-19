@@ -1,0 +1,55 @@
+&apos;// UnprotectSheet.bas
+&apos;//----------------------------------------------------------------------
+&apos;// UnprotectSheet - Remove protection from selected sheet (no password).
+&apos;//		10/12/20.	wmk.
+&apos;//----------------------------------------------------------------------
+
+public sub UnprotectSheet()
+
+&apos;//	Usage.	macro call or
+&apos;//			call UnprotectSheet()
+&apos;//
+&apos;//
+&apos;// Entry.	selected sheet &quot;protected&quot; (no password)
+&apos;//
+&apos;//	Exit.	selected sheet &quot;unprotected&quot;
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	10/12/20.		wmk.	original code
+&apos;//
+&apos;//	Notes.
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+rem ----------------------------------------------------------------------
+rem define variables
+dim document   as object
+dim dispatcher as object
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dim args1(0) as new com.sun.star.beans.PropertyValue
+args1(0).Name = &quot;Protect&quot;
+args1(0).Value = false
+
+dispatcher.executeDispatch(document, &quot;.uno:Protect&quot;, &quot;&quot;, 0, args1())
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;UnprotectSheet - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end UnprotectSheet		10/12/20

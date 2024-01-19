@@ -1,0 +1,30 @@
+# awkfixbashpaths.txt 12/16/22.
+BEGIN {yup=1}
+{ if(NR==2){print "# 12/16/22.    wmk.   (automated) CB *codebase env var support." }
+{ ispathbase = index($0,"pathbase="); ispathstart = index($0,"-z \"$pathbase");
+  isgeanypath = index($0,"pathbase/Projects-Geany");
+  isprocspath = index($0,"pathbase/Procs-Dev");
+   if (ispathbase != 0 )
+   {
+    split($0,arr,"="); print arr[1] "=$folderbase/Territories/FL/SARA/86777";
+    yup=0;
+   }
+   else if (ispathstart != 0 )
+   {
+    print "if [ -z \"$codebase\" ];then\n export codebase=$folderbase/GitHub/TerritoriesCB\nfi\n" $0;
+   }
+   else if (isgeanypath !=0 || isprocspath != 0)
+   {
+    spos = index($0,"pathbase"); nextpos = spos + 8; cmdlen = length($0);
+    print substr($0,1,spos-1) "codebase" substr($0,nextpos,cmdlen);yup=0; 
+   }
+   else if(isoldpath){
+    print substr($0,1,isoldpath-1) substr($0,isoldpath+14,99);
+    yup=0;
+   }
+   else if(yup)
+    print;
+   }
+   yup=1;
+} 
+

@@ -1,0 +1,183 @@
+&apos;// GenFLinkM.bas
+&apos;//---------------------------------------------------------------
+&apos;// GenFLinkM - Generate hyperlink(s) for selected range.
+&apos;//		7/13/21.	wmk.	10:36
+&apos;//---------------------------------------------------------------
+
+public sub GenFLinkM()
+
+&apos;//	Usage.	macro call or
+&apos;//			call GenFLinkM()
+&apos;//
+&apos;//
+&apos;// Entry.	user has selected a range of cells in desired row(s) to
+&apos;//			extract the address field from the COL_ADDR column index
+&apos;//			and create a hyperlink to look up phone/address information
+&apos;//			from fastpeoplesearch.com
+&apos;//			cell B3 has city name
+&apos;//
+&apos;//	Exit.	each row selected has a hperlink added in the COL_HLINK
+&apos;//			column in the form:
+&apos;//			HYPERLINK(&quot;&lt;url&gt;&quot;) that will allow the end-user to click
+&apos;//			on the hyperlink url and be taken to a search webpage
+&apos;//
+&apos;// Calls.	
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;// 2/16/21.	wmk.	original code; adapted from GenHLinkM
+&apos;//	2/18/21.	wmk.	bug fix &quot;City&quot; being included in sCity.
+&apos;//
+&apos;//	Notes. Semicolon &quot;;&quot; MUST be used for the HYPERLINK paramters
+&apos;// delimiter in order for the hyperlinks to work in Excel.
+&apos;// The current sGenPhoneURL only generates links to the
+&apos;// truepeoplesearch.com website. It could possible be expanded in the
+&apos;//	future to be able to use.
+&apos;// Wishlist. Pick up COL_ADDR and COL_HLINK from predetermined cells
+&apos;// in the oRange.Sheet.
+&apos;//	Method. for each row, extract address field from COL_ADDR
+&apos;//		use sGenPhoneURL to generate url from address
+&apos;//     add HYPERLINK(&quot;&lt;url&gt;&quot;) to create hyperlink
+&apos;//		store hyperlink in row at COL_HLINK
+
+&apos;//	constants.
+&apos;// see Module header...
+const ROW_HEADING=4		&apos;// heading row index
+const COL_ADDR=1		&apos;// column index for extracting address
+const COL_FLINK=6		&apos;// column for fastpeople hyperlink
+const COL_CITY=1		&apos;// column for city
+const ROW_CITY=2		&apos;// row for city
+const COL_UNIT=2		&apos;// column index for unit
+const COL_B=1			&apos;// column index for col B
+const ROW_2=1			&apos;// row index for row 2
+
+&apos;// cell formatting constants.
+const LJUST=1		&apos;// left-justify HoriJustify
+const CJUST=2		&apos;// center HoriJustify
+const RJUST=0		&apos;// right-justify HoriJustify
+const YELLOW=16776960		&apos;// decimal value of YELLOW color
+const TXT_HLINK=&quot;HYPERLINK(&quot;&quot;&quot;	&apos;// HYPERLINK prefix
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+
+&apos;// processing variables.
+dim nRowsProcessed	 As Integer	&apos;// count of rows processed
+dim nRowCount		As Integer	&apos;// # rows to process
+dim sAddress As String		&apos;// address field from current row
+dim sURL	As String		&apos;// url generated from sAddress
+dim sHLink	As String		&apos;// HYPERTEXT link to store
+dim i		As Integer		&apos;// loop counter
+
+&apos;// XCell sheet objects
+dim oCellAddr as object		&apos;// address field
+dim oCellUnit	As Object	&apos;// unit field
+dim oCellFLink as object	&apos;// hyperlink field
+dim oCity 	As object		&apos;// city for sheet
+dim sCity	As String		&apos;// city from sheet
+dim sUnit	As String		&apos;// unit from sheet
+dim oCell		As Object	&apos;// working cell
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	
+	dim sCountStr 		As String
+	dim nColonPos		As Integer
+	dim sNumCount		As String
+	&apos;// extract city applying to sheet
+	oCity = oSheet.getCellByPosition(COL_CITY, ROW_CITY)
+	sCity = trim(oCity.String)
+	nColonPos = instr(sCity, &quot;:&quot;)
+	if nColonPos &gt; 0 then
+		sCity = trim(right(sCity, len(sCity)-nColonPos))
+	endif
+	
+	if len(sCity) = 0 then
+		sCity = &quot;Venice&quot;
+	endif
+	nRowsProcessed = 0		&apos;// clear processed count
+
+	&apos;// set row processing from oRange information
+&apos;	lThisRow = oRange.StartRow - 1		&apos;// start at -1 since increment first
+	lThisRow = ROW_HEADING
+	nRowCount = oRange.EndRow - lThisRow	&apos;// set row count to process
+
+	&apos;// get row count from B2.
+	oCell = oSheet.getCellByPosition(COL_B,ROW_2)		&apos;// Record Count: xxx
+	sCountStr = oCell.String
+	nColonPos = Instr(sCountStr, &quot;:&quot;)
+	sNumCount = Right(sCountStr, len(sCountStr)-nColonPos)
+	nRowCount = CInt(sNumCount)
+&apos;	nRowCount = oCell.getValue()
+	for i = 1 to nRowCount
+		lThisRow = lThisRow + 1		&apos;// advance current row
+		oCellAddr = oSheet.getCellByPosition(COL_ADDR, lThisRow)
+		oCellUnit = oSheet.getCellByPosition(COL_UNIT, lThisRow)
+		oCellFLink = oSheet.getCellByPosition(COL_FLINK, lThisRow)
+		sAddress = trim(oCellAddr.String)		&apos;// set cell address text
+		
+		if len(oCellUnit.String) = 0 then
+			sUnit = &quot;&quot;
+		else
+			sUnit = trim(oCellUnit.String)			&apos;// set unit text
+		endif
+		
+		if len(sAddress) = 0 then
+&apos;			msgBox(&quot;GenFLinkM - empty address field; halting process.&quot;)
+			oCellAddr.CellBackColor = YELLOW
+			exit for
+		endif	&apos;// null string - alert user, mark row and bail
+
+		&apos;// see what piece of oCellHLink contains HYPERLINK.. maybe function?
+&apos;XRay oCellHLink
+&apos;sLink = oCellHLink.String
+&apos;msgbox(&quot;HLink cell .String = &apos;&quot; + sLink + &quot;&apos;&quot;
+&apos;sLink = oCellHLink.getFormula()
+&apos;msgbox(&quot;HLink cell .Formula = &apos;&quot; + sLink + &quot;&apos;&quot;
+&apos;sLink = oCellHLink.Hyperlink
+&apos;msgbox(&quot;HLink cell .Hyperlink = &apos;&quot; + sLink + &quot;&apos;&quot;
+&apos;        if true then
+&apos;        if false then
+&apos;           GoTo Nextfor
+&apos;        endif
+
+		&apos;// Generate fastpeople.. URL
+		sURL = sGenFastURL(sAddress, sUnit, sCity)
+		sHLink = &quot;=&quot;+TXT_HLINK + sURL + CHR(34)+&quot;;&quot;+CHR(34) _
+	 + &quot;Click here to search&quot; + CHR(34) + &quot;)&quot;
+&apos;msgbox(&quot;Double quote = &quot; + ASC(&quot;&quot;&quot;&quot;) )
+&apos;msgbox(&quot;Generated URL =&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sURL + &quot;&apos;&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;Generated Hypertext link = &quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sHLink )
+
+&apos;		oCellHLink.String = sHLink
+		oCellFLink.setFormula(sHLink)
+		
+		
+Nextfor:
+		nRowsProcessed = nRowsProcessed + 1
+
+	next i
+	
+&apos;	msgbox(&quot;GenFLinkM - &quot; + nRowsProcessed + &quot; rows processed&quot;)
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+   msgbox(&quot;GenFLinkM - unprocessed error.&quot;)
+   GoTo NormalExit
+
+end sub		&apos;// end GenFLinkM	7/13/21.	10:36

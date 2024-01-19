@@ -1,0 +1,4 @@
+#test99.tmp
+#   5/4/22. wmk.	(automated) path corrections.
+ifeq ($(USER),ubuntu)
+endif

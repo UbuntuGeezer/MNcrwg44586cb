@@ -1,0 +1,61 @@
+# MakeFixDownload.tmp  - (template) makefile for Fix.vvvvv.sh in RefUSA-Downloads/Special.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 10/4/22.    wmk.   (automated) fix *pathbase for CB system.
+# 10/4/22.    wmk.   (automated) fix *pathbase for CB system.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#   5/4/22. wmk.	(automated) path corrections.
+#	4/24/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 4/24/22.	wmk.	code generalized for FL/SARA/86777;*pathbase*, 
+#			 *congterr*, *conglib* env vars introduced.
+# Legacy mods.
+# 9/1/21.	wmk.	original makefile.
+# 12/28/21.	wmk.	chmod 700 added to recipe so .sh will execute.
+# 3/14/22.	wmk.	terrase added for TX/HC/99999 support; chmod 700 
+# by the MakeSpecialRUdb makefile whenever there are errors in a
+# <special-db> download to be corrected by Fix.vvvvv.sql in the /Special
+# folder.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : ;
+.ONESHELL : ;
+specpath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Special
+ projpath = $(codebase)/Projects-Geany/SpecialRUdb
+ bashpath = $(codebase)/Procs-Dev
+
+# (specpath)/Fix.vvvvv.sh primary target
+#==================================================
+$(specpath)/Fix.vvvvv.sh : $(specpath)/Fix.vvvvv.sq $(specpath)/Fix.vvvvv.sql
+	cat $(bashpath)/hdrAnySQL_1.sh $(specpath)/Fix.vvvvv.sq \
+	 $(bashpath)/hdrAnySQL_2.sh > $@
+	sed -i 's?<filename>?Fix.vvvvv?g' $@
+	chmod +x $@
+
+$(specpath)/Fix.vvvvv.sq : $(specpath)/Fix.vvvvv.sql
+	bash $(bashpath)/AnySQLtoSQ.sh $(specpath) Fix.vvvvv
+
+$(specpath)/Fix.vvvvv.sql : ;
+
+#==================================================

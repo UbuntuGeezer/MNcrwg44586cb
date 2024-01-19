@@ -1,0 +1,147 @@
+# MakeSpecialSCdb.tmp - SpecialSCdb make template.
+#	7/6/23.	wmk.
+#
+# Usage. make -f MakeSpecialSCdb
+#	prior to make command run DoSed <db-name> mm dd [terrid]
+#
+# Entry. pathSCdefs.inc - include file SC path definitions
+#		pathSCdefs.inc derived from generic ~/include/pathSCdefs.i
+#			via Build dependency
+#		(vpath .db)Terryyy_SC.db - territory SC current download
+#		(vpath .csv) Mapyyy_SC.csv - territory SC .csv download raw data
+#		var postpath = postprocessing path to Terryyy/FixyyySC.sh
+ # var bashpath(codebase)
+#
+# Exit. primary target (specpath)/vvvvv.db built.
+#
+# Modification History.
+# ---------------------
+# 11/24/22.	wmk.	include path corrected to use *codebase; ForceBuild semaphore
+#			 introduced.
+# 5/8/23.	wmk.	comments tidied.
+# 7/6/23.	wmk.	change to use AnySQLtoSH for main recipe build.
+# Legacy mods.
+# 6/5/22.	wmk.	major rewrite of main recipe to use *make* with
+#			 HdrsSQLtoSH project.
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# Legacy mods.
+# 5/18/22.	wmk.	*pathbase* support; modified for TX/HDLG/99999; *..path*
+#			 var definitions trailing '/' dropped.
+# 5/30/22.	wmk.	consistency mods for future use; standardized back to
+#			 FL/SARA/86777.
+# 6/5/22.	wmk.	.sh recipes improved.
+# Legacy mod
+# 7/24/21.	wmk.	original makefile; adapted from MakeSpecialRUdb.tmp
+# 8/12/21.	wmk.	mod to get .sql from Special folder.
+# 8/13/21.	wmk.	removed redundant recipes for SCSpecTerr_1, SCSpecTerr_2.
+# 8/14/21.	wmk.	added (specpath)vvvvv.sql prerequisite to vvvvv.db recipe.
+# 9/4/21.	wmk.	leading 'bash' removed from primary target recipe; 
+#			 bashpath var added; vvvvv.db prerequisites simplified;
+#			 vvvvv.db recipe combined with others to remove prereqs;
+#			 AnySQLtoSQ simplifying conversion.
+#
+# Notes. DoSed prepares this makefile by changing v vvvv to the < special-id >
+#
+# This makefile creates a Special database from download data in 
+# Special/<area-name>.csv file. It uses the shell SCSpecTerr_db.sh to
+# create a new <area-name>.db database that has 3 tables:
+#	<area-name> - table created from extracted .csv records; typically
+#	   a street or known area (e.g. BirdBay)
+#	TerrList - table containing territory IDs and record counts for
+#	   each territory having records in <area-name> tabe
+#	Spec_SCBridge - table of partially populated Bridge records
+#	  reformatted from <area-name> records
+
+.ONESHELL : ;
+.NOTPARALLEL : ;
+.PHONY : WarnUser NeverMake ;
+
+# set folderbase by host system.
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+incroot = $(codebase)/include/
+ projpath = $(codebase)/Projects-Geany/SpecialSCdb
+specpath = $(pathbase)/RawData/SCPA/SCPA-Downloads/Special
+ bashpath = $(codebase)/Procs-Dev
+vpath %.i $(codebase)/include
+# altproj = $(codebase)/Projects-Geany/HdrsSQLtoSH
+# altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# primary build target ($)specpath/vvvvv.db
+#=====================================================================
+$(specpath)/vvvvv.db  : $(specpath)/vvvvv.sql \
+ $(projpath)/ForceBuild
+	cp -p $(specpath)/vvvvv.sql $(projpath)/SCSpecTerr_db.sql
+	# ** replace MakeHdrsSQLtoSH with AnySQLtoSH for consistency **
+	#cd $(altproj);./DoSed.sh $(projpath) SCSpecTerr_db
+	#$(MAKE) -f $(altproj)/MakeHdrsSQLtoSH
+	cd $(altproj);./DoSed.sh $(projpath) SCSpecTerr_db SCSpecTerr_db.hd1 \
+	 SCSpecTerr_db.hd2
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/SCSpecTerr_db.sh;then \
+	 echo "** SCSpecTerr_db.sh build failed - aborting **";exit 1;fi
+	$(projpath)/SCSpecTerr_db.sh vvvvv  @@  zz
+
+
+$(specpath)/vvvvv.sql : 
+	if ! test -f $@;then \
+	 echo " ** missing query vvvvv.sql required for $(specpath)/vvvvv.csv **";exit 1;fi
+#	$(error ** missing query vvvvv.sql required for $(specpath)/vvvvv.csv **)
+
+$(projpath)/ForceBuild : ;
+	if ! test -f $@;then \
+	 echo " ** missing ForceBuild semaphore file for SpecialSCdb build **";exit 1;fi
+	 
+#===============================================================================
+# end MakeSpecialsSCdb makefile.
+
+# legacy recipes.
+#$(projpath)/SCSpecTerr_db.sh : $(projpath)/SCSpecTerr_db.sql \
+# $(projpath)/SCSpecTerr_1.sh $(projpath)/SCSpecTerr_2.sh
+#	cat (projpath)/SCSpecTerr_1.sh $(projpath)/SCSpecTerr_db.sql $(projpath)/SCSpecTerr_2.sh > $@
+#	sed -i 's?<filename>?SCSpecTerr_db?g' $@
+	
+#$(projpath)/SCSpecTerr_db.sql : $(projpath)/SCSpecTerr_db.sq 
+#	cd $(projpath)
+#	# convert .sq file to .sql file of echo'ss.
+#	echo 's?\"?\\\\"?g' > sedatives.txt
+#	echo "s?^?echo \"?g" >> sedatives.txt
+#	echo "s?\$$?\" >> SQLTemp.sql?g" >> sedatives.txt
+#	echo "1s?>>?>?g" >> sedatives.txt
+#	sed  -f sedatives.txt $(projpath)/SCSpecTerr_db.sq > $@
+
+#$(projpath)/SCSpecTerr_db.sq : $(specpath)/vvvvv.sql
+#	cp $(specpath)/vvvvv.sq $@
+
+#$(projpath)/SCSpecTerr_1.sh : 
+#	if ! -f $@;then \
+#	 echo "** missing SCSpecTerr_1.sh - required for build vvvvv.db **";exit 1;fi
+#	$(error ** missing SCSpecTerr_1.sh - required for build vvvvv.db **)
+
+#$(projpath)/SCSpecTerr_2.sh : ;
+#	if ! -f $@;then \
+#	 echo "** missing SCSpecTerr_2.sh - required for build vvvvv.db **";exit 1;fi
+#	$(error ** missing SCSpecTerr_2.sh - required for build vvvvv.db **)
+
+#================================================================
+
+pathSCdefs.i : ;
+
+
+NeverMake : ;
+

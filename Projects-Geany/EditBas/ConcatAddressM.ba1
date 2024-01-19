@@ -1,0 +1,162 @@
+&apos;// ConcatAddressM.bas
+&apos;//---------------------------------------------------------------
+&apos;// ConcatAddressM - Concatenate Number, Predirectional, Street,
+&apos;//	  Street Suffix, Unit into single address field.
+&apos;//		10/12/20.	wmk.	11:00
+&apos;//---------------------------------------------------------------
+
+public sub ConcatAddressM()
+
+&apos;//	Usage.	macro call or
+&apos;//			call ConcatAddressM()
+&apos;//
+&apos;// Entry.	user has selected row(s) in which to concatenate address fields
+&apos;//			each row should have an empty column to its right in which
+&apos;//			to place the concatenated address information
+&apos;//
+&apos;//	Exit.	concatenated address is in form:
+&apos;//			&lt;number&gt;&lt;b&gt;&lt;b&gt;&lt;b&gt;&lt;Predir&gt;&lt;b&gt;&lt;Street&gt;&lt;b&gt;&lt;Street Suffix&gt;&lt;b_35&gt;&lt;Unit&gt;
+&apos;//			where &lt;b&gt; is a single space
+&apos;//			&lt;b_35&gt; is blank field ending in column 35
+&apos;//			also trim all source fields to eliminate house numbers
+&apos;//			which were imported as 10-character, right-justified,
+&apos;//			space-filled fields
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	8/21/20.	wmk.	original code; adapted from GenHLinkM
+&apos;//	8/22/20.	wmk.	modified to replace all address fields with
+&apos;//						trimmed strings
+&apos;//	8/28/20.	wmk.	source and target columns advanced by 1 to acccount for
+&apos;//						new &quot;Found Name&quot; column in standardized
+&apos;//						territory worksheet
+&apos;//	9/3/20.		wmk.	shift concatentated address to uppercase for consistency
+&apos;//						with addresses imported from SC-PA
+&apos;//	9/15/20.	wmk.	modified to insert 3 spaces after number token
+&apos;//						to match SCPA download of addresses; if there is
+&apos;//						a &quot;pre-direction&quot; token, it is now moved to the
+&apos;//						&quot;post-direction&quot; to make directional entries consistent
+&apos;//						with RefUSA download data
+&apos;//	9/16/20.	wmk.	fix bug introduced with 9/15 modifications where
+&apos;//						full address being stored in wrong column
+&apos;//	9/18/20.	wmk.	mod to space out unit 17 spaces from end of street;
+&apos;//						dead code deleted
+&apos;//	10/8/20.	wmk.	mod to space out unit 16 instead of 17 spaces from
+&apos;//						end of street
+&apos;// 10/12/20.	wmk.	mod to space out unit to always start in col 36
+&apos;//
+&apos;//	Notes. Column indexes for the address fields are for import spreadsheet
+&apos;// taken from ReferenceUSA .xls format spreadsheet
+
+&apos;//	constants.
+const COL_NUMBER=3			&apos;// house number
+const COL_PREDIR=4			&apos;// street pre-direction
+const COL_STREET=5			&apos;// street name
+const COL_SUFFIX=6			&apos;// street suffix (e.g. Ave)
+const COL_POSTDIR=7			&apos;// street post direction
+const COL_UNIT=8			&apos;// unit/apt #
+const COL_FULLADDR=9		&apos;// full concatenated address
+const YELLOW=16776960		&apos;// decimal value of YELLOW color
+const BLANKS_30=&quot;                              &quot;	&apos;// exactly 30 spaces
+const BLANKS_17=&quot;                 &quot;	&apos;// exactly 17 spaces
+const BLANKS_16=&quot;                &quot;	&apos;// exactly 16 spaces
+const BLANKS_3=&quot;   &quot;				&apos;// exactly 3 spaces
+const BLANKS_2=&quot;  &quot;					&apos;// exactly 2 spaces
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+
+&apos;// processing variables.
+dim nRowsProcessed As Integer	&apos;// count of rows processed
+dim nRowCount		As Integer	&apos;// # rows to process
+dim sAddress As String		&apos;// address field from current row
+dim sPrefix	As String		&apos;// url generated from sAddress
+dim sStreet	As String		&apos;// HYPERTEXT link to store
+dim sSuffix As String		&apos;// 
+dim sUnit	As String	
+dim i		As Integer		&apos;// loop counter
+dim nBlanks		As Integer		&apos;// space count to insert to fill 35 columns
+
+&apos;// XCell sheet objects
+dim oCellAddr as object		&apos;// address field
+dim oCellHLink as object	&apos;// hyperlink field
+dim oCity 	As object		&apos;// city for sheet
+dim sCity	As String		&apos;// city from sheet
+dim sPreDir	As String		&apos;// prefix direction
+dim sPostDir	As String		&apos;// post-direction token
+
+&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	nRowsProcessed = 0		&apos;// clear processed count
+
+	&apos;// set row processing from oRange information
+	lThisRow = oRange.StartRow - 1		&apos;// start at -1 since increment first
+	nRowCount = oRange.EndRow - lThisRow	&apos;// set row count to process
+	for i = 1 to nRowCount
+		lThisRow = lThisRow + 1		&apos;// advance current row
+		oCellAddr = oSheet.getCellByPosition(COL_NUMBER, lThisRow)
+		oCellAddr.String = trim(oCellAddr.String)		
+		sAddress = oCellAddr.String						&apos;// set number token text
+		oCellAddr.String = trim(oCellAddr.String)		&apos;// set cell address text
+		oCellAddr = oSheet.getCellByPosition(COL_PREDIR, lThisRow)
+		sPreDir = oCellAddr.String				&apos;// save pre-direction for post..
+		oCellAddr = oSheet.getCellByPosition(COL_STREET, lThisRow)
+		oCellAddr.String = trim(oCellAddr.String)		&apos;// set street token
+		sAddress = sAddress + BLANKS_3 + oCellAddr.String	&apos;// 3 spaces past number
+		oCellAddr = oSheet.getCellByPosition(COL_SUFFIX, lThisRow)
+		oCellAddr.String = trim(oCellAddr.String)
+		sAddress = sAddress + &quot; &quot; + oCellAddr.String	&apos;// set Ave, St, etc
+		oCellAddr = oSheet.getCellByPosition(COL_POSTDIR, lThisRow)
+&apos;		oCellAddr.String = trim(oCellAddr.String)		&apos;// get post-direction
+		sPostDir = trim(oCellAddr.String)		&apos;// get post-direction
+		if len(sPreDir) &gt; 0 then
+			sAddress = sAddress + &quot; &quot; + sPreDir			&apos;// set non-empty pre-direction
+		endif
+	    if len(sPostDir) &gt; 0 then
+			sAddress = sAddress + &quot; &quot; + sPostDir	&apos;// set post-direction
+	    endif	&apos;// end post-direction present conditional
+		oCellAddr = oSheet.getCellByPosition(COL_UNIT, lThisRow)
+		sUnit = trim(oCellAddr.String)
+		&apos;// add unit text spaced out to col 36
+		if len(sUnit) &gt; 0 then
+            nBlanks = 35 - len(sAddress)		&apos;// get space count
+            sAddress = sAddress + left(BLANKS_30, nBlanks) + sUnit
+&apos;			sAddress = sAddress + BLANKS_16 + oCellAddr.String	&apos;// add unit text
+		endif
+	
+		oCellAddr = oSheet.getCellByPosition(COL_FULLADDR, lThisRow)
+		sAddress = trim(sAddress)
+		if len(sAddress) = 0 then
+			oCellAddr.String = &quot;&quot;
+			oCellAddr.CellBackColor = YELLOW
+			msgbox(&quot;At row &quot; + lThisRow + &quot;... empty address - skipped&quot;)
+		else
+			oCellAddr.String = UCase(sAddress)
+		endif	&apos;// end empty address fields conditional
+		
+Nextfor:
+		nRowsProcessed = nRowsProcessed + 1
+	next i		&apos;// advance to next row
+	
+NormalExit:
+	msgbox(&quot;ConcatAddressM complete. &quot; + nRowsProcessed + &quot; rows processed.&quot;)
+	exit sub
+	
+ErrorHandler:	
+	msgbox(&quot;ConcatAddressM - unprocessed error.&quot;)
+	GoTo NormalExit
+
+end sub		&apos;// end ConcatAddressM	10/12/20.

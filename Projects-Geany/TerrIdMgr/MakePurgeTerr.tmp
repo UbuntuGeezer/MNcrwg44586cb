@@ -1,0 +1,67 @@
+# MakePurgeTerr.tmp - *make* file for PurgeTerr build.
+#	6/4/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 5/30/23.	wmk.	original code.
+# 6/4/23.	wmk.	exit 2 stops removed.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/TerrIdMgr
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	if test -f $(projpath)/CheckTerrIDData.sh;then rm CheckTerrIDData.sh;fi
+	if test -f $TEMP_PATH/FoundTerritory.txt;then rm $TEMP_PATH/FoundTerritory.txt;fi
+	cd $(altproj);./DoSed.sh $(projpath) CheckTerrIDData emptypreamble.sh checkpostscript.sh
+	$(MAKE) --silent -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/CheckTerrIDData.sh;then \
+	 echo "** Purgatory.sh generation failed **";exit 1;fi
+	$(projpath)/CheckTerrIDData.sh
+	if [ $$? -eq 0 ];then \
+	 echo " ** cannot purge territory yyy - TerrIDData.Territory is active"; \
+	 echo " ** Deactivate territory before attempting purge operation. **";exit 1;fi
+	#exit 2
+	if test -f $(projpath)/Purgatory.sh;then rm Purgatory.sh;fi 
+	cd $(altproj);./DoSed.sh $(projpath) Purgatory
+	$(MAKE) --silent -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/Purgatory.sh;then \
+	 echo "** Purgatory.sh generation failed **";exit 1;fi
+	echo "** run Purgatory.sh to delete territory **"
+	$(projpath)/Purgatory.sh yyy
+	echo "Territory yyy purged from /DB-Dev databases."
+	#exit 2
+	$(projpath)/PurgeSpecial.sh > /dev/null
+	echo "Territory yyy purged from Special databases."
+	cd $(pathbase)/$(rupath)
+	rm -rv Terryyy
+	cd $(pathbase)/$(scpath)
+	rm -rv Terryyy
+	cd $(pathbase)/TerrData
+	rm -rv Terryyy
+	
+#==================================================================
+# end MakePurgeTerr.tmp

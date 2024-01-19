@@ -1,0 +1,308 @@
+&apos;// TSToEdit.bas
+&apos;//---------------------------------------------------------------
+&apos;// TSToEdit - Convert TS formatted territory to Admin-Edit format.
+&apos;//		9/12/20.	wmk.	08:00
+&apos;//---------------------------------------------------------------
+
+public sub TSToEdit()
+
+&apos;//	Usage.	macro call or
+&apos;//			call TSToEdit()
+&apos;//
+&apos;// Entry.	user has TS formatted territory selected
+&apos;// following are the columns A - id, B - name, C - phone_number
+&apos;//							  D - street_address E - city_state_zip
+&apos;//							  F - notes
+&apos;//
+&apos;//	Exit.	sheet reformatted to Admin-Edit sheet format
+&apos;// following are the Admin-Edit columns: A - OwningParcel, B - UnitAddress,
+&apos;//		C - Resident1, D - Resident2, E - Phone1, F - Phone2,
+&apos;//		G - RefUSA/Phone, H - search/truepeople, I - search/411,
+&apos;//		J - search/whitepages, K - SubTerritory, L - CongTerrID,
+&apos;//		M - DoNotCall, N - RSO, O - Foreign, P - RecordDate
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/10/20.		wmk.	original code
+&apos;// 9/12/20.		wmk.	bug fixes with column headings
+&apos;//
+&apos;//	Notes. In the Admin-Edit sheet, only columns B, C, E come from column
+&apos;// data in the TS formatted sheet. The header information is assumed to
+&apos;// contain the values for column A, column K and column L. Column O
+&apos;// will be flagged with an &apos;x&apos; if column F (notes) contains &apos;foreign&apos;
+&apos;// (not case-sensitive). Column M will be flagged with an &apos;x&apos; if column F
+&apos;// (notes) contains &apos;dnc&apos; (not case-sensitive). Column N will be flagged 
+&apos;//	with an &apos;x&apos; if column F (notes) contains &apos;rso&apos; (not case-sensitive).
+&apos;//
+&apos;// Method.
+&apos;//		move header information B1-I4 to A1
+&apos;//		change column A heading to &quot;OwningParcel&quot;
+&apos;//		change column E heading to &quot;Phone1&quot;
+&apos;//		set column G - P headings to &quot;RefUSA/PHone&quot;..&quot;RecordDate&quot;
+&apos;//		loop on all active rows (pass 1)
+&apos;//			process column F (notes); if &apos;dnc&apos; set &apos;x&apos; in column M this row
+&apos;//				if &apos;foreign&apos; set &apos;x&apos; in column O this row,
+&apos;//				if &apos;rso&apos; set &apos;x&apos; in column N this row
+&apos;//			set column F to &quot;&quot; (Phone2)
+&apos;//			set column A to property ID from E1
+&apos;//			set column E to column C (phone_number)
+&apos;//			set column C to column B (name)
+&apos;//			set column B to column D (street_address)
+&apos;//			set column D to &quot;&quot; (Resident2)
+&apos;//			set column K to SubTerritory from B4
+&apos;//			set column L to CongTerrID from D4
+&apos;//		next row
+&apos;//		select all active rows
+&apos;//		use GenELinkM to generate all hyperlinks
+&apos;//		set H1 to &quot;Admin-Edit formatted sheet&apos;
+&apos;//		set all headings bold
+&apos;//		set EditColWidths
+&apos;//		force recalc
+
+&apos;//	constants.
+const COL_PARCEL=0		&apos;// &quot;OwningParcel&quot; column index
+const COL_A=0
+const COL_B=1
+const COL_C=2	
+const COL_D=3
+const COL_E=4
+const COL_F=5
+const COL_G=6			&apos;// column G index
+const COL_H=7			&apos;// column H index
+const COL_I=8			&apos;// column I index
+const COL_J=9			&apos;// column J index
+const COL_K=10			&apos;// column K index
+const COL_L=11			&apos;// column L index 
+const COL_M=12			&apos;// column M index (DoNotCall)
+const COL_N=13			&apos;// column N index (RSO)
+const COL_O=14			&apos;// column O index (Foreign)
+const COL_P=15			&apos;// column P index (RecordDate)
+const ROW_1=0
+const ROW_2=1
+const ROW_3=2
+const ROW_4=3
+const ROW_HEADING=4		&apos;// headings row index
+const LJUST=1		&apos;// left-justify HoriJustify				&apos;// mod052020
+const CJUST=2		&apos;// center HoriJustify						&apos;// mod052020
+const RJUST=3		&apos;// right-justify HoriJustify				&apos;// mod052320
+const MDYY=30		&apos;// &apos;M/D/YY&apos; format value
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+dim oMrgRange	As Object	&apos;// merge range
+
+dim oCell	As Object		&apos;// cell working on
+dim oCell2	As Object		&apos;// related cell to cell working on
+dim oCellPhone	As Object	&apos;// cell with Phone1
+dim i		As Integer		&apos;// loop index
+dim sPropID	As String		&apos;// property ID
+dim sSubTerr	As String	&apos;// subterritory
+dim sCongTerr	As String	&apos;// cong terr ID
+dim lRowCount	As Long		&apos;// row count of addresses
+dim dDate		As Double	&apos;// date value
+dim sCityStZip	As String	&apos;// concatenated City, State, Zip
+dim sNotes		As String	&apos;// notes field
+dim	nCols		As Integer	&apos;// column count to remove
+dim nPos		As Integer	&apos;// position of string within notes
+
+	&apos;// code.
+	ON ERROR GoTo ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	
+&apos;//		Move B1-I4 entries to A1
+	oMrgRange = oRange
+	oMrgRange.StartColumn = COL_B
+	oMrgRange.EndColumn = COL_I
+	oMrgRange.StartRow = ROW_1
+	oMrgRange.EndRow = ROW_4
+dim oTarget as new com.sun.star.table.CellAddress
+	oTarget.Sheet = oRange.Sheet
+	oTarget.Column = COL_A
+	oTarget.Row = ROW_1
+	oSheet.moveRange(oTarget,oMrgRange)
+
+	&apos;// pick up row count from header
+	oCell =	oSheet.getCellByPosition(COL_B, ROW_2)
+	lRowCount = oCell.Value
+
+	&apos;// pick up propertyID from header
+	oCell = oSheet.getCellByPosition(COL_E, ROW_1)
+	sPropID = oCell.String
+	
+	&apos;// pick up SubTerritory from header B4
+	oCell =	oSheet.getCellByPosition(COL_B, ROW_4)
+	sSubTerr = oCell.String
+	
+	&apos;// pick up CongTerrID from header D4
+	oCell =	oSheet.getCellByPosition(COL_D, ROW_4)
+	sCongTerr = oCell.String
+	
+&apos;//		change column A heading to &quot;OwningParcel&quot;
+	oCell =	oSheet.getCellByPosition(COL_A, ROW_HEADING)
+	oCell.String = &quot;OwningParcel&quot;
+	
+&apos;//		change column B heading to &quot;UnitAddress&quot;
+	oCell =	oSheet.getCellByPosition(COL_B, ROW_HEADING)
+	oCell.String = &quot;OwningParcel&quot;
+
+&apos;//		change column D heading to &quot;Resident2&quot;
+	oCell =	oSheet.getCellByPosition(COL_D, ROW_HEADING)
+	oCell.String = &quot;Resident2&quot;
+
+&apos;//		change column C heading to &quot;Resident1&quot;
+	oCell =	oSheet.getCellByPosition(COL_C, ROW_HEADING)
+	oCell.String = &quot;Resident1&quot;
+
+&apos;//		change column E heading to &quot;Phone1&quot;
+	oCell =	oSheet.getCellByPosition(COL_E, ROW_HEADING)
+	oCell.String = &quot;Phone1&quot;
+	
+&apos;//		change column F heading to &quot;Phone2&quot;
+	oCell =	oSheet.getCellByPosition(COL_F, ROW_HEADING)
+	oCell.String = &quot;Phone2&quot;
+	
+&apos;//		set column G - P headings to &quot;RefUSA/Phone&quot;..&quot;RecordDate&quot;
+	oCell =	oSheet.getCellByPosition(COL_G, ROW_HEADING-1)
+	oCell.String = &quot;RefUSA&quot;
+	oCell.HoriJustify = CJUST
+	oCell =	oSheet.getCellByPosition(COL_G, ROW_HEADING)
+	oCell.String = &quot;Phone Number&quot;
+	oCell.HoriJustify = CJUST
+	oCell =	oSheet.getCellByPosition(COL_H, ROW_HEADING-1)
+	oCell.String = &quot;search&quot;
+	oCell.HoriJustify = CJUST
+	oCell =	oSheet.getCellByPosition(COL_H, ROW_HEADING)
+	oCell.String = &quot;truepeople&quot;
+	oCell.HoriJustify = CJUST
+	oCell =	oSheet.getCellByPosition(COL_I, ROW_HEADING-1)
+	oCell.String = &quot;search&quot;
+	oCell.HoriJustify = CJUST
+	oCell =	oSheet.getCellByPosition(COL_I, ROW_HEADING)
+	oCell.String = &quot;411&quot;
+	oCell.HoriJustify = CJUST
+	oCell =	oSheet.getCellByPosition(COL_J, ROW_HEADING-1)
+	oCell.String = &quot;search&quot;
+	oCell.HoriJustify = CJUST
+	oCell =	oSheet.getCellByPosition(COL_J, ROW_HEADING)
+	oCell.String = &quot;whitepages&quot;
+	oCell.HoriJustify = CJUST
+	oCell =	oSheet.getCellByPosition(COL_K, ROW_HEADING)
+	oCell.String = &quot;SubTerritory&quot;
+	oCell.HoriJustify = CJUST
+	oCell =	oSheet.getCellByPosition(COL_L, ROW_HEADING)
+	oCell.String = &quot;CongTerrID&quot;
+	oCell.HoriJustify = CJUST
+	oCell =	oSheet.getCellByPosition(COL_M, ROW_HEADING)
+	oCell.String = &quot;DoNotCall&quot;
+	oCell.HoriJustify = CJUST
+	oCell =	oSheet.getCellByPosition(COL_N, ROW_HEADING)
+	oCell.String = &quot;RSO&quot;
+	oCell.HoriJustify = CJUST
+	oCell =	oSheet.getCellByPosition(COL_O, ROW_HEADING)
+	oCell.String = &quot;Foreign&quot;
+	oCell.HoriJustify = CJUST
+	oCell =	oSheet.getCellByPosition(COL_P, ROW_HEADING)
+	oCell.String = &quot;RecordDate&quot;
+	oCell.HoriJustify = CJUST
+
+	lThisRow = ROW_HEADING
+&apos;// loop on all active rows
+	for i = 0 to lRowCount-1
+		lThisRow = lThisRow + 1
+&apos;//			process column F (notes); if &apos;dnc&apos; set &apos;x&apos; in column M this row
+&apos;//				if &apos;foreign&apos; set &apos;x&apos; in column O this row,
+&apos;//				if &apos;rso&apos; set &apos;x&apos; in column N this row
+&apos;//			set column F to &quot;&quot; (Phone2)
+		oCell =	oSheet.getCellByPosition(COL_F, lThisRow)
+		sNotes = LCase(trim(oCell.String))
+		oCell.String = &quot;&quot;
+		nPos = InStr(sNotes, &quot;dnc&quot;)
+		if nPos &gt; 0 then
+			oCell2 = oSheet.getCellByPosition(COL_M, lThisRow)
+			oCell2.String = &quot;x&quot;
+			oCell2.HoriJustify = CJUST
+		endif
+		nPos = InStr(sNotes, &quot;foreign&quot;)
+		if nPos &gt; 0 then
+			oCell2 = oSheet.getCellByPosition(COL_O, lThisRow)
+			oCell2.String = &quot;x&quot;
+			oCell2.HoriJustify = CJUST
+		endif
+		nPos = InStr(sNotes, &quot;rso&quot;)
+		if nPos &gt; 0 then
+			oCell2 = oSheet.getCellByPosition(COL_N, lThisRow)
+			oCell2.String = &quot;x&quot;
+			oCell2.HoriJustify = CJUST
+		endif
+		
+		&apos;//	set column A to property ID from E1
+		oCell =	oSheet.getCellByPosition(COL_A, lThisRow)
+		oCell.String = sPropID
+		
+		&apos;//	set column E to column C (phone_number)
+		oCell =	oSheet.getCellByPosition(COL_C, lThisRow)
+		oCell2 = oSheet.getCellByPosition(COL_E, lThisRow)
+		oCell2.String = oCell.String
+
+		&apos;//		set column C to column B (name)
+		oCell2 = oSheet.getCellByPosition(COL_B, lThisRow)
+		oCell.String = oCell2.String
+
+		&apos;//		set column B to column D (street_address)
+		oCell =	oSheet.getCellByPosition(COL_D, lThisRow)
+		oCell2.String = oCell.String
+
+		&apos;//		set column D to &quot;&quot; (Resident2)
+		oCell.String = &quot;&quot;
+		
+		&apos;//		set column K to SubTerritory from B4
+		oCell =	oSheet.getCellByPosition(COL_K, lThisRow)
+		oCell.String = sSubTerr
+	
+		&apos;//		set column L to CongTerrID from D4
+		oCell =	oSheet.getCellByPosition(COL_L, lThisRow)
+		oCell.String = sCongTerr
+
+	next i
+
+	&apos;//	select all active rows
+	&apos;//	use GenELinkM to generate all hyperlinks
+	SelectActiveRows()
+	GenELinkM()
+	
+	&apos;//	set H1 to &quot;Admin-Edit formatted sheet&apos;
+	oCell =	oSheet.getCellByPosition(COL_H, ROW_1)
+	oCell.String = &quot;Admin-Edit formatted sheet&quot;
+		
+	&apos;//	set all headings bold
+	BoldHeadings()
+	
+	&apos;//	set EditColWidths
+	SetEditColWidths()
+	
+	&apos;//	force recalc
+	ForceRecalc()
+	
+	&apos;// restore selection
+	SetSelection(oRange)
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;TSToEdit - unprocessed error.&quot;)
+	GoTo NormalExit
+
+end sub		&apos;// end TSToEdit		9/12/20

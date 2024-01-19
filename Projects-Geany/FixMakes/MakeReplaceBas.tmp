@@ -1,0 +1,72 @@
+# MakeReplaceBas.tmp - Makefile (template) for MakeReplaceBas.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#   5/4/22. wmk.	(automated) path corrections.
+#   5/4/22. wmk.	(automated) path corrections.
+#   5/4/22. wmk.	(automated) path corrections.
+#	4/19/22.	wmk.
+#
+# This makefile is edited by DoSed.sh with <basmacro> <basfile> substituted
+# throughout. <basmacro> will be the name of a .bas source file with no
+# filename extension; <basmodfile> will be the complete name of a module file with
+# the .bas filename extension.
+#
+# Modification History.
+# ---------------------
+# 3/8/22.	wmk.	original makefile; adapted from MakeExtractBas;
+#			 add ampersand conversion to sed; note & conversion must come
+#			 first to avoid screwing up other XML & fields.
+# 4/19/22.	wmk.	folderbase ifndef included;bassedatives.txt used for
+#			 *sed* editing from .bas to .xba format (see CopyBASoverXBA.sh);
+#			 major change to just replace basmacro within .bas module file;
+#			 fix day 1 bug in *projpath* definition.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : Always JustDoIt
+ projpath = $(codebase)/Projects-Geany/EditBas
+
+# <filepath>/<filebase>.sql
+#=======================================================
+Always : JustDoIt
+	cd $(projpath)/
+	cp <basmacro>.bas $$TEMP_PATH/scratch.bas
+	#sed -i  -f bassedatives.txt $$TEMP_PATH/scratch.bas
+	# delete 1st and last lines of new .bas
+	sed -i "/\/\ <basmacro>.bas/d;/\/\*\*\//d" $$TEMP_PATH/scratch.bas
+	cp <basmodfile>.bas scratch.bas
+	sed -i "1,4d" scratch.bas
+	# find module.bas in scratch.bas file; read lines from stripped .bas file
+	mawk "/\/\/ <basmacro>.bas/{f=1;print;while(getline < \"$$TEMP_PATH/scratch.bas\")\
+	 {print}}/\/\*\*\//{f=0}!f" scratch.bas > new<basmodfile>.bas
+#	$(AWK) "/<basmacro>.bas/,/\/\*\*\//" scratch.bas > new<basmodfile>.bas
+	sed -i '1i newline\;' new<basmodfile>.bas
+	sed -i "1r ModuleHdr.xba" new<basmodfile>.bas
+	sed -i "1d" new<basmodfile>.bas
+	mv <basmodfile>.bas old<basmodfile>.bas
+	mv new<basmodfile>.bas ./<basmodfile>.bas
+	echo "module <basmacro>.bas replaced into local <basmodfile>.bas..."
+	echo "use CopyBASoverXBA to copy the new <basmodfile> over to a new <xbafile>"
+	echo "use PutXBAModule.sh to copy the new <xbafile> over GitHub/<xbafile> after changes checked."
+
+#=======================================================
+JustDoIt: ;

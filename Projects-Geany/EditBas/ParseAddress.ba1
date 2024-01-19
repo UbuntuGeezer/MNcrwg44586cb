@@ -1,0 +1,87 @@
+&apos;// ParseAddress.bas - Parse address into multiple fields.
+&apos;//---------------------------------------------------------------
+&apos;// ParseAddress - Parse address into multiple fields.
+&apos;//		2/19/21.	wmk.	13:34
+&apos;//---------------------------------------------------------------
+
+public sub ParseAddress( psAddress AS String, psSeps As String, _
+				psTokens() AS String )
+
+&apos;//	Usage.	macro call or
+&apos;//			call ParseAddress( sAddress, sSeps, sTokens() )
+&apos;//
+&apos;//		sAddress = address string to parse
+&apos;//		sSeps = string of legal separators, if empty, comma will be used
+&apos;//		sTokens = (returned) array of tokens extracted from sAddress
+&apos;//
+&apos;// Entry.	
+&apos;//
+&apos;//	Exit.	sTokens contains parsed fields from sAddress
+&apos;//			UBound(sTokens) will allow the caller to get token count
+&apos;//
+&apos;// Calls. Crack.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	2/16/21.	wmk.	original code
+&apos;// 2/19/21.	wmk.	bug fixes to satisfy OPTION EXPLICIT
+&apos;//
+&apos;//	Notes. Addresses are all over the show, whether dealing with search
+&apos;// engines or downloads. This little guy parses any address field
+&apos;// into an array.
+&apos;//	Compensates for bug in Crack where source string not being reduced.
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim sAddress	As String		&apos;// copy of passed address
+dim sArray()	AS String
+dim sSepFnd		AS String		&apos;// separator found
+dim sToken		AS String		&apos;// token extracted
+dim sSource		AS String		&apos;// source string remaining
+dim nTokens		AS Integer		&apos;// token count
+dim bContinue	AS Boolean		&apos;// loop control flag
+dim sSepList	As String		&apos;// local separator list
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	sAddress = psAddress
+	sSepList = psSeps
+	sSepFnd = &quot;&quot;
+	sToken = &quot;&quot;
+	redim psTokens()
+	nTokens = 0
+	if len(sSepList) = 0 then
+		sSepList = &quot; &quot;			&apos;// default to space
+	endif
+	
+	if len(sAddress) = 0 then
+		GoTo NormalExit
+	endif
+	
+	bContinue = len(sAddress) &gt; 0
+	Do While bContinue
+		Crack(sAddress, sSepList, sToken, sSepFnd)
+&apos;		if len(sAddress) &gt; len(sToken) then
+&apos;		   sAddress = Right(sAddress,len(sAddress)-len(sToken)-1)
+&apos;		else
+&apos;		   sAddress =&quot;&quot;
+&apos;		endif
+		if len(sToken) = 0 then	&apos;// flush multiple seps
+		   GoTo NextToken
+		endif
+		bContinue = len(sAddress) &gt; 0
+		redim preserve psTokens(nTokens)
+		psTokens(nTokens) = sToken
+		nTokens = nTokens + 1 
+NextToken:		
+	Loop
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;ParseAddress - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end ParseAddress	2/19/21.	13:34

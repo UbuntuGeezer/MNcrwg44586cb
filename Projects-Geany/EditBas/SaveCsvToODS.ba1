@@ -1,0 +1,70 @@
+&apos;// SaveCsvToODS.bas
+&apos;//---------------------------------------------------------------
+&apos;// SaveCsvToODS - Save current sheet (.csv) to .ods sheet file.
+&apos;//		10/12/20.	wmk.	13:45
+&apos;//---------------------------------------------------------------
+
+public sub SaveCsvToODS()
+
+&apos;//	Usage.	macro call or
+&apos;//			call SaveCsvToODS()
+&apos;//
+&apos;// Entry.	ThisComponent.URL = &quot;file://&lt;filepath to this Doc&gt;
+&apos;//
+&apos;//	Exit.	file save to entry URL modified to &apos;.ods&apos;
+&apos;//			user focused in new workbook
+&apos;//			goCurrDocument set for return to this document
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	10/11/20.		wmk.	original code
+&apos;// 7/9/21.			wmk.	set up for return to goCurrDocument
+&apos;//
+&apos;//	Notes.
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim sDocURL		As String	&apos;// document URL
+dim nURLlen		As Integer	&apos;// URL length
+dim sURLBase	As String	&apos;// base of new URL
+dim sNewURL		As String	&apos;// new full URL for file save
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	sDocURL = ThisComponent.getURL()
+	nURLlen = len(sDocURL)
+	sURLBase = left(sDocURL, nURLLen-4)
+	sNewURL = sURLBase + &quot;.ods&quot;
+	dim document   as object
+
+dim dispatcher as object
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+goCurrDocument = document							&apos;// mod070921
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dim args1(1) as new com.sun.star.beans.PropertyValue
+args1(0).Name = &quot;URL&quot;
+&apos;args1(0).Value = &quot;file:///media/ubuntu/Windows/Users/Bill/Documents/Cong-Files/Territories/csvs-Dev/Terr102.ods&quot;
+args1(0).Value = sNewURL
+args1(1).Name = &quot;FilterName&quot;
+args1(1).Value = &quot;calc8&quot;
+
+dispatcher.executeDispatch(document, &quot;.uno:SaveAs&quot;, &quot;&quot;, 0, args1())
+
+
+
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SaveCsvToODS - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end SaveCsvToODS		10/12/20

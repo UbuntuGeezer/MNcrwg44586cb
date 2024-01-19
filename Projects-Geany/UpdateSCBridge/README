@@ -1,0 +1,320 @@
+README - Documentation for UpdateSCBridge Build project.
+	12/26/21.	wmk.
+
+Modification History.
+---------------------
+4/19/21.	wmk.	original documentation.
+6/6/21.		wmk.	minor modifications to use as template for others.
+6/26/21.	wmk.	documentation expanded.
+7/3/21.		wmk.	preprocess shell documentation added;
+7/23/21.	wmk.	Significant Notes added; FindAllIDinTerrs and
+					FindAllIDlist documented.
+11/3/21.	wmk.	"Document Sections", Setup and :Setup Batch" sections
+					added.
+12/26/21.	wmk.	corrections to Updating Special/<special-db> instructions.
+
+Document Sections.
+------------------
+Project Description.
+Dependencies.
+Build Description.
+Setup - step-by-step build instructions.
+Setup Batch - build instructions for "batched" run
+Significant Notes.
+
+
+Project Description.
+--------------------
+UpdateSCBridge updates one or more territory's SCBridge table with the
+latest changes from VeniceNTerritory.db/NVenAll records. In order to
+determine which territories need to be updated after downloading the
+lastest SCPA data, the query GetSCUpdateList matches up territory IDs
+in either MultiMail or PolyTerri records with the property IDs that
+are in the SCPADiffs_mm-dd.db table Diffsmmdd.
+
+Dependencies.
+-------------
+The build command "sed" must be edited with the territory ID and download
+month and day inserted as its parameters. DoSed.sh is then invoked to
+execute the "sed" command.
+
+MakeUpdateSCBridge.tmp is the makefile template for make. The DoSed
+execution edits the MakeUpdateSCBridge.tmp file into MakeUpdateSCBridge
+for the "Make" build command.
+
+If the "Make" build command has "tidlist" as the passed parameter for
+the territory ID, the file TIDList.txt will be used as a list of
+territories on which the MakeSCUpdateSCBridge makefile will be run.
+Lines within the TIDList.txt file that begin with "#" will be treated
+as comments. All other lines should contain valid territory IDs.
+See "Batch Setup" below.
+
+An initial pass TIDList.txt file can be created by querying the
+DiffAccts table in the SCPADiff_mm-dd.db database. Using SELECT DISTINCT
+to obtain the affected territories, the results can be saved to the
+UpdateSCBridge project folder, then used as the TIDList.txt.
+
+In cases where the territory is built from Special map queries, it is
+possible that the _SCBridge table may not have all of the property IDs
+or addresses. Phone territories are one situation where this arises.
+Before UpdateSCBridge can update the any records whose property ID is
+in the Diffmmdd table with the newest information, the records must
+first be created in the SCBridge table.
+
+A stand-alone query is part of the project to handle these cases. The
+query CreateBridgeFromSplitProp will create new SCBridge entries for
+any property IDs found in Diffmmdd that are not present in the SCBridge
+table. It is able to do this by querying the territory records that are
+stored in MultiMail/SplitProps (eventually add PolyTerri/TerrProps) and
+extracting the Bridge information from the records for that territory.
+This is the best way to do it, since the Mapxxx_SC.csv file is used
+in Special cases to directly add records to MultiMail.db. [It may be that
+in the future a better, more consistent, way will be found.]
+
+The CreateBridgeFromSplitProp query uses Diffmmdd, Terrxxx_SC.db and
+MultiMail databases. Until the code is included in the Create..Prop
+query, the sqlite browser may be used to attach the needed databases
+and the query can be cut/pasted into one of the SQL tabs and run.
+
+Build Description.
+------------------
+The main target of this build is Terrxxx_SC.db, where xxx is the
+SC data for territory xxx.
+
+Its prerequisites are all in the folder ~/SCPA/SCPA-Downloads/Terrxxx
+where xxx is the territory ID.  This process will bring the Bridge
+SCPA territory records up-to-date with the download of month mm, day dd.
+The prerequisite files are:
+	UpdtyyyM.csv - changed records for MultiMail.db this territory
+	UpdtyyyP.csv - changed records for PolyTerri.db this territory
+	FixyyySC.sh - SC postprocess fixes shell for this territory
+	FixyyySC.sql - SC postprocess fixes sql for this territory
+
+Terrxxx_SC.db will be considered out-or date if changes to either the
+postprocess shell, or its internal .sql query are newer than
+Terrxxx_SC.db. This is so that, even if the download data is current,
+if there is a change to the postprocess, the SC Bridge records will be
+checked and updated if necessary.
+
+UpdtyyyM.csv and UpdtyyyP.csv contain changed records that are newer in 
+the current SC download than the previous SC download. If either of these
+files are newer than Terrxxx_SC.db, then Terrxxx_SC.db will be considered
+out-of-date. The new records contained in either of these files will
+have to be used to UPDATE Terrxxx_SC.db table Terrxxx_SCBridge. The fields
+that are assumed to have changed with the new records are OwningParcel,
+Resident1, and Phone2 (homestead status). The DownloadDate field from
+the UpdtyyyM or UpdtyyyP record will be used as the new RecordDate.
+
+Terrxxx_SC.db has its records updated by UpdateSCBridge.sql, edited
+to use the territory with the month and day of the latest SC download.
+The edited .sql is placed on SQLTemp.sql and used as the input file for
+sqlite3.
+
+Setup.
+------
+There are two *make*s within the UpdateSCBridge project. UpdateSCBridge
+updates the SCBridge tables within a territory's Terrxxx_SC.db.
+UpdtSpecSCBridge updates the SCBridge tables within Special dbs resident
+in the  SCPA-Downloads/Special folder.
+Before running either UpdateSCBridge, or UpdtSpecSCBridge be sure that
+NVenAll is up-to-date with the lastest SCPA_mm-dd.db database information.
+
+NOTE: See "Batch Setup" below if doing multiple Bridge updates.
+
+Updating territory Terrxxx_SC.db Terrxxx_SCBridge table.
+Build menu:
+
+	edit 'sed' command line with territory ID, month and day of latest
+	 SCPA_mm-dd.db database
+	run 'sed' from the Build Menu
+	
+	[run Make Dry-run to check the makefile]
+	
+	run Make to Update the Terrrxxx_SC.db.Terrxxx_SCBridge table
+	
+Updating Special/<special-db>.db Spec_SCBridge table.
+Build menu:
+
+	edit 'sed1' command line with territory ID, month and day of latest
+	 SCPA_mm-dd.db database
+	run 'sed1' from the Build Menu
+	
+	run 'Make Spec Update SC Bridge' to update the /Special <special-db>
+	 SCBridge table
+	
+	[if more than 1 /Special .db, repeat above steps]
+	
+
+
+Batch Setup.
+------------
+UpdateSCBridge can handle "batch" requests for multiple SCBridge
+updates with a single run. It can also handle batch requests for multiple
+SCSpecials with a single run.
+
+SCBridge Batch Updates.
+UpdateSCBridge Project:
+
+	edit the TIDList.txt file to contain the list of all territories
+	 for which to do the UpdateSCBridge process, one territory per line
+	 in column A. A cell which begins with '#' is skipped as a comment.
+	 NOTE: When updating territories after an SCPA_mm-dd.db download, the
+	 SCPADiff_mm-dd.db table DiffAccts has the territory IDs of all territories
+	 known to be affected by the differences in the download. The following
+	 query can extract a .csv containing all the affected territories:
+		SELECT DISTINCT TerrID FROM DiffAccts where length(terrid) > 0 ORDER BY TerrID
+	 place the query results in file TIDListmmdd.csv in this project folder.
+	 
+
+Build menu:
+
+	*Batch SCBridges* command line: edit the month and day of the download with
+	which to compare records needing to be updated
+	
+	ensure that the list of territories is in TIDList.txt (see note on
+	 TIDListmmdd.csv in above paragraph)
+	 
+	run 'Batch SCBridges' menu item
+
+###SCSpecials Batch Updates.
+SCSpecials batch updates update the SCPA-Downloads/Special databases. The
+list of databases to update is in DBList.txt. For now, it is assumed that
+if one Special database is out-of-date, they all are and should be updated.
+
+*UpdateSCBridge Project*:
+
+  edit the DBList.txt file to contain the list of all Special databases
+   for which to do the Batch SCSpecials build, one database name per line
+   (with no .db suffix) in column A. A cell which begins with '#' is skipped
+   as a comment.
+
+*Build menu*:
+
+  *Batch SCSpecials* command line: edit the month and day of the download with
+   which to compare records needing to be updated
+	
+  run 'Batch SCSpecials' menu item
+
+ 
+========== Prerequisites ===============================================
+
+UpdtyyyM.csv and UpdtyyyP.csv will be considered to be out-of-date if the
+SCDiff_mm-dd.db is newer. This would indicate that different records
+may have been downloaded since the territory was last updated.
+
+If either .csv is out-of-date, the utility $(bashpath)FlagSCUpdates.sh yyy @@ zz
+will update these files for territory yyy using the SCDiff_@@-zz.db to
+extract updated records that will apply to either PolyTerri or MultiMail
+for this territory.
+
+---
+
+SCPADiff_@@-zz.db is the differences download database. If it is non-existent,
+it will not be built, as it has an empty recipe.
+
+---
+
+FixyyySC.sh is the postprocessing shell for territory yyy; FixyyySC.sql
+is the .sql query that is the basis for the shell. FixyyySC.sh will be
+considered out-of-date if FixyyySC.sql is newer. If FixyyySC.sql does
+not exist, it will be created empty using "touch" and a do-nothing shell
+FixyyySC.sh will be generated.
+
+---
+
+SpecyyySC.sh is the optional preprocessing shell for Territory yyy.
+SpecyyySC.sql is the sql query that is the basis for the shell. SpecyyySC.sh
+will be considered out-of-date if SpecyyySC.sql is newer. If there is no
+SpecyyySC.sh file the primary targe make will not attempt to run it.
+The primary function of the SpecyyySC.sql is to ensure that all the
+relevant addresses for the territory are present in the Bridge records
+before the update from the download occurs.
+
+In several territories, the SCPA map polygon data either misses addresses
+or is too cumbersome to accurately get all the addresses in the territory.
+The folder Special in the SCPA-Downloads directory contains .dbs built
+from street-oriented SCPA downloads. A given street download may contain
+many addresses outside of the territory, so it is up to the preprocessing
+query to extract only the relevant addresses.
+
+The file SPECIAL within an SCPA territory download's raw data is used to
+document the dependencies the territory has on .dbs within the
+SCPA-Downloads/Special folder. It will be considered to be of high
+importance, like the README file, documenting quirks of the territory.
+
+---
+
+This build updates the _SCBridge table inside the Terrxxx_SC.db for
+territory xxx. The primary target of this build is Terrxxx_SC.db.
+UpdateNvenAll is project that will take a given SCPA_mm-dd.db and use
+it to update the NVenAll table within the VeniceNTerritory.db. This
+process will bring the master SCPA territory records up-to-date with
+the SCPA_mm-dd.db download.
+
+Its prerequisites are SCPA_mm-dd.db and SCPADiff_mm-dd.db, where
+SCPA_mm-dd.db is the full SCPA download and SCPADiff_mm-dd is the
+"differences" collection of records that have changed since the
+prefious full SCPA download. VeniceNTerritory.db will be considered
+to be out-of-date if either of the prerequisite files is newer.
+
+The DiffsToNVenAll.sh shell performs the update. It is built off
+DiffsToNVenAll.sh by stream editing m2 and d2 to produce XDiffsToNVenAll.sh.
+It takes the SCPADiff_m2-d2.db table Diffm2d2 and updates the NVenAll
+table by Inserting/Deleting entire records that have changed. This is
+more accurate than just doing an UPDATE of the NVenAll records, since
+multiple fields may have changed that are not being tested for.
+
+The SCNewVsNVenall.sql query differences the SC download with NVenAll.
+It is provided for reference to inspect what records will be changed.
+
+To simplify usage, most menu items have been removed, but are documented
+below in case they need to be restored. To do the Build, all that is
+necessary is to edit the "sed" Build command in the Independent commands
+placing the month and day of the Diff file and prior downoad to use in
+the DoSed command.
+	./DoSed.sh m1 d1 m2 d2
+where m1 = month of previous download
+	  d1 = day of previous download
+	  m2 = month of current download
+	  d2 = day of current download
+
+Significant Notes.
+------------------
+Two utility shells are resident with UpdateSCBridge to facilitate getting
+"stray" UnitAddress(s) associated with the proper territory.
+
+FindAllIDinTerrs takes a single property ID and searches all of the
+Terrxxx_SC.db/Terrxxx_Bridge tables for a matching property ID. If a 
+match is found, it is written to the file xxxxxxxxxx.sqllist.txt in
+the $WINCONG_PATH/temp folder, where xxxxxxxxxx is the property ID.
+
+FindAllIDlist takes a list of property IDs from the LostIDlist.txt file
+and runs FindAllIDinTerrs with each property ID in the list. The list
+file is resident in the UpdateSCBridge project folder.
+
+The LostIDlist.txt file is populated by copying a .csv that contains
+the "difference" records of properties that have no territory ID
+associated with them. This file has a standardized naming format:
+DiffsNoTerIDsmm-dd.csv where mm, dd are the month and day of the
+download differences database. Its records are obtained by query from
+the DiffAccts table in SCPADiff_mm-dd.db where the records have an
+empty TerrID field.
+
+(future).
+If the "stray" UnitAddress is not located in any of the Bridge tables
+searched, a last-resort query can be run, also using the LostIDlist.txt
+property IDs. These records can then be used to extract the property
+record from NVenAll (up-to-date) in order to obtain the full situs
+address. The full situs address can then be queried against all Bridge
+tables' SitusAddress fields, looking only at the first 35 (non-unit)
+characters, with the house number field (1st field up to 1st blank)
+stripped. If the street matches, it will be considered a "pretty good
+guess" as to which territory the record belongs with. When a match is
+found, the property ID, situs address, and Bridge territory number are
+exported to the file <property-id>.situsmatches.lst in the
+$WINCONG_PATH/temp folder.
+
+These records can then be "harvested" and placed into their proper
+Bridge tables after review. Eventually, the PolyTerri and MultiMail
+records for each territory will be fully completed as the addresses
+are picked up on each subsequent download.

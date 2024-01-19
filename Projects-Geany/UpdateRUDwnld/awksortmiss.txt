@@ -1,0 +1,15 @@
+BEGIN{cnt = 0}
+{if($1 ~ "Terr.*"){
+  if($2 ~ ".*K")
+   nsize = substr($2,1,index($2,"K")-1) * 1000
+  else
+   nsize = $2
+   
+  ids[cnt] = $1
+  counts[cnt] = nsize
+  thelist[cnt] = nsize " " $1
+  cnt++};
+}
+END{n = asort(thelist,slist,"@val_num_desc")
+ for(i = 0;i <= n;i++)print slist[i]
+  }

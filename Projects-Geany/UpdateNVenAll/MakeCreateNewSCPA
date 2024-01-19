@@ -1,0 +1,64 @@
+# MakeCreateNewSCPA.tmp - makefile for CreateNewSCPA.sh
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	3/20/22.	wmk.
+#
+# Exit. CreateNewSCPA.sql > CreateNewSCPA.sh
+#
+# Modification History.
+# ---------------------
+# 8/26/21.	wmk.	original code.
+# 11/3/21.	wmk.	CreateNewSCPA.sq prerequisite changed to
+#					CreateNewSCPA.sql; CreateNewSCPA.sh now primary target,
+#					as opposed to CreateNewSCPA.sq.
+# 12/2/21.	wmk.	WARNING added if Data0319.csv does not exist.
+# 1/2/22.	wmk.	multihost code added.
+# 2/5/22.	wmk.	chmod added to recipe to ensure .sh executable.
+# 3/20/22.	wmk.	intermediate messages added.
+#
+# Notes. CreateNewSCPA.sh will be considered out-of-date if
+# CreateNewSCPA.sql is newer. CreateNewSCPA.sq will be rebuilt
+# in the process.
+# 03 and 19 were chosen for the month/day for compatibility with the
+# CreateNewSCPA.sh proc (see DoSed.sh).
+
+ifeq ($(USER),ubuntu)
+ folderbase = /media/ubuntu/Windows/Users/Bill
+else
+ folderbase = $(HOME)
+endif
+
+ procpath = $(codebase)/Territories/Procs-Dev/
+scpafolder = $(folderbase)/Territories/RawData/SCPA/SCPA-Downloads
+
+#CreateNewSCPA.sh primary target
+#====================================================================
+CreateNewSCPA.sh :  preamble.CreateNewSCPA.sh  CreateNewSCPA.sq  CreateNewSCPA.sql \
+ $(scpafolder)/Data0319.csv
+	cat $(procpath)hdrAnySQL_1.sh preamble.CreateNewSCPA.sh CreateNewSCPA.sq  \
+	 $(procpath)hdrAnySQL_2.sh > $@
+	sed  -i 's?<filename>?CreateNewSCPA?g' $@
+	chmod +x $@
+	if ! test -f $(scpafolder)/Data0319.csv;then \
+	 	echo "** WARNING - Data0319.csv file missing for $@ **" \
+	else; \
+	 echo "** Now run $@ from Terminal to build SCPA_mm-dd.db **"; \ 
+	fi
+
+CreateNewSCPA.sq : CreateNewSCPA.sql
+	echo 's?\"?\\\"?g' > sedatives.txt
+	echo "{s/^/echo \"/g;s/$$/\" >> SQLTemp.sql/g;1 s/>>/>/;}" >> sedatives.txt
+	sed -f sedatives.txt CreateNewSCPA.sql > $@
+
+CreateNewSCPA.sql : CreateNewSCPA.psq;
+	echo "** run DoSed to make CreateNewSCPA.sql **"
+
+CreateNewSCPA.psq : ;
+
+preamble.CreateNewSCPA.sh : ;
+	if ! test -f preamble.CreateNewSCPA.sh;then '
+	  echo "**  preamble.CreateNewSCPA.sh not found for CreateNewSCPA.sh recipe! **";exit 1;fi
+
+$(scpafolder)/Data0319.csv : ;
+	echo "** WARNING - Data0319.csv file missing for CreateNewSCPA.sh **"
+

@@ -1,0 +1,4 @@
+#!/bin/bash
+echo "  " > SQLTemp.sql
+echo "--Sample Fix SQL" >> SQLTemp.sql
+echo "--  3/12/21. wmk." >> SQLTemp.sql

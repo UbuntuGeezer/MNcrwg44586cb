@@ -1,0 +1,4 @@
+s?\$SCPA_DB2?SCPA_06-19.db?g
+s?\$SCPA_TBL2?Data0619?g
+s?\$SCPA_CSV?SCPA-Public_06-19.csv?g
+s?\$folderbase?/home/bill?g

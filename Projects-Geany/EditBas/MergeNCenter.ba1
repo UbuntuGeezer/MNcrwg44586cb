@@ -1,0 +1,50 @@
+&apos;// MergeNCenter.bas
+&apos;//---------------------------------------------------------------
+&apos;// MergeNCenter - &lt;sub description&gt;.
+&apos;//		9/3/20.	wmk.
+&apos;//---------------------------------------------------------------
+
+public sub MergeNCenter
+
+&apos;//	Usage.	macro call or
+&apos;//			call Merge/NCenter()
+&apos;//
+&apos;// Entry.	user has selected area to toggle Merge/Center
+&apos;//
+&apos;//	Exit.	selected cells merged or unmerged
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/3/20.		wmk.	original code
+&apos;//
+&apos;//	Notes.
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+rem ----------------------------------------------------------------------
+rem define variables
+dim oDocument   as object
+dim oDispatcher as object
+rem ----------------------------------------------------------------------
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	rem get access to the document
+	oDocument   = ThisComponent.CurrentController.Frame
+	oDispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+	rem ----------------------------------------------------------------------
+	oDispatcher.executeDispatch(oDocument, &quot;.uno:ToggleMergeCells&quot;, &quot;&quot;, 0, Array())
+
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgBox(&quot;MergeNCenter - unprocessed error.&quot;)
+	GoTo NormalExit
+
+end sub		&apos;// end MergeNCenter	9/3/20

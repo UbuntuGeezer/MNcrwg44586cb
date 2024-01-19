@@ -1,0 +1,4 @@
+s?\$\"?%\"?g
+s?\"\$?\"%?g
+s?%folderbase?\$folderbase?g
+1a-- * 1/13/22.	wmk.	(automated) ($)string repairs.

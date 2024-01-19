@@ -1,0 +1,28 @@
+cmd=$previous_command ret=$?
+if [ $ret -ne 0 ];then
+ echo "$cmd FAILED.. error code = $ret"
+fi
+if [ $ret -eq 0 ];then
+ jumpto NormalExit
+# DO NOT MOVE THIS HEADER..
+# Posttrap.sh - template postscript for shells using error handling.
+#   5/16/23. wmk
+# end test postscript
+else
+ # error handling.
+ export MYPROC=$0
+ ~/sysprocs/BLDMSG "  ** $MYPROC $P1 - $cmd FAILED **"
+  grep PPid /proc/$$/task/$$/status | \
+ mawk \
+ '{print "#!/bin/bash";print "export idtext="$2;print "echo \"this process id=$thisid\"";print "echo \"parent process id=$idtext\""}' > temp.sh
+ chmod +x temp.sh
+ sed -i '1,4d' temp.sh
+ . ./temp.sh
+# at this point *idtext env var contains process ID that
+# can be passed to child processes.
+ ps $idtext >> $build_log
+ exit 1
+fi
+jumpto NormalExit
+NormalExit:
+

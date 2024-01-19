@@ -1,0 +1,86 @@
+# MakeFixAnySC.tmp - template for make MakeFixAnySC.
+#	6/5/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 6/5/23.	wmk.	main recipe simplfied to use AnySQLtoSH; *pathbase corrected;
+#			 comments tidied.
+# Legacy mods.
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# Legacy mods.
+# 4/25/22.	wmk.	modified for general use FL/SARA/86777.
+# 6/28/22.	wmk.	bug fix with hdr.. files in main recipe; error handling
+#			 improved in prerequisites; hdr.. files now in project
+# 			 folder.
+# Legacy mods.
+# 3/15/21.	wmk.	original code.
+# 3/20/21.	wmk.	added log and terminal messages to .sh
+# 5/28/21.	wmk		modified for use with either home or Kay's system;
+#					whichsystem, folderbase vars added.
+# 6/18/21.	wmk.	bug fix where NR values not correct when copying.
+# 6/19/21.	wmk.	code improvement where folderbase dependent on ($)HOME;
+#					whichsystem var/conditional eliminated.
+# 6/27/21.	wmk.	superfluous "s removed; awk replaced with cat.
+# 9/19/21.	wmk.	old dead code removed; change to SQLtoSQ from SQLtoSH.
+# 1/29/22.	wmk.	chmod 700 added to recipe to ensure .sh executable.
+# 1/30/22.	wmk.	multihost code replace HOME with USER in test; recipe
+#			 changed to use FixXXXsc_1.sh, FixXXXsc_2.sh
+#
+#	Dependencies.
+#		hdrFixXXXSC_1.sh in folder ~/Procs-Dev
+#		hdrFixXXXSC_2.sh in folder ~/Procs-Dev
+#		FixyyySC.sql in folder ~/SCPA-Downloads/Terryyy
+#	if the line count of the preamble section of hdrFixXXXSC changes,
+#	 the values for NR<= and NR>= must be changed below in the
+#	 primary targe make recipe. 
+#
+#	Build results.
+#		FixyyySC.sh in folder ~/SCPA-Downloads/Terryyy
+#
+# Notes. Supports multiple host systems, with env var ($)HOME set by system.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+vpath %.sql $(pathbase)/RawData/SCPA/SCPA-Downloads/Terryyy
+vpath %.sh $(pathbase)/RawData/SCPA/SCPA-Downloads/Terryyy
+vpath %.tmp $(pathbase)/RawData/SCPA/SCPA-Downloads/Terryyy
+ bashpath = $(codebase)/Procs-Dev
+postpath = $(pathbase)/RawData/SCPA/SCPA-Downloads/Terryyy
+targpath = $(pathbase)/RawData/SCPA/SCPA-Downloads/Terryyy
+# new definition - supports FixyyySC.sh if provided.
+ projpath = $(codebase)/Projects-Geany/FixAnySC
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+ 
+.PHONY : ;
+.ONESHELL : ;
+
+# FixyyySC.sh recipe.
+#======================================================================
+$(targpath)/FixyyySC.sh   :  $(targpath)/FixyyySC.sql
+	if test -f $(targpath)/OBSOLETE;then \
+	 echo "Territory yyy OBSOLETE - MakeFixAnySC exiting...";exit 2;fi
+	if test -f $@; then rm $@;fi
+	cd $(altproj);./DoSed.sh $(targpath) FixyyySC
+	$(MAKE) -f $(altproj)/AnySQLtoSH
+
+$(targpath)/FixyyySC.sql : ;
+	if test -f $(targpath)/OBSOLETE;then \
+	 echo "Territory yyy OBSOLETE - MakeFixAnySC exiting...";exit 2;fi
+	if ! test -f $@;then \
+	 echo "** missing FixyyySC.sql for *make* FixyyySC.sh build **";exit 1;fi
+

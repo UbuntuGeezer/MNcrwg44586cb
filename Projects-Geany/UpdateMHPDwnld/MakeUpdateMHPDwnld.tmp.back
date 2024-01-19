@@ -1,0 +1,122 @@
+# MakeUpdateMHPDwnload.tmp - template for MakeUpdateMHPDownload make file.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	11/14/21.wmk.
+#
+# Dependencies.
+#	MakeUpdateMHPDwnload.tmp placeholders y yy and v vvv will be edited
+#	 by DoSed.sh to be a territory ID and special database name.
+#	/Special/vvvv.db contains the current download records for the entire
+#	 MHP.
+#	DoSed run prior to make MakeUpdateMHPDwnld setting yyy and vvvv.
+#
+# Modification History.
+# ---------------------
+# 7/4/21.	wmk.	original code.
+# 7/6/21.	wmk.	Dependencies updated with DoSed; RU<MHP-name>_mm-dd.db
+#					qualified with ($)specialpth; RU<MHP-name>_mm-dd.csv
+#					recipe fixed.
+# 9/8/21.	wmk.	Complete overhaul.
+# 9/9/21.	wmk.	bug fixes; improve directory access; force rebuild
+#					of FixyyyRU.sh.
+# 9/23/21.	wmk.	bug fix altProj corrected to altproj in recipe; added
+#					SetMHPSpecTerrs to recipe to link territory records
+#					with <special-db> records.
+# 11/14/21.	wmk.	update to use MakeSpecials to regenerate RU database
+#					for MHP.
+#
+# Notes. UpdateRUDwnld is programmed to skip building any territory
+# that has SPECIAL in its folder.
+# The most straighforward way to do an MHP build is to do a 
+# RUNewTerritory to rebuild Terrxxx_RU.db. MakeRUMHP needs to be
+# run after this to ensure the presence of the TerrxxxMHP table
+# for the Diffs processes.
+# then just run FixyyyRU.sh
+# to fix the records; Then sync in any records from Specxxx_RU built
+# by special processing; then ExtractOldDiffs from the Previous that
+# were missed by all of the above and IntegrateOldDiffs.
+# The Specyyy_RU.db is rebuilt by make RU/MakeSpecials, called by
+# the Make.MHP.Terr make in the /Special folder.
+# vvvv e.g. BayIndiesMHP
+
+ifeq ($(HOME),/home/ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+else
+  folderbase = $(HOME)
+endif
+
+specialpth = $(folderbase)/Territories/RawData/RefUSA/RefUSA-Downloads/Special/
+terrpath = $(folderbase)/Territories/RawData/RefUSA/RefUSA-Downloads/Terryyy/
+ altproj = $(codebase)/Territories/Projects-Geany/RUNewTerritory
+altprroj2 = $(folderbase)/Territories/Projects-Geany/SpecialRUdb
+ projpath = $(codebase)/Territories/Projects-Geany/UpdateMHPDwnld
+ bashpath = $(codebase)/Territories/Procs-Dev/
+
+.PHONY : AlwaysUpdate
+
+#include pathRUdefs.inc
+
+# $(terrpath)Terryyy_RU.db primary
+#==============================================================
+# DoSed run prior with <db-name> <terrid>.
+
+# set one or the other.
+oldway = 0
+#oldway = 1
+
+ifeq ($(oldway),1)
+#============ old build using full initialize and build.
+$(terrpath)Terryyy_RU.db : $(terrpath)Mapyyy_RU.csv \
+ $(terrpath)Specyyy_RU.db
+	cd $(altproj); $(altproj)/DoSed.sh yyy; \
+	 $(MAKE)  -f $(altproj)/MakeRUNewTerritory
+	cd $(projpath); $(projpath)/DoSed1.sh yyy vvvv \
+	 $(MAKE)  -f MakeRUMHP
+	# force rebuild of FixyyyRU.sh
+	$(bashpath)AnySQLtoSQ.sh $(terrpath) FixyyyRU
+	cat $(bashpath)hdrAnySQL_1.sh $(terrpath)FixyyyRU.sq \
+	 $(bashpath)hdrAnySQL_2.sh > $(terrpath)FixyyyRU.sh
+	sed -i 's?<filename>?FixyyyRU?g' $(terrpath)FixyyyRU.sh
+	$(terrpath)FixyyyRU.sh
+	$(terrpath)SetMHPSpecTerrs.sh
+	$(terrpath)SyncTerrToSpec.sh
+	$(MAKE)  -f MakeExtractOldDiffs
+	$(MAKE)  -f MakeIntegrateOldDiffs
+	$(projpath)/ExtractOldDiffs.sh
+	$(projpath)/IntegrateOldDiffs.sh
+	
+$(terrpath)Specyyy_RU.db : $(specialpth)vvvv.db
+	$(MAKE)  -f $(terrpath)MakeSpecials
+
+$(terrpath)Mapyyy_RU.csv : ;
+
+$(specialpth)vvvv.db :  
+	(warning ** MakeUpdateMHPDwnld build looking for $(specialpth)vvvv.db **)
+
+#============ end old build using full initialize and build.
+else
+#============ new build using MakeSpecials.
+dbname = vvvv
+
+AlwaysUpdate : $(specialpth)vvvv.db \
+ $(terrpath)Specyyy_RU.db
+	cd $(terrpath)
+	$(MAKE) -f $(terrpath)MakeSpecials
+	cd $(projpath)
+	$(MAKE)  -f $(projpath)/MakeExtractOldDiffs
+	$(MAKE)  -f $(projpath)/MakeIntegrateOldDiffs
+	$(projpath)/ExtractOldDiffs.sh
+	$(projpath)/IntegrateOldDiffs.sh
+
+$(specialpth)vvvv.db  :  $(specialpth)vvvv.csv
+	cd $(altproj2); ./DoSed.sh vvvv
+	$(MAKE) -f $(altproj2)/MakeSpecialRUdb
+
+$(specialpth)vvvv.csv  : ;
+
+#============ new build using full initialize and build.
+endif
+
+
+#==============================================================
+# end MakeUpdateMHPDwnld.tmp

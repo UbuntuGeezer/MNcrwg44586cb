@@ -1,0 +1,46 @@
+&apos;// FreezeView.bas
+&apos;//---------------------------------------------------------------
+&apos;// FreezeView - Freeze rows A1..A5 to keep headings in place.
+&apos;//		8/28/20.	wmk.
+&apos;//---------------------------------------------------------------
+
+public sub FreezeView()
+
+&apos;//	Usage.	macro call or
+&apos;//			call FreezeView()
+&apos;//
+&apos;// Entry.	user has active sheet
+&apos;//
+&apos;//	Exit.	active sheet has Freeze Rows and Columns starting at $A$6
+&apos;//			so headings remain when scrolling
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	8/28/20.		wmk.	original code
+&apos;//
+&apos;//	Notes. Coded by recording macro to do same.
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim document   as object
+dim dispatcher as object
+
+	&apos;// code.
+	&apos;// get access to the document
+	document   = ThisComponent.CurrentController.Frame
+	dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+	&apos;// set up arguments for uno:GoToCell interface
+	dim args1(0) as new com.sun.star.beans.PropertyValue
+	args1(0).Name = &quot;ToPoint&quot;
+	args1(0).Value = &quot;$A$6&quot;
+
+	dispatcher.executeDispatch(document, &quot;.uno:GoToCell&quot;, &quot;&quot;, 0, args1())
+
+	&apos;// Freeze panes at row/column $A$6
+	dispatcher.executeDispatch(document, &quot;.uno:FreezePanes&quot;, &quot;&quot;, 0, Array())
+
+end sub		&apos;// end FreezeView		8/28/20

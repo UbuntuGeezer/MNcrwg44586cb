@@ -1,0 +1,7 @@
+# list of territories for FixAnySC.
+642
+643
+644
+645
+646
+#end of territory list.

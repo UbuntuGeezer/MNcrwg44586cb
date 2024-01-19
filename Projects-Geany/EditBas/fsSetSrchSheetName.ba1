@@ -1,0 +1,47 @@
+&apos;// fsSetSrchSheetName.bas
+&apos;//---------------------------------------------------------------
+&apos;// fsSetSrchSheetName :- Set PubTerr sheet name in module var.
+&apos;//		3/1/21.	wmk. 08:21
+&apos;//---------------------------------------------------------------
+
+public function fsSetSrchSheetName(psSheetName As String) as void
+
+&apos;//	Usage.	&lt;target&gt; = fsSetSrchSheetName( sSheetName )
+&apos;//			or fsSetSrchSheetName( sSheetName )
+&apos;//
+&apos;// Entry.	gsPubTerrSheet module var declared
+&apos;//
+&apos;//	Exit.	gsPubTerrSheet = specified sheet name
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	3/16/21.	wmk.	original code
+&apos;// 3/17/21.	wmk.	bug fix where attempting to set void function
+&apos;//						value
+&apos;//
+&apos;//	Notes. The gsPubTerrSheet module var holds the name of the PubTerr
+&apos;// sheet in the territory workbook. A territory workbook has the
+&apos;// standardized name %Terrxxx% where xxx is the territory id
+&apos;// (e.g. QTerr125 for territory 125).
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim aRetValue As Any
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	gsSearchSheet = psSheetName
+	
+NormalExit:
+	exit function
+	
+ErrorHandler:
+	ON ERROR GOTO
+	msgbox(&quot;fsSetSrchSheetName - unprocessed error&quot;)
+	GoTo NormalExit
+
+end function 	&apos;// end fsSetSrchSheetName	&apos;//	3/17/21. 09:15

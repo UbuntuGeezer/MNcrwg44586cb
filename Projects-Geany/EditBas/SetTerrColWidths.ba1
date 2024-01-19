@@ -1,0 +1,106 @@
+&apos;// SetTerrColWidths.bas
+&apos;//----------------------------------------------------------------------
+&apos;// SetTerrColWidths - Set column widths on Edit formatted sheet columns.
+&apos;//		1/13/21.	wmk.	05:40
+&apos;//----------------------------------------------------------------------
+
+public sub SetTerrColWidths()
+
+&apos;//	Usage.	macro call or
+&apos;//			call SetTerrColWidths()
+&apos;//
+&apos;// Entry.	User in Pub-Territory formatted territory sheet
+&apos;//
+&apos;//	Exit.	A = 1.75&quot;, B = 1.0, C = 1.75&quot;, D = 1.0, E = 0.45, F = 1.0&quot;
+&apos;//			G = 0.9&quot;, H = 0.9. I = 2.5&quot;
+&apos;//
+&apos;// Calls.	SetTerrColWidths
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/11/20.	wmk.	original code; adapted from SetEditColWidths
+&apos;//	9/18/20.	wmk.	widths readjusted and set through col I
+&apos;//	10/23/20.	wmk.	new Unit column width set; dead code removed
+&apos;// 1/13/21.	wmk.	E width set to 0.45 for &quot;homestead&quot; column
+&apos;//
+&apos;//	Notes. UNO Dispatcher exits this module, corrupting any module-wide
+&apos;//	vars. Only way to preserve user cell selection on entry is in local
+&apos;//	vars this sub.
+
+&apos;//	constants.
+const ONE_INCH=2540
+
+&apos;// column and row indexes
+const COL_A=0
+const COL_B=1
+const COL_C=2	
+const COL_D=3
+const COL_E=4
+const COL_F=5
+const COL_G=6			&apos;// column G index
+const COL_H=7			&apos;// column H index
+const COL_I=8			&apos;// column I index
+const COL_J=9			&apos;// column J index
+const COL_K=10			&apos;// column K index
+const COL_L=11			&apos;// column L index 
+const COL_M=12			&apos;// column M index (DoNotCall)
+const COL_N=13			&apos;// column N index (RSO)
+const COL_O=14			&apos;// column O index (Foreign)
+const ROW_1=0
+const ROW_2=1
+const ROW_3=2
+const ROW_4=3
+const ROW_HEADING=4		&apos;// headings row index
+const LJUST=1		&apos;// left-justify HoriJustify				&apos;// mod052020
+const CJUST=2		&apos;// center HoriJustify						&apos;// mod052020
+const RJUST=3		&apos;// right-justify HoriJustify				&apos;// mod052320
+const MDYY=30		&apos;// &apos;M/D/YY&apos; format value
+
+&apos;// column widths
+const A_WIDTH=1.75
+const B_WIDTH=1.0
+const C_WIDTH=1.75
+const D_WIDTH=1.0
+const E_WIDTH=0.45
+const F_WIDTH=1.1
+const G_WIDTH=0.9
+const H_WIDTH=0.9
+const I_WIDTH=2.5
+
+&apos;//	local variables.
+dim oDocument   as object
+dim oDispatcher as object
+dim oDoc	As Object	&apos;// ThisComponent
+dim oSel	As Object	&apos;// current cell selection on entry
+dim oSheet	As Object	&apos;// current sheet
+dim oRange	As Object	&apos;// RangeAddress selected
+dim iSheetIx	As Integer	&apos;// sheet index this sheet
+dim oCols	As Object	&apos;// .Columns array this sheet
+dim nColWidths(8) As Integer	&apos;// columns widths array
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	&apos;// preserve user cell selection
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+
+	nColWidths(0) = A_WIDTH*ONE_INCH
+	nColWidths(1) = B_WIDTH*ONE_INCH
+	nColWidths(2) =	C_WIDTH*ONE_INCH
+	nColWidths(3) = D_WIDTH*ONE_INCH
+	nColWidths(4) = E_WIDTH*ONE_INCH
+	nColWidths(5) = F_WIDTH*ONE_INCH
+	nColWidths(6) = G_WIDTH*ONE_INCH
+	nColWidths(7) = H_WIDTH*ONE_INCH
+	nColWidths(8) = I_WIDTH*ONE_INCH
+	SetColWidths(nColWidths)
+	
+NormalExit:
+	SetSelection(oRange)	&apos;// restore user cell selection
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SetTerrColWidths - unprocessed error.&quot;)
+	
+end sub		&apos;// end SetTerrColWidths	1/13/21

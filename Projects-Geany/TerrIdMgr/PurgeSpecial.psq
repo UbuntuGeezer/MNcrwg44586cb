@@ -1,0 +1,35 @@
+-- * PurgeTerrSpec.psq/sql - module description.
+-- * 6/3/23.	wmk.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 6/3/23.	wmk.	original code.
+-- *
+-- * Notes. This query removes all records from the special territory
+-- * vvvvv.db in both SCPA-Downloads and RefUSA-Downloads/Special
+-- * that have territory ID yyy.
+-- *
+-- *;
+
+-- * attach databases;
+.open '$pathbase/DB-Dev/junk.db'
+
+ATTACH '$pathbase/$scpath/Special/vvvvv'
+ AS db29;
+--pragma db29.table_info(Spec_SCBridge);
+
+ATTACH '$pathbase/$rupath/Special/vvvvv'
+  AS db30;
+--pragma db30.table_info(Spec_RUBridge);
+
+-- * clear records from SC/Special db;
+DELETE FROM d29.Spec_SCBridge
+WHERE CongTerrID IS 'yyy';
+
+
+-- * clear records from RU/Spec_SCBridge;
+DELETE FROM d30.Spec_RUBridge
+WHERE CongTerrID IS 'yyy';
+
+.quit
+-- * END PurgeTerrSpec.sql;

@@ -1,0 +1,78 @@
+-- * DeleteRSO.psq/sql - Delete RSO from TerrIDData.
+-- * 6/14/23.	wmk.
+-- *
+-- * Entry.	/DB-Dev/TerrIDData.DeletedRSOs = table or archived DoNotCalls
+-- *				TerrIDData.DoNotCalls = table of DoNotCalls
+-- *
+-- * Dependencies. < propid >, < unit >, < initials > fields replaced by 
+-- *	DoSedDelete.sh
+-- *
+-- * Exit.	/DB-Dev/TerrIDData.DeletedRSOs = updated with DoNotCall
+-- *	removed from DoNotCalls table < propid > < unit >
+-- *	DoNotCalls table records < propid > < unit > marked for deletion
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 6/13/23.	wmk.	original code; adapted from DeleteDNC.
+-- * 6/14/23.	wmk.	selections corrected to use *rsoid.
+-- * Legacy mods.
+-- * 6/1/23.	wmk.	adapted from ArchiveRSOs.psq.
+-- * 6/8/23.	wmk.	bug fix - was deleting where DelPending <> 1; changed
+-- *			 to only set DelPending on record.
+-- * Legacy mods
+-- * 5/31/23.	wmk.	original code.
+-- * 6/1/23.	wmk.	bug fix check for DelPending <> 1.
+-- *
+-- * Notes. The archiving process takes all of the DoNotCalls for a given territory
+-- * ID and places them in the DeletedRSOs table.
+-- *;
+
+.open '$pathbase/DB-Dev/TerrIDData.db'
+
+--CREATE TABLE DoNotCalls (
+-- TerrID TEXT NOT NULL DEFAULT '000', Name TEXT, 
+-- UnitAddress TEXT NOT NULL DEFAULT ' ', Unit TEXT, Phone TEXT, 
+-- Notes TEXT, RecDate TEXT, RSO INTEGER, Foreign INTEGER, PropID TEXT, 
+-- ZipCode TEXT, DelPending INTEGER, DelDate TEXT, Initials TEXT, 
+-- LangID INTEGER, 
+-- FOREIGN KEY (TerrID) 
+-- REFERENCES Territory(TerrID) 
+-- ON UPDATE CASCADE 
+-- ON DELETE SET DEFAULT);
+
+--CREATE TABLE DeletedRSOs (
+-- TerrID TEXT NOT NULL DEFAULT '000', Name TEXT, UnitAddress TEXT NOT NULL, 
+-- Unit TEXT, Phone TEXT, Notes TEXT, RecDate TEXT, RSO INTEGER, 
+-- Foreign INTEGER, PropID TEXT, ZipCode TEXT, DelPending INTEGER, 
+-- ArchDate TEXT, Initials TEXT );
+
+-- * add records into Deleted RSOs;
+INSERT INTO DeletedRSOs
+SELECT TerrID, Name, UnitAddress, Unit, Phone, Notes, RecDate, RSO,
+"Foreign", PropID, ZipCode, '0', '$TODAY', '<initials>'
+FROM DoNotCalls
+WHERE RSO = <rsoid>
+ AND DelPending <> 1; 
+
+-- * Set DelPending on DeleteDoNotCalls record and reset RSO to 0;
+UPDATE DoNotCalls
+SET DelPending = 1,
+DelDate = '$TODAY',
+RSO = 0
+WHERE RSO = <rsoid>;
+
+--INSERT INTO RSOLog(Timestamp,LogMsg)
+--VALUES(CURRENT_TIMESTAMP,'<propid> <unit> RSO deleted.');
+INSERT INTO RSOLog(Timestamp,LogMsg)
+SELECT CURRENT_TIMESTAMP,'RSO <rsoid> deleted.' || initials FROM Admin;
+
+-- * delete RSOInfo first, since RSOAddress is parent;
+DELETE FROM RSOInfo
+WHERE RSOid = <rsoid>;
+
+-- * delete RSOAddress parent record;
+DELETE FROM RSOAddress
+WHERE RSOid = <rsoid>;
+
+.quit
+-- * END DeleteRSO.sql;

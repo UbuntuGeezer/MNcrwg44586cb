@@ -1,0 +1,54 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=FlagSCUpdates
+base_path=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/FlagSCUpdates/
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=4
+FILE_NAME_0=0;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FFlagSCUpdates%2FDoSed.sh;0;4
+FILE_NAME_1=7562;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FFlagSCUpdates%2FFlagSCUpdate.psq;0;4
+FILE_NAME_2=6519;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FFlagSCUpdates%2FFlagSCUpdate.sql;0;4
+FILE_NAME_3=1891;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FFlagSCUpdates%2FMakeFlagSCUpdates;0;4
+FILE_NAME_4=1864;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FFlagSCUpdates%2FMakeFlagSCUpdates.tmp;0;4
+FILE_NAME_5=5005;Markdown;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FFlagSCUpdates%2FREADME.md;0;4
+FILE_NAME_6=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FUpdateSCBridge%2FTIDList0426.csv;0;4
+FILE_NAME_7=523;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FFlagSCUpdates%2FFlagSCUpdate.sh;0;4
+FILE_NAME_8=0;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FFlagSCUpdates%2FFlagAllSCUpdates.sh;0;4
+
+[VTE]
+last_dir=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/FlagSCUpdates
+
+[build-menu]
+NF_03_LB=sed
+NF_03_CM=./DoSed.sh   276  04 26
+NF_03_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/FlagSCUpdates
+NF_00_LB=_Make
+NF_00_CM=make -f MakeFlagSCUpdates
+NF_00_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/FlagSCUpdates
+EX_01_LB=Make Dry-Run
+EX_01_CM=make --dry-run -f MakeFlagSCUpdates
+EX_01_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/FlagSCUpdates

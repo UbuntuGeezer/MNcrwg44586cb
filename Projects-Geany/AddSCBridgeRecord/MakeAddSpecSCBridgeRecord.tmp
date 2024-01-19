@@ -1,0 +1,57 @@
+# MakeAddSpecSCBridgeRecord.tmp - Makefile for AddSpecSCBridgeRecord build.
+#	5/24/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 5/24/23.	wmk.	original code; adapted from MakeAddSCBridgeRecord.
+# Legacy mods.
+# 6/18/22.	wmk.	*pathbase support; misc code improvements.
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# Legacy mods.
+# 9/22/21.	wmk.	original makefile.
+# 2/3/22.	wmk.	add prompt at end of recipe to run resultant .sh;
+#			 add chmod to recipe to ensure .sh is executable.
+# 2/7/22.	wmk.	change Execute to Run It in user message.
+#
+# MakeAddSpecSCBridgeRecord adds a new record to Terrxxx_SCBridge from the
+# NVenAll table of VeniceNTerritory.db.
+# The 'Execute' Build command does the actual adding of the record.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+.PHONY : ;
+.ONESHELL : ;
+
+projbase = $(codebase)/Projects-Geany/AddSCBridgeRecord
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# $(projbase)/AddSpecSCBridgeRec.sh
+#============================================================
+$(projbase)/AddSpecSCBridgeRec.sh : $(projbase)/AddSpecSCBridgeRec.sql
+	cd $(altproj);./DoSed.sh $(projbase) AddSpecSCBridgeRec
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $@;then \
+	 echo "** MakeAddSpecSCBridgeRec.sh failed - check parameters **";exit 1;fi
+	$(projbase)/AddSpecSCBridgeRec.sh
+	echo "** Terryyy_SC.db wwww property ID added **"
+
+$(projbase)/AddSpecSCBridgeRec.sql : ;
+	if ! test -f $@;then \
+	 echo "** missing AddSpecSCBridgeRec.sql for MakeAddSpecSCBridgeRecord **";exit 1;fi
+
+#============================================================

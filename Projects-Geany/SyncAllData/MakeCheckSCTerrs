@@ -1,0 +1,65 @@
+# MakeCheckSCTerrs.tmp - makefile for CheckSCTerrs.sh.
+#	2/4/23.	wmk.
+#
+# Dependencies.
+#		*pathbase/DB-Dev/Terr86777.db - master county data for cong territory
+#		*pathbase/*scpath/SCPADiff_mm-dd.db - differences from latest download mm dd.
+#
+# Modification History.
+# ---------------------
+# 2/4/23.	wmk.	original code.
+#
+# Notes. DoSed sets the month (m m) and (d d) fields in this makefile.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/SyncAllData
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+.PHONY  : Always ;
+.ONESHELL : ;
+
+# primary target $(projpath)/CheckSCTerrs.sh
+#==================================================================
+$(projpath)/CheckSCTerrs.sh : ;
+$(error ** cannot use *make to build CheckSCTerrs **)
+	oops=0
+	remake=0
+	oodcount=0		# out-of-date counter
+	namesuffx=_SC.db
+	pushd ./ > $$TEMP_PATH/scratchfile
+	cd $$pathbase/$$scpath
+	ls -d Terr* > $(projpath)/SCTerrList.txt
+	file=$(projpath)/SCTerrList.txt
+	# loop on all SCPA-Downloads/Terrxxx folders checking Terrxxx_SCdb
+	#  date against Terr86777.db date.
+	while read -e;do
+	  Terr=$REPLY
+	  SCdbName=$$Terr$$namesuffx
+	  if [ $$pathbase/DB-Dev/Terr86777.db -nt $$pathbase/$$scpath/$$Terr/$$SCdbName ];then \
+	   echo "  ** $$SCdbname out-of-date **";\
+	   echo "$$SCdbName" >> $(projpath)/SCoodList.txt;\
+	   echo "$$SCdbName" >> $(projpath)/KillSync;oodcount=$$((oodcount+1));fi
+	done < $$file
+	if [ $$oodcount -gt 0 ];then \
+	 echo " ** $$oodcount SCPA territories out-of-date **";echo "  file SCoodList.txt contains list.";fi
+	popd > $$TEMP_PATH/scratchfile
+	
+#==================================================================
+# end MakeCheckSCTerrs.tmp

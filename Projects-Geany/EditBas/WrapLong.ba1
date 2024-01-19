@@ -1,0 +1,61 @@
+&apos;// WrapLong.bas - subroutine and function header template.
+&apos;//---------------------------------------------------------------
+&apos;// WrapLong - &lt;sub description&gt;.
+&apos;//		1/1/21.	wmk.
+&apos;//---------------------------------------------------------------
+
+public sub WrapLong()
+
+&apos;//	Usage.	macro call or
+&apos;//			call WrapLong( &lt;parameters&gt; )
+&apos;//
+&apos;//		&lt;parameters description&gt;
+&apos;//
+&apos;// Entry.	&lt;entry conditions&gt;
+&apos;//
+&apos;//	Exit.	&lt;exit conditions&gt;
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	1/1/21.		wmk.	original code
+&apos;//
+&apos;//	Notes. &lt;Insert notes here&gt;
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+rem ----------------------------------------------------------------------
+rem define variables
+dim document   as object
+dim dispatcher as object
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dispatcher.executeDispatch(document, &quot;.uno:CommonAlignTop&quot;, &quot;&quot;, 0, Array())
+
+rem ----------------------------------------------------------------------
+dim args2(0) as new com.sun.star.beans.PropertyValue
+args2(0).Name = &quot;WrapText&quot;
+args2(0).Value = true
+
+dispatcher.executeDispatch(document, &quot;.uno:WrapText&quot;, &quot;&quot;, 0, args2())
+
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;WrapLong - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end WrapLong

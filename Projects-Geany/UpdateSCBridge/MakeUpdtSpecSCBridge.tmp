@@ -1,0 +1,101 @@
+# MakeUpdtSpecSCBridge.tmp - template for make MakeUpdtSpecSCBridge.
+$(error out-of-date)
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	5/30/22.	wmk.
+#
+# Notes. DoSed1 modifies this makefile changing <s pecial-db> to the name
+# of the Special database, @ @ to the month and z z to the day of the
+# download.
+# 
+# Modification History.
+# ---------------------
+# 4/25/22.	wmk.	modified for general use;*pathbase* support.
+# 5/30/22.	wmk.	exit 1 on any *make* errors.; .sh recipe simplified
+#			 to use AnySQLtoSH.
+# Legacy mods.
+# 11/6/21.	wmk.	original makefile.
+# 1/3/22.	wmk.	change to USER from HOME for host test; add chmod to
+#			 recipe to ensure .sh executable.
+#
+# update happens only if SCPADiff_@@-zz newer than <special-db>.
+# Notes.! prior to running "make" on this project
+#    edit the "sed1" command in the Build menu, set <s pecial-db> in
+#	   1st parameter, enter mm and dd of the download in the 2nd and 3rd
+#	   paramteters.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+#var folderbase set above for folder definitions.
+specbase = $(folderbase)/Territories/RawData/SCPA/SCPA-Downloads/Special/
+ bashpath = $(codebase)/Territories/Procs-Dev
+SCbase = $(folderbase)/Territories/RawData/SCPA/SCPA-Downloads/
+
+
+# phony targets are always considered to be out-of-date.
+.PHONY  : UpdateSpecial JustDoIt
+
+.ONESHELL : JustDoIt ;
+.NOTPARALLEL : ;
+
+ifndef AWK
+   AWK = mawk
+endif
+
+ projpath = $(codebase)/Projects-Geany/UpdateSCBridge
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# UpdateSpecial recipe - PHONY, always built.
+# WARNING: Differs from UpdateSCBridge in that it will ALWAYS
+# update Special/<special-db> from SCPADiff_mm-dd.db even if
+# diff db is older.
+#=================================================================
+#var dirbase defined in pathSCdefs.inc.
+# this and all recipes modified by DoSed1.
+UpdateSpecial:  $(projpath)/UpdtSpecSCBridge.sql \
+ $(projpath)/UpdtSpecSCBridge.sh
+	$(projpath)/UpdtSpecSCBridge.sh
+
+#$(projpath)/UpdtSpecSCBridge.sh
+#---
+$(projpath)/UpdtSpecSCBridge.sh  : $(projpath)/UpdtSpecSCBridge.sql
+	cd $(altproj);./DoSed.sh $(projpath) UpdtSpecSCBridge
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	echo "** run UpdtSpecSCBridge to update <special-db> **"
+
+#	cat $(bashpath)/hdrAnySQL_1.sh  $(projpath)/UpdtSpecSCBridge.sq \
+#	 $(bashpath)/hdrAnySQL_2.sh  > $@
+#	sed -i 's?<filename>?UpdtSpecSCBridge?g' $@
+#	chmod +x $@
+
+$(projpath)/UpdtSpecSCBridge.sql : $(projpath)/UpdtSpecSCBridge.psq
+	echo "** Run DoSed1 before make MakeUpdtSpecSCBridge! **"
+	exit 1
+
+#---
+
+#========================================================
+
+
+#$(SCbase)SCPADiff_@@-zz.db ensures that SCPADiff_mm-dd is newer.
+#================================================================
+$(SCbase)SCPADiff_@@-zz.db : $(specbase)<special-db>.db
+	echo "** <special-db>.db is NEWER than SCPADiff..db - make abandoned. **"
+	exit 1
+
+#==============================================
+# end MakeUpdtSpecSCBridge

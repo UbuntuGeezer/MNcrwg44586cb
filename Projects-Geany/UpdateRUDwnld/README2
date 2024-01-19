@@ -1,0 +1,32 @@
+README - UpdateRUDwnld project documentation.
+	6/6/21.	wmk.
+	
+README - Documentation for UpdateSCBridge Build project.
+	4/19/21.	wmk.
+
+Modification History.
+---------------------
+4/19/21.	wmk.	original documentation.
+6/6/21.		wmk.	minor modifications to use as template for others.
+
+
+Build Description.
+------------------
+The main target of this build is Terrxxx_SC.db, where xxx is the
+SC data for territory xxx.
+
+Its prerequisites are all in the folder ~/SCPA/SCPA-Downloads/Terrxxx
+where xxx is the territory ID.  This process will bring the Bridge
+SCPA territory records up-to-date with the download of month mm, day dd.
+The prerequisite files are:
+	UpdtyyyM.csv - changed records for MultiMail.db this territory
+	UpdtyyyP.csv - changed records for PolyTerri.db this territory
+	FixyyySC.sh - SC postprocess fixes shell for this territory
+	FixyyySC.sql - SC postprocess fixes sql for this territory
+
+Terrxxx_SC.db will be considered out-or date if changes to either the
+postprocess shell, or its internal .sql query are newer than
+Terrxxx_SC.db. This is so that, even if the download data is current,
+if there is a change to the postprocess, the SC Bridge records will be
+checked and updated if necessary.
+

@@ -1,0 +1,148 @@
+# MakeSpecialRUdb.tmp - SpecialRUdb make template.
+#	3/1/23.	wmk.
+#
+# Entry. pathRUdefs.inc - include file RU path definitions
+#		pathRUdefs.inc derived from generic ~/include/pathRUdefs.i
+#			via Build dependency
+#		(vpath .db)Terryyy_RU.db - territory RU current download
+#		(vpath .csv) Mapyyy_RU.csv - territory RU .csv download raw data
+#		var postpath = postprocessing path to Terryyy/FixyyyRU.sh
+ # var bashpath(codebase)
+#	DoSed must have been run to substitute v vvvv and y yy throughout
+#	this makefile (Build menu item "sed" - ./DoSed <terrid> <special-db>)
+#
+#	Dependencies.
+#	-------------
+#	The *csvdate environment var must be exported and set to the file
+#	 date of v GondolaParkDr.csv. prior to executing *make on this makefile.
+#	The primary target of this makefile is (specpath)v vvvv.db, the area/street
+#	 special download database (e.g. CapriIslesBlvd.db).
+#	The primary data dependency is the existence of file v vvvv.csv in the
+#	 RefUSA-Downloads/Special folder.
+#	The code dependencies are file within the project: RUSpecTerr_db.sql, .sq
+#	 and .sh
+#
+# Modification History.
+# ---------------------
+# 3/1/23.	wmk.	*csvdate environment var dependency added.
+# Legacy mods.
+# 9/22/22.  wmk.   (automated) *codebase env var support.
+# 10/4/22.  wmk.   (automated) fix *pathbase for CB system.
+# 12/24/22.	wmk.	ForceBuild support added; comments tidied.
+# Legacy mods.
+# 5/31/22.	wmk.	main recipe simplified to use AnySQLtoSH; change to use
+#			 specpathdefs.inc
+# Legacy mods.
+# 3/14/22.	wmk.	adapted to use terrbase var for TX/HC/99999 support.
+# 4/7/22.	wmk.	*terrbase* environment var corrections for generic territory.
+# 4/24/22.	wmk.	code generalized for FL/SARA/86777;*pathbase*, 
+# 4/25/22.	wmk.	*..path* vars corrected to drop '/' at end	
+#			 *congterr*, *conglib* env vars introduced.
+# 5/6/22.	wmk.	.PHONY, .ONESHELL added for consistency; *terrbase* references
+#			 all changed to *pathbase* for consistency.
+# 5/9/22.	wmk.	AlwaysCheck .PHONY added for <special-db>.sql recipe.
+# Legacy mods.
+# 6/7/21.	wmk.	original makefile; adapted from MakeUpdateRUDwnld.tmp
+# 7/2/21.	wmk.	multihost code improvements.
+# 7/18/21.	wmk.	dead code removed; check for functionality with Special
+#			 database BirdBayCir.db; name change to MakeSpecialRUdb;
+#			 FixyyyRU prerequisites and build eliminate.
+# 7/21/21.	wmk.	SetNewBridgeTerrs prerequisites removed.
+# 8/17/21.	wmk.	GondolaParkDr.db recipe (projpath) added to RUSpecTerr_db.sh
+#			 reference; yyy eliminated from RUSpecTerr_db.sh;
+#			 RUSpecTerr_1.sh, RUSpecTerr_2.sh prerequisites added
+#			 for RUSpecTerr_db.sh recipe.
+# 9/1/21.	wmk.	Fix.<special-db>.sql support for correcting known
+#			 download errors in the <special-db> records.
+# 9/4/21.	wmk		fix <filename> in .sh.
+# 9/5/21.	wmk.	pathRUdefs.inc qualified with projpath.
+# 9/12/21.	wmk.	code review and minor documentation adjustments.
+# 11/12/21.	wmk.	update sequence to .sql > .sq > .sh for RUSpecTerr_db
+#			 files; add SetSpecialDNCs call to main recipe.
+#					
+#
+# Notes. This makefile uses the to create a special RU database in the
+# RefUSA-Downloads/Special folder.
+# shell RUSpecTerr_db.sh to create a new Terrxxx_RU.db database that looks
+# exactly like that created by RUNewTerr_db.sh.
+
+# Note. Will not work if there is no RUBridge data.
+# update happens if RefUSA-Downloads/Terryyy/Mapyyy_RU.csv newer than Terryyy_RU.db
+# also will happen if either FixyyyRU.sql or FixyyyRU.sh newer than Terryyy_RU.db
+# fatal errors detected: no Mapyyy_RU.csv file, FixyyyRU.sh missing or out-of-date
+#  and no FixyyyRU.sql file.
+#
+
+#<dbname>.db		: <dbname>.csv
+	#sql to take <dbname>.csv and create a database with Spec_RUBridge records
+	# with RURaw and RUPoly tables from which to extract records into
+	# Terrxxx_RU.db RURaw and RUPoly tables. This will be useful
+	# for convoluted territories like 289 in Gondola Park where it is
+	# nearly impossible to get RefUSA to extract the proper records
+	# for the UnitAddress set in the territory.
+
+
+.ONESHELL : ;
+.NOTPARALLEL : ;
+.PHONY : WarnUser NeverMake AlwaysCheck;
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+  pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+incroot = $(pathbase)/include/
+specpath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Special
+ projpath = $(codebase)/Projects-Geany/SpecialRUdb
+ bashpath = $(codebase)/Procs-Dev
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+syncproj = $(codebase)/Projects-Geany/SyncAllData
+vpath %.i $(pathbase)/include
+
+#include $(projpath)/pathRUdefs.inc
+include $(projpath)/specpathdefs.inc
+
+# primary target ($)specpath/GondolaParkDr.db
+# same as UpdateRUDwnld except first step - RUSpecTerr_db.sh.
+# yyy is territory id; GondolaParkDr is special .csv/database name.
+#================================================================
+$(specpath)/GondolaParkDr.db  : $(specpath)/GondolaParkDr.csv $(projpath)/ForceBuild
+	if [ -z "$csvdate" ];then \
+	 echo " ** *csvdate not set - MUST be set before *make MakeRUSpecTerr **";exit 1;fi
+	$(projpath)/RUSpecTerr_db.sh GondolaParkDr
+	if test -f $(specpath)/Fix.GondolaParkDr.sql;then $(projpath)/DoFixSed.sh GondolaParkDr; \
+	 $(MAKE) -f $(projpath)/MakeFixDownload;$(specpath)/Fix.GondolaParkDr.sh;fi
+	$(projpath)/SetSpecialDNCs.sh GondolaParkDr
+	 
+#-----
+$(projpath)/ForceBuild : ;
+	if ! test -f $@;then
+	 echo " ** missing ForceBuild semaphore file for GondolaParkDr.db build **";exit 1;fi
+
+AlwaysCheck : 
+	if ! test -f $(projpath)/RUSpecTerr_db.sql;then \
+	 echo "** missing RUSpecTerr_db.sql - required for RUSpecTerr_db.sql **";fi
+	if ! test -f $(projpath)/GondolaParkDr.csv;then \
+	 echo "** missing GondolaParkDr.csv - required for GondolaParkDr.db **";fi
+	
+#================================================================
+
+#pathRUdefs.i : ;
+#	#(error ** include/pathRUdefs.i not found! - needed for pathRUdefs.inc **)
+
+$(specpath)/GondolaParkDr.csv : ;
+	if ! test $@;then \
+	 echo "** *specpath/GondolaParkDr.csv not found! - needed for special db generation **";exit 1;fi
+	 
+NeverMake : ;

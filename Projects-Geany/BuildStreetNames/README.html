@@ -1,0 +1,29 @@
+<p>README - BuildStreetNames project documentation.<br>
+12/19/22.   wmk.</p>
+
+<h3>Modification History.</h3>
+
+<pre><code>12/19/22.   wmk.   original document
+</code></pre>
+
+<h3 id=0.1>0.1 StreetNames.db Structure.</h3>
+
+<p>The /DB-Dev/Streetnames.db is a database of all street names within the
+territory. It is built from a file-by-file scan of all of the RefuSA
+publisher territory databases, selecting distinct street names. It should
+be noted that for letter-writing territories the street names include
+the zip code.<br>
+<strong>Streets Table.</strong><br>The "Streets" table is defined as follows:</p>
+
+<pre><code>
+    CREATE TABLE Streets(
+    StreetName TEXT, TerrID TEXT, RUSpec TEXT, SCSpec TEXT)
+
+    StreetName = extracted street name (may include zip code)
+    TerrID = territory ID street is in
+    RUSpec = RefUSA/Special/<db-name> containing street
+    SCSpec = SCPA/Special/<db-name> containing street
+</code></pre>
+
+<p>No fields within the table have UNIQUE values. A street name may reside
+in several territories, and several RU/Special or SC/Special databases.</p>

@@ -1,0 +1,2 @@
+# sedmoverso.txt - *sed directives for DoSedMove.sh.
+#	6/13/23.	wmk.

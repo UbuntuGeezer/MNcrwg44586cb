@@ -1,0 +1,46 @@
+# MakeDeleteXBAbas.tmp - Makefile (template) for MakeDeleteXBAbas.
+$(error out-of-date)
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#   5/4/22. wmk.	(automated) path corrections.
+#
+# MakeDeleteXBAbas deletes a module from the specified .xba file.
+# the module must be bounded by '<modulename>.bas' at the beginning
+# and '/**/' at the end.
+#
+# Modification History.
+# ---------------------
+# 3/7/22.	wmk.	original makefile; adapted from MakeAnySHtoSQL.
+# 4/24/22.	wmk.	*pathbase* env var included.
+# 5/4/22. wmk.	(automated) path corrections.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+.PHONY : Always JustDoIt
+.ONESHELL : ;
+
+ projpath = $(codebase)/Projects-Geany/EditBas
+
+# <filepath>/<filebase>.sql
+#=======================================================
+Always : JustDoIt
+	sed -i '/\/\/ PubToSuper.bas/,/\/\*\*\//d' Module1
+	echo "PubToSuper deleted from Module1"
+	~\sysprocs/LOGMSG "  PubToSuper deleted from Module1."
+
+#=======================================================
+JustDoIt: ;

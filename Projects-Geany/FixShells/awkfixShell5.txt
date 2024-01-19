@@ -1,0 +1,12 @@
+BEGIN {FS="=";p=1
+{if( $1 == "TEMP_PATH" )
+ p=0
+ if( p )
+  {print}
+ }
+}
+{if( $1 == "TEMP_PATH" )
+ {while(getline < "pathbaseblock.txt")
+ {print}
+ }
+}

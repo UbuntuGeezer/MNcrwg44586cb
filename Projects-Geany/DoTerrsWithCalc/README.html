@@ -1,0 +1,108 @@
+<p>README - DoTerrsWithCalc project documentation for Chromebook.<br>
+5/2/23. wmk.    </p>
+
+<h3>Modification History.</h3>
+
+<pre><code>7/8/21.   wmk.    original document.
+7/14/21.    wmk.   internal documentation added.
+1/26/22.    wmk.   Document Sections added; Project Description expanded.
+5/1/22.     wmk.   .md formatting updated for pandoc utility.
+5/2/23.     wmk.   internal hyperlinks added; .md formatting redone for *mk utility.
+</code></pre>
+
+<h3 id="IX">Document Sections.</h3>
+
+<pre><code><a href="#1.0">link</a> 1.0 Project Description - overall project description.
+<a href="#2.0">link</a> 2.0 Dependencies - code dependencies.
+<a href="#3.0">link</a> 3.0 Significant Notes - important stuff not documented elsewhere.
+<a href="#4.0">link</a> 4.0 Internal Documentation - detailed documentation apart from inline code
+   documentation.
+</code></pre>
+
+<h3 id="1.0">1.0 Project Description.</h3>
+
+<p>DoTerrsWithCalc implements the code required to process QTerrxxx.csv files by placing a list of the territory IDs in a Calc spreadsheet. Then The user can execute a macro from the Territories macro Library to process the list by opening each file and running the necessary additional macros to process the QTerrxxx.csv into a Terrxxx_PubTerr.ods and Terrxxx_SuperTerr.ods.</p>
+
+<p>The goal is to be able to use DoTerrsWithCalc as a repeated process to generate territories from a list of territory IDs (such as what is in Territory Master). This will enable batch processing of territories whose QTerrxxx.csv's have been updated awaiting Calc processing into publisher territories.</p>
+
+<p>There is no <em>make</em> or makefile for DoTerrsWithCalc. All of the active processing is performed in the macro calls. To facilitate ease of use, the spreadsheet ProcessQTerrs12.ods is saved in the DoTerrsWithCalc project folder. This workbook consists of two spreadsheets, the first of which is the list of territories to process, and the second a scratch history sheet.</p>
+
+<p>An associated project <em>TerrPageHeader</em> was added later to add column headings to each page of the resultant publisher territory to facilitate ease of use. It is documented with its own
+<a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/TerrPageHeader/README.html">README</a> file.</p>
+
+<p>DoTerrsWithCalc also contains a folder "Tracking". The /Tracking folder has the spreadsheet file <em>SystemTracker</em> which contains multiple tabs for keeping track of data downloads and territory generation. The documentation for the SystemTracker spreadsheet is contained in the README file in the Tracking folder.<h3>Dependencies.</h3>
+~/Basic/OpenQTerr.bas - Open Office Basic subroutine/macro present in
+  LibreOffice/Libraries/Territories library<br>
+<br><a href="#IX">Index</a></p>
+
+<h3 id="2.0">2.0 Dependencies.</h3>
+
+<p><strong>Basic Macros.</strong>
+This project depends upon the macros described below.</p>
+
+<pre><code>OpenQTerr.bas - Open QTerrxxx.csv from Working-Files for territory xxx.
+SaveCsvToODS.bas - Save .csv file to .ods workbook.
+QToPubTerr3 - Build PubTerr sheet from download QTerr data.
+QGetToBridge - Build Bridge sheet from download QTerr data.
+BridgeToTerr3 - Build PubTerr sheet from Bridge sheet.
+InsertQTerrHdr - Insert territory sheet header into download data.
+MoveToDocSheet - Move to document/sheet from different document/sheet.
+FinishTerritory - (future) Untitled PubTerr to _PubTerr.ods, _PubTerr.xlsx, _PubTerr.pdf
+SuperTerritory - (future) _PubTerr.xlsx to _SuperTerr.xlsx, _SuperTerr.ods
+</code></pre><br><a href="#IX">Index</a>
+<h3 id="3.0">3.0 Significant Notes.</h3>
+Much of the prototype code development is initially done in macros defined
+in ProcessQTerrs12.ods. This is done to avoid having to continually export
+the *Territories* Library in order to preserve code changes over Calc crashes.
+
+The drawback is that any code that jumps into the Territories Library,
+then returns, may lose continuity due to Territories Library vars being
+released. This has the side-effect that code may have to be migrated
+into the Territories Library in order to be accurately tested for
+functionality.<br><a href="#IX">Index</a>
+<h3 id="4.0">4.0 Internal Documentation.</h3>
+ProcessQTerrs12.ods is the current active territory processing workbook. It contains several internal macros that reference *Territories* library macros to accomplish territory generation. Using a list of territories in the first worksheet, territories are "batch" processed until the list is exhausted.
+
+A new project *UpdatePubTerrs" can be used to determine which publisher
+territories are out-of-date. The list of out-of-date territories is in the
+autoload.csv file within the
+[UpdatePubTerrs](file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/UpdatePubTerrs/README.html)
+project. The shell file *GenBatchTerrs* within "DoTerrsWithCalc" will run Calc
+to regeerate the out-of-date territories.
+
+The territory list is taken from column A of the first worksheet (0), starting at
+row 6, one per cell. If a cell begins with the '#' character, it is ignored and
+treated as a comment. The list is terminated with a cell that begins with the '$'
+character.<br>
+<br>
+**Subs/macros.**
+<pre><code> - Main - called from the function Main1
+  the main processing loop that goes through the list of territories invoking the
+  local macros that process each territory.
+
+ - Main1 - called by cell reference '=Main1()'
+  this function macro allows executing Main without having to go through the
+  Tools>Macros>Basic>Execute Macro menu sequence by simply calling it from
+  a cell.
+</code></pre>
+
+<p>The cell that contains the <em>Main1</em> reference may be "deactivated" by editing the cell to begin with the ['] character, making it a string. This is done as a precaution prior to closing the workbook to prevent the automatic firing of the function reference the next time the workbook is opened and autocalc is run.</p>
+
+<pre><code>
+ - DoTerrWithCalc - called with xxx territory ID
+  to take territory xxx QTerrxxx.csv and make a territory workbook
+  Terrxxx_PubTerr.ods
+</code></pre>
+
+<p>DoTerrWithCalc uses the QTerrxxx.csv file as its basis for generating the resultant territory. The QTerrxxx.csv file was generated by runniing a query on the territories SQL database to extract the records for territory xxx. Once that has been done, the SQL processing is left behind, and LibreOffice/OpenOffice Calc is used to finish generating the territory in spreadsheet and PDF formats for the publishers to use.</p>
+
+<pre><code>
+ - QGetToBridge - Territories libary macro called during processing
+  takes the QTerrxxx.csv file and creates a *Bridge* sheet for processing by
+  subsequent library macros.
+</code></pre>
+
+<p>The sub/macro QGetToBridge takes the download data from the .csv file and creates the Bridge sheet which contains all the base records for the territory. The Bridge worksheet is taken as input to the BridgeToTerr sub that creates a territory worksheet in the QTerrxxx.ods workbook.</p>
+
+<p>Once the territory worksheet has been created in QTerrxxx.ods, it is exported to the Terrxxx_PubTerr.ods. From there, it is further saved as an Excel formatted workbook and a PDF formatted file for ease of use by publishers.
+<br><a href="#IX">Index</a></p>

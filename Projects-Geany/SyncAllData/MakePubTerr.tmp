@@ -1,0 +1,166 @@
+# MakePubTerr.tmp - *make* file for PUbTerrxxx.ods build.
+#	6/25/23.	wmk.
+#
+# Dependencies.	*sed run on .tmp to create MakePubTerr makefile.
+#		*batchrun = 1 if this is part of a batch run of pub terrs.
+#		*batchend = 1 if this is the last of a batch run.
+#
+# Modification History.
+# ---------------------
+# 3/5/23.	wmk.	modified for batch runs; *batchrun, *batchend support.
+# 3/6/23.	wmk.	extra 'fi' removed from end of main recipe.
+# 3/7/23.	wmk.	*TEMP_PATH.autotids.txt removed if not batch run;
+#			 *run_soffice environment var support.
+# 3/12/23.	wmk.	accumulate RUoodList.txt if *batchrun.
+# 3/21/23.	wmk.	OBSOLETE territory honored.
+# 3/23/23.	wmk.	NOMAP semaphore support to skip .db build from Mapxxx_RU.csv.
+# 5/14/23.	wmk.	bug fix SpecDBs recipe fixed to call CheckSCSpecDBs.sh;
+#			 --silent mode added to RUTerrs, QTerrs recipes.
+# 5/25/23.	wmk.	FAILED message changed to "out-of-date".
+# 6/14/23.	wmk.	*spath used for soffice.bin.
+# 6/26/23.	wmk.	bug fix - continuation '\' removed from commented mawk;
+#			 change PToodList.txt test to -s for nonzero length.
+# Legacy mods.
+# 2/19/23.	wmk.	original code.
+# 2/26/23.	wmk.	dwnldproj var definition added; automate 
+#			 UpdateRUDwnld batch run call; upbridge var definition added;
+#			 automate UpdateSCBridges run call.
+# 3/4/23.	wmk.	fix SpecDBs recipe.
+# Notes.
+#
+# Following is the build sequence for bringing a territory up-to-date:
+#
+#	SCPA master database Terr86777.db
+#	SCPA territory database Terrxxx_SC.db
+#	SCPA Special territory database(s) < special-db1 > .. < special-dbn >
+#	RefUSA territory database Terrxxx_RU.db
+#	RefUSA Special territory database(s) < special-db1 > .. < special-dbn >
+#	PolyTerri.db and MultiMail.db databases along with QTerrxxx.db
+#	/TerrData publisher territory and PDF files
+#
+# Some 'Check' operations may produce multiple entries in a *oodList.txt file.
+# The *awk directives file awkdeldups.txt will take territories from that
+# list and write unique entries to an appropriate .tidlist.txt file.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+#ifndef run_soffice
+# run_soffice = 1
+#endif
+
+projbase = $(codebase)/Projects-Geany
+ projpath = $(codebase)/Projects-Geany/SyncAllData
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+bridgesproj = $(codebase)/Projects-Geany/BridgesToTerr
+dwnldproj = $(codebase)/Projects-Geany/UpdateRUDwnld
+upbridge = $(codebase)/Projects-Geany/UpdateSCBridge
+
+.PHONY  : PubTerr QTerrs RUTerrs SCPATerrs SpecDBs SCPAMaster
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target PubTerr
+#==================================================================
+PubTerr : QTerrs
+	if [ $$batchrun -eq 0 ];then \
+	 if test -f $(projpath)/PToodList.txt;then rm $(projpath)/PToodList.txt;\
+	  rm $$TEMP_PATH/autotids.txt;fi;fi
+	#  
+	$(projpath)/CheckPubTerrs.sh <start-tid> <end-tid>
+	#the following line was removed after 'then' below...
+	 #mawk 'END{print "$$"}{print substr($$1,5,3)}' $(projpath)/PToodList.txt > $$TEMP_PATH/autotids.txt;
+	 echo "in MakePubTerr..batchend = '$$batchend'"
+	 if [ $$batchend -eq 1 ];then \
+	  if test -s $(projpath)/PToodList.txt;then \
+	   gawk -f gawkgenlist.txt $(projpath)/PToodList.txt >> $$TEMP_PATH/autotids.txt; \
+	   cat $$TEMP_PATH/autotids.txt;cat $(projpath)/autoload.tmp $$TEMP_PATH/autotids.txt \
+	    > $(projpath)/autoload.csv;cat $(projpath)/autoload.csv;fi
+	  if test -f $(projpath)/PToodList.txt;then \
+	   echo "MakePubTerr *make* 1 or more PubTerrs out-of-date - see PToodList.txt";\
+	   echo "  use ProcessQTerrs.ods to generate territory(ies) **";\
+	   if [ $$run_soffice -ne 0 ];then \
+	    $$("$$spath/soffice.bin" autoload.csv \
+	     $(projbase)/DoTerrsWithCalc/ProcessQTerrs12.ods);fi;fi; \
+	  else echo "PubTerr yyy up-to-date.";fi
+
+QTerrs : RUTerrs
+	if test -f $(projpath)/QToodList.txt;then rm $(projpath)/QToodList.txt;fi  
+	$(projpath)/CheckQTerrs.sh <start-tid> <end-tid>
+	if test -f $(projpath)/KillSync;then
+	 cd $(bridgesproj);./DoSed.sh <start-tid>; \
+	 $(MAKE) --silent -f $(bridgesproj)/MakeBridgesToTerr; fi
+		
+
+RUTerrs : SCPATerrs
+	if [ $$batchrun -eq 0 ];then \
+	 if test -f $(projpath)/RUoodList.txt;then rm $(projpath)/RUoodList.txt;fi;fi  
+	$(projpath)/CheckRUTerrs.sh <start-tid> <end-tid>
+	$(projpath)/CheckSpecRUTerrs.sh <start-tid> <end-tid>
+	if test -f $(projpath)/RUoodList.txt;then \
+	 if test -f $(pathbase)/$(rupath)/Terr<start-tid>/MakeSpecials;then \
+	  cd $(codebase)/Projects-Geany/UpdateRUDwnld;./DoSed.sh <start-tid>; \
+	  $(MAKE) --silent -f $(pathbase)/$(rupath)/Terr<start-tid>/MakeSpecials;rm $(projpath)/KillSync;exit 0;fi;fi
+	if test -f $(projpath)/RUoodList.txt;then \
+	 echo " the following should have UpdateRUDwnld run..."; \
+	 cat $(projpath)/RUoodList.txt; fi
+	if test -f $(projpath)/RUoodList.txt;then \
+	 echo " cat RUtidList.txt to see list for *make UpdateRUDwnld.."; \
+	 gawk -F "_" -f awkdeldups.txt $(projpath)/RUoodList.txt > $(projpath)/RUtidList.txt;fi
+	#cp -pv $(projpath)/RUtidList.txt $(dwnldproj)/TIDlist.txt
+	mawk -f awkstripTerr.txt RUtidList.txt > $(dwnldproj)/TIDList.txt
+	echo "  RUtidList.txt tranferred to $(dwnldproj)..."
+	echo "  ** run the batch $(projpath)/UpdtAllRUDwnld shell to finish... **"
+	 # the following lines temporarily removed until can produce TIDList.txt
+	 # and automate the run of UpdateRUDwnld,s.
+	 # cat $(projpath)/RUoodList.txt; \
+	 #cd $(codebase)/Projects-Geany/UpdateRUDwnld;./DoSed.sh <start-tid>;$(MAKE) -f MakeUpdateRUDwnld;\
+	 #rm $(projpath)/KillSync;fi
+	if test -f $(projpath)/KillSync;then exit 1;fi	
+
+SCPATerrs : SpecDBs
+	if test -f $(projpath)/SCoodList.txt;then rm $(projpath)/SCoodList.txt;fi  
+	$(projpath)/CheckSCTerrs.sh <start-tid> <end-tid>
+	$(projpath)/CheckSpecSCTerrs.sh <start-tid> <end-tid>
+	if test -f $(projpath)/SCoodList.txt;then \
+	 echo " cat SCtidList.txt to see list for *make UpdateSCBridge.."; \
+	 gawk -F "_" -f awkdeldups.txt $(projpath)SCoodList.txt > $(projpath)/SCtidList.txt; \
+	 cp -pv $(projpath)/SCtidList.txt $(upbridge)/TIDList.txt; \
+	 echo " ** run the batch process $(upbridge)/UpdtAllSCBridges shell to finish...";fi
+
+SpecDBs : SCPAMaster
+	$(projpath)/CheckSCSpecdbs.sh
+	if test -f $(projpath)/SCSpecOODlist.txt;then \
+	 echo " do UpdtSpecSCBridges for all affected SC special databases"; \
+	 echo "  from Terr86777 master db";fi
+	$(projpath)/CheckRUSpecdbs.sh
+	if test -f $(projpath)/RUSpecOODlist.txt;then \
+	 echo " do SpecialRUdb for all affected RU special databases" \
+	 echo "  download any .csv files for rebuilding out-of-date RU special dbs";\
+	 echo "  move files from Downloads folder to RefUSA/Special folder";\
+	 echo "  run DoSed and *make* for each out-of-date special db";fi
+	
+SCPAMaster :
+	if test -f $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terr<start-tid>/OBSOLETE;then \
+	 echo "** Territory <start-tid> is OBSOLETE - Build halted.**";exit 1;fi
+	if test -f $(projpath)/KillSync;then rm $(projpath)/KillSync;fi
+	$(MAKE) --silent -f $(projpath)/MakeCheckMaster
+	if test -f $(projpath)/KillSync;then exit 1;fi
+	
+
+#==================================================================
+# end MakePubTerr.tmp

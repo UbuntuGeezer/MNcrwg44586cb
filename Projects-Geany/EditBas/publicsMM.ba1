@@ -1,0 +1,16 @@
+&apos;// publicsMM.bas
+&apos;// publics for MultiMail parented spreadsheet processing
+&apos;//	sheet processing constants.
+&apos;// Modified 7/9/21, goCurrDocument added.
+public const COL_ADDR=0		&apos;// column index for extracting address
+public const COL_HLINK=5		&apos;// column for truepeople hyperlink
+public const COL_HLINK1=6		&apos;// column for 411 hyperlink
+public const COL_HLINK2=7		&apos;// column for whitepages hyperlink
+public const COL_CITY=1		&apos;// column index for city
+public const ROW_CITY=2		&apos;// row index for city -B3
+
+public const CJUST=2		&apos;// center HoriJustify
+public const RJUST=0		&apos;// right-justify HoriJustify
+public const YELLOW=16776960		&apos;// decimal value of YELLOW color
+public const TXT_HLINK=&quot;HYPERLINK(&quot;&quot;&quot;	&apos;// HYPERLINK prefix
+&apos;// end publics for MultiMail parented spreadsheet processing

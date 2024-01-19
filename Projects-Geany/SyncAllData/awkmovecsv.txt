@@ -1,0 +1,27 @@
+# awkmovcsv.txt - create MovCSV?.sh from date, filename.
+#	3/1/23.	wmk.
+# entry ENVIRON['ix'] = row index processing
+# write #!/bin/bash
+#       dstr=$1 from file *TEMP_PATH/SortedCSVList.csv (date field)
+#       fstr=$2 from file *TEMP_PATH/SortedCSVList.csv (filename)
+#		date -d $dstr > csvdate
+#		if [ $csvdate -lt $cutoff ];then
+#		 mv $pathbase/$rupath/Special/$fstr $pathbase/$rupath/Special/Previous
+#		 echo "  $fstr moved to ./Previous.."
+#		else
+#		 echo "  $fstr skipped.."
+#		fi
+{if (NR == ENVIRON["ix"]){
+ print"#!/bin/bash"
+ print "dstr=" $1
+ print "fstr=" $2
+ print "csvdate=$(date -d $dstr +%Y%m%d)"
+ print "cutoff=$(date -d \"2022-01-01\" +%Y%m%d)"
+ print "if [ $csvdate -lt $cutoff ];then"
+ print " mv $pathbase/$rupath/Special/$fstr $pathbase/$rupath/Special/Previous"
+ print " echo \"  $fstr moved to ./Previous..\""
+ print "else"
+ print " echo \"  $fstr skipped..\""
+ print "fi"
+ }
+}

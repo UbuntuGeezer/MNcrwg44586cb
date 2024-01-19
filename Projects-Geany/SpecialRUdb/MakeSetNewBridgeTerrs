@@ -1,0 +1,74 @@
+# MakeSetNewBridgeTerrs.tmp - SetNewBridgeTerrs make template.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	5/29/22.	wmk.
+#
+# Entry. pathRUdefs.inc - include file RU path definitions
+#		pathRUdefs.inc derived from generic ~/include/pathRUdefs.i
+#			via Build dependency
+#		(vpath .db)Terryyy_RU.db - territory RU current download
+#		(vpath .csv) Mapyyy_RU.csv - territory RU .csv download raw data
+#		var postpath = postprocessing path to Terryyy/FixyyyRU.sh
+ # var bashpath(codebase)
+#
+# Modification History.
+# ---------------------
+# 4/24/22.	wmk.	code generalized for FL/SARA/86777;*pathbase*, 
+#			 *congterr*, *conglib* env vars introduced.
+# 5/4/22.	wmk.	(automated) path corrections.
+# 5/29/22.	wmk.	main recipe simplified to use AnySQLtoSH *make*.
+# Legacy mods.
+# 6/7/21.	wmk.	original makefile; adapted from MakeUpdateRUDwnld.tmp
+# 7/2/21.	wmk.	multihost code improvements.
+# 7/18/21.	wmk.	dead code removed; check for functionality with Special
+#			 database BirdBayCir.db; name change to MakeSpecialRUdb;
+#			 FixyyyRU prerequisites and build eliminate.
+# 7/19/21.	wmk.	primary target changed to SetNewBridgeTerrs.sh; projpath
+#			 var added.
+
+.ONESHELL : ;
+.NOTPARALLEL : ;
+.PHONY : WarnUser NeverMake ;
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+incroot = $(pathbase)/include/
+ procpath = $(codebase)/Procs-Dev
+specpath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Special
+ projpath = $(codebase)/Projects-Geany/SpecialRUdb
+vpath %.i $(pathbase)/include
+ altproj = $pathbase)/Project-Geany/AnySQLtoSH(codebase)/Project-Geany/AnySQLtoSH
+include pathRUdefs.inc
+
+
+# primary target ($)projpath/SetNewBridge.sh
+#================================================================
+$(projpath)/SetNewBridgeTerrs.sh : (projpath)/SetNewBridgeTerrs.sql
+	cd $(altproj);./DoSed.sh $(projpath) SetNewBridgeTerrs
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+
+$(projpath)/SetNewBridgeTerrs.sql : 
+	if ! test -f (projpath)/SetNewBridgeTerrs.sql;then \
+	 echo "** missing SetNewBridgeTerrs.sql for MakeSetNewBridgeTerrs **";exit 1 fi
+
+#================================================================
+# end MakeSetNewBridgeTerrs

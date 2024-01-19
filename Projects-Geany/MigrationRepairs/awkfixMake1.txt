@@ -1,0 +1,1 @@
+/projpath =/{f=1;print;while(getline < "defpathbase.txt"){print}}/endif #/{f=0}!f

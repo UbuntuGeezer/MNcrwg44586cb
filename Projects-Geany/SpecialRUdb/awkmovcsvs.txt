@@ -1,0 +1,43 @@
+# awkmovcsvs.txt - Generate MovManyCsvs.sh from download list.
+#	12/8/22.	wmk.
+#
+#  Usage.	mawk -f awkmovcsvs.txt csvlist.txt
+#
+#	csvlist.txt = output from *ls -lh *.csv in Downloads.
+#
+#  Exit. MovManyCsvs.sh has list of ./MovDwnld.sh calls for each set of
+#		  multiple .csvs
+#
+#	e.g. AvensCohosh-1.csv AvensCohosh-2.csv -> 
+#		 ./MovSpecDwnld.sh AvensCohosh 2
+BEGIN {prename = "";bname="";bcnt=0}
+{if($9 ~ /[1-9]\.csv/){
+  if (bcnt == 0) {print "#!/bin/bash";bcnt = 1};
+  perdpos = index($9,".")
+  print "cp -pv ~/Downloads/" substr($9,1,perdpos-1) ".csv  $pathbase/$rupath/Special"
+   } ;
+}
+
+#  if (bcnt > 1 && prename != nxtname) {
+#   print prename " " bcnt
+#   prename = nxtname
+#   bcnt = 0
+#   } prename = nxtname
+#}
+#  else {bcnt=0;prename=""}
+#}
+
+#{if($9 ~ /[1-9]\.csv/){dashix = index($9,"-");;bcnt = bcnt + 1;
+#  if(bcnt == 1) prename=bname;;
+#priht bname " " bcnt
+# }
+# 
+#  else {prename="";bcnt=0}
+#
+#if(bcnt > 0) print bname " " bcnt;
+#  else if(bcnt > 0)
+#   {print prename " " bcnt;bcnt=0;prename=""}
+#  else prename=bname;print bname " " bcnt
+# }
+# else; # end have number-.csv
+#}

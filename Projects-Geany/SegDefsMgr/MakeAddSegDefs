@@ -1,0 +1,56 @@
+# MakeAddSegDefs - *make* file for AddSegDefs.sh.
+#	2/25/23.	wmk.
+#
+# Entry. loadsegsfailed semaphore file - if present, LoadSegDefs *make failed.
+#		 DoSedLoadSegDefs.sh preprocessed this makefile.
+#
+# Exit.
+#  
+# Modification History.
+# ---------------------
+# 2/25/23.	wmk.	modified for use with SegDefsMgr project.
+# Legacy mods.
+# 2/12/23.	wmk.	original code.
+# 2/12/23.	wmk.	loadsegsfailed semaphore Entry condition documented.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/SegDefsMgr
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOTPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	if test -f $(projpath)/loadsegsfailed;then \
+	 echo " ** LoadSegDefs failed - cannot build/run AddSegDefs. **";exit 1;fi
+	cd $(altproj);./DoSed.sh $(projpath) AddSegDefs
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/AddSegDefs.sh;then \
+	 echo "** AddSegDefs.sh generation failed **";exit 1;fi
+	echo "** AddSegDefs.sh to load territory segment definitions **"
+	$(projpath)/AddSegDefs.sh
+	sed -i 's/"//g' $(projpath)/Jumpto.sql
+	sqlite3 < $(projpath)/Jumpto.sql
+	
+#==================================================================
+# end MakeAddSegDefs.tmp

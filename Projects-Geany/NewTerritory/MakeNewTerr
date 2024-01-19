@@ -1,0 +1,67 @@
+# MakeNewTerr.tmp - make file template for creating new territory.
+$(error out-of-date)
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	4/1/22.	wmk.
+#
+# Entry. user must have defined territory in TerrIDData.db.Territory table.
+#
+# Modification History.
+# ---------------------
+# 6/17/21.	wmk.	original code (multihost included).
+# 7/2/21.	wmk.	superfluous "s removed.
+# 8/27/21.	wmk.	updated and cleaned up; bug fix in bashpath.
+# 8/28/21.	wmk.	added reminder to create Terr843Hdr.ods.
+# 4/1/22.	wmk.	*state* *county* *congno* support added; HOME changed
+#			 to USER in host check.
+#
+# Notes. Project "sed" command should be used to change terrid to 843 in
+#  MakeNewTerr make file.
+#  This makefile adopts the *standard* that vars ending in *path* have no
+#  trailing '/'; vars ending in *base* have a trailing '/'
+# ** The environment variable *pathbase* has no trailint '/', so one is
+#    added for internal use here **
+
+ifeq ($(USER),ubuntu)
+  folderbase=/media/ubuntu/Windows/Users/Bill/
+else
+  folderbase = $(HOME)/
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+  ifneq ("",)
+   pathxbase = $(folderbase)////
+  else
+   pathxbase = $(folderbase)/Territories/
+  endif
+else
+  pathxbase = $(pathbase)/
+endif
+
+ bashpath = $(codebase)Territories/Procs-Dev
+RUpath = $(pathxbase)RawData/RefUSA/RefUSA-Downloads
+SCpath = $(pathxbase)RawData/SCPA/SCPA-Downloads
+
+# primary targets $(RUpath)/TErr843 $(SCPath)/TErr843
+#=========================================================
+$(RUpath)/Terr843 $(SCpath)/Terr843 &: 
+	if test -d $(RUpath)/TErr843; then rm -r $(RUpath)/TErr843;fi
+	if test -d $(SCpath)/TErr843; then rm -r $(SCpath)/TErr843;fi
+	bash $(bashpath)/MakeRawData.sh 843 TX HDLG 99999
+	bash $(bashpath)/MakeTerrData.sh 843
+	bash $(bashpath)/GenTerrHdr.sh 843
+	echo "** Now run Calc on Terr843Hdr.csv to create Terr843Hdr.ods **"
+
+#==========================================================	
+
+	
+#junk.txt .ONESHELL :     MakeNewTerr
+#	bash $(bashpath)/MakeRawData.sh 843
+#	bash $(bashpath)/MakeTerrData.sh 843
+#	bash $(bashpath)/GenTerrHdr.sh 843
+
+#MakeNewTerr :

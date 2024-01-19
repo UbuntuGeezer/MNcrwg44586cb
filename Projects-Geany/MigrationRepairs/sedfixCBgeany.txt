@@ -1,0 +1,8 @@
+# sedfixCBproj.txt - *sed directives to migrate Projects-Geany/<proj>.geany to CB.
+s?/media/ubuntu/Windows/Users/Bill?/home/vncwmk3/GitHub?g
+s?Territories/FL/SARA/86777?TerritoriesCB?g
+s?%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill?%2Fhome%2Fvncwmk3%2FGitHub?g
+s?Territories%2FFL%2FSARA%2F86777?TerritoriesCB?g
+s?home/vncwmk3/Territories/?home/vncwmk3/GitHub/TerritoriesCB/?g
+s?home%2Fvncwmk3%2FTerritories%2F?home%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2F?g
+

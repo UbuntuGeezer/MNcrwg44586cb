@@ -1,0 +1,75 @@
+<p>ForeignKeys.md - FOREIGN keys within territory databases.<br>
+2/3/23.     wmk.</p>
+
+<h3>Modification History.</h3>
+
+<pre><code>2/3/23.    wmk.   original document.
+</code></pre>
+
+<h3 id="IX">Documentation Sections.</h3>
+
+<pre><code><a href="#1.0">link</a> 1.0 FOREIGN Key Usage - how FOREIGN keys are used.
+<a href="#2.0">link</a> 2.0 Dependencies - project dependencies.
+<a href="#3.0">link</a> 3.0 Project Build - step-by-step build instructions.
+<a href="#4.0">link</a> 4.0 Significant Notes - important stuff not documented elsewhere.
+</code></pre>
+
+<h3 id="1.0">1.0 FOREIGN Key Usage.</h3>
+
+<p>FOREIGN keys are used to enforce relationships between related database tables.
+It is best if the related tables are within the same database, but this is not
+an absolute constraint.</p>
+
+<p>The "foreign-keys" sqlite3 flag indicates whether the installed sqlite3 supports
+FOREIGN keys. The command:</p>
+
+<pre><code> PRAGMA foreign_keys;</code></pre>
+
+<p>returns 1 if enabled, 0 if disabled. The command:</p>
+
+<pre><code> PRAGMA foreign_keys = ON | OFF;</code></pre>
+
+<p>enables or disables FOREIGN key usage for the sqlite3 session.</p>
+
+<p>FOREIGN keys are useful for one-to-many table relationships. The "one" table
+will be the "parent" table, and the "many" table will be the "child" table.
+A FOREIGN key
+definition is part of the "child" table and refers back to a field within
+the "parent" table. Typically the "parent" key is the primary key of the
+parent table.</p>
+
+<p>To specify how foreign key constraint behaves whenever the parent key is
+deleted or updated, you use the ON DELETE or ON UPDATE action as follows:</p>
+
+<pre><code> FOREIGN KEY (foreign\_key\_columns)
+        REFERENCES parent\_table(parent_key\_columns)
+        ON UPDATE action 
+        ON DELETE action;
+</code></pre>
+
+<p>SQLITE supports the following actions:</p>
+
+<pre><code>
+    SET NULL
+    SET DEFAULT
+    RESTRICT
+    NO ACTION
+    CASCADE
+
+    SET NULL sets NULL value in child table dependent upon "ON" action
+    SET DEFAULT sets default value in child table dependent upon "ON" action
+    RESTRICT does not allow changes in parent key of paernt table
+    NO ACTION similar to RESTRICT
+    CASCADE propagate changes in the parent table to the child table
+</code></pre>
+
+<p><a href="https://www.sqlitetutorial.net/sqlite-foreign-key/">Documentation Source</a><br>
+An example within
+territories is special database name to territories which use it.
+<a href="#IX">Index</a></p>
+
+<h3 id="2.0">2.0 Dependencies.</h3>
+
+<h3 id="3.0">3.0 Project Build.</h3>
+
+<h3 id="4.0">4.0 Significant Notes.</h3>

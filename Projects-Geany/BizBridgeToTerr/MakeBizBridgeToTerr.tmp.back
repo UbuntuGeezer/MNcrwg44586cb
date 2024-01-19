@@ -1,0 +1,54 @@
+# MakeBizBridgeToTerr.tmp - template for MakeBizBridgeToTerr make file.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	9/28/21.	wmk.
+# Modification History.
+# ---------------------
+# 9/28/21.	wmk.	original makefile; adpated from MakeBridgesToTerr.
+# legacy mods.
+# 3/8/21.	wmk.	original recipe.
+# 3/24/21.	wmk.	SetSCRUdncs call added to ensure DNCs set in Bridges.
+# 4/7/21.	wmk.	Added SortTerrByAddress call to force proper sorting
+#					and QGenTable to generate .csv at very end.
+# 4/10/21.	wmk.	Replaced SortTerrByAddress call with SortQTerrByAddr
+#					then changed it back since there is a Make for SortTerr..
+# 5/27/21.	wmk.		modified for use with either home or Kay's system;
+#					whichsystem, folderbase vars added.
+# 6/6/21.	wmk.	whichsystem set for "home"
+# 6/17/21.	wmk.	multihost code improvements; ($)HOME env var used.
+# 7/3/21.	wmk.	SortQTerrByAddr replaced SortTerrByAddr in make recipe.
+# 7/7/21.	wmk.	dead code removed; remove excess "s.
+# 7/8/21.	wmk.	added prerequisite LastChanceDNCs.sh to build; var
+#					projbase added.
+# 9/15/21.	wmk.	changed from .sq -> .sql to .sql -> .sq.
+#
+# Notes.
+
+ifeq ($(HOME),/home/ubuntu)
+ folderbase=/media/ubuntu/Windows/Users/Bill
+else
+ folderbase=$(HOME)
+endif
+
+vpath %_RU.db $(folderbase)/Territories/BRawData/BRefUSA/BRefUSA-Downloads/Terryyy
+vpath %.sh $(folderbase)/Territories/Procs-Dev
+vpath %.csv $(folderbase)/Territories/BTerrData/Terryyy/Working-Files
+ bashpath = $(codebase)/Territories/Procs-Dev/
+projbase = $(folderbase)/Territories/Projects-Geany/
+targpath = $(folderbase)/Territories/BTerrData/Terryyy/Working-Files
+
+.PHONY : $(targpath)/QTerryyy.csv 
+
+.NOTPARALLEL : ;
+
+.ONESHELL : ;
+
+# $(targpath)/QTerryyy.csv primary target
+#==============================================================
+ $(targpath)/QTerryyy.csv : $(targpath)/QTerryyy.ods
+	bash $(bashpath)QBGetTerr.sh yyy
+
+$(targpath)/QTerryyy.ods : ;
+
+#=============================================================
+

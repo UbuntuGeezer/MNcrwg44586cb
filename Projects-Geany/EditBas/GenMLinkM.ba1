@@ -1,0 +1,168 @@
+&apos;// GenMLinkM.bas
+&apos;//---------------------------------------------------------------------
+&apos;// GenMLinkM - Generate hyperlink(s) for selected MultiMail terr range.
+&apos;//		9/8/20.	wmk.	09:30
+&apos;//---------------------------------------------------------------------
+
+public sub GenMLinkM()
+
+&apos;//	Usage.	macro call or
+&apos;//			call GenMLinkM()
+&apos;//
+&apos;// Entry.	user selection is Admin-Import format sheet
+&apos;//			user has selected a range of cells in desired row(s) to
+&apos;//			extract the address field from the COL_ADDR column index
+&apos;//			and create a hyperlink to look up phone/address information
+&apos;//
+&apos;//	Exit.	each row selected has a hperlink added in the COL_HLINK,
+&apos;//			COL_HLINK1 and COL_HLINK2 (N, O, P) columns in the form:
+&apos;//			HYPERLINK(&quot;&lt;url&gt;&quot;) that will allow the end-user to click
+&apos;//			on the hyperlink url and be taken to a search webpage
+&apos;//
+&apos;// Calls.	sGenPhoneURL, sGen411URL, sGenWhtPgesURL
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	8/22/20.	wmk.	original code; adapted from GenHLinkM
+&apos;// 8/23/20.	wmk.	columns adjusted 1 right for new &quot;Found Name&quot; column
+&apos;// 9/8/20.		wmk.	add documentation that links are in cols N-P
+&apos;//
+&apos;//	Notes. GenMLinkM accommodates territory extracted using a combination
+&apos;// of brute force physical search and ReferenceUSA.com. These supply
+&apos;// the list of addresses. Since the first pass on the data came from 
+&apos;// the brute force method, the downstream routines for URL generation
+&apos;// use the full address. All of the ReferenceUSA.com fields are
+&apos;// present in the territory spreadsheet, but a utility was written
+&apos;// to bridge the split address into a full address for use with
+&apos;// existing software modules.
+&apos;//	Method. for each row, extract address field from COL_GULLADDR
+&apos;//		use sGenPhoneURL to generate url from address
+&apos;//     add HYPERLINK(&quot;&lt;url&gt;&quot;) to create hyperlink
+&apos;//		store hyperlink in row at COL_HLINK, COL_HLINK1, COL_HLINK2
+
+&apos;//	constants.
+const COL_CITY=1
+const ROW_CITY=2
+
+&apos;//	constants. (shared with ConcatAddressM)
+const COL_NUMBER=3			&apos;// house number
+const COL_PREDIR=4			&apos;// street pre-direction
+const COL_STREET=5			&apos;// street name
+const COL_SUFFIX=6			&apos;// street suffix (e.g. Ave)
+const COL_POSTDIR=7			&apos;// street post direction
+const COL_UNIT=8			&apos;// unit/apt #
+const COL_FULLADDR=9		&apos;// full concatenated address
+const COL_HLINK=13			&apos;// truepeoplesearch (N)
+const COL_HLINK1=14			&apos;// 411 search (O)
+const COL_HLINK2=15			&apos;// whitepages search (P)
+const YELLOW=16776960		&apos;// decimal value of YELLOW color
+
+&apos;// cell formatting constants.
+&apos;const LJUST=1		&apos;// left-justify HoriJustify
+&apos;const CJUST=2		&apos;// center HoriJustify
+&apos;const RJUST=0		&apos;// right-justify HoriJustify
+&apos;const YELLOW=16776960		&apos;// decimal value of YELLOW color
+&apos;const TXT_HLINK=&quot;HYPERLINK(&quot;&quot;&quot;	&apos;// HYPERLINK prefix
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+
+&apos;// processing variables.
+dim nRowsProcessed As Integer	&apos;// count of rows processed
+dim nRowCount		As Integer	&apos;// # rows to process
+dim sAddress As String		&apos;// address field from current row
+dim sURL	As String		&apos;// url generated from sAddress
+dim sHLink	As String		&apos;// HYPERTEXT link to store
+dim i		As Integer		&apos;// loop counter
+
+&apos;// XCell sheet objects
+dim oCellAddr as object		&apos;// address field
+dim oCellHLink as object	&apos;// hyperlink field
+dim oCity 	As object		&apos;// city for sheet
+dim sCity	As String		&apos;// city from sheet
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	
+	&apos;// extract city applying to sheet
+	oCity = oSheet.getCellByPosition(COL_CITY, ROW_CITY)
+	sCity = trim(oCity.String)
+	if len(sCity) = 0 then
+		sCity = &quot;Venice&quot;
+	endif
+	nRowsProcessed = 0		&apos;// clear processed count
+
+	&apos;// set row processing from oRange information
+	lThisRow = oRange.StartRow - 1		&apos;// start at -1 since increment first
+	nRowCount = oRange.EndRow - lThisRow	&apos;// set row count to process
+	for i = 1 to nRowCount
+		lThisRow = lThisRow + 1		&apos;// advance current row
+		oCellAddr = oSheet.getCellByPosition(COL_FULLADDR, lThisRow)
+		oCellHLink = oSheet.getCellByPosition(COL_HLINK, lThisRow)
+		sAddress = trim(oCellAddr.String)		&apos;// set cell address text
+		if len(sAddress) = 0 then
+			msgBox(&quot;GenMLinkM  - empty address field; halting process.&quot;)
+			oCellAddr.CellBackColor = YELLOW
+			exit for
+		endif	&apos;// null string - alert user, mark row and bail
+
+		&apos;// Generate truepeople.. URL
+		sURL = sGenPhoneURL(sAddress, sCity)
+		sHLink = &quot;=&quot;+TXT_HLINK + sURL + CHR(34)+&quot;;&quot;+CHR(34) _
+	 + &quot;Click here to search&quot; + CHR(34) + &quot;)&quot;
+&apos;msgbox(&quot;Double quote = &quot; + ASC(&quot;&quot;&quot;&quot;) )
+&apos;msgbox(&quot;Generated URL =&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sURL + &quot;&apos;&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;Generated Hypertext link = &quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sHLink )
+&apos;		oCellHLink.String = sHLink
+		oCellHLink.setFormula(sHLink)
+		
+		&apos;// Generate 411.. URL
+		sURL = sGen411URL(sAddress, sCity)
+		sHLink = &quot;=&quot;+TXT_HLINK + sURL + CHR(34)+&quot;;&quot;+CHR(34) _
+	 + &quot;Click here to search&quot; + CHR(34) + &quot;)&quot;
+&apos;msgbox(&quot;Generated URL =&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sURL + &quot;&apos;&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;Generated Hypertext link = &quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sHLink )
+		oCellHLink = oSheet.getCellByPosition(COL_HLINK1, lThisRow)
+		oCellHLink.setFormula(sHLink)
+
+		&apos;// Generate whitepages.. URL
+		sURL = sGenWhtPgesURL(sAddress, sCity)
+		sHLink = &quot;=&quot;+TXT_HLINK + sURL + CHR(34)+&quot;;&quot;+CHR(34) _
+	 + &quot;Click here to search&quot; + CHR(34) + &quot;)&quot;
+&apos;msgbox(&quot;Generated URL =&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sURL + &quot;&apos;&quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;Generated Hypertext link = &quot; + CHR(13) + CHR(10) _
+&apos;		+ &quot;&apos;&quot; + sHLink )
+		oCellHLink = oSheet.getCellByPosition(COL_HLINK2, lThisRow)
+		oCellHLink.setFormula(sHLink)
+		
+Nextfor:
+		nRowsProcessed = nRowsProcessed + 1
+
+	next i
+	
+	msgbox(&quot;GenMLinkM  - &quot; + nRowsProcessed + &quot; rows processed&quot;)
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+   msgbox(&quot;GenMLinkM  - unprocessed error.&quot;)
+   GoTo NormalExit
+
+end sub		&apos;// end GenMLinkM 	9/8/20

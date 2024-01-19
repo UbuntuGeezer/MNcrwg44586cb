@@ -1,0 +1,68 @@
+# MakeRegenSpecDB - MakeRegenSpecDB  SC template for territory xxx.
+#	5/5/23.	wmk.
+#
+# Note: edit xxx to be the territory ID where this is stored.
+#
+# Modification History.
+# ---------------------
+# 12/15/22.	wmk.	comments tidied.
+# 5/5/23.	wmk.	superfluous recipe removed.
+# Legacy mods.
+# 5/4/22.	wmk.	(automated) path corrections.
+# 6/7/22.   wmk.    (automated) simplify main RegenSpecDB recipe.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+# 11/25/22. wmk.    (automated) main .sh recipe fix.
+# 11/25/22. wmk.    (automated) correct *procpath, *codebase, *bashpath
+# Legacy mods.
+# 7/22/21.	wmk.	original code.; adapted from RU version.
+# 8/13/21.	wmk.	note added about editing xxx to territory ID.
+# 9/5/21.	wmk.	<filename> fixed in .sh.
+# 11/2/21.	wmk.	sequence changed to .sql > .sq > .sh.
+# 12/15/21.	wmk.	edited for territory xxx.	
+# legacy history.
+# 7/20/21.	wmk.	bug fix where HOME environment var not being
+#			evaluated; missing $s corrected in path refs.
+
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef codebase
+ codebase=$(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : ;
+.ONESHELL : ;
+
+prepath = $(pathbase)/RawData/SCPA/SCPA-Downloads/Terrxxx
+procpath = $(codebase)/Procs-Dev
+
+# RegenSpecDB.sh primary target.
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+#================================================="
+$(prepath)/RegenSpecDB.sh : $(prepath)/RegenSpecDB.sql
+	cd $(altproj);./DoSed.sh $(prepath) RegenSpecDB
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+
+
+$(prepath)/RegenSpecDB.sql :;
+	if ! test -f $@;then \
+	 echo " ** missing RegenSpecDB.sql for build RegenSpecDB.sh **";exit 1;fi
+
+#================================================== 
+

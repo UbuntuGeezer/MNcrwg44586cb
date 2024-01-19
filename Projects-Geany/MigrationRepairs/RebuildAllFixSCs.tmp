@@ -1,0 +1,52 @@
+# MakeRebuildAllFixSCs.tmp - template for make MakeRebuildAllFixSCs.
+#	5/28/22.	wmk.
+#
+# Entry. SCPA-Downloads/Terr*/FixTerr*SC.sql files all current with
+#			*pathbase*
+#
+# Build Results: SCPA-Downloads/Terr*/FixTerr*SC.sh files all rebuilt
+#
+# update happens if SCPA-Downloads/SCPADiff_mm-dd.db is newer than 
+#		SCPA-Downloads/Updtxxx.csv for all territories xxx.
+#
+# Modification History.
+# ---------------------
+# 5/28/22.	wmk.	original code.
+#
+# Dependencies. - run "sed" make preprocessor after editing sed Build command.
+# yyy  run Build "sed" to change yyy to territory and set download date.
+
+.ONESHELL : ;
+.NOTPARALLEL : ;
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+vpath %.csv $(pathbase)/RawData/SCPA/SCPA-Downloads/Terryyy
+SCDwnldPath = $(pathbase)/RawData/SCPA/SCPA-Downloads
+projpath = $(pathbase)/Projects-Geany/FlagSCUpdates
+altproj = $(pathbase)/Projects-Geany/AnySQLtoSH
+scterrpath = $(SCDwnldPath)/Terryyy
+
+.PHONY  : Always
+.ONESHELL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	cd $(altproj);./DoSed.sh $(scterrpath) FixyyySC
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(scterrpath)/FixyyySC.sh;then \
+	 echo "** FixyyySC.sh generation failed **";exit 1;fi
+	$(scterrpath)/FixyyySC.sh
+	
+#==================================================================

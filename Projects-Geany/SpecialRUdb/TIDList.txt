@@ -1,0 +1,7 @@
+#TerrID list for BerkshirePlace.
+615
+616
+617
+630
+640
+# end TID list for BerkshirePlace.

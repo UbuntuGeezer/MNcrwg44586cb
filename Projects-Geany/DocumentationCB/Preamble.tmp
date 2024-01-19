@@ -1,0 +1,17 @@
+# Preamble.tmp - template preamble for shells using error handling.
+#	5/16/23.	wmk.
+# set *MYPROC = process name to display in error handling.
+#jumpto function definition
+function jumpto
+{
+    label=$1
+    cmd=$(sed -n "/$label:/{:a;n;p;ba};" $0 | grep -v ':$')
+    eval "$cmd"
+    exit
+}
+export thisid=$$
+export MYPROC=$0
+if [ -z "$build_log" ];then
+ export build_log=$TEMP_PATH/BuildLog.txt
+fi
+

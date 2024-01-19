@@ -1,0 +1,4 @@
+# sedPre.txt - (modified by DoSed > sedPreDir.txt
+/\-\- \*\* FixFromSC/i\-\-begin SPLIT
+/\-\- \*\* FixFromSC/i\-\-begin FixFromSC
+/\*\* END FixFromSC/a--/**/

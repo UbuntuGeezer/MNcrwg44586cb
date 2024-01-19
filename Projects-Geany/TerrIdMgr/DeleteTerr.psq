@@ -1,0 +1,20 @@
+-- * DeleteTerr.psq/sql - Delete territory from PolyTerr, MultiMail, TerrIDData, AuxSCPA.
+-- * 5/30/23.	wmk.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 5/30/23.	wmk.	original code.
+-- *
+-- * Notes. DeleteTerr sets 'DelPending' = 1 in the following tables
+-- * for each record where the territory ID is x xx.
+-- *	PolyTerri.PropOwners
+-- *	PolyTerri.TerrProps
+-- *	MultiMail.SplitOwners
+-- *	MultiMail.SplitProps
+-- * DelTerr sets the TerrID = '000' in TerrIDData.Territory
+-- *  where current TerrID = x xx (this cascades into all of the other
+-- *  TerrIDData tables).
+-- *;
+
+.quit
+-- * END DeleteTerr.sql;

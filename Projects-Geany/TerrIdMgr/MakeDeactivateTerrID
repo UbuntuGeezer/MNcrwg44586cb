@@ -1,0 +1,50 @@
+# MakeDeactivateTerr.tmp - *make* file for DeactivateTerr build.
+#	6/2/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 6/2/23.	wmk.	original code.
+#
+# DeactivateTerr will deactivate a territory by killing all of its records
+# in the Terrxxx_SC.db, Terrxxx_RU.db, PolyTerri.db and MultiMail.db databases.
+# It uses DeactivateTerr.sh and DeactivateMasterTerr.sh to accomplish this.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/TerrIdMgr
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	cd $(altproj);./DoSed.sh $(projpath) DeactivateTerrID
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/DeactivateTerrID.sh;then \
+	 echo "** DeactivateTerrID.sh generation failed **";exit 1;fi
+	echo "** run DeactivateTerrID.sh to delete territory **"
+	$(projpath)/DeactivateTerrID.sh 965
+	echo "Territory 965 deactivated within TerrIDData.Territory table."
+	
+#==================================================================
+# end MakeDeactivateTerr.tmp

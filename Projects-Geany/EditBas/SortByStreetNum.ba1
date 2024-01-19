@@ -1,0 +1,73 @@
+&apos;// SortByStreetNum.bas
+&apos;//------------------------------------------------------------------------
+&apos;// SortByStreetNum - Sort RefUSA Import sheet on Street and Number fields.
+&apos;//		10/25/20.	wmk.	08:20
+&apos;//------------------------------------------------------------------------
+
+public sub SortByStreetNum()
+
+&apos;//	Usage.	macro call or
+&apos;//			call SortByStreetNum()
+&apos;//
+&apos;// Entry.	user has selected row(s) of import data to be
+&apos;//			sorted in ascending order by Street, then Number columns
+&apos;//
+&apos;//	Exit.	selected rows sorted
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	10/15/20.	wmk.	original code
+&apos;// 10/25/20.	wmk.	bug fix; called for presort so columns changed
+&apos;//						column numbers ar 1-based
+&apos;//
+&apos;//	Notes.
+
+rem ----------------------------------------------------------------------
+rem define variables
+dim document   as object
+dim dispatcher as object
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dim args1(11) as new com.sun.star.beans.PropertyValue
+args1(0).Name = &quot;ByRows&quot;
+args1(0).Value = true
+args1(1).Name = &quot;HasHeader&quot;
+args1(1).Value = false
+args1(2).Name = &quot;CaseSensitive&quot;
+args1(2).Value = false
+args1(3).Name = &quot;NaturalSort&quot;
+args1(3).Value = false
+args1(4).Name = &quot;IncludeAttribs&quot;
+args1(4).Value = true
+args1(5).Name = &quot;UserDefIndex&quot;
+args1(5).Value = 0
+args1(6).Name = &quot;Col1&quot;
+args1(6).Value = 5					&apos;// 1-based (E)
+args1(7).Name = &quot;Ascending1&quot;
+args1(7).Value = true
+args1(8).Name = &quot;Col2&quot;
+args1(8).Value = 3					&apos;// 1-based (C)
+args1(9).Name = &quot;Ascending2&quot;
+args1(9).Value = true
+args1(10).Name = &quot;IncludeComments&quot;
+args1(10).Value = false
+args1(11).Name = &quot;IncludeImages&quot;
+args1(11).Value = true
+
+dispatcher.executeDispatch(document, &quot;.uno:DataSort&quot;, &quot;&quot;, 0, args1())
+
+NormalExit:
+	msgbox(&quot;SortByStreetNum complete. &quot;)
+	exit sub
+	
+ErrorHandler:	
+	msgbox(&quot;SortByStreetNum - unprocessed error.&quot;)
+	GoTo NormalExit
+
+end sub		&apos;// end SortByStreetNum		10/25/20

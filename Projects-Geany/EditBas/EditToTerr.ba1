@@ -1,0 +1,230 @@
+&apos;// EditToTerr.bas
+&apos;//---------------------------------------------------------------
+&apos;// EditToTerr - Convert Admin-Edit to Pub-Territory sheet.
+&apos;//		9/13/20.		wmk.	01:05
+&apos;//---------------------------------------------------------------
+
+public sub EditToTerr()
+
+&apos;//	Usage.	macro call or
+&apos;//			call EditToTerr()
+&apos;//
+&apos;// Entry.	user selection is Admin-Edit formatted sheet
+&apos;//
+&apos;//	Exit.	produces a &quot;Pub-Territory&quot; formatted sheet with the following fields:
+&apos;//        A    	B      C       D      E     F    		G		   H		I
+&apos;//		Address  Name1  Name2   Phone1  Phone2 RU/Phone	 DoNotCall	Foreign	Personal/Notes
+&apos;//[source] B      C	  D		   E	  F	        G          M       O		-
+&apos;//
+&apos;// Calls.	BoldHeadings, ForceRecalc, SetTerrWidths,
+&apos;//			SetSelection, MergeOwnerCells, MergeStreetsCells,
+&apos;//			MergeSheetType
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/11/20.	wmk.	original code
+&apos;//	9/12/20.	wmk.	SetTerrWidths call corrected; MergeStreetsCells
+&apos;//						call added
+&apos;//	9/13/20.	wmk.	changed to leave RefUSA/Phone column
+&apos;//						in Territory fields
+&apos;//
+&apos;// Admin-Edit sheet fields.
+&apos;//		9/7/20. (lines preceded by #s are SplitTable fields)
+&apos;//								source-column	target-column
+&apos;//0|OwningParcel|TEXT|1||0			A				-
+&apos;//1|UnitAddress|TEXT|1||0			B				D
+&apos;//2|Resident1|TEXT|0||0			C				B
+&apos;//3|Resident2|TEXT|0||0			D				C
+&apos;//4|Phone1|TEXT|0||0				E				D
+&apos;//5|Phone2|TEXT|0||0				F				E
+&apos;//6|RefUSA-Phone|TEXT|0||0			G				F
+&apos;//	truepeople hyperlink			H				-
+&apos;// 411 hyperlink					I				-
+&apos;// whitepages hyperlink			J				-
+&apos;//7|SubTerritory|TEXT|0||0			K				-
+&apos;//8|CongTerrID|TEXT|0||0			L				-
+&apos;//9|DoNotCall|INTEGER|0|0|0		M				G
+&apos;//10|RSO|INTEGER|0|0|0				N				-
+&apos;//11|Foreign|INTEGER|0|0|0			O				H
+&apos;//12|RecordDate|REAL|0|0|0			P
+&apos;//13|X-Pending|INTEGER|0|0|0
+&apos;//
+&apos;// Method.
+&apos;//		Move header A1-H4 to B1
+&apos;//		Remove column A
+&apos;//		Change A heading to &quot;Address&quot;
+&apos;//		col B heading to &quot;Name1&quot;
+&apos;//		col C heading to &quot;Name2&quot;
+&apos;//		remove columns G-N
+&apos;//		remove column G
+&apos;//		set H column heading to &quot;Personal/Notes&quot;
+&apos;//		set H1 = &quot;Pub-Territory formatted sheet&quot;
+
+&apos;//	constants.
+const COL_NAME1=1		&apos;// column B is Name1 column
+const COL_A=0
+const COL_B=1
+const COL_C=2	
+const COL_D=3
+const COL_E=4
+const COL_F=5
+const COL_G=6			&apos;// column G index
+const COL_H=7			&apos;// column H index
+const COL_I=8			&apos;// column I index
+const COL_J=9			&apos;// column J index
+const COL_K=10			&apos;// column K index
+const COL_L=11			&apos;// column L index 
+const COL_M=12			&apos;// column M index (DoNotCall)
+const COL_N=13			&apos;// column N index (RSO)
+const COL_O=14			&apos;// column O index (Foreign)
+const ROW_1=0
+const ROW_2=1
+const ROW_3=2
+const ROW_4=3
+const ROW_HEADING=4		&apos;// headings row index
+const LJUST=1		&apos;// left-justify HoriJustify				&apos;// mod052020
+const CJUST=2		&apos;// center HoriJustify						&apos;// mod052020
+const RJUST=3		&apos;// right-justify HoriJustify				&apos;// mod052320
+const MDYY=30		&apos;// &apos;M/D/YY&apos; format value
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+dim oMrgRange	As Object	&apos;// merge range
+
+dim oCell	As Object		&apos;// cell working on
+dim oCell2	As Object		&apos;// cell related cell to oCell
+dim i		As Integer		&apos;// loop index
+dim sPropID	As String		&apos;// property ID
+dim sSubTerr	As String	&apos;// subterritory
+dim sCongTerr	As String	&apos;// cong terr ID
+dim lRowCount	As Long		&apos;// row count of addresses
+dim dDate		As Double	&apos;// date value
+dim sCityStZip	As String	&apos;// concatenated City, State, Zip
+dim sNotes		As String	&apos;// notes field
+dim	nCols		As Integer	&apos;// column count to remove
+dim sFormula	As String	&apos;// COUNTA formula from B2
+dim bForeign	As Boolean
+dim bDoNotCall	As Boolean
+
+	&apos;// code.
+	ON ERROR GoTo ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	oCell =	oSheet.getCellByPosition(COL_B, ROW_2)
+	lRowCount = oCell.Value
+
+&apos;//		Move header A1-H4 to B1
+	oCell = oSheet.getCellByPosition(COL_B, ROW_2)
+	sFormula = oCell.getFormula()					&apos;// save B2 formula
+	oMrgRange = oRange
+	oMrgRange.StartColumn = COL_A
+	oMrgRange.EndColumn = COL_H
+	oMrgRange.StartRow = ROW_1
+	oMrgRange.EndRow = ROW_4
+dim oTarget as new com.sun.star.table.CellAddress
+	oTarget.Sheet = oRange.Sheet
+	oTarget.Column = COL_B
+	oTarget.Row = ROW_1
+	oSheet.moveRange(oTarget,oMrgRange)
+
+&apos;//		Remove column A, then restore formula in B2
+	oSheet.Columns.removeByIndex(COL_A, 1) 
+	oCell = oSheet.getCellByPosition(COL_B, ROW_2)
+	oCell.setFormula(sFormula)
+
+&apos;//		Change A heading to &quot;Address&quot;
+&apos;//		col B heading to &quot;Name1&quot;
+&apos;//		col C heading to &quot;Name2&quot;
+	oCell = oSheet.getCellByPosition(COL_A, ROW_HEADING)
+	oCell.String = &quot;Address&quot;
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_B, ROW_HEADING)
+	oCell.String = &quot;Name1&quot;
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_C, ROW_HEADING)
+	oCell.String = &quot;Name2&quot;
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_F, ROW_HEADING-1)
+	oCell.String = &quot;RefUSA&quot;
+	oCell.HoriJustify = CJUST
+
+&apos;//		remove columns G-K
+	nCols = ASC(&quot;K&quot;) + 1 - ASC(&quot;G&quot;)
+	oSheet.Columns.removeByIndex(COL_G, nCols) 
+
+&apos;//		remove column H (RSO)
+	oSheet.Columns.removeByIndex(COL_H, 1) 
+
+&apos;//		remove column I (RecordDate)
+	oSheet.Columns.removeByIndex(COL_I, 1) 
+
+&apos;//		set I column heading to &quot;Personal/Notes&quot;
+	oCell = oSheet.getCellByPosition(COL_I, ROW_HEADING-1)
+	oCell.String = &quot;Personal&quot;
+	oCell.HoriJustify = CJUST
+	oCell = oSheet.getCellByPosition(COL_I, ROW_HEADING)
+	oCell.String = &quot;Notes&quot;
+	oCell.HoriJustify = CJUST
+	SetColWidth(COL_I, 2.0)
+	
+&apos;//		set H1 = &quot;Pub-Territory formatted sheet&quot;
+	&apos;// merge H1-J1 SheetType
+	MergeSheetType()
+	
+	oCell = oSheet.getCellByPosition(COL_H, ROW_1)
+	oCell.String = &quot;Pub-Territory formatted sheet&quot;
+	oCell.HoriJustify = CJUST
+
+	&apos;// set column widths
+	SetTerrWidths()
+
+	&apos;// merge owner name cells back together
+	MergeOwnerCells()
+	
+	&apos;// merge Streets/Addrs cells back together
+&apos;	MergeStreetsCells()
+
+	&apos;// for all rows, check DoNotCall/Foriegn and change Resident1 name to &quot;DO NOT CALL&quot;
+	lThisRow = ROW_HEADING
+	for i = 0 to lRowCount-1
+		lThisRow = lThisRow + 1
+		oCell = oSheet.getCellByPosition(COL_F, lThisRow)
+		oCell2 = oSheet.getCellByPosition(COL_G, lThisRow)
+		bForeign = (len(trim(oCell2.String)) &gt; 0)
+		bDoNotCall = (len(trim(oCell.String)) &gt; 0)
+		if bForeign then
+			oCell = oSheet.getCellByPosition(COL_NAME1, lThisRow)
+			oCell.String = &quot;Foreign Language - Do not call&quot;
+dim oCols As Object
+			oCols = oSheet.Columns
+			oCols(COL_NAME1).setPropertyValue(&quot;Width&quot;, 2540*2)
+		elseif bDoNotCall then
+			oCell = oSheet.getCellByPosition(COL_NAME1, lThisRow)
+			oCell.String = &quot;DO NOT CALL&quot;
+		endif
+		
+	next i
+	
+	&apos;// force recalculation
+	ForceRecalc()
+	
+	&apos;// restore selection to entry place
+	SetSelection(oRange)
+	
+NormalExit:
+	exit sub
+
+ErrorHandler:
+	msgbox(&quot;EditToTerr - unprocessed error.&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end EditToTerr		9/13/20

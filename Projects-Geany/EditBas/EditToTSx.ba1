@@ -1,0 +1,305 @@
+&apos;// EditToTSx.bas
+&apos;//---------------------------------------------------------------
+&apos;// EditToTSx - Convert Admin-Edit to Admin-TSExport sheet.
+&apos;//		9/10/20.		wmk.	08:15
+&apos;//---------------------------------------------------------------
+
+public sub EditToTSx()
+
+&apos;//	Usage.	macro call or
+&apos;//			call EditToTSx()
+&apos;//
+&apos;// Entry.	user selection is Admin-Edit formatted sheet
+&apos;//
+&apos;//	Exit.	produces an &quot;Admin-TSExport&quot; formatted sheet with the following fields:
+&apos;//      A    B        C            D                E           F
+&apos;//		id  name  phone_number street_address  city_state_zip  notes
+&apos;//	[source]  C        E			B				B3&apos;FL&apos;C3	M, N, O (foreign)
+&apos;//
+&apos;// Calls.	BoldHeadings, ForceRecalc, fsConcatCityToZip, SetTSColWidths,
+&apos;//			SetSelection
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/8/20.		wmk.	original code
+&apos;// 9/9/20.		wmk.	modified to move entire header over to column B
+&apos;//	9/10/20.	wmk.	added SetTSColWidths call; &quot;DO NOT CALL&quot; set in 
+&apos;//						name field of DoNotCalls
+&apos;//
+&apos;//	Notes. With column A so narrow, much better fit for header to just
+&apos;//	move the whole thing over to column B. TSToEdit will move it back.
+&apos;//
+&apos;// Admin-Edit sheet fields.
+&apos;//		9/7/20. (lines preceded by #s are SplitTable fields)
+&apos;//								source-column	target-column
+&apos;//0|OwningParcel|TEXT|1||0
+&apos;//1|UnitAddress|TEXT|1||0			B				D
+&apos;//2|Resident1|TEXT|0||0			C				B
+&apos;//3|Resident2|TEXT|0||0
+&apos;//4|Phone1|TEXT|0||0				E				C
+&apos;//5|Phone2|TEXT|0||0
+&apos;//6|RefUSA-Phone|TEXT|0||0
+&apos;//	truepeople hyperlink
+&apos;// 411 hyperlink
+&apos;// whitepages hyperlink
+&apos;//7|SubTerritory|TEXT|0||0
+&apos;//8|CongTerrID|TEXT|0||0
+&apos;//9|DoNotCall|INTEGER|0|0|0		M
+&apos;//10|RSO|INTEGER|0|0|0				N
+&apos;//11|Foreign|INTEGER|0|0|0			O
+&apos;//12|RecordDate|REAL|0|0|0			P
+&apos;//13|X-Pending|INTEGER|0|0|0
+&apos;//
+&apos;// Method.
+&apos;//		Change A heading to &quot;id&quot;
+&apos;//		Concatenate City, State, Zip
+&apos;//		Move col B entries to Col D
+&apos;//		Change D heading to &quot;street_address&quot;
+&apos;//		Move col C entries to col B
+&apos;//		Change B heading to  &quot;name&quot;
+&apos;//		Move col G  entries to col C (RefUSA phone)
+&apos;//		Change C heading to &quot;phone-number&quot;
+&apos;//		Row-by-Row
+&apos;//		  store concatenated city, state, zip in E
+&apos;//		  store &quot;&quot; in A
+&apos;//       BuildNote from columns M, N, O
+&apos;//		  store note in column F
+&apos;//       if C = &quot;Not Available&quot;, store column E in C
+&apos;//  	end Row-by-row
+&apos;//		remove columns G - P
+&apos;//		set H1 = &quot;Admin-TSExport formatted sheet&quot;
+
+&apos;//	constants.
+const COL_PARCEL=0		&apos;// &quot;OwningParcel&quot; column index
+const COL_A=0
+const COL_B=1
+const COL_C=2	
+const COL_D=3
+const COL_E=4
+const COL_F=5
+const COL_G=6			&apos;// column G index
+const COL_H=7			&apos;// column H index
+const COL_I=8			&apos;// column I index
+const COL_J=9			&apos;// column J index
+const COL_K=10			&apos;// column K index
+const COL_L=11			&apos;// column L index 
+const COL_M=12			&apos;// column M index (DoNotCall)
+const COL_N=13			&apos;// column N index (RSO)
+const COL_O=14			&apos;// column O index (Foreign)
+const ROW_1=0
+const ROW_2=1
+const ROW_3=2
+const ROW_4=3
+const ROW_HEADING=4		&apos;// headings row index
+const LJUST=1		&apos;// left-justify HoriJustify				&apos;// mod052020
+const CJUST=2		&apos;// center HoriJustify						&apos;// mod052020
+const RJUST=3		&apos;// right-justify HoriJustify				&apos;// mod052320
+const MDYY=30		&apos;// &apos;M/D/YY&apos; format value
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+dim oMrgRange	As Object	&apos;// merge range
+
+dim oCell	As Object		&apos;// cell working on
+dim oCellPhone	As Object	&apos;// cell with Phone1
+dim i		As Integer		&apos;// loop index
+dim sPropID	As String		&apos;// property ID
+dim sSubTerr	As String	&apos;// subterritory
+dim sCongTerr	As String	&apos;// cong terr ID
+dim lRowCount	As Long		&apos;// row count of addresses
+dim dDate		As Double	&apos;// date value
+dim sCityStZip	As String	&apos;// concatenated City, State, Zip
+dim sNotes		As String	&apos;// notes field
+dim	nCols		As Integer	&apos;// column count to remove
+
+	&apos;// code.
+	ON ERROR GoTo ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	
+	oCell =	oSheet.getCellByPosition(COL_B, ROW_2)
+	lRowCount = oCell.Value
+
+	&apos;//		concatenate City State Zip B3 + &quot;FL&quot; + C3
+	sCityStZip = fsConcatCityToZip()
+
+	&apos;//		Change col A heading to &quot;id&quot;
+	oCell = oSheet.getCellByPosition(COL_A, ROW_HEADING)
+	oCell.String = &quot;id&quot;
+	oCell.HoriJustify = CJUST
+
+&apos;//		Move col B entries to Col D
+	oMrgRange = oRange
+	oMrgRange.StartColumn = COL_B
+	oMrgRange.EndColumn = COL_B
+	oMrgRange.StartRow = ROW_HEADING + 1
+	oMrgRange.EndRow = ROW_HEADING + lRowCount
+dim oTarget as new com.sun.star.table.CellAddress
+	oTarget.Sheet = oRange.Sheet
+	oTarget.Column = COL_D
+	oTarget.Row = ROW_HEADING + 1
+	oSheet.moveRange(oTarget,oMrgRange)
+
+
+&apos;//		Change D heading to &quot;street_address&quot;
+	oCell = oSheet.getCellByPosition(COL_D, ROW_HEADING)
+	oCell.String = &quot;street_address&quot;
+	oCell.HoriJustify = CJUST
+
+&apos;//		Move col C entries to col B
+	oMrgRange = oRange
+	oMrgRange.StartColumn = COL_C
+	oMrgRange.EndColumn = COL_C
+	oMrgRange.StartRow = ROW_HEADING + 1
+	oMrgRange.EndRow = ROW_HEADING + lRowCount
+	oTarget.Sheet = oRange.Sheet
+	oTarget.Column = COL_B
+	oTarget.Row = ROW_HEADING + 1
+	oSheet.moveRange(oTarget,oMrgRange)
+
+&apos;//		Change B heading to  &quot;name&quot;
+	oCell = oSheet.getCellByPosition(COL_B, ROW_HEADING)
+	oCell.String = &quot;name&quot;
+	oCell.HoriJustify = CJUST
+
+&apos;//		Move col G  entries to col C (RefUSA phone)
+	oMrgRange = oRange
+	oMrgRange.StartColumn = COL_G
+	oMrgRange.EndColumn = COL_G
+	oMrgRange.StartRow = ROW_HEADING + 1
+	oMrgRange.EndRow = ROW_HEADING + lRowCount -1
+	oTarget.Sheet = oRange.Sheet
+	oTarget.Column = COL_C
+	oTarget.Row = ROW_HEADING + 1
+	oSheet.moveRange(oTarget,oMrgRange)
+
+&apos;//		Change C heading to &quot;phone_number&quot;
+	oCell = oSheet.getCellByPosition(COL_C, ROW_HEADING)
+	oCell.String = &quot;phone_number&quot;
+	oCell.HoriJustify = CJUST
+
+&apos;//		Change E heading to &quot;city_state_zip&quot;
+	oCell = oSheet.getCellByPosition(COL_E, ROW_HEADING)
+	oCell.String = &quot;city_state_zip&quot;
+	oCell.HoriJustify = CJUST
+
+&apos;//		Change F heading to &quot;notes&quot;
+	oCell = oSheet.getCellByPosition(COL_F, ROW_HEADING)
+	oCell.String = &quot;notes&quot;
+	oCell.HoriJustify = CJUST
+
+&apos;//		Row-by-Row
+&apos;//x	  store concatenated city, state, zip in E
+&apos;//x	  store &quot;&quot; in A
+&apos;//       BuildNote from columns M, N, O
+&apos;//		  store note in column F
+&apos;//       if C = &quot;Not Available&quot;, store column E in C
+&apos;//  	end Row-by-row
+	lThisRow = ROW_HEADING
+dim sOldPhone	As String
+	for i = 0 to lRowCount-1
+		lThisRow = lThisRow + 1
+		
+		&apos;// store city, state, zip
+		oCell = oSheet.getCellByPosition(COL_E, lThisRow)
+		sOldPhone = oCell.String
+		oCell.String = sCityStZip
+&apos;//		  for each entry set col A = &quot;&quot;
+		oCell = oSheet.getCellByPosition(COL_A, lThisRow)
+		oCell.String = &quot;&quot;
+
+&apos;//       for each entry if DoNotCall (M) &quot;Do NotCall&quot; into F
+        sNotes = &quot;&quot;
+		oCell = oSheet.getCellByPosition(COL_M, lThisRow)
+		if len(trim(oCell.String)) &gt; 0 then
+			sNotes = &quot;DoNotCall &quot; 
+			oCell = oSheet.getCellByPosition(COL_B, lThisRow)
+			oCell.String = &quot;DO NOT CALL&quot;
+		endif
+		
+&apos;//       for each entry if RSO (N) &quot;RSO&quot; into F
+		oCell = oSheet.getCellByPosition(COL_N, lThisRow)
+		if len(trim(oCell.String)) &gt; 0 then
+			sNotes = sNotes + &quot;RSO &quot;
+		endif
+
+&apos;//       for each entry if Foreign (O) &quot;Foreign&quot; into F
+		oCell = oSheet.getCellByPosition(COL_O, lThisRow)
+		if len(trim(oCell.String)) &gt; 0 then
+			sNotes = sNotes + &quot;Foreign&quot;
+		endif
+		oCell = oSheet.getCellByPosition(COL_F, lThisRow)
+		oCell.String = sNotes
+		
+&apos;//		check if C = &quot;Not Available&quot;; if so, change to data from E		
+		oCell = oSheet.getCellByPosition(COL_C, lThisRow)
+		if (strComp(trim(oCell.String),&quot;Not Available&quot;) = 0) then
+			oCell.String = sOldPhone
+		endif
+
+	next i	&apos;// end loop setting row data
+	
+&apos;// set count formula in B2 to count column B
+	oCell = oSheet.getCellByPosition(COL_B, ROW_2)
+	oCell.setFormula(&quot;=COUNTA(B6:B1299)&quot;)
+
+&apos;// remove all columns G-P
+	nCols = ASC(&quot;Q&quot;) - ASC(&quot;G&quot;)
+	oSheet.Columns.removeByIndex(COL_G, nCols) 
+
+&apos;//	set I1 sheet format to &quot;Admin-TSExport formatted sheet
+	oCell = oSheet.getCellByPosition(COL_H, ROW_1)
+	oCell.String = &quot;Admin-TSExport formatted sheet&quot;
+
+	BoldHeadings()
+	
+&apos;//	shift all heading information over to column B
+&apos;// move H1 one right first to make room
+&apos;// move A1 through G4 over 1 column right
+	oMrgRange = oRange
+	oMrgRange.StartColumn = COL_H
+	oMrgRange.EndColumn = COL_H
+	oMrgRange.StartRow = ROW_1
+	oMrgRange.EndRow = ROW_1
+	oTarget.Sheet = oRange.Sheet
+	oTarget.Column = COL_I
+	oTarget.Row = ROW_1
+	oSheet.moveRange(oTarget,oMrgRange)
+
+	oMrgRange = oRange
+	oMrgRange.StartColumn = COL_A
+	oMrgRange.EndColumn = COL_G
+	oMrgRange.StartRow = ROW_1
+	oMrgRange.EndRow = ROW_4
+	oTarget.Sheet = oRange.Sheet
+	oTarget.Column = COL_B
+	oTarget.Row = ROW_1
+	oSheet.moveRange(oTarget,oMrgRange)
+
+
+	&apos;// set column widths
+	SetTSColWidths()
+	
+	&apos;// force recalculation
+	ForceRecalc()
+	
+	&apos;// restore entry selection
+	SetSelection(oRange)
+	
+NormalExit:
+	exit sub
+
+ErrorHandler:
+	msgbox(&quot;EditToTSx - unprocessed error.&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end EditToTSx		9/10/20

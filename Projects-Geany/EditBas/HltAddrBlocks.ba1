@@ -1,0 +1,182 @@
+&apos;// HltAddrBlocks.bas - Highlight address blocks.
+&apos;//---------------------------------------------------------------
+&apos;// HltAddrBlocks - Highlight address blocks.
+&apos;//		2/19/21.	wmk.	19:27
+&apos;//---------------------------------------------------------------
+
+public sub HltAddrBlocks()
+
+&apos;//	Usage.	macro call or
+&apos;//			call HltAddrBlocks()
+&apos;//
+&apos;// Entry.	user has sheet with rows selected to check for address blocks
+&apos;//
+&apos;//	Exit.	rows scanned and compared; if two or more adjacent rows have
+&apos;//			the same unitaddress and unit, the first row will be
+&apos;//			highlighted green
+&apos;//
+&apos;// Calls.	GreenRow
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	2/14/21.	wmk.	original code
+&apos;// 2/15/21.	wmk.	bug fixes.
+&apos;//	2/16/21.	wmk.	mod to use cell B2 Row Count: xxx for row count
+&apos;// 2/17/21.	wmk.	bug fix where oRange.LastRow used to determine
+&apos;//						row limit after have modified to not use selected
+&apos;//						area, but use count from B2.
+&apos;//	2/19/21.	wmk.	mod to use count from A2; Address and unit
+&apos;//						now in Col A,B
+&apos;//
+&apos;//	Notes. This sub highlights the first row of any block of addresses
+&apos;// that are the same. This makes it easier to see identical addresses
+&apos;// as a group.
+&apos;//
+
+&apos;//	constants.
+const COL_A=0
+const COL_B=1
+const COL_C=2
+const ROW_2=1
+const LTGREEN=13953643
+const LTBLUE3=11847644     &apos;// 0xb4c7dc
+const ROW_HEADING=4
+
+&apos;//	local variables.
+dim i				As Integer		&apos;// loop counter
+dim bHltgBlocks		AS Boolean		&apos;// highlighting blocks in process flag
+dim bEmptyIssued	AS Boolean		&apos;// empty row message issued
+dim iStatus			AS integer		&apos;// status var
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+
+dim lThisRow as long			&apos;// current row selected on sheet
+dim lLastRow	As Long			&apos;// last row to process
+dim nRowCount	As Integer		&apos;// row count to process
+dim nRowsProcessed	As Integer	&apos;// processed row count
+dim nErrCode	As integer	&apos;// error code
+dim	oCell			As Object	&apos;// working cell
+dim oCellAddr		As Object	&apos;// addr current row
+dim oCellNextAddr	AS Object	&apos;// addr next row
+dim oCellUnit		AS Object	&apos;// unit current row
+dim oCellNextUnit	AS Object	&apos;// unit next row
+dim sAddress		AS String	&apos;// current row address
+dim sNextAddr		As String	&apos;// next row address
+dim sUnit			As String	&apos;// current row unit
+dim sNextUnit		As String	&apos;// next row unit
+dim sRange			As String	&apos;// highlight selection range
+
+dim document   as object		&apos;// uno frame reference object
+dim dispatcher as object		&apos;// uno dispatcher services object
+dim args1(0) as new com.sun.star.beans.PropertyValue	&apos;// uno properties
+dim args9(3) as new com.sun.star.beans.PropertyValue
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	bHltgBlocks = false
+	bEmptyIssued = false
+&apos;	nErrCode = ERR_UNK
+	iStatus = 0
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+
+	
+	&apos;// initialie uno API hooks.
+	document   = ThisComponent.CurrentController.Frame
+	dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+&apos;msgbox(&quot;In local HltAddrBlks...&quot;)
+	&apos;// set row processing from oRange information
+	lThisRow = oRange.StartRow - 1		&apos;// start at -1 since increment first
+	lThisRow = ROW_HEADING
+	&apos;// get row count from A2.
+	oCell = oSheet.getCellByPosition(COL_A,ROW_2)		&apos;// Record Count: xxx
+	dim sCountStr 		As String
+	dim nColonPos		As Integer
+	dim sNumCount		As String
+	sCountStr = oCell.String
+	nColonPos = Instr(sCountStr, &quot;:&quot;)
+	sNumCount = Right(sCountStr, len(sCountStr)-nColonPos)
+	nRowCount = CInt(sNumCount)
+	lLastRow = lThisRow + nRowCount
+	nRowsProcessed = 0
+&apos;	nRowCount = oCell.getValue()
+
+	bHltgBlocks = false
+	for i = 1 to nRowCount
+		lThisRow = lThisRow + 1		&apos;// advance current row
+		oCellAddr = oSheet.getCellByPosition(COL_A, lThisRow)
+		oCellUnit = oSheet.getCellByPosition(COL_B, lThisRow)
+		sAddress = ucase(trim(oCellAddr.String))		&apos;// set cell address text
+		if len(trim(oCellUnit.String)) = 0 then
+			sUnit = &quot;&quot;
+		else
+			sUnit = trim(oCellUnit.String)						&apos;// set unit address text
+		endif
+		
+		if len(sAddress) = 0 then
+			if not bEmptyIssued then
+				msgBox(&quot;HLtAddrBlocks - empty address field; skipping row...&quot;)
+				bEmptyIssued = true
+			GoTo NextRow
+			endif
+		endif	&apos;// null string - skip/alert user
+
+		&apos;// check next row.
+		if lThisRow &lt; lLastRow then
+		
+			&apos;// see if Address and unit of next row match this row.
+			oCellNextAddr = oSheet.getCellByPosition(COL_A, lThisRow+1)
+			oCellNextUnit = oSheet.getCellByPosition(COL_B, lThisRow+1)
+			sNextAddr = UCase(trim(oCellNextAddr.String))
+			sNextUnit = trim(oCellNextUnit.String)
+			
+			&apos;// check for address and unit match across rows.
+			if (strcomp(sAddress, sNextAddr) = 0)_ 
+			  AND (strcomp(sUnit, sNextUnit) = 0) then
+				if bHltgBlocks then
+					oCell = oSheet.getCellByPosition(COL_A, lThisRow)
+					oCell.CellBackColor = LTBLUE3
+				   
+				   GoTo NextRow
+				else	&apos;// 2 rows the same, turn highlighting on
+					bHltgBlocks = true		&apos;// turn on in block flag
+					&apos;// highlight this row.
+					GreenRow(lThisRow)
+				endif	&apos;// end highlighting blocks conditional
+				GoTo NextRow
+			else 	&apos;// lines different
+				if bHltgBlocks then
+					bHltgBlocks = false
+					oCell = oSheet.getCellByPosition(COL_A, lThisRow)
+&apos;					oCell.CellBackColor = LTGREEN
+					oCell.CellBackColor = LTBLUE3
+				endif
+			endif	&apos;// end 2 lines same address conditional
+			
+		endif	&apos;// end next row exists conditional
+		
+NextRow:
+		nRowsProcessed = nRowsProcessed + 1
+
+	next i
+
+	msgbox(&quot;HltAddrBlocks - &quot; + nRowsProcessed + &quot; rows processed.&quot;)
+	exit sub
+
+
+NormalExit:
+	exit sub					
+	
+ErrorHandler:
+	msgbox(&quot;HltAddrBlocks - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end HltAddrBlocks	2/19/21.	19:27

@@ -1,0 +1,88 @@
+# Make.CapriIslesBlvd.csv - makefile for Capri IslesBlvd download combining .csv files.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#   5/4/22. wmk.	(automated) path corrections.
+#	4/24/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 4/24/22.	wmk.	code generalized for FL/SARA/86777;*pathbase*, 
+#			 *congterr*, *conglib* env vars introduced.
+# Legacy mods.
+# 9/5/21.	wmk.	original makefile.
+#
+# make -f Make.CapriIslesBlvd.csv will regenerate the CapriIslesBlvd.csv
+# if it is out-of-date. CapriIslesBlvd.csv will be considered out-of-date
+# if any of the following prerequisites are newer:
+#	CapriIslesBlvd-1.csv
+#	CapriIslesBlvd-2.csv
+#	CapriIslesBlvd-3.csv
+#
+# 'make' is called whenever Make.CapriIsles.Dwnld is built to check that
+# the .csv is current, rebuilding it if necessary. If headers are present
+# in the prerequisite files they are deleted in the target .csv.
+
+	echo "  * Follow-up with make Make.CapriIslesBlvd.Terr *"
+
+#---
+$(specpath)/$(dbname).db : ;
+
+#===============================================================
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : ;
+.ONESHELL : ;
+endif
+.PHONY : ;
+.ONESHELL : ;
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+.PHONY : ;
+.ONESHELL : ;
+
+basepath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/
+specpath = $(basepath)Special/
+dbname = CapriIslesBlvd
+
+# /RefUSA-Downloads/Special/CapriIslesBlvd.csv.
+#====================================================================
+$(specpath)CapriIslesBlvd.csv : $(specpath)CapriIslesBlvd-1.csv \
+ $(specpath)CapriIslesBlvd-2.csv $(specpath)CapriIslesBlvd-3.csv
+	cat $(specpath)CapriIslesBlvd-1.csv $(specpath)CapriIslesBlvd-2.csv \
+	 $(specpath)CapriIslesBlvd-3.csv > $@
+	sed -i '{/Last Name/ d}' $@
+	~/sysprocs/LOGMSG "  RefUSA-Downloads/Special/CapriIslesBlvd.db build complete."
+	echo "RU/Special/CapriIslesBlvd complete." 
+	echo "  * Follow-up with make Make.CapriIslesBlvd.Terr *"
+
+#---
+$(specpath)$(dbname).db : ;
+
+#===============================================================
+

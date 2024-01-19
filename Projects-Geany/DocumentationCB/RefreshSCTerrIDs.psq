@@ -1,0 +1,39 @@
+-- * RefreshSCTerrIDs.psq/sql - Refresh SC/Special/<spec-db> TerrList table.
+-- * 2/20//23.	wmk.
+-- *
+-- * Entry. *sed (DoSed1) has modified < db-name > to be special (full) datbase name.
+-- *	    SCPA-Downloads/Special/< spec-db >.db exists - special download database.
+-- * 		< spec-db >.db.TerrList = list of territory IDs and Counts
+-- *
+-- * Exit.	< spec-db >.db.TerrList updated with list of territory ID counts from
+-- *		 .Spec_SCBridge table.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 2/20/23.	wmk.	original code.
+-- *
+-- * Notes. 
+-- *;
+
+.open '$pathbase/$scpath/Special/<db-name>'
+
+DROP TABLE IF EXISTS TerrList;
+CREATE TABLE TerrList(
+ TerrID TEXT,
+ Counts INTEGER DEFAULT 0
+ );
+INSERT INTO TerrList(TerriD)
+SELECT DISTINCT CongTerrID FROM Spec_SCBridge;
+
+WITH a AS (SELECT TerrID TID FROM TerrList)
+UPDATE TerrList
+SET Counts =
+CASE WHEN TerrID IN (SELECT TID FROM a)
+ THEN (SELECT COUNT() CongTerrID FROM Spec_SCBridge
+ INNER JOIN a
+ ON a.TID IS CongTerrID
+  WHERE TerrID IS a.TID)
+END;
+
+-- * END RefreshSCTerrIDs.sql;
+

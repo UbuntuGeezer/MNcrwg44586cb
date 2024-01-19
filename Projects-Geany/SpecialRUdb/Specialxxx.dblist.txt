@@ -1,0 +1,168 @@
+--* Specialyyy.dblist.txt;
+--*		11/13/21.
+--*
+--* Modification History.
+--* 10/21/21.	original listing.
+--* 10/25/21.	modified to include WITH/INSERT query for all databases.
+--* 11/13/21.	MHP db,s added.
+--*
+--* BayIndiesMHP.db - Bay Indies MHP RU download
+--* BayLakeMHP.db - Bay Lake Estates MHP RU download
+--* RidgewoodMHP.db - Ridgewood MHP RU download
+--*	AvensCohosh.db -  Windwood RU download
+--*	Bellagio.db - Bellagio RU download
+--* BerkshirePlace.db - Berkshire Place RU download
+--* BrennerPark.db - Brenner Park RU download
+--* BridleOaks.db - Bridle Oaks RU download
+--* EaglePoint.db - Eagle Point RU download
+--* HiddenLakes.db - Hidden Lakes RU download
+--* ReclinataCir.db - Reclinata Circle RU download
+--* SawgrassN.db - Sawgrass north section RU download
+--* SawgrassS.db - Sawgrass south section RU download
+--*	TrianoCir.db - TrianoCir RU download
+--* WaterfordNE.db - WaterfordNE RU download
+--*	WaterfordNW.db - WaterfordNW RU download
+--*;
+--* AvensCohosh;
+ATTACH '$folderbase/Territories/RawData/RefUSA/RefUSA-Downloads/Special'
+   || '/AvensCohosh.db'
+   AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terryyy_SCBridge)
+INSERT INTO Spec_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+DETACH db29;
+--*;
+--* Bellagio;
+ATTACH '$folderbase/Territories/RawData/RefUSA/RefUSA-Downloads/Special'
+   || '/Bellagio.db'
+   AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terryyy_SCBridge)
+INSERT INTO Spec_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+DETACH db29;
+--*;
+--* BerkshirePlace.db - Berkshire Place RU download
+ATTACH '$folderbase/Territories/RawData/RefUSA/RefUSA-Downloads/Special'
+   || '/BerkshirePlace.db'
+   AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terryyy_SCBridge)
+INSERT INTO Spec_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+DETACH db29;
+--*;
+--* BrennerPark.db - Brenner Park RU download
+ATTACH '$folderbase/Territories/RawData/RefUSA/RefUSA-Downloads/Special'
+   || '/BrennerPark.db'
+   AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terryyy_SCBridge)
+INSERT INTO Spec_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+DETACH db29;
+--*;
+--* BridleOaks.db - Bridle Oaks RU download
+ATTACH '$folderbase/Territories/RawData/RefUSA/RefUSA-Downloads/Special'
+   || '/BridleOaks.db'
+   AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terryyy_SCBridge)
+INSERT INTO Spec_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+DETACH db29;
+--*;
+--* EaglePoint.db - Eagle Point RU download
+ATTACH '$folderbase/Territories/RawData/RefUSA/RefUSA-Downloads/Special'
+   || '/EaglePoint.db'
+   AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terryyy_SCBridge)
+INSERT INTO Spec_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+DETACH db29;
+--*;
+--* HiddenLakes.db - Hidden Lakes RU download
+ATTACH '$folderbase/Territories/RawData/RefUSA/RefUSA-Downloads/Special'
+   || '/HiddenLakes.db'
+   AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terryyy_SCBridge)
+INSERT INTO Spec_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+DETACH db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terryyy_SCBridge)
+INSERT INTO Spec_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+DETACH db29;
+--*;
+--* ReclinataCir.db - Reclinata Circle RU download
+ATTACH '$folderbase/Territories/RawData/RefUSA/RefUSA-Downloads/Special'
+   || '/ReclinataCir.db'
+   AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terryyy_SCBridge)
+INSERT INTO Spec_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+DETACH db29;
+--*;
+--* SawgrassN.db - Sawgrass north section RU download
+ATTACH '$folderbase/Territories/RawData/RefUSA/RefUSA-Downloads/Special'
+   || '/SawgrassN.db'
+   AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terryyy_SCBridge)
+INSERT INTO Spec_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+DETACH db29;
+--*;
+--* SawgrassS.db - Sawgrass south section RU download
+ATTACH '$folderbase/Territories/RawData/RefUSA/RefUSA-Downloads/Special'
+   || '/SawgrassS.db'
+   AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terryyy_SCBridge)
+INSERT INTO Spec_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+DETACH db29;
+--*;
+--* TrianoCir;
+ATTACH '$folderbase/Territories/RawData/RefUSA/RefUSA-Downloads/Special'
+   || '/TrianoCir.db'
+   AS db29;
+--*;
+--* WaterfordNE.db - WaterfordNE RU download
+ATTACH '$folderbase/Territories/RawData/RefUSA/RefUSA-Downloads/Special'
+   || '/WaterfordNE.db'
+   AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terryyy_SCBridge)
+INSERT INTO Spec_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+DETACH db29;
+--*;
+--*	WaterfordNW.db - WaterfordNW RU download
+ATTACH '$folderbase/Territories/RawData/RefUSA/RefUSA-Downloads/Special'
+   || '/WaterfordNW.db'
+   AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terryyy_SCBridge)
+INSERT INTO Spec_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+DETACH db29;
+--*;

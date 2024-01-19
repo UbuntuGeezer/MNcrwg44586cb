@@ -1,0 +1,59 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=RUNewTerritory
+base_path=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/RUNewTerritory/
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=9
+FILE_NAME_0=0;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FRUNewTerritory%2FDoSed.sh;0;4
+FILE_NAME_1=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FRUNewTerritory%2FInitialFix.psq;0;4
+FILE_NAME_2=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FRUNewTerritory%2FInitialRUFix.psq;0;4
+FILE_NAME_3=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FRUNewTerritory%2FMakeInitialRUFix;0;4
+FILE_NAME_4=1868;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FRUNewTerritory%2FMakeInitialRUFix.tmp;0;4
+FILE_NAME_5=2200;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FRUNewTerritory%2FMakeRUNewBizTerr.tmp;0;4
+FILE_NAME_6=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FRUNewTerritory%2FMakeRUNewTerritory;0;4
+FILE_NAME_7=2489;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FRUNewTerritory%2FMakeRUNewTerritory.tmp;0;4
+FILE_NAME_8=215;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FRUNewTerritory%2FpathRUdefs.i;0;4
+FILE_NAME_9=215;Pascal;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FRUNewTerritory%2FpathRUdefs.inc;0;4
+FILE_NAME_10=2876;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FRUNewTerritory%2FREADME;0;4
+
+[VTE]
+last_dir=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany
+
+[build-menu]
+NF_03_LB=sed
+NF_03_CM=bash DoSed.sh 841
+NF_03_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/RUNewTerritory
+NF_00_LB=_Make
+NF_00_CM=make -f MakeRUNewTerritory
+NF_00_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/RUNewTerritory
+EX_01_LB=Make Dry Run
+EX_01_CM=make --dry-run -f MakeRUNewTerritory
+EX_01_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/RUNewTerritory
+NF_02_LB=Make _Object
+NF_02_CM=make %e.o
+NF_02_WD=

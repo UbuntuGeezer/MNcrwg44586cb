@@ -1,0 +1,110 @@
+<p>README - MigrationRepairs project documentation.<br>
+9/21/22.    wmk.</p>
+
+<h2>Modification History.</h2>
+
+<pre><code>5/28/22.    wmk.   original document.
+9/21/22.    wmk.   MakeRebuildFixSC,RU documentation.
+</code></pre>
+
+<h3>Modification History.</h3>
+
+<pre><code>9/21/21.    wmk.   original documents.
+12/25/22.   wmk.   Finding Street Addresses in Territories section added.
+<h3 id="IX">Document Sections.</h3>
+<pre><code><a href="#1.0">link</a> 1.0 Project Description- overall project description.
+<a href="#2.0">link</a> 2.0 Finding Street Address in Territories - how to track down street addresses.
+</code></pre>
+
+<h3 id="1.0">Project Description.</h3>
+
+<p>MigrationRepairs has system-wide <em>make</em> files to repair bunches of stuff
+that got hosed by migrating to a new Territories system. These repairs
+primarily focus on rebuilding SQLs associated shells that are part of the
+"data segment". While technically SQL and shell files would be considered
+"code", since the SQL queries apply only to data, these files are maintained
+as part of the "data segment".</p>
+
+<p>On the Chromebook/chromeos system the "data segment" files are all resident
+on the *HOME/Territories path. Each publisher territory has a folder under
+three associated data folders: SCPA-Downloads, RefUSA-Downloads, and TerrData.</p>
+
+<pre><code>
+ExtractBody.sh - extract procbody/endprocbody block from shell.
+
+MakeRebuildFixSC - makefile for RebuildAllFixSC.sh
+RebuildAllFixSC - rebuilds all FixyyySC.sql, .sh files where either
+ *bashpath* omitted or incorrectly set; *pathbase* must be current in .sql.
+
+MakeRebuildFixRU - makefile for RebuildAllFixSC.sh
+RebuildAllFixRU - rebuilds all FixyyyRU.sql, .sh files where either
+ *bashpath* omitted or incorrectly set; *pathbase* must be current in .sql.
+
+DoAllRedos.sh - run all "Redo.." and FixMakeSpecial shells on territory xxx.
+ updates MakeRegenSpecDB, MakeSetSpecTerrs, MakeSyncTerrToSpec and MakeSpecials
+  within Terrxxx.
+    DoAllRedos.sh <fixpath> <terrid>
+    <fixpath> = full path to <terrid>
+      e.g. *pathbase/*rupath
+    <terrid> = territory ID
+DoSed.sh
+ExtractBody.sh
+FixAllMakePaths.sh
+FixAllMakeSpecials1.sh
+FixAllMakeSpecials.sh
+FixAllMHPMakeSpecials.sh
+FixAllNVenAllRefs.sh
+FixAllProjPaths.sh
+FixAllRUSpecTidy.sh
+FixAllShellPaths.sh
+FixAllSyncTerrs.sh
+FixCBPaths.sh
+FixMakePaths.sh
+FixMakeSpecials1.sh
+FixMakeSpecials.sh
+FixMHPMakeSpecials.sh
+FixShellPaths.sh
+FixSyncTerrs.sh
+MovBDwnld.sh
+MvBDwnld.sh
+RebuildAllFixRUs.sh
+RebuildAllFixSCs.sh
+RebuildAllRegenSpecDBs.sh
+RedoAllRegenSpec.sh
+RedoFixTerrRU.sh
+RedoRegenSpecDB.  - Redo MakeRegenSpecDB makefile in territory xxx.
+ rebuilds MakeRegenSpecDB recipe and corrects altproj path var.
+     RedoMakeRegen.sh <fixpath> [<terrid>]
+     <fixpath> = full path to MakeRegenSpecDB for territory xxx
+       e.g. *pathbase/*rupath
+     <terrid> = territory ID
+RunSpecMakes.sh - run *make* on all "special" makefiles in territory xxx.
+ rebuilds RegenSpecDB.sh, SetSpecTerrs.sh, and SyncTerrToSpec.sh shells within
+  territory xxx.
+    RunSpecMakes.sh [<terrid>]
+    <terrid> = (optional) territory ID for which to run *make* on makefiles
+        default is last 3 chars of *PWD
+    (assumes RefUSA for now..)
+
+</code></pre>
+
+<p>See TX/HDLG/9999/Projects-Geany/FixMakes/README.html...
+<a href="file:///media/ubuntu/Windows/Users/Bill/Territories/TX/HDLG/99999/Projects-Geany/FixMakes/README.html">TX/FixMakes Documentation</a><br><a href="#IX">Index</a></p>
+
+<h3 id="2.0">2.0 Finding Street Addresses in Territories.</h3>
+
+<p>When reviewing /Special databases for counts of records within territories, some
+records may not have a territory assignment recorded in the database <em>TerrList</em> table.
+Finding which territory these street addresses occur in can be a challenge. A shell
+utility has been provided in the /TerrData folder to search the existing publisher
+territories for any given street address.</p>
+
+<p>The shell utility for searching territories is "WhichTerr?". All one needs to do is
+move to the /TerrData base directory and execute the following:<br></p>
+
+<pre><code>    WhichTerr?  < address ></code></pre>
+
+<p>where &lt; address > is the street address to search for. The street address should be
+specified with exactly 3 spaces between the number and the street name, as this is
+the format the street address will have been stored in the raw data. The results
+will be a list of territories containing the street address.<br><a href="#IX">Index</a></p>

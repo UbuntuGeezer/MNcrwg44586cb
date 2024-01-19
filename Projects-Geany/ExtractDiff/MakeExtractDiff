@@ -1,0 +1,145 @@
+# MakeExtractDiff.tmp - Make template for ExtractSCDiff.
+#	11/21/22.	wmk.
+#
+#=====================================================================
+# build ExtractDownDiff.s and ExtractDownDiff.s
+#
+
+# Exit. target file = ExtractDownDiff.sh shell to extract differences db.
+#
+# Modification History.
+# ---------------------
+# 11/21/22.	wmk.	*codebase support.
+# Legacy mods.
+# 4/27/22.	wmk.	modified for general use; *pathbase* support; all 
+#			 *..path*, *..dir* vars trailing '/' removed.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+# Legacy mods.
+# 6/20/21.	wmk.	original makefile.
+# 6/29/21.	wmk.	mod to use cat instead of awk.
+# 9/30/21.	wmk.	preamble dependency added; dead recipe code removed.
+# 2/6/22.	wmk.	chmod added to ensure that .sh is executable.
+# 3/19/22.	wmk.	HOME changed to USER in host test;chmod +x instead of
+#			 700.
+#
+# Notes. (see README also)
+# This makefile is an extracted subset of what will be the master makefile,
+# MakeBuildSCDiff.tmp. Isolating this makefile allows for modular testing
+# of the main build sections of MakeBuildSCDiff.
+
+
+# Dependencies.
+# -------------
+# cat is used to generate the shell file that builds the database. It has
+# the dependency on hdrAnySQL_1.sh and hdrAnySQL_2 for inserting shell
+# preamble and  postscript sections around the SQL that performs the
+# difference query. 
+
+# var definitions.
+#==================================================================
+# makefile setup section.
+# set folderbase contignent upon ($)HOME system information.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase=$(folderbase)/Territories/FL/SARA/86777
+endif
+
+SHELL = /bin/bash
+.SUFFIXES:
+.SUFFIXES: .s .db .csv .sql .sh
+
+# path defaults by filetype.
+vpath %.db $(pathbase)/RawData/SCPA/SCPA-Downloads
+vpath %.csv $(pathbase)/RawData/SCPA/SCPA-Downloads
+vpath %.xlsx $(pathbase)/RawData/SCPA/SCPA-Downloads
+
+# path variables for use inside recipes.
+maindbpath = $(pathbase)/DB-Dev
+scdwnldpath = $(pathbase)/RawData/SCPA/SCPA-Downloads
+sqltoshpath = $(codebase)/Projects-Geany/AnySQLtoSH
+includepath = $(codebase)/include
+ bashpath = $(codebase)/Procs-Dev
+targpath = "$(codebase)/Projects-Geany/ExtractDiff
+srcdir = $(codebase)/Projects-Geany/ExtractDiff
+thisproj = $(codebase)/Projects-Geany/ExtractDiff
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+.ONESHELL : ;
+.PHONY : err placeholder;
+#====================================================================
+
+
+
+#====================================================================
+# primary target recipe.
+# recipe for ExtractDownDiff.sh
+
+$(srcdir)/ExtractDownDiff.sh  :  $(srcdir)/ExtractDownDiff.sql \
+ $(srcdir)/preamble.sh
+	# now build the .sh file from the AnySQL.sh header, the preamble.sh and .s file.
+	cd $(altproj);./DoSed.sh $(srcdir) ExtractDownDiff preamble.sh
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	
+#	cat $(bashpath)/hdrAnySQL_1.sh preamble.sh ExtractDownDiff.s $(bashpath)/hdrAnySQL_2.sh > $@
+#	sed -i 's/<filename>/ExtractDownDiff/g' $@
+#	chmod +x $@
+
+
+$(srcdir)/ExtractDownDiff.sql : ;
+	if ! -f $@;then \
+	 echo "** ExtractDownDiff.sql missing for build ExtractDiff **";fi
+
+	
+#	cd $(srcdir)
+#	echo 's?\"?\\\"?g' > $(srcdir)/sedatives.txt
+#	echo "s?^?echo \"?g" >> $(srcdir)/sedatives.txt
+#	#echo "s/\$/\" >> SQLTemp.sql/g" > sedative.txt
+#	sed -f $(srcdir)/sedatives.txt $(srcdir)/ExtractDownDiff.sql \
+#	 > $(srcdir)/ExtractDownDiff.s
+#	sed -i -f $(srcdir)/dirtest.txt $(srcdir)/ExtractDownDiff.s
+
+#preamble.sh is built by DoSed.sh
+$(srcdir)/preamble.sh : ;
+	if ! -f $@ then; \
+	 echo "** Run *sed* to build preamble.sh for ExtractDiff build. **";fi
+
+
+.PHONY : placeholder 
+
+placeholder: ;
+#	echo "1, 1s?>>?>?" > sedatives.txt
+#	sed -i -f sedatives.txt $(srcdir)/ExtractDownDiff.s
+
+# discarded code.	
+#	rm $@
+#	echo 's/\"/\\\"/g' > sedatives.txt
+#	echo 's/\^/echo \"/g' >> sedatives.txt
+#	echo 's/$$/\" >> SQLTemp.sql/g' >> sedatives.txt
+#	echo '1,1s/>>/>/' >> sedatives.txt
+#	echo '{s/\"/\\\"/g;s/\^/echo \"/g;s/$$/\" >> SQLTemp.sql/g;1,1s/>>/>/}' > sedatives.txt
+#	echo 's/\^/echo \"/g' >> sedatives.txt
+#	echo 's/$$/\" >> SQLTemp.sql/g' >> sedatives.txt
+#	echo '1,1s/>>/>/' >> sedatives.txt
+	#sed  -f sedatives.txt $(srcdir)/ExtractDownDiff.sql > $@
+	#	;s/$/\" >> SQLTemp.sql/g;1,1s/>>/>/;}' > sedatives.txt
+	#sed  -i -f sedatives.txt $@
+	#sed -i -f sedatives.txt $@
+	#sed -i -f sedatives.txt $@	
+	
+# no dependencies will always force Build.	
+#$(srcdir)/ExtractDownDiff.sql : 
+
+#===================================================================

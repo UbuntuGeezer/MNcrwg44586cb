@@ -1,0 +1,55 @@
+&apos;// YellowTab.bas
+&apos;//---------------------------------------------------------------
+&apos;// YellowTab - Change current worksheet tab color to Yello.
+&apos;//		10/12/20.	wmk.
+&apos;//---------------------------------------------------------------
+
+public sub YellowTab()
+
+&apos;//	Usage.	macro call or
+&apos;//			call YellowTab()
+&apos;//
+&apos;// Entry.	user has worksheet selected
+&apos;//
+&apos;//	Exit.	worksheet tab color changed to YELLOW
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	7/2/20.		wmk.	original code; cloned from macro recording
+&apos;//
+&apos;//	Notes.
+&apos;//
+
+&apos;//	constants.
+const YELLOW=16776960			&apos;// YELLOW color value
+
+&apos;//	local variables.
+rem ----------------------------------------------------------------------
+rem define variables
+dim document   as object
+dim dispatcher as object
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dim args1(0) as new com.sun.star.beans.PropertyValue
+args1(0).Name = &quot;TabBgColor&quot;
+args1(0).Value = YELLOW
+
+dispatcher.executeDispatch(document, &quot;.uno:SetTabBgColor&quot;, &quot;&quot;, 0, args1())
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;YellowTab - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end YellowTab	10/12/20

@@ -1,0 +1,53 @@
+echo "-- ExtractOldDiffs.sq - Extract older RU records not in newer download."  > SQLTemp.sql
+echo "--	7/6/21.	wmk."  >> SQLTemp.sql
+echo "--"  >> SQLTemp.sql
+echo "-- * subquery list."  >> SQLTemp.sql
+echo "-- * --------------"  >> SQLTemp.sql
+echo "-- * ExtractOldDiffs - Extract older RU records not in newer download."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- ** ExtractOldDiffs **********"  >> SQLTemp.sql
+echo "-- *	7/6/21.	wmk."  >> SQLTemp.sql
+echo "-- *----------------------------"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * ExtractOldDiffs - Extract older RU records not in newer download."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Entry DB and table dependencies."  >> SQLTemp.sql
+echo "-- *	junk.db"  >> SQLTemp.sql
+echo "-- *	Terr245_RU.db - as db12,"  >> SQLTemp.sql
+echo "-- *	./Previous/Terr245_RU.db - as db32,"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Exit DB and table results."  >> SQLTemp.sql
+echo "-- *	Terr245OldDiffs.csv - extracted _RUBridge records from ./Previous"  >> SQLTemp.sql
+echo "-- *	  .db where UnitAddress not in current .db"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Notes."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo ".open '$folderbase/Territories/DB-Dev/junk.db'"  >> SQLTemp.sql
+echo ".cd '$folderbase/Territories/RawData/RefUSA/RefUSA-Downloads'"  >> SQLTemp.sql
+echo "ATTACH './Terr245/Terr245_RU.db'"  >> SQLTemp.sql
+echo " AS db12;"  >> SQLTemp.sql
+echo "-- pragma db12.table_info(Terr245_RUBridge);"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "ATTACH './Terr245/Previous/Terr245_RU.db'"  >> SQLTemp.sql
+echo " AS db32;"  >> SQLTemp.sql
+echo "-- pragma db32.table_info(Terr245_RUBridge);"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo ".headers ON"  >> SQLTemp.sql
+echo ".separator ,"  >> SQLTemp.sql
+echo ".mode csv"  >> SQLTemp.sql
+echo ".output './Terr245/Terr245OldDiffs.csv'"  >> SQLTemp.sql
+echo "UPDATE db12.Terr245_RUBridge"  >> SQLTemp.sql
+echo "SET UnitAddress = trim(UnitAddress);"  >> SQLTemp.sql
+echo "UPDATE db32.Terr245_RUBridge"  >> SQLTemp.sql
+echo "SET UnitAddress = trim(UnitAddress);"  >> SQLTemp.sql
+echo "WITH a AS (SELECT UnitAddress FROM db12.Terr245_RUBridge)"  >> SQLTemp.sql
+echo "SELECT * FROM db32.Terr245_RUBridge"  >> SQLTemp.sql
+echo " WHERE UnitAddress NOT IN (SELECT UnitAddress FROM a);"  >> SQLTemp.sql
+echo "--DETACH db12;"  >> SQLTemp.sql
+echo "--DETACH db32;"  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- ** END ExtractOldDiffs **********;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql

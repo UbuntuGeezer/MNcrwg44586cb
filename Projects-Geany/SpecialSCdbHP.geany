@@ -1,0 +1,94 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=SpecialSCdb
+base_path=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/SpecialSCdb/
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=39
+FILE_NAME_0=1383;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FClearSpecial.sh;0;4
+FILE_NAME_1=2290;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FDoSed.sh;0;4
+FILE_NAME_2=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FFixSCMenu.i;0;4
+FILE_NAME_3=0;Pascal;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FFixSCMenu.inc;0;4
+FILE_NAME_4=0;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FInitSpecial.sh;0;4
+FILE_NAME_5=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FMakeRegenSpecDB.tmp;0;4
+FILE_NAME_6=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FMakeSetSpecTerrs.tmp;0;4
+FILE_NAME_7=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FMakeSpecialDBsc;0;4
+FILE_NAME_8=2879;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FMakeSpecialDBsc.tmp;0;4
+FILE_NAME_9=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FMakeSpecials;0;4
+FILE_NAME_10=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FMakeSpecialSCdb;0;4
+FILE_NAME_11=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FMakeSpecTerrQuery;0;4
+FILE_NAME_12=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FMakeSyncTerrToSpec.tmp;0;4
+FILE_NAME_13=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FMethod1.sql;0;4
+FILE_NAME_14=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FMethod2.sql;0;4
+FILE_NAME_15=0;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FMvSpecDwnld.sh;0;4
+FILE_NAME_16=756;Pascal;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2Fspecpathdefs.inc;0;4
+FILE_NAME_17=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FREADME;0;4
+FILE_NAME_18=419;Markdown;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FREADME.md;0;4
+FILE_NAME_19=1799;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FREADME.Method;0;4
+FILE_NAME_20=0;HTML;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FREADME.Method.html;0;4
+FILE_NAME_21=0;Markdown;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FREADME.Method.md;0;4
+FILE_NAME_22=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FREADME.TerrSetup;0;4
+FILE_NAME_23=0;HTML;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FREADME.TerrSetup.html;0;4
+FILE_NAME_24=0;Markdown;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FREADME.TerrSetup.md;0;4
+FILE_NAME_25=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FRegenSpecDB.sql;0;4
+FILE_NAME_26=0;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FSCPropTerrToBridge.sh;0;4
+FILE_NAME_27=3536;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FSCSpecTerr_db.hd1;0;4
+FILE_NAME_28=351;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FSCSpecTerr_db.hd2;0;4
+FILE_NAME_29=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FSCSpecTerr_db.sql;0;4
+FILE_NAME_30=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FSCSpecTerr_db_.sq;0;4
+FILE_NAME_31=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FSCSpecTerr_db_.sql;0;4
+FILE_NAME_32=0;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FSCSpecTerr_db_old.sh;0;4
+FILE_NAME_33=8762;Sh;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FSCSpecTerrN_db.sh;0;4
+FILE_NAME_34=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FSetSpecTerrs.sql;0;4
+FILE_NAME_35=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FSPECIAL;0;4
+FILE_NAME_36=0;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FSpecxxxSC.sql;0;4
+FILE_NAME_37=0;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FSyncTerrToSpec.psq;0;4
+FILE_NAME_38=390;SQL;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FMethod3.sql;0;4
+FILE_NAME_39=3081;None;0;EUTF-8;1;1;0;%2Fmedia%2Fubuntu%2FWindows%2FUsers%2FBill%2FTerritories%2FFL%2FSARA%2F86777%2FProjects-Geany%2FSpecialSCdb%2FMakeSpecialSCdb.tmp;0;4
+
+[VTE]
+last_dir=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/SpecialSCdb
+
+[build-menu]
+NF_03_LB=sed
+NF_03_CM=./DoSed.sh  WhitePineTreeRd  01 02  '206'
+NF_03_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/SpecialSCdb
+NF_00_LB=_Make
+NF_00_CM=make -f MakeSpecialSCdb
+NF_00_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/SpecialSCdb
+NF_01_LB=Make Custom _Target...
+NF_01_CM=make 
+NF_01_WD=
+EX_01_LB=Make Dry-run
+EX_01_CM=make --dry-run -f MakeSpecialSCdb
+EX_01_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/SpecialSCdb
+NF_02_LB=Make _Object
+NF_02_CM=make %e.o
+NF_02_WD=
+EX_00_LB=_Execute
+EX_00_CM=./%e
+EX_00_WD=

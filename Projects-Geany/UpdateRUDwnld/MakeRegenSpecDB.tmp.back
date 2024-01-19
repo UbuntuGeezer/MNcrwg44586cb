@@ -1,0 +1,33 @@
+# MakeRegenSpecDB.tmp - MakeRegenSpecDB template for territory xxx.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	7/19/21.	wmk.
+
+
+ifeq ($(HOME),/home/ubuntu) 
+ folderbase=/media/ubuntu/Windows/Users/Bill
+else
+ folderbase=$(HOME)
+endif
+
+prepath = $(folderbase)/Territories/RawData/RefUSA/RefUSA-Downloads/Terrxxx/
+ procpath = $(codebase)/Territories/Procs-Dev/
+
+# RegenSpecDB.sh primary target.
+#============================================================================
+$(prepath)RegenSpecDB.sh : $(prepath)RegenSpecDB.sql $(prepath)RegenSpecDB.sq
+	cat $(procpath)hdrAnySQL_1.sh $(prepath)RegenSpecDB.sql \
+	 $(procpath)hdrAnySQL_2.sh > $@
+
+$(prepath)RegenSpecDB.sql : $(prepath)RegenSpecDB.sq
+	echo 's?\"?\\\\"?g' > sedatives.txt
+	echo "s?^?echo \"?g" >> sedatives.txt
+	echo "s?\$$?\" >> SQLTemp.sql?g" >> sedatives.txt
+	echo "1s?>>?>?g" >> sedatives.txt
+	sed -f sedatives.txt $(prepath)RegenSpecDB.sq > $@
+
+$(prepath)RegenSpecDB.sq : ;
+	$(error ** missing $(prepath)RegenSpecDB.sq to build RegenSpecDB.sql **)
+	
+
+#============================================================================

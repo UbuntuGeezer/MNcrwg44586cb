@@ -1,0 +1,50 @@
+# MakeAdd86777Record.tmp - Makefile for Add86777Record build.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	6/5/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 6/5/22.	wmk.	original makefile; adapted from MakeAddNVenAllRecord.
+#
+# MakeAdd86777Record adds a new record to Terr86777 from the Datam1d1
+# table of SCPA_m1-d1.db download.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+ projpath = $(codebase)/Projects-Geany/AddTerr86777Record
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# $(projpath)/Add86777Rec.sh
+#============================================================
+$(projpath)/Add86777Rec.sh : $(projpath)/Add86777Rec.sql
+	cd $(altproj);./DoSed.sh $(projpath) Add86777Rec
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH	
+	if ! test -f $@;then \
+	 echo " ** build Add86777Rec.sh failed - aborting **";exit 1;fi
+	$(projpath)/Add86777Rec.sh
+	
+#	echo "#!/bin/bash" >$@
+#	echo 'echo ""  Add86777Rec wwww  m1 d1 initiated."" ' >> $@
+#	echo "~/sysprocs/LOGMSG '  Add86777Rec wwww  m1 d1 initiated.'" >> $@
+#	echo "sqlite3 < $(projbase)/Add86777Rec.sql" >> $@
+#	echo 'echo ""  Add86777Rec wwww  m1 d1 complete."" ' >> $@
+#	echo "~/sysprocs/LOGMSG '  Add86777Rec wwww  m1 d1 complete.'" >> $@
+
+$(projpath)/Add86777Rec.sql : 
+
+#============================================================

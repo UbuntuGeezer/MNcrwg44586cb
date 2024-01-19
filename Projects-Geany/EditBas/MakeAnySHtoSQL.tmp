@@ -1,0 +1,37 @@
+# MakeAnySHtoSQL.tmp - Makefile (template) for MakeAnySHtoSQL.
+$(error out-of-date)
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+#	12/26/21.	wmk.
+#
+# MakeAnySHtoSQL takes a <file base>.sh file and move it through the
+# reverse process to de-shell it into a .sql file of straight SQL. An
+# intermediate file <file base>.sq is the SQL shell echo,s stripped out
+# of the .sh file.
+#
+# Modification History.
+# ---------------------
+# 12/2/21.	wmk.	original makefile.
+# 12/3/21.	wmk.	AWK var added to run *mawk*.
+# 12/26/21.	wmk.	folderbase correctedt for multihost.
+
+ifeq ($(USER),ubuntu)
+ folderbase = /media/ubuntu/Windows/Users/Bill
+else
+ folderbase = $(HOME)
+endif
+AWK = mawk
+.PHONY : Always
+ projpath = $(codebase)/Territories/Projects-Geany/AnySHtoSQL
+
+# <filepath>/<filebase>.sql
+# moved next from p=1 to print...
+#=======================================================
+Always :
+	$(AWK) 'BEGIN {p =0 }; \
+	 /procbodyhere/ {p = 1 }; \
+	 /endprocbody/ { p = 0; next }; \
+	 p { print;next } ' <filepath>/<filebase>.sh > <filepath>/<filebase>.sq 
+	 # now use sed to go from .sq to .sql
+	 bash $(projpath)/AnySQtoSQL.sh <filepath> <filebase>
+
+#=======================================================

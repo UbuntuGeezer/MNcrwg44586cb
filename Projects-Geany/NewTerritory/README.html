@@ -1,0 +1,201 @@
+<p>README - NewTerritory project documentation.<br>
+    1/21/23.    wmk.</p>
+
+<h3>Modification History.</h3>
+
+<pre><code>4/26/23.    wmk.   original document.
+9/10/21.    wmk.   added Calc step for defining hdr .ods file.
+9/16/21.    wmk.   WARNING about runnning SCNewTerritory project before
+             running RUNewTerritory.
+10/23/21.   wmk.   documentation added for letter writing territories.
+3/31/22.    wmk.   project expanded for <state> <county> <congno> support;
+             .md file formatting.
+4/1/22.     wmk.   Setup section expanded.
+1/21/23.    wmk.   Setup section updated; .md formatting and hyperlinks.
+4/26/23.    wmk.   Project Description minor changes.
+</code></pre>
+
+<h3 id="IX">Documentation Sections.</h3>
+
+<pre><code><a href="#1.0">link</a> 1.0 Project Description - overall project description.
+<a href="#2.0">link</a> 2.0 Setup - step-by-step build instructions.
+</code></pre>
+
+<h3 id="1.0">1.0 Project Description.</h3>
+
+<p>NewTerritory sets up the code and data segments for a new congretation 
+territory. This project has build menu items for both the system-wide process,
+and a publisher territory-specific process.</p>
+
+<p>(For full-featured creating new publisher territories
+within the congregation territory, see the 
+<a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/RUNewTerritory/README.html">RUNewTerritory</a>
+and
+<a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/SCNewTerritory/README.html">SCNewTerritory</a>
+projects.)
+<br></p>
+
+<p><em>* New system-wide congregation territory.</em>*<br>
+The *makefile MakeDefineCongTerr is built to create a new system-wide
+territory. The "Make FullCongTerr" build menu selection performs this.
+This will create both code and data segments for the new congregation territory.</p>
+
+<p>To support state, county and congregation numbers for keeping territories
+segregated, the state, county and congregation number is used in the
+folder structure under the *Territories* parent folder. This allows for
+congregation assigned territories that span county boundaries to be
+managed under one parent directory.</p>
+
+<p><em>* New publisher territory.</em>*<br>
+The *makefile MakePubTerr is built to create a new publisher territory.
+The "Make PubTerr" build menu selection performs this. This creates the
+new publisher territory within the current data segment.</p>
+
+<p>The initial folders created are RefUSA-Downloads/Terrxxx and 
+SCPA-Downloads/Terrxxx. To create empty Map downloads in order to
+initialize the territory, use MakeEmptyRUMap and MakeEmptySCMap.</p>
+
+<p><strong>Associated Projects.</strong><br>
+Two projects support the *NewTerritory* project. They are *NewCodeSegment*
+and *NewDataSegment*. Each congregation's assigned territory is treated
+as its own Territory system. Any given Territory system has two segments,
+a code segment, and a data segment.</p>
+
+<p>The <em>NewTerritory</em> project invokes the two supporting projects to create
+the segments that make up the Territory system for any given congregation.
+See the README.html files under each of these projects for a discussion
+of the details.</p>
+
+<p>The <em>NewTerritory</em> project will first create a new data segment that
+contains critical databases for the congregation's territory system. The
+data segment folder system will also be defined. Then a new code segment
+containing general code for managing the territory data will be created.
+The code segment makes allowances for the congregation to add code that is
+county-specific, and territory number-specific for generating territories
+for the publishers.<br><a href="#IX">Index</a></p>
+
+<h3 id="2.0">2.0 Setup.</h3>
+
+<p>There are two tiers to the process of setting up a new territory. The upper
+tier, DefineTerr, sets up a new Territory system for a congregation. The second
+tier, MakePubTerr, sets up new publisher territories within the congregation
+territory system.</p>
+
+<p>If a congregation's assigned territory spans more than one county, a separate
+Territory system must be set up for each county. This is because each county
+has its own property appraiser data that is unique to that county.</p>
+
+<p><strong>Setting Up a Congregation Territory System</strong><br>
+The <em>NewTerritory</em> project (this project) has all of the build components for
+setting up a new congregation Territory system. Each county territory system
+is organized by state, county and congregation number. This provides for data
+separation even if two congregations have territory within the same county.</p>
+
+<p>Three pieces of information are necessary before beginning: the two-character
+state abbreviation, a four-character county abbreviaion, the congregation number.
+In the steps below, the state abbreviation is represented by &lt; state >, the
+county abbreviation is represented by &lt; county > and the congregation number is
+represented by &lt; congno >.</p>
+
+<p>The data segment setup by the DefineCongTerr *make* process consists of the following folders:</p>
+
+<pre><code>
+            pathbase = folderbase/Territories/< state >/< county >/< congno >
+            pathbase/DB-Dev
+            pathbase/RawData
+            pathbase/RawData/RefUSA
+            pathbase/RawData/RefUSA/RefUSA-Downloads
+            pathbase/RawData/RefUSA/RefUSA-Downloads/Special
+            pathbase/RawData/SCPA
+            pathbase/RawData/SCPA/SCPA-Downloads
+            pathbase/RawData/SCPA/SCPA-Downloads/Special
+            pathbase/RawData/SCPA/SCPA-Downloads/Previous
+            pathbase/TerrData
+            pathbase/Territory-PDFs
+</code></pre>
+
+<p>The code segment setup by the DefineCongTerr *make* process consists of the following folders:</p>
+
+<pre><code>
+            codebase
+            codebase/Procs-Dev
+            codebase/Projects-Geany
+            codebase/Projects-Geany/ArchivingBackups
+</code></pre>
+
+<p>The code segment is also defined as a GitHub project to facilitate collaborative
+development of code, as well as providing a second-tier of offsite backup
+for the Terrtitory system code. For documention on the GitHub project see
+the
+<a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/README.html">README</a>
+file for the GitHub project.</p>
+
+<p><strong>Setting Up New Publisher Territories</strong><br>
+A new publisher territory is set up by defining the territory boundaries
+and basic information in the TerrIDData.db. Once that has been done, the
+<em>MakePubTerr</em> *make* process builds the essential file system framework
+for the new publisher territory. The database administrator then downloads
+the publisher territory data from the external data sources. Following that
+two additional projects, SCNewTerritory
+and RUNewTerritory are used to populate the publisher territory with the
+address data for all parcels within the new territory. See the
+<a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/SCNewTerritory/README.html">SCNewTerritory</a>
+and
+<a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/RUNewTerritory/README.html">RUNewTerritory</a>
+documentation for details on these projects.</p>
+
+<p>Here is an overview of the steps involved in creating a new publisher territory:</p>
+
+<pre><code>
+    If the territory is a letter territory, the territory.pdf needs to
+     be ported to a Terrxxx_TS.ods spreadsheet file. The project to do
+     this operation is 
+
+    Define the territory boundaries and basic information in the TerrIDData.db.
+     This includes the territory number, DoNotCalls, area name, optional
+     subterritories, zip code and status. The territory header information
+     is taken from this database.
+
+    edit the territory id into the "sed" item in the Build menu
+    run "sed" from the Build menu to set up the makefile for building
+     folders for the territory.
+
+    run "Make Dry Run" from the Build menu to check the setup.
+
+    run "Make" from the Build menu to build the initial territory folders.
+     The initial folders are named TErrxxx so they appear first in the
+     file folders under RawData for SCPA and RefUSA. This makes the folders
+     stand out for receiving territory download data.
+
+    run Calc on TerrData/Terrxxxhdr.csv to create Terrxxxhdr.ods
+
+    use RefUSA to define and save the download polygon for the territory
+    download the RefUSA polygon data into the Downloads folder
+    rename the download Mapxxx_RU.csv
+    move/copy the download to the TErrxxx folder under RefUSA-Downloads
+    rename the folder Terrxxx so it is in its proper place in the system
+    update the SystemTracker.Territory Master List sheet with the date
+     of the download, as well as the RefUSA Downloads sheet
+
+    use SCPA Property Search map to define the download polygon for the
+     territory. There is no mechanism within SCPA to save the polygon.
+    download the SCPA polygon data into the Downloads folder
+    rename the download Mapxxx_SC.csv
+    move/copy the download to the TErrxxx folder under SCPA-Downloads
+    rename the folder Terrxxx so it is in its proper place in the system
+    update the SystemTracker.Territory Master List sheet with the date
+     of the download, as well as the SCPA Downloads sheet
+    [Note. Some territories have only 1 SCPA record (e.g. mobile home
+     parks). For these, run MakeEmptySCMap.sh from the Procs-Dev folder
+     to create an empty SC map.]
+
+    move to the SCNewTerritory project to build the Terrxxx_SC.db
+    set the build commands and run make
+
+    WARNING: The RUNewTerritory project depends upon SCNewTerritory having
+     run first!
+    move to the RUNewTerritory project to build the Terrxxx_RU.db
+    set the Build commands and run make
+</code></pre>
+
+<p><a href="#IX">Index</a></p>

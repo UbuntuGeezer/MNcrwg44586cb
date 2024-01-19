@@ -1,0 +1,45 @@
+# MakeFile - universal makefile template.
+# MakeFile.tmp - *make* file for <mame> build.
+#	2/19/23.	wmk.
+#
+# Modification History.
+# ---------------------
+# 2/19/23.	wmk.	original code.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ projpath = $(codebase)/Projects-Geany/<proj-name>
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	cd $(altproj);./DoSed.sh $(projpath) <shfile>
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/<shfile>.sh;then \
+	 echo "** <shfile>.sh generation failed **";exit 1;fi
+	echo "** <shfile>.sh to <do-whatever> **"
+	
+#==================================================================
+# end MakeFile.tmp

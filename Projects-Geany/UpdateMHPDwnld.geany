@@ -1,0 +1,72 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=UpdateMHPDwnld
+base_path=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/UpdateMHPDwnld/
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=10
+FILE_NAME_0=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateMHPDwnld%2FAllMakeRUMHP.sh;0;4
+FILE_NAME_1=3822;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateMHPDwnld%2FAllUpdtRUDwnld.sh;0;4
+FILE_NAME_2=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateMHPDwnld%2FDoSed.sh;0;4
+FILE_NAME_3=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateMHPDwnld%2FDoSed1.sh;0;4
+FILE_NAME_4=2184;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateMHPDwnld%2FMakeExtractOldDiffs.tmp;0;4
+FILE_NAME_5=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateMHPDwnld%2FMakeIntegrateOldDiffs.tmp;0;4
+FILE_NAME_6=51;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateMHPDwnld%2FMakeRUMHP.tmp;0;4
+FILE_NAME_7=4485;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateMHPDwnld%2FMakeUpdateMHPDwnld.tmp;0;4
+FILE_NAME_8=635;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateMHPDwnld%2FAddMHPTable.psq;0;4
+FILE_NAME_9=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateMHPDwnld%2FREADME;0;4
+FILE_NAME_10=19;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateMHPDwnld%2FTIDList.txt;0;4
+
+[VTE]
+last_dir=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/UpdateRUDwnld
+
+[build-menu]
+NF_01_LB=Make Custom _Target...
+NF_01_CM=make 
+NF_01_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/UpdateMHPDwnld
+NF_03_LB=sed
+NF_03_CM=./DoSed.sh BayIndiesMHP  235
+NF_03_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/UpdateMHPDwnld
+EX_01_LB=Make Dry-run
+EX_01_CM=make --dry-run  -f MakeUpdateMHPDwnld
+EX_01_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/UpdateMHPDwnld
+NoneFT_02_LB=sed1
+NoneFT_02_CM=./DoSed1.sh 244 BayIndiesMHP
+NoneFT_02_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/UpdateMHPDwnld
+filetypes=None;Sh;
+NF_00_LB=_Make
+NF_00_CM=make -f MakeUpdateMHPDwnld -k
+NF_00_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/UpdateMHPDwnld
+NF_02_LB=Make _Object
+NF_02_CM=make %e.o
+NF_02_WD=
+ShFT_00_LB=PreMake
+ShFT_00_CM=make -f MakeExtractOldDiffs; make -f MakeIntegrateOldDiffs
+ShFT_00_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/UpdateMHPDwnld
+NoneFT_01_LB=Batch Run
+NoneFT_01_CM=./AllUpdtRUDwnld.sh BayIndiesMHP  
+NoneFT_01_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/UpdateMHPDwnld

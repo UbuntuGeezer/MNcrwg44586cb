@@ -1,0 +1,80 @@
+<p>README - SCNewTerritory project documentation.<br>
+    1/14/23.    wmk.<br></p>
+
+<h3>Modification History.</h3>
+
+<pre><code>
+8/10/21.    wmk.    original document.
+9/10/21.    wmk.    Significant Notes section added.
+9/16/21.    wmk.    added Setup section.
+3/17/22.    wmk.    edited for TX/HDLG/99999 support.
+1/14/23.    wmk.    .md formatting; hyperlinks added.
+</code></pre>
+
+<h3 id="IX">Document Sections.</h3>
+
+<pre><code><a href="#1.0">link</a> 1.0 Project Description - general description of project.
+<a href="#2.0">link</a> 2.0 Setup - insructions for running the Build of SCNewTerritory.
+<a href="#3.0">link</a> 3.0 Raw Data Structure - data structure of SC territory database.
+<a href="#4.0">link</a> 4.0 Significant Notes - stuff not documented elsewhere.
+</code></pre>
+
+<h3 id="1.0">1.0 Project Description.</h3>
+
+<p>SCNewTerritory takes download data from the SCPA records and creates a
+database with the download records and Bridge table for territory generation.
+The download records are assumed to be "map" download records from the
+SCPA master online database in polygon record format, as opposed to full
+records taken directly from the SCPA full download data.<br><a href="#IX">Index></a></p>
+
+<h3 id="2.0">2.0 Setup.</h3>
+
+<p>Perform the following steps when building a new SC territory:</p>
+
+<pre><code>
+    edit "sed" item in the Buid menu with the territory ID
+    run "sed" from the Build menu
+
+    run "Make Dry Run from the Build menu to check the new territory
+    projected execution
+
+    run "Make" from the Build menu to generate the SC territory database.
+</code></pre>   
+
+<p><a href="#IX">Index></a></p>
+
+<h3 id="3.0">3.0 Raw Data Structure.</h3>
+
+<p>Following is the table structure of the map polygon data. In the first
+pass at generating territories, the "by shape" feature was used to draw
+polygons on the SC aerial map to obtain the addresses. The resulting
+.csv download records all have the following SQL fields present:</p>
+
+<p>CREATE TABLE Terrxxx_SCPoly
+( Account TEXT, Name TEXT, Name2 TEXT, ADDRESS TEXT, CITY TEXT,
+ STATE TEXT, ZIP TEXT, COUNTRY TEXT, LOCATIONNAME TEXT,
+ LOCATIONSTREET TEXT, LOCATIONDIRECTION TEXT, UNIT TEXT,
+ LOCATIONCITY TEXT, LOCATIONZIP TEXT)</p>
+
+<p>As can be seen from the table definition, the .csv fields are imported
+directly into table Terrxxx_SCPoly where xxx is the territory ID.</p>
+
+<p>A provision has been made to take download data from the SCPA full download
+database. This provision covers cases where entire streets are necessary
+to have in a database, where the street spans two or more territories.
+The SpecialSCdb project handles these databases. Where a territory makes
+use of this provision, its raw data will contain documentation in
+file SPECIAL, and a secondary database Specxxx_SC.db of special records
+that in Bridge format for inclusion in the generated territory.
+(See the SpecialSCdb project documentation
+<a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/SpecialSCdb/README.html">README</a> 
+for further information.)
+<a href="#IX">Index></a></p>
+
+<h3 id="4.0">4.0 Significant Notes.</h3>
+
+<p>SCNewTerritory should be run to build the SC territory prior to building
+the RUNewTerritory. RUNewTerritory depends upon the Terrxxx<em>SC.db, even
+if there are no records (e.g. mobile home park). An empty Terrxxx</em>SCBridge
+table is built.
+<a href="#IX">Index></a></p>

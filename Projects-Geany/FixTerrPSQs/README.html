@@ -1,0 +1,40 @@
+<p>README.md - FixTerrPSQs project documentation.<br>
+5/8/22. wmk.</p>
+
+<h2>Modification History.</h2>
+
+<pre><code>
+</code></pre>
+
+<h2>Document Sections.</h2>
+
+<pre><code>
+</code></pre>
+
+<h2>Project Description.</h2>
+
+<p>FixTerrPSQs is a "reliability" project that goes through a list of territories
+then processeS each territory's folder .psq files
+and batch edits them to be consistent with all SQL queries for a given
+Territory system. The most obvious is to ensure the SQL is using the
+environment variable <em>pathbase</em> in all file referencing operations like
+.open,.import.,.output and ATTACH. The single build uses <em>sed</em>, <em>awk</em> and
+<em>cat</em> to modifify the .psq files in a specific folder (typically a territory
+download or Geany project folder.</p>
+
+<p>The project will also be used when creating new congregation Territory
+systems. There are over 1,000 .psq query files within a Territory system, many
+of which have path dependencies on the <em>folderbase</em>, <em>basepath</em> and
+<em>congterr</em> environment variables. Whenever these system-wide environment
+variables are changed, the downstream SQL queries and shell files will be
+affected. FixTerrPSQs, especially the FixAllPSQs shell, facilitates rapidly
+editing all affected SQL queries.</p>
+
+<h2>Setup.</h2>
+
+<p>FixTerrPSQs consists of "stand-alone" shells that fix .psq and .psq files.
+FixTerrSQL.sh fixes a single territory folder. FixAllSQLs.sh fixes all
+territory folders in the TIDList.txt list files on the &lt; path >.
+The shells use 3 parameters &lt; path > &lt; file > [&lt; extension >]. &lt; path > is the
+full path to the file; &lt; file > is the base filename (e.g. Fix101RU);
+[&lt; extension >] is the file extension type .psq | psq}.</p>

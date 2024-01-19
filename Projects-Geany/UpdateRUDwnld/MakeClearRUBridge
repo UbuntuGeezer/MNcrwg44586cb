@@ -1,0 +1,59 @@
+# MakeClearRUBridge.tmp - MakeClearRUBridge template for territory xxx.
+#	10/4/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# 10/2/22.	wmk.	comments tidied.
+# 10/4/22.	wmk.	*pathbase set for CB system.
+# Legacy mods.
+# 7/9/22.	wmk.	original code; adapted from MakeRegenSpecDB.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : ;
+.ONESHELL : ;
+
+prepath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terr314
+ procpath = $(codebase)/Procs-Dev
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+ projpath = $(codebase)/Projects-Geany/UpdateRUDwnld
+
+# ClearRUBridge.sh primary target.
+#============================================================================
+$(projpath)/ClearRUBridge.sh : $(projpath)/ClearRUBridge.sql
+	cd $(altproj);./DoSed.sh $(projpath) ClearRUBridge
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH	
+
+#	cat $(procpath)hdrAnySQL_1.sh $(projpath)ClearRUBridge.sql \
+#	 $(procpath)hdrAnySQL_2.sh > $@
+
+
+$(projpath)/ClearRUBridge.sql : ;
+	if ! test -f $@;then
+	 echo "** missing ClearRUBridge.sql to build ClearRUBridge.sh **";exit 1;fi
+
+# $(error ** missing $(projpath)ClearRUBridge.sq to build ClearRUBridge.sql **)
+	
+
+#============================================================================

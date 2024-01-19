@@ -1,0 +1,62 @@
+&apos;// SetBizHeadings.bas
+&apos;//---------------------------------------------------------------
+&apos;// SetBizHeadings - Set Admin-Bridge sheet headings.
+&apos;//		9/25/21.	wmk.	21:47
+&apos;//---------------------------------------------------------------
+
+public sub SetBizHeadings()
+
+&apos;//	Usage.	macro call or
+&apos;//			call SetBizHeadings()
+&apos;//
+&apos;// Entry.	user has Biz-Bridge sheet selected
+&apos;//
+&apos;//	Exit.	Column headings will be set as follows:
+&apos;//	&quot;Company Name&quot;, &quot;UnitAddress&quot;,&quot;Owner&quot;,&quot;Contact Phone&quot;,&quot;Biz Desc&quot;,
+&apos;// &quot;OGender&quot;, &quot;OTitle&quot;,&quot;Territory&quot;,&quot;DoNotCall&quot;,&quot;RecordDate&quot;,&quot;SunbizDoc&quot;,
+&apos;// &quot;DelPending&quot;
+&apos;//
+&apos;// Calls. SetColHeadings.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;// 9/25/21.	wmk.	adapted from SetBridgeHeadings; headings changed
+&apos;//						to match Biz Bridge records format
+&apos;// Legacy mods.
+&apos;//	9/21/20.	wmk.	original code
+&apos;// 9/23/20.	wmk.	&quot;PropUse&quot; heading added
+&apos;//	10/23/20.	wmk.	Column adjustments; &quot;Unit&quot; replaces Resident1,
+&apos;//						&quot;Resident1&quot; replaces Resident2
+&apos;// 11/22/20.	wmk.	&quot;Phone2&quot; changed to &quot;H&quot; for homestead
+&apos;//
+&apos;//	Notes.
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim sColHeadings(11) As String		&apos;// column headings array
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	sColHeadings(0) = &quot;Company Name&quot;	&apos;// 2.18
+	sColHeadings(1) = &quot;UnitAddress&quot;		&apos;// 1.45
+	sColHeadings(2) = &quot;Owner&quot;			&apos;// 1.30
+	sColHeadings(3) = &quot;Contact Phone&quot;	&apos;// 1.17
+	sColHeadings(4) = &quot;Biz Desc&quot;		&apos;// 2.53
+	sColHeadings(5) = &quot;OGender&quot;			&apos;// 0.99
+	sColHeadings(6) = &quot;OTitle&quot;			&apos;// 0.99
+	sColHeadings(7) = &quot;Terr&quot;			&apos;// 0.45
+	sColHeadings(8) = &quot;DNC&quot;				&apos;// 0.50
+	sColHeadings(9) = &quot;RecordDate&quot;		&apos;// 0.79
+	sColHeadings(10) = &quot;SunBizDoc&quot;		&apos;// 0.85
+	sColHeadings(11) = &quot;Del&quot;			&apos;// 0.46
+	SetColHeadings(sColHeadings)
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SetBizHeadings - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end SetBizHeadings	9/25/21.	21:47

@@ -1,0 +1,5 @@
+.:
+total 5.0K
+-rwxrwxrwx 1 ubuntu ubuntu 819 Oct 28 15:14 MakeBuildDates
+-rwxrwxrwx 1 ubuntu ubuntu   0 Oct 28 15:14 PubTerrDates.txt
+-rwxrwxrwx 1 ubuntu ubuntu 533 Oct 28 14:49 README

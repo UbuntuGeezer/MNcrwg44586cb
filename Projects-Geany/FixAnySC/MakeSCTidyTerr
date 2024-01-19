@@ -1,0 +1,49 @@
+# MakeSCTidyTerr - SCTidyTerr_db.sh makefile.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	6/28/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 6/28/22.	wmk.	original makefile.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(pathbase)
+endif
+
+ bashpath = $(codebase)/Procs-Dev
+postpath = $(pathbase)/RawData/SCPA/SCPA-Downloads/Terryyy
+targpath = $(pathbase)/RawData/SCPA/SCPA-Downloads/Terryyy
+ projpath = $(codebase)/Projects-Geany/FixAnySC
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+.PHONY : Always;
+.ONESHELL : ;
+
+# $(projpath)/SCTidyTerr_db.sh
+#==============================================================================
+Always : $(projpath)/SCTidyTerr_db.sql
+	cd $(altproj);./DoSed.sh $(projpath) SCTidyTerr_db preSCTidy.sh
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	echo "SCTidyTerr_db.sh now ready for use..."
+
+$(projpath)/SCTidyTerr_db.sql : ;
+	if ! test -f $@;then \
+	 echo "** missing SCTidyTerr_db.sql missing for SCTidyTerr_db.sh build **";exit 1;fi
+
+#==============================================================================
+
+

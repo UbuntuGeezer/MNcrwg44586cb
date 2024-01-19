@@ -1,0 +1,4 @@
+s/TestThis/<filename>/g
+s/\\\"/\"/g
+{s/echo "//g;s/" >> SQLTemp.sql//g;1 s/> SQLTemp.sql//;}
+{s/echo "//g;s/" >> SQLTemp.sql//g;1 s/> SQLTemp.sql//;}

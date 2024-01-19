@@ -1,0 +1,66 @@
+# MakeDBNamesDB.tmp - CreateDBNames.sh makefile.
+#	1/30/29.	wmk.
+#
+# Build Results: /Special/SpecialDBs.db created.
+#
+#
+# Modification History.
+# ---------------------
+# 1/30/23.  wmk.    original code.
+#
+# Dependencies. - run "sed" make preprocessor after editing sed Build command.
+# yyy  run Build "sed" to change yyy to territory and set download date.
+
+.NOTPARALLEL : ;
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+vpath %.csv $(pathbase)/RawData/SCPA/SCPA-Downloads/Terryyy
+SCDwnldPtr = $(pathbase)/RawData/SCPA/SCPA-Downloads
+ projpath = $(codebase)/Projects-Geany/FlagSpecSCUpdates
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+targpath = $(SCDwnldPtr)/Special
+.PHONY  : Build ;
+.ONESHELL : ;
+
+# primary target phony
+#==================================================================
+# $(targpath)/SpecialDBs.db : $(targpath)/DBNameDates.csv
+Build : $(targpath)/DBNameDates.csv
+	cd $(altproj);./DoSed.sh $(projpath) CreateSpecDBs
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/CreateSpecDBs.sh;then \
+	 echo "** CreateSpecDBs.sh generation failed **";exit 1;fi
+	./DoSed.sh $(projpath) UpdateDBNames
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/UpdateDBNames.sh;then \
+	 echo "** UpdateDBNames.sh generation failed **";exit 1;fi
+	cd $(SCDwnldPtr)/Special
+	ls -lh *.db > $$TEMP_PATH/lslist.txt
+	mawk -f $(projpath)/awkcsvdir $$TEMP_PATH/lslist.txt > $(targpath)DBNameDates.csv
+	echo " $$TEMP_PATH/lslist.txt created..."
+	$(projpath)/CreateSpecDBs.sh
+	$(projpath)/UpdateDBNames.sh
+	echo "  SpecialDBs.db built - MakeDBNames complete."
+	
+$(targpath)/DBNameDates.csv : 
+	cd $(SCDwnldPtr)/Special
+	ls -lh *.db > $$TEMP_PATH/lslist.txt
+	mawk -f awkcsvdir $$TEMP_PATH/lslist.txt > $@
+	echo " $$TEMP_PATH/lslist.txt created..."
+
+#==================================================================

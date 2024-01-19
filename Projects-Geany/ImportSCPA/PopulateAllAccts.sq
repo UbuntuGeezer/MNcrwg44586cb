@@ -1,0 +1,17 @@
+echo "-- PopulateAllAccts - Populate AllAccts table in Terr86777.db."  > SQLTemp.sql
+echo "-- *	4/29/22.	wmk."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * ---------------------"  >> SQLTemp.sql
+echo "-- * 4/29/22.	wmk.	original code."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ".open '$pathbase/DB-Dev/Terr86777.db'"  >> SQLTemp.sql
+echo "DROP TABLE IF EXISTS AllAccts;"  >> SQLTemp.sql
+echo "CREATE TABLE AllAccts"  >> SQLTemp.sql
+echo "( Account TEXT, PRIMARY KEY(Account));"  >> SQLTemp.sql
+echo "INSERT OR IGNORE INTO AllAccts"  >> SQLTemp.sql
+echo "SELECT \"Account #\" FROM Terr86777"  >> SQLTemp.sql
+echo "ORDER BY \"Account #\";"  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo "-- * END PopulateAllAccts."  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql

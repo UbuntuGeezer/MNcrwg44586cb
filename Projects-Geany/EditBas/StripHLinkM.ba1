@@ -1,0 +1,155 @@
+&apos;// StripHLinkM.bas
+&apos;//---------------------------------------------------------------
+&apos;// StripHLinkM - Strip hyperlink function to isolate URL.
+&apos;//		8/16/20.	wmk.	15:00
+&apos;//---------------------------------------------------------------
+
+public sub StripHLinkM()
+
+&apos;//	Usage.	macro call or
+&apos;//			call StripHLinkM()
+&apos;//
+&apos;//
+&apos;// Entry.	user has selected a range of cells in desired row(s) to
+&apos;//			strip the HYPERLINK function from, leaving only the URL
+&apos;//
+&apos;//	Exit.	each row selected has a hperlink added in the COL_HLINK
+&apos;//			and COL_HLINK1 columns in the form:
+&apos;//			HYPERLINK(&quot;&lt;url&gt;&quot;) that will allow the end-user to click
+&apos;//			on the hyperlink url and be taken to a search webpage
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	8/16/20.	wmk.	original code; adapted from GenHLinkM; constants
+&apos;// 					moved to Module1 header; modified to de-link
+&apos;//						3 URL columns
+&apos;//
+&apos;// Wishlist. Pick up COL_ADDR and COL_HLINK from predetermined cells
+&apos;// in the oRange.Sheet.
+&apos;//	Method. for each row, extract HYPERLINK field from COL_HLINK
+&apos;//		and COL_HLINK1
+&apos;//		use cell.getFormula() function to extract formula from cell
+&apos;//     strip &quot;=HYPERLINK(&quot; from front of formula, &quot;,&quot;Click to search&quot;)&quot;
+&apos;//     from end of formula to isolate URL
+&apos;//		use cell.setFormula() function to set &quot;=&quot; at front of URL and
+&apos;//       store as new formula
+
+&apos;// constants.
+&apos;// see Module header...
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+
+&apos;// processing variables.
+dim nRowsProcessed As Integer	&apos;// count of rows processed
+dim sURL	As String		&apos;// url generated from sAddress
+dim sHLink	As String		&apos;// HYPERTEXT link to store
+dim i		As Integer		&apos;// loop counter
+dim sLink	As String		&apos;// existing HYPERTEXT link string
+dim nLinkLen	As	Integer	&apos;// existing link length
+dim nURLLen	As Integer		&apos;// URL length
+
+&apos;// XCell sheet objects
+dim oCellHLink as object	&apos;// hyperlink field
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	
+	nRowsProcessed = 0		&apos;// clear processed count
+
+	&apos;// set row processing from oRange information
+	lThisRow = oRange.StartRow - 1		&apos;// start at -1 since increment first
+	nRowCount = oRange.EndRow - lThisRow	&apos;// set row count to process
+	for i = 1 to nRowCount
+		lThisRow = lThisRow + 1		&apos;// advance current row
+		
+		&apos;// delink truepeoplesearch
+		oCellHLink = oSheet.getCellByPosition(COL_HLINK, lThisRow)
+		sHLink = oCellHLink.getFormula()	&apos;// retrieve hyperlink formula text
+		nLinkLen = Len(sHLink)
+		if nLinkLen = 0 then
+			msgBox(&quot;StripHLinkM - empty hyperlink field; skipping.&quot;)
+			oCellAddr.CellBackColor = YELLOW
+			GoTo NextLink
+		endif	&apos;// null string - alert user, mark row and continue
+
+		&apos;// strip &quot;=HYPERLINK(&quot; from front of function string
+		&apos;// strip &quot;, &quot;Click here to search&quot;&quot; from back of function
+		nStripLen = Len(&quot;=HYPERLINK(&quot;)
+		sURL = &quot;=&quot; + Right(sHLink, nLinkLen-nStripLen)
+		nURLLen = Len(sURL)
+		nStripLen = Len(&quot;,&quot; + CHR(34) + &quot;Click here to search&quot; + CHR(34) + &quot;)&quot;)
+		sURL = Left(sURL, nURLLen-nStripLen)
+		oCellHLink.setFormula(sURL)
+msgbox(&quot;StripHLinkM - URL =&quot; +CHR(13)+CHR(10) + sURL)
+
+NextLink:
+		&apos;// delink 411.com
+		oCellHLink = oSheet.getCellByPosition(COL_HLINK1, lThisRow)
+		sHLink = oCellHLink.getFormula()	&apos;// retrieve hyperlink formula text
+		nLinkLen = Len(sHLink)
+		if nLinkLen = 0 then
+			msgBox(&quot;StripHLinkM - empty hyperlink field; skipping.&quot;)
+			oCellAddr.CellBackColor = YELLOW
+			GoTo Nextfor
+		endif	&apos;// null string - alert user, mark row and continue
+
+		&apos;// strip &quot;=HYPERLINK(&quot; from front of function string
+		&apos;// strip &quot;, &quot;Click here to search&quot;&quot; from back of function
+		nStripLen = Len(&quot;=HYPERLINK(&quot;)
+		sURL = &quot;=&quot; + Right(sHLink, nLinkLen-nStripLen)
+		nURLLen = Len(sURL)
+		nStripLen = Len(&quot;,&quot; + CHR(34) + &quot;Click here to search&quot; + CHR(34) + &quot;)&quot;)
+		sURL = Left(sURL, nURLLen-nStripLen)
+		oCellHLink.setFormula(sURL)
+msgbox(&quot;StripHLinkM - URL =&quot; +CHR(13)+CHR(10) + sURL)
+
+NextLink2:
+		&apos;// delink whitepages.com
+		oCellHLink = oSheet.getCellByPosition(COL_HLINK2, lThisRow)
+		sHLink = oCellHLink.getFormula()	&apos;// retrieve hyperlink formula text
+		nLinkLen = Len(sHLink)
+		if nLinkLen = 0 then
+			msgBox(&quot;StripHLinkM - empty hyperlink field; skipping.&quot;)
+			oCellAddr.CellBackColor = YELLOW
+			GoTo Nextfor
+		endif	&apos;// null string - alert user, mark row and continue
+
+		&apos;// strip &quot;=HYPERLINK(&quot; from front of function string
+		&apos;// strip &quot;, &quot;Click here to search&quot;&quot; from back of function
+		nStripLen = Len(&quot;=HYPERLINK(&quot;)
+		sURL = &quot;=&quot; + Right(sHLink, nLinkLen-nStripLen)
+		nURLLen = Len(sURL)
+		nStripLen = Len(&quot;,&quot; + CHR(34) + &quot;Click here to search&quot; + CHR(34) + &quot;)&quot;)
+		sURL = Left(sURL, nURLLen-nStripLen)
+		oCellHLink.setFormula(sURL)
+msgbox(&quot;StripHLinkM - URL =&quot; +CHR(13)+CHR(10) + sURL)
+		
+Nextfor:
+		nRowsProcessed = nRowsProcessed + 1
+
+	next i
+	
+	msgbox(&quot;StripHLinkM - &quot; + nRowsProcessed + &quot; rows processed&quot;)
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+   msgbox(&quot;StripHLinkM - unprocessed error.&quot;)
+   GoTo NormalExit
+
+end sub		&apos;// end StripHLinkM	8/16/20.

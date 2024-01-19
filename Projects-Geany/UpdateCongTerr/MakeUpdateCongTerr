@@ -1,0 +1,163 @@
+# MakeUpdateCongTerr.tmp - template for make MakeUpdateCongTerr.
+#	6/16/23.	wmk.
+#
+# Dependencies.
+# -------------
+# DoSed run to set 05 28 in this template for MakeUpdateCongTerr
+#	XDiffsToCongTerr.sh generated from DiffsToCongTerr.sh
+#	< congno > replaced with congregation number by DoSed.
+#
+# Modification History.
+# ---------------------
+# 11/27/22.	wmk.	*codebase dependent references corrected; *terrdflt
+#			 references deleted; co05ents tidied.
+# 4/25/23.	wmk.	BuildDiffAcctsTbl.sh a28ed to main recipe to build
+#			 DiffAccts table in SCPADiff_05-28.db.
+# 6/16/23.	wmk.	BuildSCDiff project references replace this project
+#			 Diff builds.
+# Legacy mods.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+# Legacy mods.
+# 4/27/22.	wmk.	original code; cloned from MakeUpdateNVenAll.
+# 5/27/22.	wmk.	CreateNewSCPA and BuildSCDiff removed completely;
+#			 SCNewVsCongTerr included in recipe.
+# Legacy mods.
+# 2/28/21.	wmk.	original code.
+# 6/25/21.	wmk.	multihost support.
+# 6/26/21.	wmk.	vpath for .db excess trailing " removed; targpath
+#			 var defined; DiffsToNVenAll recipe a28ed.
+# 7/22/21.	wmk.	sqlite3 for BuildDiffAcctsTbl a28ed.
+# 8/25/21.	wmk.	a28ed error messages for SCPA-Public_05-28.csv, .xlsx
+# 9/30/21.	wmk.	prerequisites qualified with paths for clarification;
+#			 CP-DBsToMirror path corrected to mainpath.
+# 11/3/21.	wmk.	projpath var replaces targpath for clarity; header
+#			 corrected; recipe for CreateNewSCPA.sql a28ed;
+# 12/2/21.	wmk.	bug fix; dependency SCPA-Public_05-28.csv changed to
+#			 Datam2d2.csv.
+# 12/3/21.	wmk.	bug fix; QSCPADiff.sh reactivated in SCPADiff_05-28.db
+#			 recipe; mainpath replaced with mainbase, projpath replaced
+#			 with thisbase, shellpath replaced with shellbase, scpapath
+#			 replaced with scpabase.
+# 1/2/22.	wmk.	use USER instead of HOME for host test.
+# 1/8/22.	wmk.	a28 chmod to .sh recipes to ensure executable.
+#
+# IMPORTANT NOTE ON VARS:
+# vars which substitute for *path* names will have a string that does NOT end
+# with '/'; vars which substituet for *base* names WILL have a string that
+# ends with '/'.
+#
+# The environment var *pathbase* contains the path of the current <state>
+# <county>  Territory system.
+#
+# updating Terr.db[Terr]
+# Terr.db will be considered out-of-date if either SCPA_05-28.db
+#	or SCPADiff_05-28.db is newer
+# SCPA_05-28.db will be considered out-of-date if SCPA Public_05-28.csv or
+#	SCPA Public_05-28.xlsx is newer; the .csv file is what is used to 
+#	build the SCPA_05-28.db [Data0528] table
+# SCPADiff_05-28.db will be considered out-of-date if SCPA Public_05-28.csv
+#	or SCPA_05-28.db is newer
+#
+# sed should set 05 and 28 in this recipe to the month and day of SCPA full download
+# recipe should ensure that ~/SCPA-Downloads/SCPADiff_05-28.db is up-to-date.
+#   if not, generate it by running QSCPADiff.sh against old/new dbs
+#		using sed to set 04 04 to older SCPA download month/day
+#		 and m2 d2 to the newest SCPA full download
+# if Terr.db is out-of-date (by looking at SCPADiff_05-28)
+#	run the shell version of DiffsToCongTerr.sql (DiffsToCongTerr.sh)
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+vpath %.db $(pathbase)/RawData/SCPA/SCPA-Downloads/
+vpath %.csv
+vpath %.xlsx
+mainbase = $(pathbase)/DB-Dev
+#mainpath = $(pathbase)/DB-Dev/
+ procpath = $(codebase)/Procs-Dev
+shellbase = $(codebase)/Projects-Geany/ShellFiles/
+#shellpath = $(codebase)/Projects-Geany/ShellFiles
+projbase = $(codebase)/Projects-Geany/
+thisbase = $(codebase)/Projects-Geany/UpdateCongTerr/
+thisproj = $(projbase)UpdateCongTerr
+ projpath = $(codebase)/Projects-Geany/UpdateCongTerr
+scpabase = $(pathbase)/RawData/SCPA/SCPA-Downloads
+#scpapath = $(pathbase)/RawData/SCPA/SCPA-Downloads
+altproj = $(projbase)AnySQLtoSH
+diffproj = $(projbase)/BuildSCDiff
+
+.PHONY : Always
+.ONESHELL :
+
+# primary target: (mainbase)Terr.db
+#====================================================================
+# Terr
+#Always : $(thisbase)DiffsToCongTerr.sh
+$(mainbase)/Terr.db  :   $(scpabase)/SCPA_05-28.db \
+ $(thisbase)/DiffsToCongTerr.sh  $(thisproj)/ForceBuild
+	echo "shellbase = '$(shellbase)'"
+	if test -f $(thisproj)/SCNewVsCongTerr.sh;then \
+	 rm $(thisproj)/SCNewVsCongTerr.sh;fi
+	$(MAKE) -f $(thisproj)/MakeSCNewVsCongTerr
+	if ! test -f SCNewVsCongTerr.sh;then \
+	 echo "** MakeUpdateCongTerr aborted - MakeSCNewVsCongTerr failed **";exit 1;fi
+	$(thisproj)/SCNewVsCongTerr.sh
+	#$(thisproj)/BuildDiffAcctsTbl.sh
+	$(thisbase)DiffsToCongTerr.sh
+
+#===================================================================
+
+$(scpabase)/SCPA_05-28.db :
+	if ! test -f $@;then \
+	 echo " ** SCPA_05-28.db missing for Terr.db update **";exit 1;fi
+
+#DiffsToCongTerr.sh
+#===================================================================
+$(thisbase)DiffsToCongTerr.sh  : $(thisbase)DiffsToCongTerr.sql
+	cd $(altproj);./DoSed.sh $(thisbase) DiffsToCongTerr
+	$(MAKE) -f $(altproj)/AnySQLtoSH
+
+$(thisbase)DiffsToCongTerr.psq : ;
+	if ! test -f $(thisbase)DiffsToCongTerr.psq;then \
+	 echo "** DiffsToCongTerr.psq missing for DiffsToCongTerr.sh build **";exit 1;fi
+
+$(thisproj)/ForceBuild :
+	if ! test -f $@;then \
+	 echo "** ForceBuild semaphore file missing for MakeUpdateCongTerr build **";exit 1;fi
+
+#===================================================================
+
+
+#(procpath)/QSCPADiff.sh
+#===================================================================
+$(procpath)/QSCPADiff.sh  : $(procpath)/QSCPADiff.psq \
+ $(procpath)/QSCPADiff.sql  $(procpath)/QSCPADiff.sq
+	cd $(altproj); ./DoSed.sh $(procpath) QSCPADiff
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+
+$(procpath)/QSCPADiff.sq : ;
+
+$(procpath)/QSCPADiff.sql : ;
+
+$(procpath)/QSCPADiff.psq : ;
+
+#==============================================
+
+
+#===================================================================
+
+# end MakeUpdateCongTerr

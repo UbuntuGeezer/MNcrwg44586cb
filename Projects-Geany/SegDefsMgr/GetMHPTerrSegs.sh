@@ -1,0 +1,56 @@
+#!/bin/bash
+# <filename>.sh - <description>.
+# 2/2/23.	wmk.
+#
+# Usage. bash  <filename>.sh
+#
+# Entry. 
+#
+# Dependencies.
+#
+# Modification History.
+# ---------------------
+# 2/2/23.	wmk.	original shell (template)
+#
+# Notes. 
+#
+# set parameters P1..Pn here..
+#
+P1=$1
+P2=$2
+if [ -z "$P1" ] || [ -z "$P2" ];then
+ echo "<filename> <mm> <dd> missing parameter(s) - abandoned."
+ exit 1
+fi
+if [ -z "$folderbase" ];then
+ if [ "$USER" == "ubuntu" ]; then
+  folderbase=/media/ubuntu/Windows/Users/Bill
+ else
+  folderbase=$HOME
+ fi
+fi
+if [ -z "$pathbase" ];then
+ export pathbase=$folderbase/Territories/FL/SARA/86777
+fi
+if [ -z "$codebase" ];then
+ export pathbase=$folderbase/GitHub/TerritoriesCB
+fi
+if [ -z "$system_log" ]; then
+  system_log=$folderbase/ubuntu/SystemLog.txt
+  ~/sysprocs/LOGMSG "  <filename> - initiated from Make"
+  echo "  <filename> - initiated from Make"
+else
+  ~/sysprocs/LOGMSG "  <filename> - initiated from Terminal"
+  echo "  <filename> - initiated from Terminal"
+fi 
+TEMP_PATH=$HOME/temp
+#	Environment vars:
+if [ -z "$TODAY" ];then
+ . ~/GitHub/TerritoriesCB/Procs-Dev/SetToday.sh
+#TODAY=2022-04-22
+fi
+#procbodyhere
+#endprocbody
+echo "  <filename> complete."
+~/sysprocs/LOGMSG "  <filename> complete."
+# end <filename>.sh

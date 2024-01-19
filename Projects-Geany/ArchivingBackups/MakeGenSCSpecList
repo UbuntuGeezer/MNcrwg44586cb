@@ -1,0 +1,36 @@
+# MakeGetSCSpecList - GetSCSpecList makefile.
+#	11/28/22.	wmk.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+ifndef codebase
+ codebase = $folderbase/GitHub/TerritoriesCB
+endif
+
+projpath = $(codebase)/Projects-Geany/ArchivingBackups
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# GetSCSpecList.sh
+########################################################
+$(projpath)/GetSCSpecList.sh : $(projpath)/GetTerrSCSpecList.sql
+	cd $(altproj);./DoSed.sh $(projpath) GetTerrSCSpecList
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	echo "** Now run GetTerrSCSpecList to generate dump list.**"
+  
+$(projpath)/GetTerrSCSpecList.sql :;
+	if ! test -f $@;then \
+	 echo "** GetTerrSCSpecList.sql missing for GetTerrSCSpecList.sh build **;exit 1;fi
+
+########################################################
+

@@ -1,0 +1,49 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=BizBridgeToTerr
+base_path=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/BizBridgeToTerr/
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=0
+
+[VTE]
+last_dir=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany
+
+[build-menu]
+NF_00_LB=_Make
+NF_00_CM=make -f MakeBizBridgeToTerr
+NF_00_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/BizBridgeToTerr
+NF_03_LB=sed
+NF_03_CM=./DoSed.sh  5xx
+NF_03_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/BizBridgeToTerr
+EX_01_LB=Make Dry Run
+EX_01_CM=make --dry-run  -f MakeBizBridgeToTerr
+EX_01_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Projects-Geany/BizBridgeToTerr
+NoneFT_02_LB=Batch Run
+NoneFT_02_CM=./AllBizBridgeToTerr.sh
+NoneFT_02_WD=/media/ubuntu/Windows/Users/Bill/Territories/FL/SARA/86777/Procs-Dev
+filetypes=None;

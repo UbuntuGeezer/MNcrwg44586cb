@@ -1,0 +1,17 @@
+-- Jumpto.psq - Jump to code for LoadSegDefs.psq.;
+-- 2/25/23.   wmk - new table structure for SegDefsMgr;
+-- 2/11/23.   wmk - original code.;
+.open '/home/vncwmk3/Territories/FL/SARA/86777/DB-Dev/TerrIDData.db'
+DROP TABLE IF EXISTS "Defsyyy";
+CREATE TABLE "Defsyyy"(
+ newtid TEXT,
+ newdb TEXT,
+ newsql TEXT)
+;
+.mode csv
+.headers OFF
+.separator |
+.import '/home/vncwmk3/Territories/FL/SARA/86777/RawData/<rawpath>/Terryyy/segdefs.csv' "Defsyyy"
+.quit
+-- end Jumpto.psq
+

@@ -1,0 +1,7 @@
+# sedativesCBG.txt - *sed* Chromebooks project to GitHub .geany file migration.
+#
+s?/media/ubuntu/Windows/Users/Bill?/home/vncwmk3?g
+s?/media/ubuntu/Windows/Users/Bill?%2Fhome%2Fvncwmk3?g
+/FILE_NAME/ s?/?%2F?g
+s?Territories/FL/SARA/86777?GitHub/TerritoriesCB?g
+s?Territories%2FFL%2FSARA%2F86777%2F?GitHub%2FTerritoriesCB%2F?g

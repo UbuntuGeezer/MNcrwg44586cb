@@ -1,0 +1,7 @@
+BEGIN{ cnt = 0 }
+{names[cnt] = $1;nums[cnt] = $2;cnt++}
+END{
+ m = asort(nums,nums,"@val_num_asc")
+ for( i = 0; i <= cnt; i++) print names[i]
+ for( i = 0; i <= cnt; i++) print nums[nums[i]]
+}

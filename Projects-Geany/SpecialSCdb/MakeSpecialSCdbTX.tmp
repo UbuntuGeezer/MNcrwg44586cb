@@ -1,0 +1,138 @@
+#MakeSpecialSCdb.tmp - SpecialSCdb make template.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	5/18/22.	wmk.
+#
+# Usage. make -f MakeSpecialSCdb
+#	prior to make command run DoSed <db-name> mm dd [terrid]
+#
+# Entry. pathSCdefs.inc - include file SC path definitions
+#		pathSCdefs.inc derived from generic ~/include/pathSCdefs.i
+#			via Build dependency
+#		(vpath .db)Terryyy_SC.db - territory SC current download
+#		(vpath .csv) Mapyyy_SC.csv - territory SC .csv download raw data
+#		var postpath = postprocessing path to Terryyy/FixyyySC.sh
+ # var bashpath(codebase)
+#
+# Exit. primary target (specpath)/vvvvv.db built.
+#
+# Modification History.
+# ---------------------
+# 5/18/22.	wmk.	*pathbase* support; modified for TX/HDLG/99999; *..path*
+#			 var definitions trailing '/' dropeed.
+# Legacy mods.
+# 7/24/21.	wmk.	original makefile; adapted from MakeSpecialRUdb.tmp
+# 8/12/21.	wmk.	mod to get .sql from Special folder.
+# 8/13/21.	wmk.	removed redundant recipes for SCSpecTerr_1, SCSpecTerr_2.
+# 8/14/21.	wmk.	added (specpath)vvvvv.sql prerequisite to vvvvv.db recipe.
+# 9/4/21.	wmk.	leading 'bash' removed from primary target recipe; 
+#					bashpath var added; vvvvv.db prerequisites simplified;
+#					vvvvv.db recipe combined with others to remove prereqs;
+#					AnySQLtoSQ simplifying conversion.
+#
+# Notes. This makefile creates a Special database from download data in 
+# Special/<area-name>.csv file. It uses the shell SCSpecTerr_db.sh to
+# create a new <area-name>.db database that has 3 tables:
+#	<area-name> - table created from extracted .csv records; typically
+#	   a street or known area (e.g. BirdBay)
+#	TerrList - table containing territory IDs and record counts for
+#	   each territory having records in <area-name> tabe
+#	Spec_SCBridge - table of partially populated Bridge records
+#	  reformatted from <area-name> records
+
+.ONESHELL : ;
+.NOTPARALLEL : ;
+.PHONY : WarnUser NeverMake ;
+
+# set folderbase by host system.
+ifndef folderbase
+ifeq ($(USER),ubuntu)
+ folderbase = /media/ubuntu/Windows/Users/Bill
+else
+ folderbase = $(HOME)
+endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/TX/HDLG/99999
+endif
+
+incroot = $(pathbase)/include/
+ projpath = $(codebase)/Projects-Geany/SpecialSCdb
+specpath = $(pathbase)/RawData/SCPA/SCPA-Downloads/Special
+ bashpath = $(codebase)/Procs-Dev
+vpath %.i $(pathbase)/include
+
+#include pathSCdefs.inc # only needed for individual territory builds
+
+# primary build target ($)specpath/vvvvv.db
+#=====================================================================
+$(specpath)/vvvvv.db  : $(specpath)/vvvvv.csv  $(specpath)/vvvvv.sql\
+ $(projpath)/SCSpecTerr_1.sh    $(projpath)/SCSpecTerr_2.sh 
+	cp $(specpath)/vvvvv.sql $(projpath)/SCSpecTerr_db.sql
+	#
+	$(bashpath)/AnySQLtoSQ.sh $(projpath)/ SCSpecTerr_db
+	#
+	cat $(projpath)/SCSpecTerr_1.sh $(projpath)/SCSpecTerr_db.sq \
+	 $(projpath)/SCSpecTerr_2.sh > $(projpath)/SCSpecTerr_db.sh
+	#
+	$(projpath)/SCSpecTerr_db.sh  vvvvv @@ zz yyy
+	# now set territory IDs and standardize Bridge UnitAddress fields for terr.
+
+#-----
+# there's a problem lurking here??... the vvvvv.sql does the whole enchilada..
+# no more queries are necessary..
+$(specpath)/vvvvv.csv : $(specpath)/vvvvv.sql
+	echo " in make recipe for $(specpath)/vvvvv.csv"
+	echo " run query vvvvv.sql to generate .csv"
+	folderbase=$(folderbase)
+	sed 's?folderbase?$(folderbase)?g' $(specpath)/vvvvv.sql > $(specpath)/vvvvv.sq
+	sqlite3 < $(specpath)/vvvvv.sq
+	sed -i '/Account / d' $@
+
+$(specpath)/vvvvv.sql : 
+	if ! test -f $@;then \
+	 echo " ** missing query vvvvv.sql required for $(specpath)/vvvvv.csv **";exit 1;fi
+#	$(error ** missing query vvvvv.sql required for $(specpath)/vvvvv.csv **)
+
+$(projpath)/SCSpecTerr_db.sh : $(projpath)/SCSpecTerr_db.sql \
+ $(projpath)/SCSpecTerr_1.sh $(projpath)/SCSpecTerr_2.sh
+	cat (projpath)/SCSpecTerr_1.sh $(projpath)/SCSpecTerr_db.sql $(projpath)/SCSpecTerr_2.sh > $@
+	sed -i 's?<filename>?SCSpecTerr_db?g' $@
+	
+$(projpath)/SCSpecTerr_db.sql : $(projpath)/SCSpecTerr_db.sq 
+	cd $(projpath)
+	# convert .sq file to .sql file of echo'ss.
+	echo 's?\"?\\\\"?g' > sedatives.txt
+	echo "s?^?echo \"?g" >> sedatives.txt
+	echo "s?\$$?\" >> SQLTemp.sql?g" >> sedatives.txt
+	echo "1s?>>?>?g" >> sedatives.txt
+	sed  -f sedatives.txt $(projpath)/SCSpecTerr_db.sq > $@
+
+$(projpath)/SCSpecTerr_db.sq : $(specpath)/vvvvv.sql
+	cp $(specpath)/vvvvv.sq $@
+
+$(projpath)/SCSpecTerr_1.sh : ;
+	$(error ** missing SCSpecTerr_1.sh - required for build vvvvv.db **)
+
+$(projpath)/SCSpecTerr_2.sh : ;
+	$(error ** missing SCSpecTerr_2.sh - required for build vvvvv.db **)
+
+#================================================================
+
+
+# 6/6/21. note, second recipe winds up in infinite loop...
+$(projpath)/pathSCdefs.inc : NeverMake ;
+#pathSCdefs.inc : pathSCdefs.i
+#	echo "incroot = '$(incroot)'"
+#	sed 's/xxx/yyy/g' $(incroot)pathSCdefs.i > pathSCdefs.inc
+
+pathSCdefs.i : ;
+
+
+NeverMake : ;
+

@@ -1,0 +1,8 @@
+## 7/5 territory update list.
+#	wmk.	7/5/22.
+115
+#117
+120
+121
+125
+# end TIDList.txt

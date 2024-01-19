@@ -1,0 +1,2 @@
+#sedRegenSpecDB3.txt
+/#inserthere/ r /home/vncwmk3/GitHub/Projects-Geany/MigrationRepairs/MakeRegenSpecDB.txt

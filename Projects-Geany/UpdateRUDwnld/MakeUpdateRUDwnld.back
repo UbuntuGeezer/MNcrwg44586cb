@@ -1,0 +1,248 @@
+#MakeUpdateRUDwnld.tmp - template for make MakeUpdateRUDwnld.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	1/17/22.	wmk.
+#
+# Entry. pathRUdefs.inc - include file RU path definitions
+#		pathRUdefs.inc derived from generic ~/include/pathRUdefs.i
+#			via Build dependency
+#		(vpath .db)Terr302_RU.db - territory RU current download
+#		(vpath .csv) Map302_RU.csv - territory RU .csv download raw data
+#		var postpath = postprocessing path to Terr302/Fix302RU.sh
+ # var bashpath(codebase)
+#
+# Dependencies.	env var ($)HOME set to current host system home path
+#
+# Modification History.
+# ---------------------
+# 3/1/21.	wmk.	original code.
+# 3/11/21.	wmk.	support for user-supplied post processor FixxxxRU.sh
+# 3/24/21.	wmk.	trailing RUTidyTerr_db call added to complete "fixed"
+#					records.
+# 3/28/21.	wmk.	modified dependencies to rebuild if the Fix302RU.sh,
+#					Fix302RU.sql or Map302_RU.csv changed.
+# 5/26/21.	wmk.	modified for use with either home or Kay's system;
+#					whichsystem, folderbase vars added.
+# 6/6/21.	wmk.	pathRUdefs.inc changed to NeverMake because of infinite
+#					loop with DoSed.sh doing the same thing.
+# 7/6/21.	wmk.	code added to preserve previous Terrxxx_RU.db in
+#					./Previous folder; multihost code generalized; superfluous
+#					"s removed.
+# 7/16/21.	wmk.	code review; RUTidyTerr_db recipe framed; add support
+#					for Spec302RU.sh and Spec302RU.sql preprocesors for
+#					SPECIAL territories; prepath var added to pathRUdefs.i
+#					pointing to RawData preprocessing path for territory;
+#					multihost support generalized.
+# 7/18/21.	wmk.	Spec302_RU.db updating support for RU territories with
+#					records in ./Special database(s); primary recipe
+#					includes RegenSpecDB.sh and SyncTerrToSpec.sh calls.
+# 8/11/21.	wmk.	RegenSpecDB.sh corrected to CreateSpecRU.sh for RU
+#					territories with records in ./Special database(s).
+# 8/28/21.	wmk.	Terr302RU.db recipe changed to use "if test" instead
+#					of touch; for initial db creation, ensure /Previous
+#					exists by forcing copy.
+# 8/29/21.	wmk.	bug fix; long-standing bug with Fix302RU.sh generation;
+#					uses new proc AnySQLtoSQ when building Fix302RU.sh.
+# 8/30/21.	wmk.	MakeInitialRUFix segment added.
+# 9/1/21.	wmk.	bug fix; use RegenSpecDB.sh if present in folder.
+# 9/4/21.	wmk.	bash call removed from Fix302RU.sh call.
+# 9/18/21.	wmk.	<filename> fixed in InitialRUFix.sh, Fix302RU.sh.
+# 9/19/21.	wmk.	SPECIAL exception exit removed; will now update an
+#					RU download with Special processing. This does depend
+#					upon the databases used by RegenSpecDB being
+#					up-to-date.
+# 10/1/21.	wmk.	bug fix InitialRUFix recipe had InitalFix in some
+#					places.
+# 12/21/21.	wmk.	ensure resultant .sh files are executable with explicit
+#			 chmod +x to set file characteristics.
+# 12/29/21.	wmk.	RUTidyTerr_db.sh recipe updated to include chmod.
+# 1/11/22.	wmk.	Fix302RU.sh sequence corrected to .sql > .sq > .sh.
+# 1/17/22.	wmk.	recipe change to rebuild from MapxxxRU..csv, then check 
+#			 for MakeSpecials and *make* it if present.
+#
+# Note. Will not work if there is not SCBridge data.
+# update happens if RefUSA-Downloads/Terr302/Map302_RU.csv newer than Terr302_RU.db
+# also will happen if either Fix302RU.sql or Fix302RU.sh newer than Terr302_RU.db
+# fatal errors detected: no Map302_RU.csv file, Fix302RU.sh missing or out-of-date
+#  and no Fix302RU.sql file.
+# 8/30/21. Note. var altprojpath defined so this project can "borrow" the
+#  InitialRUFix code from the RUNewTerritory project. This code will build/rebuild
+#  InitialRUFix.sh in the territory download folder if it is not there
+#  or is out-of-date.
+#
+# pathRUdefs.inc has ghe following definitions:
+#vpath %.db /media/ubuntu/Windows/Users/Bill/Territories/RawData/RefUSA/RefUSA-Downloads/Terr302
+#vpath %.csv /media/ubuntu/Windows/Users/Bill/Territories/RawData/RefUSA/RefUSA-Downloads/Terr302
+ #bashpath = "/media/ubuntu/Windows/Users/Bill/Territories/Procs-Dev/"(codebase)
+#postpath = "/media/ubuntu/Windows/Users/Bill/Territories/RawData/RefUSA/RefUSA-Downloads/Terr302/"
+
+.ONESHELL : ;
+.NOTPARALLEL : ;
+.PHONY : WarnUser NeverMake ;
+
+ifeq ($(HOME),home/ubuntu)
+ folderbase = /media/ubuntu/Windows/Users/Bill
+#elseif $(USER,vncwmk3)
+# folderbase = /mnt/chromeos/MyFiles
+else
+ folderbase = $(HOME)
+endif
+
+incroot = $(folderbase)/Territories/include/
+vpath %.i $(folderbase)/Territories/include
+
+include pathRUdefs.inc
+targpath = $(folderbase)/Territories/RawData/RefUSA/RefUSA-Downloads/Terr302/
+ altprojpath = $(codebase)/Territories/Projects-Geany/RUNewTerritory/
+
+# new definition - supports Fix302RU.sh if provided.
+#Terr302_RU.db  : Map302_RU.csv $(postpath)Fix302RU.sql $(postpath)Fix302RU.sh
+#pathRUdefs.inc appended to previous line..
+
+# execute new *make* recipe
+# DoOld = 0
+# execute old *make* recipe
+ DoOld = 1
+
+
+ifeq ($(DoOld),1)
+#--------------------------------old recipe ---------------------------
+# Terr302_RU.db (primary target).
+#================================================================
+$(postpath)Terr302_RU.db  : $(postpath)Map302_RU.csv $(postpath)Fix302RU.sh \
+  $(postpath)Fix302RU.sql $(prepath)Spec302RU.sh $(prepath)Spec302RU.sql \
+  $(targpath)InitialRUFix.sh
+	#if test -f $(prepath)Spec302_RU.db; then \
+	# cp $(prepath)Spec302_RU.db $(prepath)/Previous; bash $(prepath)Spec302RU.sh ; fi
+	#if test -f $(prepath)CreateSpecRU.sh; then \
+	# bash $(prepath)CreateSpecRU.sh; fi
+	# exit 1
+	#if test -f $(targpath)SPECIAL;then echo "** CANNOT use UpdateRUDwnld on SPECIAL territory 302 **"; \
+	#  exit 1;fi
+	if test -f $(prepath)RegenSpecDB.sh;then \
+	 bash $(prepath)RegenSpecDB.sh;fi
+	if test -f $(postpath)Terr302_RU.db;then \
+	 cp $(postpath)Terr302_RU.db $(postpath)Previous; fi
+	bash $(bashpath)RUNewTerr_db.sh 302
+	#exit 1
+	bash $(targpath)InitialRUFix.sh 
+	if test -f $(prepath)SyncTerrToSpec.sh; then \
+	 bash $(prepath)SyncTerrToSpec.sh; fi
+	bash $(bashpath)RUTidyTerr_db.sh 302
+	# ensure /Previous .db exists, if not fake it.
+	if ! test -f $(postpath)Previous/Terr302_RU.db;then \
+	 cp $(postpath)Terr302_RU.db $(postpath)Previous; fi
+#	bash $(bashpath)FixXXXru.sh 302
+	if test -f $(postpath)Fix302RU.sh;then $(postpath)Fix302RU.sh;fi
+	bash $(bashpath)SetRUDNCs.sh 302
+	bash TestForMHPTable.sh 302
+	bash $(bashpath)MissingIDs.sh 302
+#	bash $(bashpath)RUTidyTerr_db.sh 302
+
+#--- InitialRUFix.sh primary target.
+$(targpath)InitialRUFix.sh : $(targpath)InitialRUFix.sql
+	if ! test -f $(targpath)/InitialRUFix.sql;then \
+	 touch $(targpath)/InitialRUFix.sql;fi
+	$(bashpath)AnySQLtoSQ.sh $(targpath) InitialRUFix
+	cat $(bashpath)hdrAnySQL_1.sh $(targpath)/InitialRUFix.sq \
+	 $(bashpath)hdrAnySQL_2.sh > $@
+	sed -i 's?<filename>?InitialRUFix?g' $@
+	chmod +x $@
+	echo "Terr302/InitialRUFix.sh built"
+
+
+$(targpath)InitialRUFix.sql : $(altprojpath)InitialRUFix.psq
+	sed 's?xxx?302?g' $(altProjPath)InitialRUFix.psq > $@
+	echo "InitialRUFix.sql copied to $(targpath)"
+	
+$(altprojpath)InitialRUFix.psq : ;
+
+#==============================================================
+#---------------------------------new recipe --------------------------
+else
+# this recipe must execute unconditionally - uses PHONY target
+# rebuild Terr302_RU.db from Map302_RU.csv
+# if *MakeSpecials* exists, run it to pick up newer data from
+#   /Special prerequisites; since Terrxxx_RU.db is newer
+#   it needs to be updated regardless of whether any of
+#   the /Special dbs are newer; SyncTerrToSpec will take
+#   care of that
+# process should execute if 1) Map302_RU.csv newer
+#   or 2) any /Special is newer (MakeSpecials)
+
+#$(warn ** executing new recipe for MakeUpdateRUDwnld **)
+.PHONY : RemakeRUdb
+RemakeRUdb : $(postpath)Map302_RU.csv
+	echo "** executing new recipe for MakeUpdateRUDwnld **"
+	exit 1
+	if test -f $(postpath)Terr302_RU.db;then \
+	 rm $(postpath)Terr302_RU.db;fi
+	$(bashpath)RUNewTerr_db.sh 302
+	if test -f $(postpath)MakeSpecials;then \
+	 $(MAKE) -f $(postpath)MakeSpecials
+#-------------------- end Terr302_RU.db recipe conditional ---------
+endif
+
+
+# ($)prepath/Spec302RU.sh, Spec302RU.sql, SpecAnyRU.sh recipe.
+#=============================================================
+$(prepath)Spec302RU.sh : $(prepath)Spec302RU.sql \
+$(bashpath)SpecAnyRU.sh
+	$(bashpath)SpecAnyRU.sh 302
+
+# if no .sql, touch it so get empty file to read..
+# this will always force Fix302SC.sh to be rebuilt.
+$(prepath)Spec302RU.sql :
+	touch $(prepath)Spec302RU.sql
+
+$(bashpath)SpecAnyRU.sh : ;
+	(error ** SpecAnyRU.sh missing from Procs-Dev **)
+#============================================================
+
+
+# 6/6/21. note, second recipe winds up in infinite loop...
+pathRUdefs.inc : NeverMake ;
+#pathRUdefs.inc : pathRUdefs.i
+#	echo "incroot = '$(incroot)'"
+#	sed 's/xxx/302/g' $(incroot)pathRUdefs.i > pathRUdefs.inc
+
+pathRUdefs.i : ;
+
+NeverMake : ;
+
+# this target can only be generated by download.
+# if it doesn't exist, message user to perform new download.
+$(postpath)Map302_RU.csv : ; 
+
+WarnUser : ;$(error "** Map302_RU.csv missing - find or perform new download **")
+
+#$(postpath)Fix302RU.sh recipe.
+#==================================================================
+#include FixRUMenu.inc
+pstpath = $(folderbase)/Territories/RawData/RefUSA/RefUSA-Downloads/Terr302
+$(postpath)Fix302RU.sh : $(postpath)Fix302RU.sql
+	if test -f $(postpath)Fix302RU.sql;then
+	  $(bashpath)AnySQLtoSQ.sh $(pstpath) Fix302RU
+	  cat $(bashpath)hdrFixXXXRU_1.sh $(postpath)Fix302RU.sq \
+	      $(bashpath)hdrFixXXXRU_2.sh > $@
+	  sed -i 's?<filename>?Fix302RU?g' $@
+	  chmod +x $@
+	else touch $@;fi
+	
+$(postpath)Fix302RU.sql : ;
+	touch $@
+
+
+#==================================================================
+
+#($)bashpath/RUTidyTerr_db.sh
+#==============================================================
+$(bashpath)RUTidyTerr_db.sh : $(RUQpath)RUTidyTerr_db.sql
+#	echo "You need to rebuild RUTidyTerr_db.sh..."
+#	the following make will build RUTidyTerr_db.sh
+	cd ../RUTidyTerr && $(MAKE) -f MakeRUTidyTerr
+	cp $(RUQBpath)RUTidyTerr_db.sh $@
+	chmod 700 $@
+	
+$(RUQpath)RUTidyTerr_db.sql : ;
+#==============================================================

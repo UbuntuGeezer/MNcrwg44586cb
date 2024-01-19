@@ -1,0 +1,55 @@
+&apos;// SetPIDColFormat.bas
+&apos;//---------------------------------------------------------------
+&apos;// SetPIDColFormat - Set PropertyID column numeric format.
+&apos;//		9/19/20.	wmk.
+&apos;//---------------------------------------------------------------
+
+public sub SetPIDColFormat()
+
+&apos;//	Usage.	macro call or
+&apos;//			call SetPIDColFormat()
+&apos;//
+&apos;// Entry.	user in any territory sheet where col A is Parcel ID
+&apos;//
+&apos;//	Exit.	col A formatted with 10 0&apos;s
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/19/20.		wmk.	original code
+&apos;//
+&apos;//	Notes.
+&apos;//
+
+&apos;//	constants.
+const TEN_ZEROS=121			&apos;// 10 0&apos;s number format
+const COL_A=0
+
+&apos;//	local variables.
+dim oDoc	As Object	&apos;// ThisComponent
+dim oSel	As Object	&apos;// current cell selection on entry
+dim oSheet	As Object	&apos;// current sheet
+dim oRange	As Object	&apos;// RangeAddress selected
+dim iSheetIx	As Integer	&apos;// sheet index this sheet
+dim oCols	As Object	&apos;// .Columns array this sheet
+dim oCell	As Object	&apos;// cell selected
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	oCols = oSheet.Columns
+	oCols(COL_A).setPropertyValue(&quot;NumberFormat&quot;, TEN_ZEROS)
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SetPIDColFormat - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end SetPIDColFormat		9/19/20

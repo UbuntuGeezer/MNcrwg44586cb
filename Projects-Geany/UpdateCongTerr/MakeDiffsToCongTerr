@@ -1,0 +1,76 @@
+# MakeDiffsToCongTerr.tmp - makefile for DiffsToCongTerr.sh
+#	4/26/23.	wmk.
+#
+# Entry. preamble.DiffsToCongTerr.sh contains code to check for the TODAY
+#		 environment variable not set.
+#
+# Exit. DiffsToCongTerr.psq > DiffsToCongTerr.sh
+#
+# Modification History.
+# ---------------------
+# 11/27/22.	wmk.	updated to use AnySQLtoSH with preamble; comments tidied.
+# 4/26/23.	wmk.	CreateNewSCPA references deactivated.
+# Legacy mods.
+# 9/22/22.  wmk.   (automated) *codebase env var support.
+# 9/22/22.  wmk.   (automated) CB *codebase env var support.
+# Legacy mods.
+# 4/27/22.	wmk.	original code; adapted from MakeDiffsToNVenAll.
+#
+# Notes. DiffsToCongTerr.sh will be considered out-of-date if
+# DiffsToCongTerr.psq is newer. CreateNewSCPA.sql and .sq will be rebuilt
+# in the process.
+# 05 and 28 were chosen for the month/day for compatibility with the
+# CreateNewSCPA.sh proc (see DoSed.sh).
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+ procpath = $(codebase)/Procs-Dev
+scpafolder = $(folderbase)/Territories/RawData/SCPA/SCPA-Downloads
+projpath = $(codebase)/Projects-Geany/UpdateCongTerr
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+#DiffsToCongTerr.sh primary target
+#====================================================================
+DiffsToCongTerr.sh :  preamble.DiffsToCongTerr.sh  DiffsToCongTerr.sql \
+ DiffsToCongTerr.psq
+	cd $(altproj);./DoSed.sh $(projpath) DiffsToCongTerr preamble.DiffsToCongTerr.sh
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	echo "** Now run $@ from Terminal to integrate Diffs0528 into Terr86777.db **" 
+
+#	cat $(procpath)/hdrAnySQL_1.sh preamble.DiffsToCongTerr.sh CreateNewSCPA.sq  \
+#	 $(procpath)/hdrAnySQL_2.sh > $@
+#	sed  -i 's?<filename>?DiffsToCongTerr?g' $@
+#	chmod +x $@
+#	echo "** Now run $@ from Terminal to integrate Diffs0528 into NVenAll **"; \ 
+
+
+DiffsToCongTerr.sql : DiffsToCongTerr.psq;
+	echo "** run DoSed to make DiffsToCongTerr.sql **"
+
+DiffsToCongTerr.psq : ;
+	if ! test -f $@;then \
+	 echo " ** missing DiffsToCongTerr.psq for DiffsToCongTerr.sh build **";exit 1;fi
+
+#preamble.CreateNewSCPA.sh : ;
+#	if ! test -f preamble.CreateNewSCPA.sh;then '
+#	  echo "**  preamble.CreateNewSCPA.sh not found for CreateNewSCPA.sh recipe! **";exit 1;fi
+
+preamble.DiffsToCongTerr.sh : ;
+	if ! test -f $@;then \
+	  echo "**  preamble.DiffsToCongTerr.sh not found for DiffsToCongTerr.sh recipe! **";exit 1;fi
+
+# end MakeDiffsToCongTerr

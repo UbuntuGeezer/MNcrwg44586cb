@@ -1,0 +1,45 @@
+# MakeBuildDates - Makefile for BuildDates project.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	1/30/22.	wmk.	
+#
+# Entry.	env var AWK defined to specify awk utility this system.
+#
+# Results.	TerrData/BuildDates.txt written with current territory dates
+#			extracted from Terrxxx_PubTerr.xlsx files.
+#
+# Modification History.
+# ---------------------
+# 10/28/21.	wmk.	original makefile.
+# 11/16/21.	wmk.	added code to remove older BuildDates.xlsx and prompt
+#			 user to run calc to update BuildDates.xlsx.
+# 1/30/22.	wmk.	switch to USER from HOME for host check; correct
+#			 rm filepath in recipe.
+
+ifeq ($(USER),ubuntu)
+ folderbase = /media/ubuntu/Windows/Users/Bill
+else
+ folderbase = $(HOME)
+endif
+
+ifndef $(AWK)
+ AWK = mawk
+endif
+
+.PHONY : always
+
+terrpath = $(folderbase)/Territories/TerrData
+
+# $(terrpath)/BuildDates.txt primary target
+#===========================================================
+$(terrpath)/BuildDates.csv : always
+	cd $(terrpath);	 \
+	  ls -lh  --time-style long-iso Terr???/Terr???_PubTerr.xlsx > PubTerrDates.txt
+	echo '{print (substr($$8,9,7), substr($$8,9,20), $$6)}' > awkward.txt
+	$(AWK) -f awkward.txt $(terrpath)/PubTerrDates.txt > $@
+	#if test -f $(terrpath)/PubTerrDates.xlsx;then
+	 #rm $(terrpath)/PubTerrDates.xlsx;fi
+	echo "** Use Calc to convert ~/TerrData/PubTerrDates.csv to .xlsx **"
+
+#===========================================================
+# end MakeBuildDates

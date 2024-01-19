@@ -1,0 +1,6 @@
+echo "--QGenTable. - Generate .csv from QTerrxxx." > SQLTemp.sql
+echo ".shell echo \\"Generating $TBL_NAME1.csv\\" | awk '{print \$1}' >> SQLTrace.txt" >> SQLTemp.sql
+echo ".shell rm $TBL_NAME1.csv" >> SQLTemp.sql
+echo ".headers ON" >> SQLTemp.sql
+echo ".output '$TBL_NAME1.csv'" >> SQLTemp.sql
+echo "SELECT * FROM $TBL_NAME1;" >> SQLTemp.sql

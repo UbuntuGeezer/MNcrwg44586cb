@@ -1,0 +1,39 @@
+&apos;// CloseWindow.bas
+&apos;//---------------------------------------------------------------
+&apos;// CloseWindow - Close current window.
+&apos;//		10/16/20.	wmk.
+&apos;//---------------------------------------------------------------
+
+public sub CloseWindow()
+
+&apos;//	Usage.	macro call or
+&apos;//			call CloseWindow()
+&apos;//
+&apos;// Entry.	user in workbook wishes to be closed
+&apos;//
+&apos;//	Exit.	user reverts to next window as determined by UNO sequencing
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	10/16/20.		wmk.	original code
+&apos;//
+&apos;//	Notes.
+
+&apos;//	constants.
+
+&apos;//	local variables.
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	ThisComponent.close(true)
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;CloseWindow - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end CloseWindow		10/16/20

@@ -1,0 +1,5 @@
+#awkSplit1.txt
+BEGIN {inSelect = 1}
+$0 == "--begin SPLIT" {inSelect = 0}
+{if ( inSelect ) {print};}
+

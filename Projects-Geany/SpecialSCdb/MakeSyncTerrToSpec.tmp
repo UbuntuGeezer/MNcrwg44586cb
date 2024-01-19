@@ -1,0 +1,67 @@
+# MakeSyncTerrToSpec - MakeSyncTerrToSpec SC template for territory xxx.
+#	5/6/23.	wmk.
+#
+# MakeSyncTerrToSpec integrates the special territory records with the
+# standard territory records  in /SCPA-Downloads/Terr$P1 so none will be
+# missing when the territory is generated.
+# Note: InitSpecial.sh  edits $P1 to fields with ($) p1 when this is placed
+# into	SCPA-Downloads/Terr$P1 folder.
+#
+# Modification History.
+# ---------------------
+# 5/4/22.	wmk.	(automated) path corrections.
+# 11/25/22. wmk.    (automated) main .sh recipe fix.
+# 11/25/22. wmk.    (automated) correct *procpath, *codebase, *bashpath
+# 5/6/23.   wmk.    (automated) move previous history comments.
+# Legacy mods.
+# 7/25/21.	wmk.	original code; adapted from RU version.
+# 8/12/21.	wmk.	documentation updated.
+# 8/13/21.	wmk.	general description added.
+# 8/24/21.	wmk.	647 corrected to $ P1; sed added to correct <filename>.
+# 8/29/21.	wmk.	update use of .sc, .sql extensions for use with AnySQLtoSQ
+#					shell.
+# 12/15/21.	wmk.	edited for territory xxx.		
+# legacy history.
+# 7/19/21.	wmk.	original code; (RU version).
+
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef codebase
+ codebase=$(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : ;
+.ONESHELL : ;
+
+prepath = $(pathbase)/RawData/SCPA/SCPA-Downloads/Terrxxx
+procpath = $(codebase)/Procs-Dev
+
+# SyncTerrToSpec.sh primary target.
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+#=================================================
+$(prepath)/SyncTerrToSpec.sh : $(prepath)/SyncTerrToSpec.sql
+	cd $(altproj);./DoSed.sh $(prepath) SyncTerrToSpec
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+
+
+$(prepath)/SyncTerrToSpec.sql :;
+	if ! test -f $@;then \
+	 echo " ** missing SyncTerrToSpec.sql for build SyncTerrToSpec.sh **";exit 1;fi
+
+#================================================== 

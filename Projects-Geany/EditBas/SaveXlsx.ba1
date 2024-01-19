@@ -1,0 +1,84 @@
+&apos;// SaveXlsx.bas
+&apos;//---------------------------------------------------------------
+&apos;// SaveXlsx - Save .ods file as .xlsx.
+&apos;//		12/23/21.	wmk.	23:13
+&apos;//---------------------------------------------------------------
+
+public sub SaveXlsx()
+
+&apos;//	Usage.	macro call or
+&apos;//			call SaveXlsx
+&apos;//
+&apos;//		psSourceName = source filename to save (e.g. &apos;Terr241_PubTerr.ods&apos;)
+&apos;//
+&apos;// Entry.	Current Sheet name contains Terr id as chars 5-8
+&apos;//
+&apos;//	Exit.	Current Sheet saved as .xls in folder ~TerrData/Terrxxx
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	7/2/20.		wmk.	original code.
+&apos;// 7/12/21.	WMK.	time stamp comments added.
+&apos;// 12/23/21.	wmk.	modified to use csTerrBase, csTerrDataPath module-wide
+&apos;//				 constants for multihost support.
+&apos;//
+&apos;//	Notes. &lt;Insert notes here&gt;
+&apos;//
+
+&apos;//	constants.
+&apos;const csTerrBase = &quot;defined above&quot;
+&apos;const csTerrDataPath = &quot;defined above&quot;
+
+&apos;//	local variables.
+dim oDoc		As Object	&apos;// current document
+dim sFile		As String	&apos;// file path value to pass to SaveAs
+dim sTerrID		As String	&apos;// territory ID to plug in file path
+dim sTitle		As String	&apos;// sheet title
+
+rem ----------------------------------------------------------------------
+rem define variables
+dim document   as object
+dim dispatcher as object
+rem ----------------------------------------------------------------------
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	sTitle = oDoc.getTitle()
+	sTerrID = mid(sTitle,5,3)
+	
+	sFile = &quot;file://&quot; &amp; csTerrDataPath
+	sFile = sFile &amp; &quot;/Terr&quot; + sTerrID + &quot;/&quot; + &quot;Terr&quot; + sTerrID + &quot;_PubTerr.xlsx&quot;
+	
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+rem dispatcher.executeDispatch(document, &quot;.uno:OpenFromCalc&quot;, &quot;&quot;, 0, Array())
+
+rem ----------------------------------------------------------------------
+dim args2(1) as new com.sun.star.beans.PropertyValue
+args2(0).Name = &quot;URL&quot;
+&apos;// args2(0).Value = &quot;file:///media/ubuntu/Windows/Users/Bill/Territories&quot; _
+&apos;//   || &quot;/TerrData/Terr241/Terr241_PubTerr.xlsx&quot;
+args2(0).Value = sFile
+args2(1).Name = &quot;FilterName&quot;
+args2(1).Value = &quot;Calc MS Excel 2007 XML&quot;
+
+dispatcher.executeDispatch(document, &quot;.uno:SaveAs&quot;, &quot;&quot;, 0, args2())
+
+if 0 = 1 then
+msgbox(&quot;Terr&quot; + sTerrID + &quot;_PubTerr.xlsx created successfully&quot;,0,&quot;SaveXlsx&quot;)
+endif
+
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SaveXlsx - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end SaveXlsx	12/23/21.	23:13

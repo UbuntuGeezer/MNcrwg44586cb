@@ -1,0 +1,76 @@
+# MakeDefineTerr.tmp - make file template for creating new congregation territory.
+#	1/21/23.	wmk.
+#
+# Entry. user must have defined territory in TerrIDData.db.Territory table.
+#
+# Modification History.
+# ---------------------
+# 1/21/23.	wmk.	name change to MakePubTerr.tmp.
+# Legacy mods.
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# 1/21/23.	wmk.	ALWAYS build logic, shell prerequisites added;
+#			 comments tidied.
+# Legacy mods.
+# 6/17/21.	wmk.	original code (multihost included).
+# 7/2/21.	wmk.	superfluous "s removed.
+# 8/27/21.	wmk.	updated and cleaned up; bug fix in bashpath.
+# 8/28/21.	wmk.	added reminder to create TerryyyHdr.ods.
+# 4/1/22.	wmk.	*state* *county* *congno* support added; HOME changed
+#			 to USER in host check.
+#
+# Notes. Project "sed" command should be used to change terrid to yyy in
+#  MakeNewTerr make file.
+#  This makefile adopts the *standard* that vars ending in *path* have no
+#  trailing '/'; vars ending in *base* have a trailing '/'
+# ** The environment variable *pathbase* has no trailint '/', so one is
+#    added for internal use here **
+
+ifeq ($(USER),ubuntu)
+  folderbase=/media/ubuntu/Windows/Users/Bill/
+else
+  folderbase = $(HOME)/
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+  ifneq ("",)
+   pathxbase = $(folderbase)////
+  else
+   pathxbase = $(folderbase)/Territories/
+  endif
+else
+  pathxbase = $(pathbase)/
+endif
+
+.PHONY : Always
+.ONESHELL :
+
+bashpath = $(codebase)Territories/Procs-Dev
+RUpath = $(pathxbase)RawData/RefUSA/RefUSA-Downloads
+SCpath = $(pathxbase)RawData/SCPA/SCPA-Downloads
+
+# primary targets $(RUpath)/TErryyy $(SCPath)/TErryyy
+#=========================================================
+#$(RUpath)/Terryyy $(SCpath)/Terryyy &: 
+Always : ;
+	if test -d $(RUpath)/TErryyy; then rm -r $(RUpath)/TErryyy;fi
+	if test -d $(SCpath)/TErryyy; then rm -r $(SCpath)/TErryyy;fi
+	bash $(bashpath)/MakeRawData.sh yyy <state> <county> <congno>
+	bash $(bashpath)/MakeTerrData.sh yyy
+	bash $(bashpath)/GenTerrHdr.sh yyy
+	echo "** Now run Calc on TerryyyHdr.csv to create TerryyyHdr.ods **"
+
+$(bashpath)/MakeRawData.sh : ;
+	if ! test -f $@;then \
+	 echo "** Missing /Procs-Dev/MakeRawData.sh for MakeNewTerr build **";exit 1;fi
+
+
+$(bashpath)/MakeTerrData.sh : ;
+	if ! test -f $@;then \
+	 echo "** Missing /Procs-Dev/MakeTerrData.sh for MakeNewTerr build **";exit 1;fi
+
+#==========================================================	

@@ -1,0 +1,72 @@
+-- * ListTerrSegs.psq/sql - export territory segments to TerryyyStreetstxt.
+-- * 2/14/23.	wmk.
+-- *
+-- * Entry.	*pathbase/DB-Dev/TerrIDData.db table SegDefs contains Terryyy segments.
+-- *
+-- * Exit.	TerrIDData.EndMessage table has termination message(s).
+-- *		/RefUSA-Downloads/Jumpto.sql will display any termination message(s).
+-- *		$TEMP_PATH/Terryyy.segdefs.csv has results.
+-- *		 formerly output to:
+-- *		/RefUSA-Downloads/Terryy/segdefs.csv has segment definitions for 'yyy'.
+-- *		/SCPA-Downloads/Terryyy/segdefs.csv has segment definitions for 'yyy'.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 2/7/23.	wmk.	original code.
+-- * 2/8/23.	wmk.	mod to write SQL "WHERE" snippet.
+-- * 2/14/23.	wmk.	snippets written to both RefUSA and SCPA territory;
+-- *			 EndMessage termination message set.
+-- *
+-- * Notes.
+-- *;
+.open '$pathbase/DB-Dev/TerrIDData.db'
+
+-- * Clear EndMessage table;
+
+-- * get segment count;
+CREATE TEMP TABLE SegCounts(Counts INTEGER);
+INSERT INTO SEGCounts( Counts )
+SELECT COUNT() sqldef FROM SegDefs
+WHERE TerrID IS 'yyy';
+
+WITH a AS (SELECT Counts FROM SegCounts)
+INSERT INTO EndMessage(msg)
+SELECT CASE WHEN a.Counts > 0
+THEN "  ListTerrSegs exporting " || a.Counts || " segments."
+ELSE "  **ListTerrSegs - No segments defined for territory 'yyy' **"
+END
+FROM a;
+
+.mode list
+.headers off
+.separator "|"
+-- * output to $TEMP_PATH/Terryyy.segdefs.csv;
+.output '$TEMP_PATH/Terryyy.segdefs.csv'
+WITH a AS (SELECT Counts FROM SegCounts)
+SELECT sqldef FROM SegDefs
+INNER JOIN a
+ON a.Counts > 0 
+WHERE TerrID IS 'yyy'
+ORDER BY RecNo;
+ 
+--;
+-- * output to *rupath first;
+--.output '$pathbase/$rupath/Terryyy/segdefs.csv;
+--WITH a AS (SELECT Counts FROM SegCounts)
+--SELECT sqldef FROM SegDefs
+--INNER JOIN a
+--ON a.Counts > 0 
+--WHERE TerrID IS 'yyy'
+--ORDER BY RecNo;
+ 
+-- * output to *scpath/Terryyy/segdefs.csv;
+--.output '$pathbase/$scpath/Terryyy/segdefs.csv;
+--WITH a AS (SELECT Counts FROM SegCounts)
+--SELECT sqldef FROM SegDefs
+--INNER JOIN a
+--ON a.Counts > 0 
+-- WHERE TerrID IS 'yyy'
+-- ORDER BY RecNo;
+ 
+.quit
+-- * END ListTerrSegs.sql;

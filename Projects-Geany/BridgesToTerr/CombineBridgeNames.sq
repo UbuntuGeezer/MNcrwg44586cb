@@ -1,0 +1,43 @@
+echo "--#procbodyhere"  > SQLTemp.sql
+echo "-- * CombineSCBridgeNames - Combine multiple names in SC Bridge records.;"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * ---------------------"  >> SQLTemp.sql
+echo "-- * 11/19/22.	wmk.	bug fix; VeniceNTerritory.db .NVenAll "  >> SQLTemp.sql
+echo "-- *			 > Terr86777.db .Terr86777.ls"  >> SQLTemp.sql
+echo "--; *"  >> SQLTemp.sql
+echo ".open '$pathbase/DB-Dev/junk.db'"  >> SQLTemp.sql
+echo "--;"  >> SQLTemp.sql
+echo "ATTACH '$pathbase'"  >> SQLTemp.sql
+echo "||		'/DB-Dev/Terr86777.db' "  >> SQLTemp.sql
+echo " AS db2;"  >> SQLTemp.sql
+echo "--;"  >> SQLTemp.sql
+echo "ATTACH '$pathbase'"  >> SQLTemp.sql
+echo " ||		\"/RawData/SCPA/SCPA-Downloads/Terr$TID/Terr$TID\" || \"_SC.db\""  >> SQLTemp.sql
+echo "  AS db11;"  >> SQLTemp.sql
+echo "--"  >> SQLTemp.sql
+echo "WITH a AS (SELECT \"Account #\" AS Acct,"  >> SQLTemp.sql
+echo " CASE "  >> SQLTemp.sql
+echo " WHEN LENGTH(TRIM(\"Owner 3\")) > 0"  >> SQLTemp.sql
+echo "  THEN TRIM(\"Owner 1\") || \", \""  >> SQLTemp.sql
+echo "    || TRIM(\"Owner 2\") || \", \""  >> SQLTemp.sql
+echo "    || TRIM(\"Owner 3\")"  >> SQLTemp.sql
+echo " WHEN LENGTH(TRIM(\"Owner 2\")) > 0 "  >> SQLTemp.sql
+echo "  THEN TRIM(\"Owner 1\") || \", \""  >> SQLTemp.sql
+echo "    || TRIM(\"Owner 2\")"  >> SQLTemp.sql
+echo " ELSE  \"Owner 1\""  >> SQLTemp.sql
+echo " END AS Names"  >> SQLTemp.sql
+echo " FROM Terr86777"  >> SQLTemp.sql
+echo " WHERE Acct IN (SELECT OwningParcel"  >> SQLTemp.sql
+echo "   FROM Terr$TID$SC_SUFFX)"  >> SQLTemp.sql
+echo " )"  >> SQLTemp.sql
+echo "UPDATE db11.Terr$TID$SC_SUFFX"  >> SQLTemp.sql
+echo "SET Resident1 = "  >> SQLTemp.sql
+echo "CASE "  >> SQLTemp.sql
+echo "WHEN OwningParcel IN (SELECT Acct FROM a)"  >> SQLTemp.sql
+echo " THEN (SELECT Names FROM a"  >> SQLTemp.sql
+echo "  WHERE Acct IS OwningParcel"  >> SQLTemp.sql
+echo " ) "  >> SQLTemp.sql
+echo "ELSE Resident1"  >> SQLTemp.sql
+echo "END; "  >> SQLTemp.sql
+echo "--#endprocbody;"  >> SQLTemp.sql

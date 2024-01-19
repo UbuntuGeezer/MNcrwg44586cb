@@ -1,0 +1,57 @@
+&apos;// TabColor.bas
+&apos;//---------------------------------------------------------------
+&apos;// TabColor - Change current worksheet tab color.
+&apos;//		10/15/20.	wmk.
+&apos;//---------------------------------------------------------------
+
+public sub TabColor(plColor As long)
+
+&apos;//	Usage.	macro call or
+&apos;//			call TabColor()
+&apos;//
+&apos;// Entry.	user has worksheet selected
+&apos;//
+&apos;//	Exit.	worksheet tab color changed to passed color
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	10/15/20.		wmk.	original code; adapted from YellowTab
+&apos;//
+&apos;//	Notes.	color constants are store here; sheet CellColor.ods in
+&apos;//	Intermediate-csvs folder allows quick grab of color values
+
+
+&apos;//	constants.
+const YELLOW=16776960			&apos;// YELLOW color value
+const DKLIME=620774				&apos;// DARKLIME color value
+
+&apos;//	local variables.
+rem ----------------------------------------------------------------------
+rem define variables
+dim document   as object
+dim dispatcher as object
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dim args1(0) as new com.sun.star.beans.PropertyValue
+args1(0).Name = &quot;TabBgColor&quot;
+args1(0).Value = plColor
+
+dispatcher.executeDispatch(document, &quot;.uno:SetTabBgColor&quot;, &quot;&quot;, 0, args1())
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;TabColor - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end TabColor	10/15/20

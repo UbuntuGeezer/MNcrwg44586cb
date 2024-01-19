@@ -1,0 +1,163 @@
+&apos;// BizBridgeToBiz.bas
+&apos;//---------------------------------------------------------------
+&apos;// BizBridgeToBiz - Biz-Bridge sheet to Biz-Territory sheet.
+&apos;//		9/26/21.	wmk.	20:52
+&apos;//---------------------------------------------------------------
+
+public sub BizBridgeToBiz()
+
+&apos;// Calls.	BoldHeadings, ForceRecalc, SetTerrColWidths3,
+&apos;//			SetSelection, MergeOwnerCells, MergeStreetsCells,
+&apos;//			MergeSheetType, SetHdrSumFormula3, CenterUnitHstead3,
+&apos;//			FreezeView
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;// 9/26/21.	wmk.	original code; adapted from BridgeToTerr3.
+&apos;// Legacy mods.
+&apos;//	9/18/20.	wmk.	original code; adapted from EditToTerr
+&apos;//	9/19/20.	wmk.	Merge.. calls; FreezeView call added
+&apos;//	9/21/20.	wmk.	SetHdrSumFormula call added
+&apos;//	9/30/20.	wmk.	PropUse column support
+&apos;//	10/3/20.	wmk.	check all rows for DoNotCall
+&apos;// 10/23/20.	wmk.	support Unit column replacing Resident1,
+&apos;//						Resident2 column removed; dead code removed;
+&apos;//						ForceRecalc call added
+&apos;// 11/29/20.	wmk.	bug fix DO NOT CALL overwriting Unit field, moved
+&apos;//						to Name1 field at new position from 10/23 mod
+&apos;// 1/14/21.	wmk.	modified to center columns B and E and to 
+&apos;//						freeze view at A6
+&apos;// 2/14/21.	wmk.	columns rearranged with H in column A; header
+&apos;//						consolidated and simplified.
+&apos;// 2/15/21.	wmk.	fix bug where DONOTCALL not updated to use COL_D
+&apos;//						so overwriting Unit.
+&apos;//	2/19/21.	wmk.	rearrange columns; keep same as version 2, except
+&apos;//						H column is now COL_C; stuff that was placed in
+&apos;//						B2, B3 now back in A2, A3.
+&apos;// 2/20/21.	wmk.	bug fix; column heading missing COL_B &quot;H&quot;; also
+&apos;//						H - * is homestead missing *
+&apos;// 3/3/21.		wmk.	bug fix; sheet date being lost, so set again
+&apos;//						before exit in cell B2 instead of C2.
+&apos;// 3/14/21.	wmk.	Add code to Align and wrap text and hightlight
+&apos;//						address blocks.
+&apos;//	3/16/21.	wmk.	add call to SetPubSheetName to preserve generated
+&apos;//						PubTerr sheet name after renaming sheet.
+&apos;// 4/7/21.		wmk.	bug fix where DONOTCALL not being set if string &quot;1&quot;
+&apos;//						as opposed to numeric 1.
+&apos;// 7/10/21.	wmk.	bug fix where zip code being deleted from header;
+&apos;//						restore FreezeView call at end.
+&apos;// 7/12/21.	wmk.	add inline code to rename sheet to _PubTerr and save;
+&apos;//						sCongTerr column corrected.
+&apos;//
+&apos;//	Notes.
+&apos;// Method.
+&apos;//		remove columns J-L
+&apos;//		remove column H
+&apos;//		reset title
+&apos;//		E1 = &quot;BizTerr formatted sheet&quot; 
+
+&apos;//	constants.
+const COL_PARCEL=0		&apos;// &quot;OwningParcel&quot; column index
+const COL_A=0
+const COL_B=1
+const COL_C=2	
+const COL_D=3
+const COL_E=4
+const COL_F=5
+const COL_G=6			&apos;// column G index
+const COL_H=7			&apos;// column H index
+const COL_I=8			&apos;// column I index
+const COL_J=9			&apos;// column J index
+const COL_K=10			&apos;// column K index
+const COL_L=11			&apos;// column L index (DoNotCall)
+const COL_M=12			&apos;// column M index (RSO)
+const COL_N=13			&apos;// column N index (Foreign)
+const COL_O=14			&apos;// column O index
+const COL_P=15			&apos;// column P index
+const ROW_1=0
+const ROW_2=1
+const ROW_3=2
+const ROW_4=3
+const ROW_HEADING=4		&apos;// headings row index
+const LJUST=1		&apos;// left-justify HoriJustify				&apos;// mod052020
+const CJUST=2		&apos;// center HoriJustify						&apos;// mod052020
+const RJUST=3		&apos;// right-justify HoriJustify				&apos;// mod052320
+const MDYY=30		&apos;// &apos;M/D/YY&apos; format value
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+dim oMrgRange	As Object	&apos;// merge range
+
+dim oCell	As Object		&apos;// cell working on
+dim i		As Integer		&apos;// loop index
+dim sPropID	As String		&apos;// property ID
+dim sSubTerr	As String	&apos;// subterritory
+dim sCongTerr	As String	&apos;// cong terr ID
+dim lRowCount	As Long		&apos;// row count of addresses
+dim dDate		As Double	&apos;// date value
+dim sCityStZip	As String	&apos;// concatenated City, State, Zip
+dim sNotes		As String	&apos;// notes field
+dim nCols		As Integer	&apos;// removal column count
+dim sPhone2		As String	&apos;// col F content
+dim sCity		As String	&apos;// City from B3
+dim sZip		As String	&apos;// Zip from C3							&apos;// mod071021
+dim sTitle		As String	&apos;// sheet Title
+
+
+	&apos;// code.
+	ON ERROR GoTo ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+
+	&apos;// remove columns J - L.
+	oSheet.Columns.removeByIndex(COL_J, 3)
+	
+	&apos;// remove column H.
+	oSheet.Columns.removeByIndex(COL_H, 1)
+
+	&apos;// reset sheet title.	
+	oCell =	oSheet.getCellByPosition(COL_E, ROW_2)
+	oCell.String = &quot;BizTerr formatted sheet&quot;
+
+	&apos;// pick up terr ID.
+    oCell = oSheet.getCellByPosition(COL_D, ROW_4)						&apos;// mod071221
+    sCongTerr = oCell.String
+
+	FreezeView()		&apos;// freeze row/column scrolling at A6		&apos;// mod071021
+
+dim document   as object
+dim dispatcher as object
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+dim sSheetName	As String
+	sSheetName = &quot;Terr&quot; + sCongTerr + &quot;_BizTerr&quot;
+dim args19(0) as new com.sun.star.beans.PropertyValue
+args19(0).Name = &quot;Name&quot;
+&apos;args1(0).Value = &quot;Terr102_Import&quot;
+args19(0).Value = sSheetName
+
+dispatcher.executeDispatch(document, &quot;.uno:RenameTable&quot;, &quot;&quot;, 0, args19())
+&apos;$
+dispatcher.executeDispatch(document, &quot;.uno:Save&quot;, &quot;&quot;, 0, Array())
+
+dispatcher.executeDispatch(document, &quot;.uno:Save&quot;, &quot;&quot;, 0, Array())
+document.Close(1)	
+	fsSetPubSheetName(sSheetName)					&apos;// mod071221
+
+NormalExit:
+	exit sub
+
+ErrorHandler:
+	msgbox(&quot;BizBridgeToBiz - unprocessed error.&quot;)
+	GoTo NormalExit
+
+end sub		&apos;// end BizBridgeToBiz	9/26/21.	20:52

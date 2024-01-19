@@ -1,0 +1,34 @@
+  System log entry made. 
+  LoopAnyShell beginning processing.
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+#   6/2/23. wmk.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# CheckTerrDefined.sh - Check if territory file system in place for terr xxx.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# CreateDataSegment.sh -  (Dev) Make RawData folders for Terr xxx.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+#DoSed.sh - perform sed modifications of MakeNewTerritory.
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+  ShellDesc complete.
+  System log entry made. 
+  System log entry made. 
+  ShellDesc - initiated from Terminal
+# NewTerrHdr.sh - Generate territory header .csv.
+  ShellDesc complete.
+  System log entry made. 
+ 6 ShellList.txt lines processed.
+  System log entry made. 
+ 	LoopAnyShell complete.

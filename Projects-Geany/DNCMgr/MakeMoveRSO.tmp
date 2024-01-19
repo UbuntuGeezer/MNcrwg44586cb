@@ -1,0 +1,53 @@
+# MakeMoveRSO.tmp - *make* file for MoveRSO.sh build.
+#	6/13/23.	wmk.
+#
+# Entry. environment var *partial = 0, full delete; 1, partial delete.
+#
+# Modification History.
+# ---------------------
+# 6/13/23.	wmk.	original code; adapted from MakeDeleteDNC.
+# Legacy mods.
+# 6/1/23.	wmk.	original code.
+# 6/8/23.	wmk.	adminpreamble added to *make recipe; "run" message changed.
+#
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+ifndef partial
+ partial = 0
+endif
+
+ projpath = $(codebase)/Projects-Geany/DNCMgr
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	cd $(altproj);./DoSed.sh $(projpath) MoveRSO adminpreamble.sh
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	if ! test -f $(projpath)/MoveRSO.sh;then \
+	 echo "** MoveRSO.sh generation failed **";exit 1;fi
+	echo "** log in then run MoveRSO.sh to move RSO **"
+	#$(projpath)/MoveRSO.sh
+
+#==================================================================
+# end MakeMoveRSO.tmp

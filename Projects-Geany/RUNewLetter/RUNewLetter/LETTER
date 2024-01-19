@@ -1,0 +1,65 @@
+LETTER - Special download (RU) documentation for territory xxx.
+	<date>.	wmk. [documents letter writing SPECIAL territories]
+	
+Modification History.
+---------------------
+7/19/21.	wmk.	original document.
+7/21/21.	wmk.	added Setup section.
+8/15/21.	wmk.	Setup section clarified.
+8/17/21.	wmk.	generic modified for territory 632.
+9/5/21.		wmk.	MakeSpecials added to downstream makefile list.
+9/11/21.	wmk.	added SELECT clause in Special Databases section.
+9/21/21.	wmk.	edited for territory 632.
+10/8/21.	wmk.	edited for territory 626.
+10/14/21.	wmk.	moved to LETTER document; generalized for terr xx x.
+<date>.		wmk.	edited for territory xxx; P1 and xx x changed to xxx.
+
+Territory xxx is a letter writing territory. Territory Servant randomly assigns
+addresses from the territory, so they are not in any particular street or area
+order. There may be some even and some odd addresses for any given street. For
+these reasons, the only way to accurately extract records from a special download
+is by using an empty Terryyy_RU.db as a placeholder. The SPECIAL processing for
+territory yyy does the rest by running the MakeSpecials makefile to regenerate
+the Specyyy_RU.db and synchronizing its records with the empty Terryyy_RU.db.
+This fills the Terryyy_RU.db with the correct RU records for the territory.
+
+Some letter-writing territories cross zip code boundaries. For these territories
+an additional SQL must be created, AddZips.sql. The MakeSpecials makefile will
+then contain a recipe to make AddZips.sh and incorporate an AddZips.sh call
+into the recipe that creates Specxxx_RU.db to add zip codes to each address line
+to avoid publisher confusion when using the territory.
+
+All Special db dependencies are documented in the SPECIAL document file.
+
+Setup.
+------
+The RUNewLetter project contains all the tools necessary to create the
+framework for a letter-writing territory. RUNewLetter creates an empty
+Mapxxx_RU.csv, then generates an empty Terrxxx_RU.db as a placeholder.
+
+From there, all that is necessary is for the SPECIAL processing to run.
+That process will create Specxxx_RU.db with all the RU records for the
+letter-writing territory, then synchronize the special records into
+Terrxxx_RU.db.
+
+RU-Downloads/Special
+Create the necessary /Special/vvvvv.dbs for the territory.
+The creation of the /Special/vvvvv.db involves several steps:
+	SpecialRUdb Project:
+	Build menu; enter territory ID and vvvvv name into "sed" item
+	execute "sed" from the build menu
+	execute "Make" from the build menu, creating vvvvv.db
+	[the tables created in vvvvv.db are documented in SpecialRUdb/README]
+
+Terminal: From the RUNewLetter project
+	run ./InitLetter.sh <terrid> with the <terrid> of the territory
+	this will copy both the LETTER documentation and the .pdf source for
+	the letter territory to ~/RefUSA-Downloads/Terrxxx
+
+RUNewLetter project:
+	Build menu: edit "sed" command line with the <terrid> of the territory
+	run "sed" from the Build menu to set up MakeRUNewLetter makefile
+	run "Make" from the Build menu to create the new/empty Terrxxx_RU.db
+
+SpecialRUdb project: enter the project and follow the Setup steps to
+complete setting up the letter writing territory RU data.

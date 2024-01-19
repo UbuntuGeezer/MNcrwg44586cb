@@ -1,0 +1,65 @@
+README - TerrPageHeader project documentation.
+	12/24/21.	wmk.
+	
+Modification History.
+---------------------
+11/19/21.	wmk.	original document.
+12/20/21.	wmk.	AddPubTerrHdr.ods documented.
+12/24/21.	wmk.	Significant Notes section added; LibreOffice version
+			 constraints affecting TerrPageHeader.
+
+Document Sections.
+------------------
+Project Description - overall project description.
+Method - project build overview.
+Significant Notes - important stuff not documented elsewhere.
+
+
+Project Description.
+--------------------
+The TerrPageHeader project facilitates adding page header information to
+the publisher territory sheets. This feature will place page headings on 
+each page when a spreadsheet is printed. The page headings will contain
+the territory area name, zip code and column headings for readability.
+
+Method.
+-------
+TerrPageHeader creates a shell file within its project folder that
+can take a given territory and add header information to its spreadsheet.
+First pass will be to create 3 .ods workbooks, one for each zip code within
+the territory. This appears easier than automating the UNO interface to
+jump into the Headers and Footers frame.
+
+The appropriate header worksheet (by zip code) will be copied to a new
+workbook. Then all the rows from the publisher territory will be copied
+into the workboook. The original publisher territory workbook will be saved
+under the new name Terrxxx_PubTerr_.xlsx. Then the new workbook will be
+saved under the original name Terrxxx_PubTerr.xlsx.
+
+Dependencies.
+-------------
+PageHdr34285.ods - empty sheet with page header for zip code 34285.
+
+PageHdr34292.ods - empty sheet with page header for zip code 34292.
+
+PageHdr34275.ods - empty sheet with page header for zip code 34275.
+
+AddPubTerrHdr.ods - Spreadsheet with internal macros to add header to
+ territory spreadsheet. All runs are considered "batch" runs using the
+ first sheet in the workbook as a list of territories for which to add
+ headers to Terrxxx_SuperTerr.xlsx, Terrxxx_PubTerr.xlsx, and
+ Terrxxx_PubTerr.pdf.
+
+
+Significant Notes.
+------------------
+TerrPageHeader was initially implemented under Libre Office 6.4.6. When
+the ChromeBook computer was obtained, the chromeos installed Libre Office
+7.2.4. AddPubTerrHdr.ods macros would hang when attempting to load and
+copy the zip code header .ods into the territory sheet. Upon investigation
+the "Headers and Footers" menu item under "Insert" was visible, but disabled.
+
+Version 7.2.4 was then uninstalled and the .deb for version 7.1.7.2 was
+downloaded and installed. The "Headers and Footers" menu item is enabled
+in this version. Hopefully this resolves the AddPubTerrHdr.ods macro
+hanging issue.

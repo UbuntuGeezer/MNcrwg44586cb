@@ -1,0 +1,216 @@
+# MakeSpecials - make all terr xxx  RU Special db related files and databases.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	4/24/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 4/24/22.	wmk.	code generalized for FL/SARA/86777;*pathbase*, 
+#			 *congterr*, *conglib* env vars introduced.
+# Legacy mods.
+# 9/5/21.	wmk.	original makefile; adapted from territory 274.
+# 9/7/21.	wmk.	add "not initialized" error until edited for territory.
+# 9/11/21.	wmk.	reinitialized for territory xxx.
+# 9/12/21.	wmk.	shellpath correction where / omitted.
+# 10/24/21.	wmk.	LETTER var added for conditional letter writing recipe
+#					items.
+# 10/25/21.	wmk.	MissingIDs call added at end of recipe.
+# 10/25/21.	wmk.	edited for territory xx x.
+# 10/28/21.	wmk.	added TheEsplanade to db list.
+# 11/13/21.	wmk.	ClearMHPruBridge, MakeClearMHPruBridge added to MHP recipe.
+# 12/9/21.	wmk.	superfluous .db suffix dropped with dbname-dbname14 vars.
+# 12/17/21.	wmk.	superfluous .db suffix dropped with dbname in non-letter case.	
+#
+# MakeSpecials performs all the "makes" within the territory to construct
+# the databases within the territory download. It will typically be invoked
+# from a high-level source (e.g. RefUSA-Downloads/Special when a database
+# from that source is a prerequisite for one or more makefiles within the
+# territory.
+# (e.g. RefUSA-Downloads/SpecialCasaDelLagoWay.db is a prerequisite
+# for building territory 274). If CasaDelLagoWay is updated,
+# all the downstream databases that use it should be rebuilt also. The
+# makefile 'Make.CasaDelLagoWay.Terr' in the RefUSA-Downloads/Special
+# folder will invoke make on the makefile 'MakeSpecials' in the
+# RefUSA-Downloads/Terrxxx folder for territories 274.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+basepath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads
+specpath = $(basepath)/Special
+shellpath = $(pathbase/Procs-Dev
+# full list of dbnames; can be trimmed to lessen prerequisites.
+dbname = AvensCohosh.db
+shortdb = BayIndiesMHP
+dbname2 = Bellagio.db
+dbname3 = BerkshirePlace.db
+dbname4 = BrennerPark.db
+dbname5 = BridleOaks.db
+dbname6 = EaglePoint.db
+dbname7 = HiddenLakes.db
+dbname8 = ReclinataCir.db
+dbname9 = SawgrassN.db
+dbname10 = SawgrassS.db
+dbname11 = TheEsplanade.db
+dbname12 = TrianoCir.db
+dbname13 = WaterfordNE.db
+dbname14 = WaterfordNW.db
+# additional dbnames go here...
+
+# edit this in the territory.
+$(error ** set MHP, LETTER vars - MakeSpecials **)
+MHP = 0
+MHP = 1
+LETTER = 0
+LETTER = 1
+
+#*** REMOVE THIS WHEN EDITED TO TERRITORY XXX. ***
+.PHONY : $(basepath)Terrxxx/Specxxx_RU.db
+
+# conditional recipe based on MHP var.
+ifeq ($(MHP),1)
+
+ projpath = $(codebase)/Projects-Geany/UpdateMHPDwnld
+
+# /RefUSA-Downloads/Terrxxx/Specxxx_RU.db
+#====================================================================
+$(basepath)/Terrxxx/Specxxx_RU.db : $(specpath)/$(dbname).db
+	$(error ** MakeSpecials not initialized for territory xxx **)
+	echo "in recipe for SpecxxxRU.db"
+	if ! test -f $(specpath)/$(dbname).db;then \
+	 echo "** Cannot proceed with Specxxx_RU.db recipe **" \
+	 exit 1;fi
+	echo "  after db test for existence, continuing..."
+	$(MAKE) -f $(basepath)/Terrxxx/MakeClearMHPruBridge
+	$(MAKE) -f $(basepath)/Terrxxx/MakeRegenSpecDB
+	$(MAKE) -f $(basepath)/Terrxxx/MakeSetMHPSpecTerrs
+	$(MAKE) -f $(basepath)/Terrxxx/MakeSyncTerrToSpec	
+	$(basepath)/Terrxxx/ClearMHPruBridge.sh
+	$(basepath)/Terrxxx/RegenSpecDB.sh
+	$(basepath)/Terrxxx/SetMHPSpecTerrs.sh
+	$(basepath)/Terrxxx/SyncTerrToSpec.sh
+	cd $(projpath);./DoSed.sh $(shortdb) xxx
+	if test -f $(projpath)/ExtractOldDiffs.sh;then \
+	 rm $(projpath)/ExtractOldDiffs.sh;fi
+	if test -f $(projpath)/IntegrateOldDiffs.sh;then \
+	 rm $(projpath)/IntegrateOldDiffs.sh;fi
+	$(MAKE) -f $(projpath)/MakeExtractOldDiffs
+	$(MAKE) -f $(projpath)/MakeIntegrateOldDiffs
+	$(projpath)/ExtractOldDiffs.sh
+	$(projpath)/IntegrateOldDiffs.sh
+	$(shellpath)/SetMhpDNCs.sh xxx
+	$(shellpath)/MissingIDs.sh xxx
+	~/sysprocs/LOGMSG "   $(basepath)/Terrxxx/Specxxx_RU.db build complete."
+	echo '  Specxxx_RU.db recipe complete.'
+else
+# non-MHP recipe.
+# /RefUSA-Downloads/Terrxxx/Specxxx_RU.db
+#====================================================================
+ifeq ($(LETTER),1)
+$(basepath)/Terrxxx/Specxxx_RU.db : $(specpath)/$(dbname) \
+ $(specpath)/$(dbname2)  $(specpath)/$(dbname3)  $(specpath)/$(dbname4) \
+ $(specpath)/$(dbname5)  $(specpath)/$(dbname6)  $(specpath)/$(dbname7) \
+ $(specpath)/$(dbname8)  $(specpath)/$(dbname9)  $(specpath)/$(dbname10) \
+ $(specpath)/$(dbname11)  $(specpath)/$(dbname12)  $(specpath)/$(dbname13) \
+ $(specpath)/$(dbname14)  $(basepath)/Terrxxx/MakeAddZips
+else
+$(basepath)/Terrxxx/Specxxx_RU.db : $(specpath)/$(dbname)
+endif
+	$(error ** MakeSpecials not initialized for territory xxx **)
+	echo "in recipe for SpecxxxRU.db"
+	if ! test -f $(specpath)/$(dbname);then \
+	 echo "** Cannot proceed with Specxxx_RU.db recipe **" \
+	 exit 1;fi
+	echo "  after db test for existence, continuing..."
+	$(MAKE) -f $(basepath)/Terrxxx/MakeRegenSpecDB
+	$(MAKE) -f $(basepath)/Terrxxx/MakeSetSpecTerrs
+	$(MAKE) -f $(basepath)/Terrxxx/MakeSyncTerrToSpec	
+ifeq ($(LETTER),1)
+	$(MAKE) -f $(basepath)/Terrxxx/MakeAddZips	
+endif
+	$(basepath)/Terrxxx/RegenSpecDB.sh
+	$(basepath)/Terrxxx/SetSpecTerrs.sh
+	$(basepath)/Terrxxx/SyncTerrToSpec.sh
+ifeq ($(LETTER),1)
+	$(basepath)/Terrxxx/AddZips.sh	
+endif
+	$(shellpath)/SetMhpDNCs.sh xxx
+	$(shellpath)/MissingIDs.sh xxx
+	~/sysprocs/LOGMSG "   $(basepath)/Terrxxx/Specxxx_RU.db build complete."
+	echo '  Specxxx_RU.db recipe complete.'
+endif
+# end conditional recipe for MHP.
+
+#---
+ifeq ($(LETTER),1)
+$(basepath)/Terrxxx/MakeAddZips : ;
+
+endif
+
+$(specpath)/$(dbname) : ;
+
+
+ifdef dbname2
+$(specpath)/$(dbname2) : ;
+endif
+
+ifdef dbname3
+$(specpath)/$(dbname3) : ;
+endif
+
+ifdef dbname4
+$(specpath)/$(dbname4) : ;
+endif
+
+ifdef dbname5
+$(specpath)/$(dbname5) : ;
+endif
+
+ifdef dbname6
+$(specpath)/$(dbname6) : ;
+endif
+
+ifdef dbname7
+$(specpath)/$(dbname7) : ;
+endif
+
+ifdef dbname8
+$(specpath)/$(dbname8) : ;
+endif
+
+ifdef dbname9
+$(specpath)/$(dbname9) : ;
+endif
+
+ifdef dbname10
+$(specpath)/$(dbname10) : ;
+endif
+
+ifdef dbname11
+$(specpath)/$(dbname11) : ;
+endif
+
+ifdef dbname12
+$(specpath)/$(dbname12) : ;
+endif
+
+ifdef dbname13
+$(specpath)/$(dbname13) : ;
+endif
+
+ifdef dbname14
+$(specpath)/$(dbname14) : ;
+endif

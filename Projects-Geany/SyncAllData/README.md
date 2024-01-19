@@ -1,0 +1,413 @@
+README.md - SyncAllData project documentation.<br>
+2/3/23.	wmk.
+###Modification History.
+<pre><code>2/3/23.    wmk.   original document.
+2/2/23.     wmk.    data segment database heirarchy updated.
+</code></pre>
+<h3 id="IX">Documentation Sections.</h3>
+<pre><code><a href="#1.0">link</a> 1.0 Project Description - overall project description.
+<a href="#2.0">link</a> 2.0 Data Segment Components - details on components of the data segment.
+<a href="#3.0">link</a> 3.0 Data Segment Database Heirarchy - database heirarchy within the data segment.
+<a href="#4.0">link</a> 4.0 Merging Territory Data - how publisher territory data is merged from sources.
+<a href="#5.0">link</a> 5.0 Significant Notes - important stuff not documented elsewhere.
+<a href="#6.0">link</a> 6.0 Making Publisher Territories.
+<a href="#7.0">link</a> 7.0 Synchronizing SCPA/Special Databases.
+<a href="#8.0">link</a> 8.0 Synchronizing RefUSA/Special Databases.
+</code></pre>
+<h3 id="1.0">1.0 Project Description.</h3>
+SyncAllData gathers together all the elements to synchronize all the data within
+the data segement of the Territories system. The major components of the data
+segment are the SCPA raw data, RefUSA raw data, and the TerrData publisher
+territories. Whenever new data is downloaded from either the SCPA or RefUSA
+source, this automatically makes some, or all, of the TerrData publisher
+territories out-of-date. This project synchronizes all of the data segment
+elements to bring them up-do-date with the latest download data.
+<a href="#IX">Index</a>
+<h3 id="2.0">2.0 Data Segment Components.</h3>
+The data segment consists of 3 major components; the SCPA raw data, the RefUSA
+raw data, and the TerrData publisher territory data. Before proceeding with
+the details here, familiarize yourself with the
+[Managing Territory Data](file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/DocumentationCB/ManagingTerritoryData.html)
+document.
+
+The principal component of the data segment is the SCPA raw data. This is the data
+upon which the publisher territories is most dependent since it is the property
+ownership records. The RefUSA data is supplementary to the SCPA data, as it
+is the "current residency" data. The TerrData publisher territories are built by
+merging these two data sources.
+
+The foundation for the synchronization dependencies used by this project is 
+understanding how the data is obtained from the SCPA and RefUSA sources, then
+merged for the TerrData publisher territories.
+
+All data for the congregation assigned territory is placed in a unique folder
+system for each county that the congregation assigned territory covers. The
+folder system for each county is named Territories/< state >/< county >/< congno >
+where < state > is the 2-character state abbreviation, < county > is the
+4-character county abbreviation, and < congno > is the congregation number.
+This allows a congregation's assigned territory to span several counties,
+or even several states.
+
+Since North Venice congregation's assigned territory is entirely contained
+within Sarasota County, only one folder system is needed, namely,
+Territories/FL/SARA/86777. The code and data segments are all stored under
+this parent folder.
+
+**SCPA Raw Data.**<br>
+The source of the SCPA raw data is the Sarasota County Property Appraiser
+records. This data is downloaded enmasse from the county property appraiser's
+website. Each download of county data is given a unique name to enbale history
+tracking. The download data from Sarasota County is a massive Excel workbook
+containing the property records and all associated conversion tables for
+coded fields within the records. This data is then converted to a database,
+then further pared down to consist only of properties within the congregation
+territory boundaries. The "paring" process is dependent upon a huge amount of
+prior work that determined all of the county property IDs within the congregation
+assigned territory. (This was done using a huge polygon superimposed upon the
+county property aerial map.)
+
+The congregation territory master database of county records is the database
+Terr86777.db. From there the data is separated out into the territories that
+the congregation territory servant has defined. Each territory has its own
+folder of files for county data. The county data for any given territory is
+on the path RawData/SCPA/SCPA-Downloads/Terrxxx where 'xxx' is the territory
+number.
+
+**RefUSA Raw Data.**<br>
+The source of the RefUSA raw data is the *Reference Solutions* (formerly
+Reference USA) databases. These databses are only accessible through public
+library systems (like Sarasota County Digital Library). The residential
+database is a well-maintained "white pages" directory of residents by
+street name and municipality.
+
+Most of the RefUSA data is obtained by drawing polygons around residential
+map areas, then downloading the information for all residents within the
+polygon boundaries. This is quite convenient for getting publisher territory
+names and addresses, since the polygons can be drawn to correspond to the
+congregation territory maps. Each territory has its own folder of files for
+RefUSA data. The RefUSA data for any given territory is on the path
+RawData/RefUSA/RefUSA-Downloads/Terrxxx where 'xxx' is the territory number.
+
+**Exceptions.**<br>
+The data segment makes provision for cases where polygon-derived data either
+misses some addresses, or where a street has segments in more than 1 territory.
+Both the RefUSA and SCPA folders contain an additional folder /Special. The
+/Special folder has download data and databases that are street or area
+organized.
+
+One example of a street with segments in multiple territories is Park Blvd S.
+This street is the boundary for 8 territories where often addresses that are
+across the street from each other are in different territories. The map
+polygons will either let you extract data from one or the other, or both,
+sides of the street, but there is no way to tell from the polygons what the
+first and last house numbers are for the polygon using the street as a boundary.
+
+The data segment /Special is set up to download all addresses on that street
+(Park Blvd). Then special processing is set up for the database which contains
+all of the street addresses to assign ranges of addresses on the street to
+different territories. This provision is in both the SCPA and RefUSA data.
+
+Each /Special street or area has 1) a .csv file named for the street/area that
+contains the download data for the street, 2) a .db database of records for
+the street, 3) a "make" file that rebuilds the publisher territory database
+for each territory that uses information from the /Special .db database.
+<a href="#IX">Index</a>
+<h3 id="3.0">3.0 Data Segment Database Heirarchy.</h3>
+DB-Dev/Terr86777.db is the master database for the congregation territory system.
+This database is ALWAYS updated first as it is the county ownership records for
+all properties within the congregation territory boundaries. Following is the
+dependency heirarchy for all data within the data segment:
+<pre><code>
+	Master database: DB-Dev/Terr87666.db
+	|
+	 - 	Special databases: SCPA-Downloads/Special/< spec-db >.db
+
+	 	  {SCPA-Downloads/Special/< spec-db >.db}
+	 	-   {RefUSA-Downloads/Special/< spec-db >.db}
+
+	-	Territory databases: SCPA-Downloads/Terrxxx/Terrxxx_SC.db
+			-[Terrxxx/Specxxx_SC.db]
+		    -Terrxxx/Terrxxx_SC.db
+
+		Territory databases: RefUSA-Downloads/Terrxxx/Terrxxx_RU.db
+			-[Terrxxx/Specxxx_RU.db]
+			-Terrxxx/Terrxxx_RU.db
+
+	-	Territory Generation datbases /DB-Dev/PolyTerri.db, MultiMail.db
+	 		-/DB-Dev/PolyTerri.db
+	 		-/DB-Dev/MultiMail.db
+	
+	-	Publisher Territories
+	 		-TerrData/Terrxxx/QTerrxxx.db
+</code></pre>
+As shown in the heirarchy list above, there are essentially 3 tiers to the data
+segment. The first tier is all of the download data; the second tier is databases
+containing all records for building publisher territories; the third tier is the
+publisher territories themselves.
+
+The relationships between the databases, both within tiers and across tiers,
+is extremely complex. To maintain the integrity of the relationships without
+using an extraordinarily complex database schema, the relationships are
+dynamically defined by build dependencies. This simplifies the synchronization
+of the data by being able to define the dependent relationships between whole
+databases, as opposed to having to define the complex details of all the table
+relationships across and within the databases.
+
+Data downloads for just a single database may have a huge ripple effect on
+multiple databases and territories within the Territories system. Each piece
+of the data segment has its own build dependencies that are relevant to
+its segment. To keep all the data synchronized, all that has to be known
+is the downstream pieces that are affected. Synchronization then merely
+involves letting each affected piece execute its own build dependencies.
+<a href="#IX">Index</a>
+<h3 id="4.0">4.0 Merging Territory Data.</h3>
+The Territories system provides tools and utilities in the code segment that
+merge the SCPA and RefUSA data into one set of records that has all of the
+information from both sources. This merged set of records is placed in the
+DB-Dev folder in two databases: PolyTerr.cb and MultiMail.db. When a publisher
+territories are generated, the data is extracted into a separate TerrData folder
+for each territory.
+
+For territories using "special" databases, the special records that pertain to
+each territory are included in the territory folder /Terrxxx (where 'xxx' is
+the territory number) residing in either the SCPA or RefUSA data segment.
+
+The heirarchy for merging territory data into a publisher territory
+is as follows:
+<pre><code>
+	SCPA master database Terr86777.db
+	SCPA Special territory database(s) < special-db1 > .. < special-dbn >
+	RefUSA Special territory database(s) < special-db1 > .. < special-dbn >
+	SCPA territory database Terrxxx_SC.db
+	RefUSA territory database Terrxxx_RU.db
+	PolyTerri.db and MultiMail.db databases along with
+	  /TerrData/Terxxx/Working-Files/QTerrxxx.db
+	/TerrData publisher territory spreadsheets and PDF files
+</code></pre>
+Once the territory data has been merged into the QTerrxxx.db for the publisher
+territory, it is processed into publisher territory spreadsheet and PDF files.
+
+The above heirarchy provides the order of prerequisites for determining if a
+publisher territory is out-of-date. The databases along the heirarchy chain
+have associated .csv or .db files. If the .db file is older than a prerequisite
+.csv file or .db file it is dependent on, then the .db file is considered
+out-of-date.
+
+The \*make\* utility is the tool used for keeping the databases up-to-date. It
+is a general purpose project management utility that provides the means to
+"build" targets that become part of an integrated system. While its most common
+use is for building applications that are "executable" files from source and
+binary files, it is used for the Territories system to integrate the data
+segment files into publisher territories. When any portion of the data segment
+that affects a publisher territory is updated, \*make\* cascades the update
+through the data segment heirarchy to update the publisher territory.
+
+The \*make\* files (makefiles) that build and update the data segment databases
+are defined and maintained in "projects" that are organized under the Geany
+project management system. All projects within the Geany project management
+system are considered part of the code segment. The code segment is documented
+in detail in the
+[Managing Territory Code](file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/DocumentationCB/ManagingTerritoryCode.html)
+documentation.
+
+The makefiles within the code segment define build chains that construct target
+files from prerequisite files. A target file is considered out-of-date if any
+of its prerequisite files are newer. For the Territories system, files that are
+further "down" the heirarchy are target files that use files "up" the heirarchy
+as prerequisites. In addition, files at a given level of the heirarchy may have
+their own prerequisites that they depend upon for being built. Databases that
+are target files generally have comma separated value (.csv) files or other
+database (.db) as prerequisites.
+
+The Territories system uses \*make\* on a complex system of makefiles that
+enforce the heiarchy of the data segment files to ensure that each publisher
+territory is properly updated whenever new data affecting that territory is
+downloaded. The "last stop" in the build sequence for any publisher territory
+is the generation of the publisher territory files PubTerrxxx.xlsx,
+SuperTerrxxx.xlsx, and PubTerrxxx.pdf from the QTerrxxx.csv file.
+
+The QTerrxxx.db, PolyTerri.db, and MultiMail.db files are all updated within
+one build  process, with the PolyTerriDB.db and MultiMail.db files
+as prerequisite files for generating the QTerrxxx.csv file.
+<br><a href="#IX">Index</a>
+<h3 id="4.0">4.0 SyncAllData Build.</h3>
+The SyncAllData build process primarily uses one complex makefile, MakePubTerr.
+That makefile is invoked for each territory and enforces
+the heirarchy described in the preceding section. "Special" territories have
+complex build prerequisites that are derived from the SpecialDBs.db databases
+residing within the RefUSA-Downloads/Special and SCPA-Downloads/Special folder.
+
+The build process heirarchically invokes other projects to accomplish
+synchronization. It also runs \*make\* on makefiles within the SyncAllData
+project. Synchronization is accommplished territory-by-territory by the
+MakePubTerr makefile running shell files, other makefiles within SyncAllData,
+and other projects' makefiles.
+
+The order of reference to other projects within the MakePubTerr makefile is
+as follows:<pre><code>
+   UpdtSpecSCBridges - updates Special SC databases with new Terr86777 data
+   SpecialRUdb - create Special RefUSA database
+   UpdateSCBridge - update territory SC database with new Terr86777 data
+   UpdateRUDwnld - update territory RefUSA database with new Mapxxx_RU.csv data
+   BridgesToTerr - merge SC and RU records for territory into main dbs,
+   	extract records to TerrData/Working-Files QTerrxxx files
+   DoTerrsWithCalc - use spreadsheet ProcessQTerrs12.ods to generate publisher
+   	territory spreadsheets
+</code></pre>
+The MakePubTerr build process keeps track of out-of-date data segment pieces. If
+the MakePubTerr encounters out-of-date pieces in any step preceding the
+BridgesToTerr process, the build is exited and the user is prompted to run the
+appropriate project(s) builds to bring the data up-to-date. It may be helpful
+to review the
+[Managing Territory Data](file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/DocumentationCB/ManagingTerritoryData.html)
+documentation for the procedures to follow when this happens.
+<br><a href="#IX">Index</a>
+<h3 id="5.0">5.0 SpecialDBs.db Databases.</h3>
+It is important that the special databases for both SCPA and ReFUSA be as
+closely synchronized as possible to each other, and that their dependent
+territories are in sync with these databases. This is the second tier of
+database heirarchy, just below the master database Terr86777. When any special
+database is updated, it puts all the territories dependent upon it out-of-date.
+The SCPA special datbases are higher in priority than the RefUSA databases,
+since the RefUSA databases have fields that need to be synced with the county
+data in the SCPA databases.
+
+In most cases, there is a corresponding SCPA special database for each RefUSA
+special database. The county SCPA data is considered the primary source of
+information for each property within the congregation territory. This is because
+the county data is the source of the ownership records for each property. This
+mandates that the county data be updated first, then the RefUSA data by updated
+and synchronized with the county data.
+
+To simplify the maintenance of this heirarchy, special datbases are not "updated"
+by changing out-of-date records. Rather, they are completely rebuilt from the
+latest special download data. The projects SpecialSCdb and SpecialRUdb are
+the engines that create special download databases. There are two ways to go
+about synchronizing the SCPA and RefUSA special databases and their dependent
+territories. One method is to ensure that the publisher territory build process
+enforces each level of the heirarchy to be up-to-date before proceeding to the
+next level of building the publisher territory. The second method is to store
+synchronization dependencies in databases for the SCPA and RefUSA segments.
+
+Build process synchronization is covered in the
+<a href="#6.0">Making Publisher Territories</a> section below.
+
+The critical information for database-driven synchronization is stored within
+the SCPA-Downloads/Special/SpecialDBs.db and RefUSA-Downloads/Special/SpecialDBs.db.
+Three tables within these databases contain interrelated records for each
+< special-db >.db. They are:
+<pre><code>
+	DBNames - table of special database names
+	OutOfDates - complete list of property IDs whose records are out-of-date
+	TerrList - list of territories using each special database
+
+DBNames:
+	DBName - name of Special db (e.g. AuburnCoveCir.db)
+	ModDate - last modification date from file system
+	base_status - numeric identifier of database (always an even number)
+	Status - current status of database; if = base_status the datbase is up-to-date
+			  if = (base_status+1) the database is out-of-date
+	
+OutOfDates:
+	DBName - name of Special.db (same as in DBNames)
+	PropID - county property ID of record newly downloaded
+	Status - current status of record (linked to DBNames.Status)
+
+TerrList:
+	DBName - name of Specialdb (same as in DBNames)
+	Terrxxx - folder name for dependent territory (e.g. Terr109)
+	Status - current status of dependent territory (linked to DBNames.Status)
+</code></pre>
+The "Status" field of both the OutOfDates and TerrList tables is keyed to the
+"Status" field in the DBNames table. Whenever a < spec-db > gets out-of-date
+because of newly downloaded data, its Status field is set to its "base_status"
+plus 1. That change is propagated downwards into the Out-of-Dates and TerrList
+tables whose records are linked to that status.
+
+It can be quickly determined which < spec-db > databases are out-of-date from
+the Status field of the DBNames table. If the Status belonging to the database
+in the DBName field is odd, the < spec-db > is out-of-date; if it is even, the
+< spec-db > is up-to-date.
+
+A special database is considered out-of-date as follows:
+<pre><code>
+	/SCPA-Downloads/Special/< spec-db >.db is older than /DB-Dev/Terr86777.db
+	../< spec-db >.db is older than its ../< spec-db >.csv
+	
+	/RefuSA-Downloads/Special/< spec-db >.db is older than /DB-Dev/Terr86777.db
+	../< spec-db >.db is older than its ../< spec-db >.csv
+</code></pre><br><a href="#IX">Index</a>
+<h3 id="6.0">6.0 Making Publisher Territories.</h3>
+The steps for making a publisher territory that has fully synchronized data
+are as follows:
+<pre><code>
+	in the SyncAlllData project run DoSed.sh to set up all of the synchronizing
+	 project files
+	  DoSed.sh mm dd < start-id > < end-id >
+	  
+	  	mm = month of current SCPA download
+	  	dd = day of current SCPA download
+	  	< start-id > = starting territory ID for processing
+	  	< end-id > = ending territory ID for processing
+
+	run \*make\* on the MakePubTerr makefile</code></pre>
+This will invoke the database checking and build processes in the correct
+heirarchical order to ensure that the publisher territory data is synchronized
+across the master, SCPA, RefUSA and publisher territory databases.
+<br><a href="#IX">Index</a>
+<h3 id="7.0">7.0 Synchronizing SCPA/Special Databases.</h3>
+An important step in keeping data synchronized is that of synchronizing special
+databases. Next to the Terr86777 master SCPA database, the special databases are
+the most important to have up-to-date. This is because many territories are
+built from the data in special databases. The SCPA special databases must be
+synchronized to the master SCPA database before synchronizing the RefUSA special
+databases. This is because correctly rebuilding RefUSA special databases depends
+upon the SCPA special databases being up-to-date.
+<br><a href="#IX">Index</a>
+<h3 id="8.0">8.0 Synchronizing RefuSA/Special Databases.</h3>
+An important step in keeping data synchronized is that of synchronizing special
+databases. Next to the Terr86777 master SCPA database, the special databases are
+the most important to have up-to-date. This is because many territories are
+built from the data in special databases. The SCPA special databases must be
+synchronized to the master SCPA database before synchronizing the RefUSA special
+databases. This is because correctly rebuilding RefUSA special databases depends
+upon the SCPA special databases being up-to-date.
+(See the <a href="#7.0">prior section</a>.)
+
+Two tests are performed to check if a RefUSA special database is up-to-date.
+The first test is checking that the RefUSA special database records are as new
+as the file date of the .csv download file for the database. If the .csv file
+is newer it implies that a download of RefUSA data has been performed, but the
+special database has not yet been rebuilt from the latest download data. If the
+special database is older than its latest .csv download, it should first be
+rebuilt from the latest download before performing the second test.
+
+The following steps sychronize all RefUSA/Special databases to their .csv
+download files:
+<pre><code>
+	cd $codebase/Projects-Geany/SyncAllData
+	ls -lh $pathbase/$rupath/Special/*.db > $TEMP_PATH/RUspecDBs.txt
+	export ix=1
+	export csvname=dummy
+	export csvdate=dummy
+	. ./GetNextSpecDB.sh
+	. ./setcsv.sh
+	. ./SetCSVDate.sh $csvname
+	./DoSed1.sh $pathbase/$rupath/Special $csvname Spec_RUBridge
+	./SetAllDBcsvDate.sh $csvname	
+</code></pre>
+The above operation proceeds through the Special/.db list of files one-at-a-time
+by repeating the steps GetNextSpecDB througth SetAllDBcsvDate for the entire
+list of /Special/.db,s.
+
+The second test is to compare the RecordDate of its newest record with the
+RecordDate of the newest record in the Terr86777 master database. If the county
+database has a newer record, the RefUSA special database should be cycled
+therough a new download and rebuild to ensure it is up-to-date.
+
+The RefUSA databases should be newly downloaded and rebuilt every time there is
+an SCPA county download. This is necesary since changes in ownership in the
+county property records will likely trigger changes in the RefUSA occupancy
+data. <br><a href="#IX">Index</a>
+
+<h3 id="n.0">n.0 Significant Notes.</h3>

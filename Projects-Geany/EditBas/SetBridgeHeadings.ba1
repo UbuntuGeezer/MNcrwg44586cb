@@ -1,0 +1,63 @@
+&apos;// SetBridgeHeadings.bas
+&apos;//---------------------------------------------------------------
+&apos;// SetBridgeHeadings - Set Admin-Bridge sheet headings.
+&apos;//		11/22/20.	wmk.	07:30
+&apos;//---------------------------------------------------------------
+
+public sub SetBridgeHeadings()
+
+&apos;//	Usage.	macro call or
+&apos;//			call SetBridgeHeadings()
+&apos;//
+&apos;// Entry.	user has Admin-Bridge sheet selected
+&apos;//
+&apos;//	Exit.	Column headings will be set as follows:
+&apos;//	&quot;OwningParcel&quot;,&quot;UnitAddress&quot;,&quot;Resident1&quot;,&quot;Resident2&quot;,&quot;Phone1&quot;,&quot;Phone2&quot;,
+&apos;//	&quot;RefUSA&quot;,&quot;SubTerritory&quot;,&quot;CongTerrID&quot;,&quot;DoNotCall&quot;,&quot;RSO&quot;,&quot;Foreign&quot;,
+&apos;// &quot;RecordDate&quot;, &quot;SitusAddress&quot;,&quot;PropUse&quot;,&quot;DelPending&quot;
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/21/20.	wmk.	original code
+&apos;// 9/23/20.	wmk.	&quot;PropUse&quot; heading added
+&apos;//	10/23/20.	wmk.	Column adjustments; &quot;Unit&quot; replaces Resident1,
+&apos;//						&quot;Resident1&quot; replaces Resident2
+&apos;// 11/22/20.	wmk.	&quot;Phone2&quot; changed to &quot;H&quot; for homestead
+&apos;//
+&apos;//	Notes.
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim sColHeadings(15) As String		&apos;// column headings array
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	sColHeadings(0) = &quot;OwningParcel&quot;
+	sColHeadings(1) = &quot;UnitAddress&quot;
+	sColHeadings(2) = &quot;Unit&quot;
+	sColHeadings(3) = &quot;Resident1&quot;
+	sColHeadings(4) = &quot;Phone1&quot;
+	sColHeadings(5) = &quot;H&quot;
+	sColHeadings(6) = &quot;RefUSA&quot;
+	sColHeadings(7) = &quot;SubTerritory&quot;
+	sColHeadings(8) = &quot;CongTerrID&quot;
+	sColHeadings(9) = &quot;DoNotCall&quot;
+	sColHeadings(10) = &quot;RSO&quot;
+	sColHeadings(11) = &quot;Foreign&quot;
+	sColHeadings(12) = &quot;RecordDate&quot;
+	sColHeadings(13) = &quot;SitusAddress&quot;
+	sColHeadings(14) = &quot;PropUse&quot;
+	sColHeadings(15) = &quot;DelPending&quot;
+	SetColHeadings(sColHeadings)
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SetBridgeHeadings - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end SetBridgeHeadings	11/22/20

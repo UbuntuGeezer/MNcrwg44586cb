@@ -1,0 +1,30 @@
+# TIDList.txt - list of business Bridges to process to terrs.
+#	10/1/21.	wmk.
+#list of territories to Update code for RU.
+# territories affected by SCPA latest download.
+109
+#109
+112
+121
+#121
+129
+203
+205
+207
+209
+221
+224
+#224
+225
+228
+230
+258
+273
+285
+286
+288
+#288
+301
+#301
+#998
+# end of SCPA territory list

@@ -1,0 +1,62 @@
+<p>README - README file for AnySQLtoSH project.<br>
+9/27/22.    wmk.</p>
+
+<h3>Modification History.</h3>
+
+<pre><code>6/26/22. wmk.    .md formatting; indexes added.
+9/27/22.    wmk.   HdrsSQLtoSH project notes added.
+Legacy mods.
+4/17/21.    wmk.    original document.
+10/12/21.   wmk.    change to .sq intermediate file from .s.
+10/16/21.   wmk.    Setup section added.
+</code></pre>
+
+<h3 id="IX">Documentation Sections.</h3>
+
+<pre><code><a href="#1.0">link></a> 1.0 Project Description - overall project description.
+<a href="#2.0">link></a> 2.0 Setup - step-by-step build instructions.
+</code></pre>
+
+<h3 id="1.0">Project Description.</h3>
+
+<p>AnySQLtoSH will take any .sql file and transform it into a shell file
+.sh by the same filename. To do this 2 transformations take place: the
+original .sql file is converted to a sequence of "echo" commands that
+will produce a file SQLTemp.sql containing all the SQL from the original
+file. This first transformation ends up on target file 'filename.ss'.
+Then a second transformation takes the .sq file and adds bash header and
+trailing commands to make the .sq file into a complete shell file with
+name 'filename.sh'.</p>
+
+<p>The transforms are all performed in a base folder name provided to the
+<em>make</em> Build. The Build must be supplied with both the base folder name
+and the base filename before it can proceed.</p>
+
+<p>If the file &lt; preamble ><a href="#2.1">[see below]</a> is present in the base folder, it will be considered
+a shell preamble to be inserted after the hdrAnySQL_1.sh in the target shell.
+This provides for situations where the generated SQL is dependent upon
+environment vars that the preamble shell can set up before the SQL is
+executed from the target shell.</p>
+
+<p>If postprocessing other than normal shutdown is necessary for the SQL, the project
+HdrsSQLtoSH makes provision for both preamble and post-SQL <em>bash</em> processing. See
+the <a href="file:///media/fuse/crostini_67db2e155275fc7e48975519462d5b22a040848a_termina_penguin/GitHub/TerritoriesCB/Projects-Geany/HdrsSQLtoSH/README.html">HrdsSQLtoSH</a> project documentation.
+<br><a href="#IX">Index</a></p>
+
+<h3 id="2.0">2.0 Setup.</h3>
+
+<p>AnySQLtoSH will use a path and an SQL source file to generate an executable shell
+by the same name as the SQL source file, with the .sql suffix replaced with .sh.
+The user may also supply a <em>preamble</em> file which contains <em>bash</em> commands that
+set up entry conditions for the SQL (e.g. environment vars that point to databsases).
+If <em>bash</em> postprocessing is necessary following the SQL execution, use the HdrsSQLtoSH
+project instead.</p>
+
+<p>To convert any SQL to a shell, do the following:
+<pre><code><a id="2.1"></a>Build Menu: edit the "sed" command line with the path, the .sql
+ filename (without the .sql suffix) and optional preamble filename
+ run "sed" from the Build menu to set up the makefile
+ run "Make" from the Build menu to create the &lt; filename >.sh
+</pre></code>
+The &lt; filename >.sh is now ready to either run from a command line or
+from another shell.<br><a href="#IX">Index</a></p>

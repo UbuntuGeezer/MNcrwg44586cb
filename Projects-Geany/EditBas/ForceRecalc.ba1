@@ -1,0 +1,47 @@
+&apos;// ForceRecalc.bas
+&apos;//---------------------------------------------------------------
+&apos;// ForceRecalc - Force calculation on sheet.
+&apos;//		9/8/20.	wmk.
+&apos;//---------------------------------------------------------------
+
+public sub ForceRecalc()
+
+&apos;//	Usage.	macro call or
+&apos;//			call ForceRecalc()
+&apos;//
+&apos;// Entry.	user selection is in Admin-Edit sheet
+&apos;//
+&apos;//	Exit.	sheet is recalculated; all HYPERLINK fields should read
+&apos;//			&quot;click to search&quot;
+&apos;//
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/8/20.		wmk.	original code; stolen from macro recording
+&apos;//
+&apos;//	Notes. Autocalc is turned off in territories, since there may be
+&apos;// literally thousands of HYPERLINKs in the larger sheets. After
+&apos;// the hyplerlinks for search fields are set (GenELinkM), ForceRecalc
+&apos;//	will be called to update the hyperlinks so they read &quot;Click to search&quot;
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim document   as object
+dim dispatcher as object
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	document   = ThisComponent.CurrentController.Frame
+	dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+	dispatcher.executeDispatch(document, &quot;.uno:Calculate&quot;, &quot;&quot;, 0, Array())
+
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;ForceRecalc - unprocessed error.&quot;)
+	GoTo NormalExit
+
+end sub		&apos;// end ForceRecalc		9/8/20

@@ -1,0 +1,85 @@
+&apos;// FixSCAddressM.bas
+&apos;//---------------------------------------------------------------
+&apos;// FixSCAddressM - ParseSitus Test for SCPA record extraction.
+&apos;//		9/16/20.	wmk.	13:10
+&apos;//---------------------------------------------------------------
+
+public sub FixSCAddressM()
+
+&apos;//	Usage.	macro call or
+&apos;//			call FixSCAddressM()
+&apos;//
+&apos;//
+&apos;// Entry.	user in PropOwners .csv formatted spreadsheet
+&apos;//			user has rows selected to fix addresses in
+&apos;//
+&apos;//	Exit.	ParseSitus and FixSCPAaddr tested with results displayed
+&apos;//
+&apos;// Calls.	SelectActiveRows, ParseSitsus, FixSCPAaddr, SetSelection
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/16/20.		wmk.	original code
+&apos;//
+&apos;//	Notes. This sub is included in PropOwners.ods, but maintained with
+&apos;// the PolyTerri-Queries in its Associated Files folder. This allows
+&apos;// editing outside of LibreCalc, which seems to still have &quot;freeze&quot;
+&apos;// issues with certain cursor activity.
+
+&apos;//	constants.
+const ROW_HEADING=4			&apos;// row index of headings
+const COL_ADDRESS=3			&apos;// column index of Address
+const YELLOW=16776960		&apos;// decimal value of YELLOW color
+
+&apos;//	local variables.
+dim	oDoc		As Object	&apos;// ThisComponent
+dim oSel		As Object	&apos;// current selection
+dim oSheet		As Object	&apos;// current sheet
+dim iSheetIx	As Integer	&apos;// selected sheet index
+dim oRange		As Object	&apos;// selected Range
+dim oCell		As Object	&apos;// working cell
+dim lCol		As long		&apos;// cell column
+dim lRow		As long		&apos;// cell row
+dim sFullAddress	As String	&apos;// full street address
+dim sNumber		As String
+dim sStreet		As String
+dim sUnit		As String
+dim lThisRow	As long		&apos;// current row processing
+dim oActvRange	As Object	&apos;// active rows range
+dim nRowCount	As Integer	&apos;// active rows count
+dim i			As Integer	&apos;// loop counter
+dim nRowsProcessed	As Integer	&apos;// processed rows count
+dim sNewAddress	As String	&apos;// newly concatenated address
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+
+if true then
+  GoTo Skip1
+endif
+&apos;//---------------------------------------------------------------------
+	lCol = oRange.StartColumn
+	lRow = oRange.StartRow
+	oCell = oSheet.getCellByPosition(lCol, lRow)
+	
+msgbox(&quot;Address being tested:&quot; + CHR(13)+CHR(10) _
+  + oCell.String)
+
+	sFullAddress = oCell.String
+&apos;//---------------------------------------------------------------------
+Skip1:
+	oActvRange = oSel.RangeAddress
+	nRowCount = oActvRange.EndRow - oActvRange.StartRow +1
+	lThisRow = oActvRange.StartRow-1
+	nRowsProcessed = 0
+	
+	for i = 0 to nRowCount-1
+		lThisRow = lThisRow + 1
+		oCell = oSheet.getCellByPosition(COL_ADDRESS, lThisRow)
+		sFullAddress = oCell.String
+		ParseSitus(sFullAddress, sNumber, sStreet, sUnit)

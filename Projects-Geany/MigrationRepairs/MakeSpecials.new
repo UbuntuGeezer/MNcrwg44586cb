@@ -1,0 +1,214 @@
+# 5/6/23.	wmk.	(automated) move previous history comments.
+# MakeSpecials.bak - make all terr 201  RU Special db related files and databases.
+#	12/15/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 6/3/22.	wmk.	(automated) restore path vars, MHP, LETTER flags.
+# 5/6/23.	wmk.	(automated) move previous history comments.
+# Legacy mods.
+# 12/15/22.	wmk.	*codebase support; ForceBuild sempaphore added
+#		 comments tidied.
+# Legacy mods.
+# 5/10/22.	wmk.	(automated) *# folderbase* corrections.
+# 5/4/22.	wmk.	(automated) path corrections.
+# 6/3/22.	wmk.	path vars missed by automation added.
+# 6/4/22.   wmk.    (automated) fix basepath var.
+# 6/3/22.   wmk.    (automated) restore path vars, MHP, LETTER flags.
+# Legacy mods.
+# 9/5/21.	wmk.	original makefile; adapted from territory 274.
+# 9/7/21.	wmk.	add "not initialized" error until edited for territory.
+# 9/11/21.	wmk.	reinitialized for territory 201.
+# 9/12/21.	wmk.	shellpath correction where / omitted.
+# 10/24/21.	wmk.	LETTER var added for conditional letter writing recipe
+#					items.
+# 10/25/21.	wmk.	MissingIDs call added at end of recipe.
+# 10/25/21.	wmk.	edited for territory xx x.
+# 10/28/21.	wmk.	added TheEsplanade to db list.
+# 11/13/21.	wmk.	ClearMHPruBridge, MakeClearMHPruBridge added to MHP recipe.
+# 12/9/21.	wmk.	superfluous .db suffix dropped with dbname-dbname14 vars.
+# 12/13/21.	wmk.	edited for territory 201; BirdBayCir, BirdBayDr dbs set.	
+#
+# MakeSpecials performs all the "makes" within the territory to construct
+# the databases within the territory download. It will typically be invoked
+# from a high-level source (e.g. RefUSA-Downloads/Special when a database
+# from that source is a prerequisite for one or more makefiles within the
+# territory.
+# (e.g. RefUSA-Downloads/SpecialCasaDelLagoWay.db is a prerequisite
+# for building territory 274). If CasaDelLagoWay is updated,
+# all the downstream databases that use it should be rebuilt also. The
+# makefile 'Make.CasaDelLagoWay.Terr' in the RefUSA-Downloads/Special
+# folder will invoke make on the makefile 'MakeSpecials' in the
+# RefUSA-Downloads/Terr201 folder for territories 274.
+
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef AWK
+ AWK = mawk
+endif
+
+#.PHONY : $(basepath)/Terr201/Spec201_RU.db
+.ONESHELL : ;
+# awkfixMakeNonMHP.txt MakeSpecials path fixes. 6/3/22.
+basepath = $(pathbase)
+specpath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Special
+shellpath = $(pathbase)/Procs-Dev
+MHP = 0
+LETTER = 0
+# end MakeSpecials path fixes.
+
+# conditional recipe based on MHP var.
+ifeq ($(MHP),1)
+
+projpath = $(codebase)/Projects-Geany/UpdateMHPDwnld
+
+# /RefUSA-Downloads/Terr201/Spec201_RU.db
+#====================================================================
+$(basepath)/Terr201/Spec201_RU.db : $(specpath)/$(dbname).db
+	$(error ** MakeSpecials not initialized for territory 201 **)
+	echo "in recipe for Spec201RU.db"
+	if ! test -f $(specpath)/$(dbname).db;then \
+	 echo "** Cannot proceed with Spec201_RU.db recipe **" \
+	 exit 1;fi
+	echo "  after db test for existence, continuing..."
+	$(MAKE) -f $(basepath)/Terr201/MakeClearMHPruBridge
+	$(MAKE) -f $(basepath)/Terr201/MakeRegenSpecDB
+	$(MAKE) -f $(basepath)/Terr201/MakeSetMHPSpecTerrs
+	$(MAKE) -f $(basepath)/Terr201/MakeSyncTerrToSpec	
+	$(basepath)/Terr201/ClearMHPruBridge.sh
+	$(basepath)/Terr201/RegenSpecDB.sh
+	$(basepath)/Terr201/SetMHPSpecTerrs.sh
+	$(basepath)/Terr201/SyncTerrToSpec.sh
+	cd $(projpath)/;./DoSed.sh $(shortdb) 201
+	if test -f $(projpath)/ExtractOldDiffs.sh;then \
+	 rm $(projpath)/ExtractOldDiffs.sh;fi
+	if test -f $(projpath)/IntegrateOldDiffs.sh;then \
+	 rm $(projpath)/IntegrateOldDiffs.sh;fi
+	$(MAKE) -f $(projpath)/MakeExtractOldDiffs
+	$(MAKE) -f $(projpath)/MakeIntegrateOldDiffs
+	$(projpath)/ExtractOldDiffs.sh
+	$(projpath)/IntegrateOldDiffs.sh
+	$(shellpath)/SetMhpDNCs.sh 201
+	$(shellpath)/MissingIDs.sh 201
+	~/sysprocs/LOGMSG "   $(basepath)/Terr201/Spec201_RU.db build complete."
+	echo '  Spec201_RU.db recipe complete.'
+else
+# non-MHP recipe.
+# /RefUSA-Downloads/Terr201/Spec201_RU.db
+#====================================================================
+ifeq ($(LETTER),1)
+$(basepath)/Terr201/Spec201_RU.db : $(specpath)/$(dbname) \
+ $(specpath)/$(dbname2)  $(specpath)/$(dbname3)  $(specpath)/$(dbname4) \
+ $(specpath)/$(dbname5)  $(specpath)/$(dbname6)  $(specpath)/$(dbname7) \
+ $(specpath)/$(dbname8)  $(specpath)/$(dbname9)  $(specpath)/$(dbname10) \
+ $(specpath)/$(dbname11)  $(specpath)/$(dbname12)  $(specpath)/$(dbname13) \
+ $(specpath)/$(dbname14)  $(basepath)/Terr201/MakeAddZips \
+ $(basepath)/Terr201/ForceBuild
+else
+$(basepath)/Terr201/Spec201_RU.db : $(specpath)/$(dbname) \
+ $(specpath)/$(dbname2)  $(basepath)/Terr201/ForceBuild
+endif
+	echo "in recipe for Spec201RU.db"
+	if ! test -f $(specpath)/$(dbname) || ! test -f $(specpath)/$(dbname2) ;then \
+	 echo "** Cannot proceed with Spec201_RU.db recipe **" \
+	 exit 1;fi
+	echo "  after db test for existence, continuing..."
+	$(MAKE) -f $(basepath)/Terr201/MakeRegenSpecDB
+	$(MAKE) -f $(basepath)/Terr201/MakeSetSpecTerrs
+	$(MAKE) -f $(basepath)/Terr201/MakeSyncTerrToSpec	
+ifeq ($(LETTER),1)
+	echo "What the hell is going on!!"
+	$(MAKE) -f $(basepath)/Terr201/MakeAddZips	
+endif
+	$(basepath)/Terr201/RegenSpecDB.sh
+	$(basepath)/Terr201/SetSpecTerrs.sh
+	$(basepath)/Terr201/SyncTerrToSpec.sh
+ifeq ($(LETTER),1)
+	$(basepath)/Terr201/AddZips.sh	
+endif
+	$(shellpath)/SetMhpDNCs.sh 201
+	$(shellpath)/MissingIDs.sh 201
+	~/sysprocs/LOGMSG "   $(basepath)/Terr201/Spec201_RU.db build complete."
+	echo '  Spec201_RU.db recipe complete.'
+endif
+# end conditional recipe for MHP.
+$(basepath)/Terr201/ForceBuild : ;
+	if ! test -f $@;then
+	 echo "  ** ForceBuild sempaphore file missing for Spec201_RU.db generation. **";exit 1;fi
+	 
+#---
+ifeq ($(LETTER),1)
+$(basepath)/Terr201/MakeAddZips : ;
+
+endif
+
+$(specpath)/$(dbname) : ;
+
+
+ifdef dbname2
+$(specpath)/$(dbname2) : ;
+endif
+
+ifdef dbname3
+$(specpath)/$(dbname3) : ;
+endif
+
+ifdef dbname4
+$(specpath)/$(dbname4) : ;
+endif
+
+ifdef dbname5
+$(specpath)/$(dbname5) : ;
+endif
+
+ifdef dbname6
+$(specpath)/$(dbname6) : ;
+endif
+
+ifdef dbname7
+$(specpath)/$(dbname7) : ;
+endif
+
+ifdef dbname8
+$(specpath)/$(dbname8) : ;
+endif
+
+ifdef dbname9
+$(specpath)/$(dbname9) : ;
+endif
+
+ifdef dbname10
+$(specpath)/$(dbname10) : ;
+endif
+
+ifdef dbname11
+$(specpath)/$(dbname11) : ;
+endif
+
+ifdef dbname12
+$(specpath)/$(dbname12) : ;
+endif
+
+ifdef dbname13
+$(specpath)/$(dbname13) : ;
+endif
+
+ifdef dbname14
+$(specpath)/$(dbname14) : ;
+endif
+

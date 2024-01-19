@@ -1,0 +1,238 @@
+SPECIAL - Special download documentation for territory 626.
+	10/8/21.	wmk. [documents letter writing SPECIAL territories]
+	
+Modification History.
+---------------------
+7/19/21.	wmk.	original document.
+7/21/21.	wmk.	added Setup section.
+8/15/21.	wmk.	Setup section clarified.
+8/17/21.	wmk.	generic modified for territory 632.
+9/5/21.		wmk.	MakeSpecials added to downstream makefile list.
+9/11/21.	wmk.	added SELECT clause in Special Databases section.
+9/21/21.	wmk.	edited for territory 632.
+10/8/21.	wmk.	edited for territory 626.
+
+
+Special Databases.
+------------------
+Territory 626 depends upon 6 special download databases resident in the folder
+Territories/RawData/.../RefUSA-Downloads/Special:
+
+	Bellagio.db
+	EaglePoint.db
+	HiddenLakes.db
+	SawgrassS.db -  Sawgrass South RU download
+	SawgrassN.db -	Sawgrass North RU download
+	WaterfordNW.db
+
+Besides the Special databases, 626 letter also depends on:
+
+	Terr232_RU.db
+	Terr272_RU.db
+
+Territory 626 is a letter writing territory. Territory Servant randomly assigns
+addresses from the territory, so they are not in any particular street or area
+order. There may be some even and some odd addresses for any given street. For
+these reasons, the only way to accurately extract records from a special download
+is by using the Terrxxx_SC.db for the territory. BUT instead of using
+Terrxxx_SCBridge,the table to be used is Terrxxx_SCPoly, which was derived
+from the actual Territory Servant list of addresses for the letter writing
+territory.
+
+The LOCATIONNAME, LOCATIONSTREET and LOCATIONDIRECTION fields from Terrxxx_SCPoly
+assemble into a complete UnitAddress to be used for record selection from a
+Special download database.
+
+Following are the SELECT clauses for territory 626:
+
+Terr626_SC.db as db11;
+SawgrassS.db  as db29;
+
+ATTACH SCPA-Downloads/Terr626/Terr626_SC.db
+ AS db11;
+-- extract matches from Bellagio;
+ATTACH 'RefUSA-Downloads/Special/Bellagio.db'
+ AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terr626_SCBridge)
+INSERT INTO Terr626_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+
+-- extract matches from EaglePoint;
+ATTACH 'RefUSA-Downloads/Special/EaglePoint.db'
+ AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terr626_SCBridge)
+INSERT INTO Terr626_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+
+-- extract matches from Hidden Lakes;
+ATTACH 'RefUSA-Downloads/Special/HiddenLakes.db'
+ AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terr626_SCBridge)
+INSERT INTO Terr626_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+
+extract matches from SawgrassS.db;
+ATTACH 'RefUSA-Downloads/Special/SawgrassS.db'
+ AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terr626_SCBridge)
+INSERT INTO Terr626_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+
+extract matches from SawgrassN.db;
+ATTACH 'RefUSA-Downloads/Special/SawgrassN.db'
+ AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terr626_SCBridge)
+INSERT INTO Terr626_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+
+extract matches from WaterfordNW.db;
+ATTACH 'RefUSA-Downloads/Special/WaterfordNW.db'
+ AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terr626_SCBridge)
+INSERT INTO Terr626_RUBridge
+SELECT * FROM db29.Spec_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+
+extract matches from Terr232_RU.db;
+ATTACH 'RefUSA-Downloads/Terr232/Terr232_RU.db'
+ AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terr626_SCBridge)
+INSERT INTO Terr626_RUBridge
+SELECT * FROM db29.Terr232_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+
+extract matches from Terr272_RU.db;
+ATTACH 'RefUSA-Downloads/Terr262/Terr262_RU.db'
+ AS db29;
+WITH a AS (SELECT OwningParcel AS Acct
+ FROM db11.Terr626_SCBridge)
+INSERT INTO Terr626_RUBridge
+SELECT * FROM db29.Terr272_RUBridge
+WHERE OwningParcel IN (SELECT Acct FROM a);
+
+WITH a AS (SELECT OwningParcel AS Acct, UnitAddress AS StreetAddr,
+     PropUse AS UseType, SitusAddress AS Situs, RecordType AS RecType
+     FROM Terr626_SCBridge)
+
+with a AS (select TRIM(trim(LOCATIONNAME) || '   ' || trim(LOCATIONSTREET)
+  || ' ' || trim(LOCATIONDIRECTION)) AS LUnitAddr FROM db11.Terr632_RUPoly)
+select * from db29.Spec_RUBridge 
+where UPPER(TRIM(UnitAddress)) IN (SELECT LUnitAddr FROM a)
+DETACH db29;
+
+SawgrassN.db  as db29;
+with a AS (select TRIM(trim(LOCATIONNAME) || '   ' || trim(LOCATIONSTREET)
+  || ' ' || trim(LOCATIONDIRECTION)) AS LUnitAddr FROM db11.Terr632_RUPoly)
+select * from db30.Spec_RUBridge 
+where UPPER(TRIM(UnitAddress)) IN (SELECT LUnitAddr FROM a)
+DETACH db29;
+
+Since a special download database is only the RU data for a given street/area,
+it may not contain any records for a given territory that depends upon it, since
+the RU data is only "occupied" addresses.
+
+
+Dependencies.
+-------------
+RegenSpecDB.sh - shell to rebuild and populate the Spec632_RU.db from the
+  latest special download databases listed above.
+
+
+Processing.
+-----------
+When an update is done to territory 632, RegenSpecDB.sh will be invoked
+by the UpdateRUDwnld make/build. RegenSpecDB.sh will rebuild the local
+Spec632_RU.db by copying the Bridge records from the special download
+databases that belong to territory 632. The Spec632_RU.db will then be
+ready for use whenever it is needed.
+
+The Spec632_RU.db entries need to be integrated into the Terr632_RU.db prior
+to running the BridgesToTerr makefile on territory 632. The shell SyncTerrToSpec
+merges the Bridge records from Spec632_RU.db into the Terr632_RU.db After the
+merge has been completed, if duplicate records are present, only the lastest 
+are retained.
+
+The make for the UpdateRUDwnld project has been modified to include both the
+RegenSpecDB and SyncToTerrSpec shell executions if they are present in the
+Terr632 RU download folder.
+
+
+Setup.
+------
+The SpecialRUdb project contains all the tools necessary to take a special
+download from RefUSA-Downloads/Special and move the .csv records into
+a database named after the .csv. A special download, say vvvvv.csv is
+the extracted records from a RefUSA polygon for given street or area.
+
+RU-Downloads/Special
+The creation of the /Special/vvvvv.db involves several steps.
+	SpecialRUdb Project:
+	Build menu; enter territory ID and vvvvv name into "sed" item
+	execute "sed" from the build menu
+	execute "Make" from the build menu, creating vvvvv.db
+	[the tables created in vvvvv.db are documented in SpecialRUdb/README]
+
+RU-Downloads/Terr632
+	copy files SPECIAL, RegenSpecDB.sq, SyncTerrToSpec.sq, MakeRegenSpecDB.tmp,
+	  MakeSyncTerrToSpec.tmp, Spec632RU.sql, MakeSpecTerrQuery, MakeSpecials to Terr632
+	  folder by running the shell InitSpecial.sh from the SpecialRUdb project
+
+	edit SPECIAL in the territory download folder to document the special
+	  databases and procedures for generating the territory
+
+	edit Spec632RU.sql to properly extract the RU data from the <special-db>
+	  that applies to territory 632
+	edit MakeSpecTerrQuery to run on territory 632
+	run "make" in the territory download folder to execute the query and
+	  generate the initial Spec632_RU.db database
+
+	edit the names of any Special databases into the RegenSpecDB.sq file
+	  ATTACH statement(s) to complete customizing the process for the territory.
+	run "make" in the territory download folder to generate RegenSpecDB.sh shell
+	  the MakeRegenSpecDB makefile
+	use "sed" to change "<filename>" to "RegenSpecDB" in RegenSpecDB.sh
+	[RegenSpecDB.sh will be run by the UpdateRUDwnld project]
+
+	edit SetSpecTerrs.sql setting the territory ID and special db names
+	edit MakeSetTerrs makefile setting the territory ID
+
+	run "make" in the territory download folder to generate SetSpecTerrs.sh shell
+	  with the  MakeSetSpecTerrs makefile
+	use "sed" to change "<filename>" to "SetSpecTerrs" in SetSpecTerrs.sh
+
+	run "make" in the territory download folder to generate SyncTerrToSpec.sh shell
+	  using the MakeSyncTerrToSpec makefile
+	use "sed" to change "<filename>" to "SyncTerrToSpec" in SyncTerrsToSpec.sh
+
+	run RegenSpecDB.sh in the Terr632 folder
+
+	run SetSoecTerrs.sh in the Terr632 folder
+
+	run SyncTerrToSpec.sh in the Terr632 folder
+
+	edit MakeSpecials and remove .PHONY qualifier to activate makefile
+	ensure territory ID and database(s) names are all set for downstream call
+	 whenever any upstream database is updated
+
+	run "make" -f MakeSpecials to complete the setup of the Spec632_RU.db
+	 and the updating/synchronizing of the data in Terr632_RU.db and
+	 any /Special/ .dbs with the territory
+
+Following the "make" operation, RegenSpecDB.sh, SetSpecTerrs, and
+SyncTerrToSpec.sh are ready to be run, in order, by MakeSpecials from
+the territory download folder. This will complete the setup of all the
+"special" database files that can now be automatically used by UpdateRUDwnld
+when regenerating the territory records after either the special or
+territory downloads.

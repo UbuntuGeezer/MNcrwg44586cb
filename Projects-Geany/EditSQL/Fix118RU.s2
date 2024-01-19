@@ -1,0 +1,90 @@
+-- ** END FixFromSC **********;
+--/**/
+
+.quit
+
+-- * Attach required databases;
+
+-- * junk as main;
+.open '$pathbase/DB-Dev/junk.db'
+
+ATTACH '$pathbase'
+||		'/DB-Dev/Terr86777.db' 
+ AS db2;
+--SELECT tbl_name FROM db2.sqlite_master 
+-- WHERE type is "table";
+--pragma db2.table_info(Terr86777);
+ 
+ATTACH '$pathbase'
+ ||		'/RawData/RefUSA/RefUSA-Downloads/Terr118/Terr118_RU.db'
+  AS db12;
+--  PRAGMA db12.table_info(Terr118_RUBridge);
+
+
+-- ** Fix118RU **********
+-- *	3/31/21.	wmk.
+-- *--------------------------
+-- *
+-- * Fix118RU - Fix RU records territory 118.
+-- *
+-- * Entry DB and table dependencies.
+-- *	junk.db - as main, junk database so can use dbxx ATTACHes
+-- *	Terr118_RU.db - as db12, new territory records from RefUSA polygon
+-- *		Terr118_RUBridge - sorted Bridge formatted records extracted 
+-- *			from RefUSA polygon (see Terr118_RUPoly)
+-- *
+-- * Exit DB and table results.
+-- *	Terr118_RU.db - as db12, new territory records from RefUSA polygon
+-- *		Terr118_RUBridge - Record created for 229 Fiesole St
+-- *
+-- * Notes. The property at 229 Fiesole St is on the aerial map, but has
+-- * no parcel ID nor property record in the county records. This query
+-- * forces the parcel ID between the two adjacent parcels and fills in
+-- * what appear to be appropriate values for the record fields.
+-- *;
+
+-- * DBs attached above;
+
+-- ** Fix700Nokomis **********
+-- *	3/31/21.	wmk.
+-- *--------------------------
+-- *
+-- * Fix700Nokomis - Fix record(s) for 700 Nokomis Ave S
+-- *
+-- * Entry DB and table dependencies.
+-- *	Terr86777.db - as db2, SCPA data for NV territory
+-- *		Terr86777 - SCPA property records
+-- *
+-- * Exit DB and table results.
+-- *
+-- * Notes. Nokomis Ave addresses do not have "S" suffix in county data.
+-- *;
+
+-- * DBs attached above;
+
+WITH a AS(select * from Terr86777 
+where "situs address (property address)"
+like "700   NOKOMIS%")
+UPDATE Terr118_RUBridge 
+SET OWNINGPARCEL =
+case
+when UPPER(TRIM(SUBSTR(UnitAddress,1,
+ LENGTH(UNITADDRESS)-1 )))
+   IN (SELECT TRIM(SUBSTR("situs address (property address)",
+			1,35))
+   FROM a)
+ then (SELECT "account #" FROM a
+ WHERE TRIM(SUBSTR("situs address (property address)",1,35))
+    IS UPPER(TRIM(SUBSTR(UnitAddress,
+        1,LENGTH(UnitAddress)-1)))
+ )
+else OwningParcel 
+end 
+WHERE UnitAddress LIKE "700   Nokomis%"
+ AND OwningParcel IS "-";
+
+-- ** END FixNokomis **********;
+
+.quit
+-- ** END Fix118RU **********;
+

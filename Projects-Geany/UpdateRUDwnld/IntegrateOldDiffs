@@ -1,0 +1,84 @@
+#!/bin/bash
+# IntegrateOldDiffs.sh - Extract differences ./Previous and current Terrxxx_RUBridge.
+# 7/6/21.	wmk.
+#
+#	Usage. bash ExtractOldDiff.sh  <terrid>
+#		<terrid> - territory to extract differences for
+#
+# Dependencies.
+#
+#	Exit.  /Terrxxx/TerrxxxOldDiffs.csv contains difference records.
+#
+# Modification History.
+# ---------------------
+# 7/6/21.	wmk.	original code (multihost support included).
+# function definition
+function jumpto
+{
+    label=$1
+    cmd=$(sed -n "/$label:/{:a;n;p;ba};" $0 | grep -v ':$')
+    eval "$cmd"
+    exit
+}
+if [ "$HOME" = "/home/ubuntu" ]; then
+ folderbase="/media/ubuntu/Windows/Users/Bill"
+else 
+ folderbase=$HOME
+fi
+#
+P1=$1
+local_debug=0	# set to 1 for debugging
+#local_debug=1
+#
+# handle case where called from Make.
+if [ -z "$system_log" ]; then
+  system_log=$folderbase/ubuntu/SystemLog.txt
+  TEMP_PATH=$HOME/temp
+  bash ~/sysprocs/LOGMSG "   IntegrateOldDiffs initiated from Make."
+  echo "   IntegrateOldDiffs initiated."
+else
+  bash ~/sysprocs/LOGMSG "   IntegrateOldDiffs initiated from Terminal."
+  echo "   IntegrateOldDiffs initiated."
+fi
+TEMP_PATH=$HOME/temp
+#
+if [ -z "$P1" ]; then
+  echo "  IntegrateOldDiffs ignored.. must specify <parameter>." >> $system_log #
+  echo "  IntegrateOldDiffs ignored.. must specify <parameter>."
+  exit 1
+else
+  echo "  IntegrateOldDiffs $P1 - initiated from Terminal" >> $system_log #
+  echo "  IntegrateOldDiffs $P1 - initiated from Terminal"
+fi 
+#
+if [ $local_debug = 1 ]; then
+ pushd ./
+ cd ~/Documents		# write files to Documents folder
+fi
+TID=$P1
+CSV_BASE=Terr$TID
+OLD_NAME=OldDiffs.csv
+CSV_NAME=$CSV_BASE$OLD_NAME
+#proc body here
+pushd ./  > $TEMP_PATH/scratchfile
+cd $folderbase/Territories/Projects-Geany/UpdateRUDwnld
+./DoSed.sh $TID
+sed -i '{:a;/OwningParcel/ d;t a}' \
+ $folderbase/Territories/RawData/RefUSA/RefUSA-Downloads/$CSV_BASE/$CSV_NAME
+#awk here to set Resident 1 field to "?"
+awk 'BEGIN {FS = ",";OFS = ","} {$4 = "?";print $0}'  \
+  $folderbase/Territories/RawData/RefUSA/RefUSA-Downloads/$CSV_BASE/$CSV_NAME \
+  > $TEMP_PATH/csvfile.txt
+cp $TEMP_PATH/csvfile.txt $folderbase/Territories/RawData/RefUSA/RefUSA-Downloads/$CSV_BASE/$CSV_NAME
+sqlite3 < IntegrateOldDiffs.sql
+popd > $TEMP_PATH/scratchfile
+#end proc body
+if [ $local_debug = 1 ]; then
+  popd
+fi
+jumpto EndProc
+EndProc:
+notify-send "IntegrateOldDiffs" "completed $1"
+echo "  IntegrateOldDiffs $P1 complete."
+~/sysprocs/LOGMSG "IntegrateOldDiffs $1 <message>."
+#end IntegrateOldDiffs

@@ -1,0 +1,48 @@
+# MakeSyncTerrToSpec.tmp - MakeSyncTerrToSpec template for territory xxx.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	4/25/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 4/25/22.	wmk.	modified for general use FL/SARA/86777.
+# Legacy mods.
+# 7/19/21.	wmk	.original code.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+prepath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terrxxx
+ procpath = $(codebase)/Procs-Dev
+ projpath = $(codebase)/Projects-Geany/UpdateRUDwnld
+# SyncTerrToSpec.sh primary target.
+#=====================================================================================
+$(prepath)/SyncTerrToSpec.sh : $(prepath)/SyncTerrToSpec.sql $(prepath)/SyncTerrToSpec.sq
+	cat $(procpath)/hdrAnySQL_1.sh $(prepath)/SyncTerrToSpec.sql \
+	 $(procpath)/hdrAnySQL_2.sh > $@
+
+$(prepath)/SyncTerrToSpec.sql : $(prepath)/SyncTerrToSpec.sq
+	echo 's?\"?\\\\"?g' > $(projpath)/sedatives.txt
+	echo "s?^?echo \"?g" >> $(projpath)/sedatives.txt
+	echo "s?\$$?\" >> SQLTemp.sql?g" >> $(projpath)/sedatives.txt
+	echo "1s?>>?>?g" >> $(projpath)/sedatives.txt
+	sed -f $(projpath)/sedatives.txt $(prepath)/SyncTerrToSpec.sq > $@
+
+$(prepath)SyncTerrToSpec.sq : ;
+	$(error ** missing $(prepath)SyncTerrToSpec.sq to build SyncTerrToSpec.sql **)
+	
+
+#====================================================================================

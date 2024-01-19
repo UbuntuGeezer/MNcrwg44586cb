@@ -1,0 +1,3 @@
+# mhppathbase - MHP path definitions.
+MHP = 1
+LETTER = 0

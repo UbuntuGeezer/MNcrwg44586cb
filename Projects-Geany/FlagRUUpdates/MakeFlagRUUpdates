@@ -1,0 +1,79 @@
+# MakeFlagRUUpdates.tmp - template for make MakeFlagRUUpdates.
+#	10/5/22.	wmk.
+#
+# Build Results: UpdtyyyM.csv  and UpdtyyyP.csv	generated as "update"
+#   records for MultiMail and PolyTerr dbs respectively, with new
+#   records to be written for each type.
+#
+# update happens if SCPA-Downloads/SCPADiff_mm-dd.db is newer than 
+#		SCPA-Downloads/Updtxxx.csv for all territories xxx.
+#
+# Modification History.
+# ---------------------
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# 10/4/22.  wmk.    (automated) fix *pathbase for CB system.
+# 10/5/22.	wmk.	comments tidied.
+# Legacy mods.
+# 5/1/22.	wmk.	*pathbase* support.
+# 7/1/22.	wmk.	eliminate dup .PHONY declaration.
+# Legacy mods.
+# 3/1/21.	wmk.	original code; initially set up to only do Terr 104
+#					for testing/debugging.
+# 3/3/21.	wmk.	fixed for PreProcess during Build.
+# 3/11/21.	wmk.	code reduction/simplification.
+# 5/27/21.	wmk.	modified to use env var HOME to determine ($)folderbase
+#					path.
+# 7/22/21.	wmk.	remove superfluous "s; compartmentalize build sections.
+# 11/3/21.	wmk.	'&' added to main target for both updating with single
+#					execution of recipe.
+#
+# Dependencies. - run "sed" make preprocessor after editing sed Build command.
+# yyy  run Build "sed" to change yyy to territory and set download date.
+
+.NOTPARALLEL : ;
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+ifndef rupath
+ rupath = RawData/RefUSA/RefUSA-Downloads
+endif
+
+vpath %.csv $(pathbase)/RawData/SCPA/SCPA-Downloads/Terryyy
+RUDwnldPtr = $(pathbase)/$(rupath)
+ projpath = $(codebase)/Projects-Geany/FlagRUUpdates
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+.PHONY  : CheckOutofDates
+.ONESHELL : ;
+
+# primary target phony
+#==================================================================
+# $(projpath)/RUtidList.txt - TID list of RU territories that can
+#  be supplied to *UpdateRUDwnld* project. There is nothing to build
+# with this makefile. The FlagRUUpdates.sh shell handles all of the
+# processing. (This is necessary since CB/Geany does not recognize 
+# *pushd and *popd commands, so they must be embedded in a shell).
+# *DoSed will set the starting and ending TID values to be processed
+# by the FlagRUUpdates shell.
+CheckOutofDates :
+	$(projpath)/FlagRUUpdates.sh  220 220
+	echo "** WARNING - Be sure that no Terrxxx_RU.db,s are older than"
+	echo " /DB-Dev/Terr86777.db, since they would not necessarily be"
+	echo " up-to-date in sync with the latest county data **"
+
+#==================================================================

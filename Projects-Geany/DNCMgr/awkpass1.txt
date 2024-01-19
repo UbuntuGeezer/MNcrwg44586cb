@@ -1,0 +1,10 @@
+# awkpass1.txt pass 1 on 'all_dncs_report.csv'
+#	6/7/23.	wmk. invoke mawk with -F ","
+BEGIN{cnt=-1}
+END{for (i=0;i<=cnt;i++)print accum[i]}
+{if( substr($1,1,1) == "L" || substr($1,1,1) ~ /[0-9]/ || substr($1,1,1) == "B")
+ {cnt++
+  accum[cnt] = $0}
+ else
+  accum[cnt] = accum[cnt] "|" $0 
+}

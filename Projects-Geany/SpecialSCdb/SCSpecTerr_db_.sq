@@ -1,0 +1,30 @@
+-- GondolaParkDr.sql - create GondolaParkDr.db from records from VeniceNTerritory.
+-- * 5/30/22.	wmk.
+-- * Modification History.
+-- * ---------------------
+-- * 8/13/21.	wmk.	original code.
+.open '$pathbase/RawData/SCPA/SCPA-Downloads/Special/GondolaParkDr.db'
+ATTACH '$pathbase/DB-Dev/VeniceNTerritory.db'
+  AS db2;
+.output '$pathbase/RawData/SCPA/SCPA-Downloads/Special/GondolaParkDr.csv'
+.headers ON
+.mode csv
+select * from db2.nvenall
+ where "situs address (property address)"
+  like "%gondola park dr%";
+DROP TABLE IF EXISTS GondolaParkDr;
+.import 'pathbase/Territories/RawData/SCPA/SCPA-Downloads/Special/GondolaParkDr.csv' GondolaParkDr
+ALTER TABLE GondolaParkDr ADD COLUMN TID TEXT;
+DROP TABLE IF EXISTS Spec_SCBridge;
+CREATE TABLE Spec_SCBridge 
+( "OwningParcel" TEXT NOT NULL, "UnitAddress" TEXT NOT NULL, "Unit" TEXT, 
+"Resident1" TEXT, "Phone1" TEXT, "Phone2" TEXT, "RefUSA-Phone" TEXT, 
+"SubTerritory" TEXT, "CongTerrID" TEXT, "DoNotCall" INTEGER DEFAULT 0, 
+"RSO" INTEGER DEFAULT 0, "Foreign" INTEGER DEFAULT 0, 
+"RecordDate" REAL DEFAULT 0, "SitusAddress" TEXT, "PropUse" TEXT, 
+"DelPending" INTEGER DEFAULT 0, "RecordType" TEXT);
+DROP TABLE PropTerr IF EXISTS;
+CREATE TABLE PropTerr (PropID TEXT, StreetAddr TEXT, TerrID TEXT);
+DROP TABLE TerrList IF EXISTS;
+CREATE TABLE TerrList (TerrID TEXT, Counts INTEGER DEFAULT 0);
+.quit

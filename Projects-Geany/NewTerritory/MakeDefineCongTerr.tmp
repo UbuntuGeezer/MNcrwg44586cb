@@ -1,0 +1,90 @@
+# MakeDefineTerr.tmp - make file template for creating new congregation territory.
+#	1/21/23.	wmk.
+#
+# Entry. *folderbase = root path for Territories system
+#		 *codebase = target path for new code segment
+#		 *pathbase = target path for new data segment
+#
+# Exit. The NewDataSegment and NewCodeSegment projects have been invoked
+#		 to create the following folders:
+#		 Data Segment
+#			*pathbase = *folderbase/Territories/< state >/< county >/< congno >
+#			*pathbase/DB-Dev
+#			*pathbase/RawData
+#			*pathbase/RawData/RefUSA
+#			*pathbase/RawData/RefUSA/RefUSA-Downloads
+#			*pathbase/RawData/RefUSA/RefUSA-Downloads/Special
+#			*pathbase/RawData/SCPA
+#			*pathbase/RawData/SCPA/SCPA-Downloads
+#			*pathbase/RawData/SCPA/SCPA-Downloads/Special
+#			*pathbase/RawData/SCPA/SCPA-Downloads/Previous
+#			*pathbase/TerrData
+#			*pathbase/Territory-PDFs
+#		Code Segment
+#			*codebase
+#			*codebase/Procs-Dev
+#			*codebase/Projects-Geany
+#			*codebase/Projects-Geany/ArchivingBackups
+#
+# Modification History.
+# ---------------------
+# 1/21/23.	wmk.	original makefile; adapted from MakePubTerr.tmp.
+#
+# Notes. Project "sed" command should be used to set the <state> <county>
+#	and <congno> fields within this makefile.
+#
+
+#  This makefile adopts the *standard* that vars ending in *path* have no
+#  trailing '/'; vars ending in *base* have a trailing '/'
+# ** The environment variable *pathbase* has no trailint '/', so one is
+#    added for internal use here **
+
+ifeq ($(USER),ubuntu)
+  folderbase=/media/ubuntu/Windows/Users/Bill/
+else
+  folderbase = $(HOME)/
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+  ifneq ("",)
+   pathxbase = $(folderbase)////
+  else
+   pathxbase = $(folderbase)/Territories/
+  endif
+else
+  pathxbase = $(pathbase)/
+endif
+
+.PHONY : Always
+.ONESHELL :
+
+bashpath = $(codebase)Territories/Procs-Dev
+RUpath = $(pathxbase)RawData/RefUSA/RefUSA-Downloads
+SCpath = $(pathxbase)RawData/SCPA/SCPA-Downloads
+
+# primary targets $(RUpath)/TErryyy $(SCPath)/TErryyy
+#=========================================================
+#$(RUpath)/Terryyy $(SCpath)/Terryyy &: 
+Always : ;
+	if [ "yyy" == " " ] || [ -z "yyy" ];then \
+	 echo "** no territory specified.. MakeDefineCongTerr abandoned.**";exit 1;fi
+	if test -d $(RUpath)/TErryyy; then rm -r $(RUpath)/TErryyy;fi
+	if test -d $(SCpath)/TErryyy; then rm -r $(SCpath)/TErryyy;fi
+	bash $(bashpath)/MakeRawData.sh ' ' <state> <county> <congno>
+	bash $(bashpath)/MakeTerrData.sh ' '
+
+
+$(bashpath)/MakeRawData.sh : ;
+	if ! test -f $@;then \
+	 echo "** Missing /Procs-Dev/MakeRawData.sh for MakeNewTerr build **";exit 1;fi
+
+
+$(bashpath)/MakeTerrData.sh : ;
+	if ! test -f $@;then \
+	 echo "** Missing /Procs-Dev/MakeTerrData.sh for MakeNewTerr build **";exit 1;fi
+
+#==========================================================	

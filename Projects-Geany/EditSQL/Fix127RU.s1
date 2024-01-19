@@ -1,0 +1,100 @@
+--Fix127RU.sql - Production fix RU parcels territory 127.
+-- * 5/7/22.	wmk.	(automated) *pathbase* integration.
+-- * 7/9/22.   wmk.   (automated) udpate FixFromSC (Terr124 template).
+-- * 6/2/22.     wmk.   (automated) NVenAll > Terr86777.
+--	9/22/21.	wmk.
+--
+-- * Modification History.
+-- * ---------------------
+-- * 3/12/21.	wmk.	original code (compatible with make).
+-- * 5/14/21.	wmk.	FixFromSC added.
+-- * 6/12/21.	wmk.	(automated) ($)folderbase support.
+-- *
+-- * Notes. whatever relevant for this RU download..
+-- *;
+
+-- * Notes. In the original version of Fix127RU, several
+-- * methods were used to match up the RU data with the SC data.
+-- * Those methods have been preserved in the legacy folder /Previous.
+-- * This new query uses a generic algorithm that will carry through
+-- * for post-procesing downloads into Bridge tables. After
+-- * RUTidyTerr_db.sh has run, there may still be parcels that are
+-- * missing parcel IDs (OwningParcel) or other information. 
+-- * The generic algorithm here will attempt to resolve those issues
+-- * by using the legacy Terr127_RU.db that is in the /Previous folder.
+-- * If they are still unresolved after this, a file MissingIDs.csv
+-- * will be the result of a query run on the Bridge table to report
+-- * any UnitAddress/Unit that still does not have an assigned parcel.
+
+-- *  Database dependencies.
+-- *	junk.db - as main, junk database so can use dbxx ATTACHes
+-- *	Terr86777.db - as db2, SCPA data for NV territory
+-- *		Terr86777 - SCPA property records
+-- *	Terr127_RU.db - as db12, new territory records from RefUSA polygon
+-- *		Terr127_RUBridge - sorted Bridge formatted records extracted 
+-- *			from RefUSA polygon (see Terr127_RUPoly)
+-- *	Terr127_RU.db - as db12, new territory records from RefUSA polygon
+-- *		Terr127_RUBridge - sorted Bridge formatted records extracted 
+-- *			from RefUSA polygon (see Terr127_RUPoly)
+-- *	
+-- *		AddrXcpt - address exceptions
+
+-- * subquery list.
+-- * --------------
+-- * Note: Since these are all batched, they need to be in the
+-- * same order below.
+-- * AttachDatabases - Attach databases for module queries.
+-- * FixFromSC - Fix RU records from SC records for territory 127.
+-- * FixFromPrevious - Fix RU records from previous db cycle.
+-- *;
+
+-- ** AttachDatabases~ **********
+-- *	3/12/21.	wmk.
+-- *--------------------------
+-- *
+-- * AttachDatabases - Attach databases for module queries.
+-- *
+-- * Entry DB and table dependencies.
+-- *	Terr86777.db - as db2, SCPA data for NV territory
+-- *		Terr86777 - SCPA property records
+-- *	Terr127_RU.db - as db12, new territory records from RefUSA polygon
+-- *		Terr127_RUBridge - sorted Bridge formatted records extracted 
+-- *			from RefUSA polygon (see Terr127_RUPoly)
+-- *	AuxSCPAData - as db8, auxiliary data for SCPA records
+-- *	Terr127_RU.db - as db22, territory records from RefUSA polygon
+-- *		Terr127_RUBridge - previous formatted records extracted 
+-- *
+-- * Exit DB and table results.s
+-- *	see modules below
+
+-- * junk as main;
+.open '$pathbase/DB-Dev/junk.db'
+
+
+ATTACH '$pathbase'
+||		'/DB-Dev/Terr86777.db' 
+ AS db2;
+--pragma db2.table_info(Terr86777);
+
+ATTACH '$pathbase'
+ ||		'/RawData/RefUSA/RefUSA-Downloads/Terr127/Terr127_RU.db'
+  AS db12;
+--  PRAGMA db12.table_info(Terr127_RUBridge);
+
+ATTACH '$pathbase'
+ ||		'/DB-Dev/AuxSCPAData.db'
+  AS db8;
+--SELECT tbl_name FROM db8.sqlite_master;
+--pragma db8.table_info(AddrXcpt); 
+
+ATTACH '$pathbase'
+ ||		'/RawData/SCPA/SCPA-Downloads/Terr127/Previous/Terr127_SC.db'
+  AS db21;
+--  PRAGMA db21.table_info(Terr127_SCBridge);
+
+ATTACH '$pathbase'
+ ||		'/RawData/RefUSA/RefUSA-Downloads/Terr127/Previous/Terr127_RU.db'
+  AS db22;
+--  PRAGMA db22.table_info(Terr127_RUBridge);
+
+

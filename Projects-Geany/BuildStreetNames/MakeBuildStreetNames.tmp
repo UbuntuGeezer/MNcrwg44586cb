@@ -1,0 +1,50 @@
+# MakeBuildStreetNames.tmp - makefile for BuildStreetNames.sh.
+#	12/19/22.	wmk.
+#
+# Modification History.
+# --------------------
+# 12/19/22.	wmk.	original code
+#
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : ;
+.ONESHELL : ;
+
+
+prepath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terrxxx
+ procpath = $(codebase)/Procs-Dev
+ projpath = $(codebase)/Projects-Geany
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+ thisproj = $(projpath)/BuildStreetNames
+ 
+# BuildStreetNames.sh primary target.
+#=======================================================================================
+$(thisproj)/BuildStreetNames.sh : $(thisproj)/BuildStreetNames.sql
+	cd $(altproj);./DoSed.sh $(thisproj) BuildStreetNames
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+
+$(thisproj)/BuildStreetNames.sql : ;
+	if ! test -f $@;then \
+	 echo " ** missing BuildStreetNames.sql to build BuildStreetNames.sh **";exit 1;fi
+
+	
+#=======================================================================================

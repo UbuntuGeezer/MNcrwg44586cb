@@ -1,0 +1,51 @@
+&apos;// fIdxColName.bas
+&apos;//-----------------------------------------------------------
+&apos;// fIdxColName - convert numerical index to column letter(s).
+&apos;//		wmk. 9/1/20.	14:45
+&apos;//-----------------------------------------------------------
+function fIdxColName( plColIndex ) as string
+
+&apos;//	Usage.	sColumn = fIdxColName( lColIndex )
+&apos;//
+&apos;//			lColIndex = 0-based column index (long)
+&apos;//
+&apos;//	Exit.	sColumn = &quot;A&quot; .. &quot;ZZ&quot;
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	5/13/20		wmk.	original code
+&apos;//	5/15/20.	wmk.	docuentation and name change from fIdxCol to fIdxColName
+&apos;//	9/1/20.		wmk.	returned valu misspelling corrected
+&apos;//
+&apos;//	Notes.	method:
+&apos;// subtract 25, if 0 or less in A-Z
+&apos;// else [A..Z][A..Z]
+&apos;//     divide by 26; (whole amount-1)+chr(65)is left half
+&apos;//                   remainder + chr(65) is right half
+
+
+&apos;//	local variables.
+
+dim sColumn as string
+dim lColIndex as long
+dim iLftIndex as integer
+dim iRightOffset as integer
+
+	&apos;// code.
+
+	lColIndex = plColIndex
+
+	sColumn = &quot;You gotta be kidding&quot;
+
+	If plColIndex &lt;= 25 Then
+		sColumn = CHR(65+plColIndex)
+	Elseif plColIndex &gt; 625 then
+		sColumn &quot;ZZ&quot;		&apos;// only up to 625 for now...
+	Else
+		iLftIndex = lColIndex/26
+		iRightOffset = lColIndex - 26*(iLftIndex)
+		sColumn = CHR(65+iLftIndex-1) + CHR(65+iRightOffset)
+	Endif
+
+	fIdxColName = sColumn
+end	function	&apos;// end fIdxColNam function		9/1/20

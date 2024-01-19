@@ -1,0 +1,1 @@
+AnyFile.sh : AnyFile.sql AnyFile.sq

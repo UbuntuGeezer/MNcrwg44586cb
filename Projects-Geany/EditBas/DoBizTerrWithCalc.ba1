@@ -1,0 +1,102 @@
+&apos;// DoBizTerrWithCalc.bas - Process territory from .csv to PubTerr.
+&apos;//----------------------------------------------------------------
+&apos;// DoBizTerrWithCalc - Process territory from .csv to PubTerr.
+&apos;//		9/29/21.	wmk.	13:16
+&apos;//----------------------------------------------------------------
+
+public sub DoBizTerrWithCalc( psTerrID )
+
+&apos;//	Usage.	macro call or
+&apos;//			call DoBizTerrWithCalc( sTerrID )
+&apos;//
+&apos;//		sTerrID = territory ID to do with Calc
+&apos;//
+&apos;// Dependencies. This sub must be resident in Territories Library.
+&apos;//
+&apos;// Entry.	goTerrODSdoc = (reserved) component for territory ODS 
+&apos;//			  workbook	
+&apos;//
+&apos;//	Exit.	goTerrODSdoc = territory ODS workbook component
+&apos;//
+&apos;// Calls.	OpenBQTerr, QodsToBizTerr
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;// 9/26/21.	wmk.	original code; adapted from DoTerrWithCalc.
+&apos;// 9/29/21.	wmk.	gbKillProcess flag checked after OpenBQTerr.
+&apos;// Legacy mods.
+&apos;//	7/10/21.	wmk.	original code; goTerrODSdoc global var
+&apos;//							dependency added.
+&apos;// 7/11/21.	wmk.	code advanced to point of saving territory
+&apos;//						workbook as	.ods file; SaveQsvODS moved to
+&apos;//						QOpenCSV
+&apos;// 8/28/21.	wmk.	comments corrected; FreezeView call added.
+&apos;//
+&apos;//	Notes. DoBizTerrWithCalc will eventually completely process a territory
+&apos;// from its QTerrxxx.csv file all the way through to formatting and
+&apos;// saving the PubTerr and SuperTerr versions.
+&apos;// SetGridLand dialog gets in the way of frame focusing... figure out
+&apos;// where to put it..
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+dim sTerrID			As	String			&apos;// copy of passed territory ID
+dim oDoc			As	Object			&apos;// ThisComponent to save to gs
+dim oUntitledDoc	As 	Object			&apos;// untitled PubTerr
+dim oParentDoc		As	Object			&apos;// parent document of PubTerr workbook
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	sTerrID = psTerrID
+	OpenBQTerr( sTerrID )
+	if gbKillProcess then
+		gbKillProcess = false
+		GoTo NormalExit
+	endif
+&apos;	AddHdrToQBTerr(sTerrID)
+	QodsToBizTerr(sTerrID)
+	
+
+&apos;//*****************************************************************
+if 1 = 1 then
+  GoTo NormalExit
+endif
+
+	oDoc = ThisComponent
+&apos;	goCurrDocument = ThisComponent
+&apos;	SaveQCsvODS
+	oDoc.Close(1)			&apos;// close the newly saved QTerrxxx.ods
+	
+
+dim oSel		As Object
+	oParentDoc = ThisComponent	&apos;// set doc to current component
+&apos;	goTerrODSdoc = oDoc
+	QToPubTerr
+	oUntitledDoc = ThisComponent
+	oSel = oUntitledDoc.getCurrentSelection()
+	MoveToDocSheet(oUntitledDoc, &quot;Terr240_PubTerr&quot;)
+	
+&apos;	SetGridLand			&apos;// set Grid on, landscape format
+&apos;	MoveToDocSheet(oUntitledDoc, &quot;Terr240_PubTerr&quot;)		&apos;// reset focus
+&apos;	oDoc = goNewWorkdoc
+	oSel = oUntitledDoc.getCurrentSelection()
+	MoveToDocSheet(oDoc, &quot;Terr240_PubTerr&quot;)
+	FreezeView()
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()	
+	SaveTerrAsODS(oUntitledDoc,oParentDoc.getURL())		&apos;// save new workbook Untitled n.ods as ods
+if 1 = 0 then
+	SaveXlsx			&apos;// save for Excel
+	ExportTerrAsPDF		&apos;// export PDF file
+endif
+
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;DoBizTerrWithCalc - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end DoBizTerrWithCalc	9/29/21.	13:16

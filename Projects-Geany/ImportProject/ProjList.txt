@@ -1,0 +1,35 @@
+# ProjList.txt - project list for AllMigrateGeany.sh
+#	3/31/22.	wmk.
+SCBridgeUnitToRU
+SCNewLetter
+SCNewTerritory
+SQLtoSH
+SortByAddress
+SpecialDB
+SpecialDBsc
+SpecialHCdb
+SpecialRUdb
+SpecialSCMapCSV
+SpecialSCdb
+SystemStart
+TerrPageHeader
+TestProject
+TestShells
+TrackerUI
+UpdateCongTerrDB
+UpdateMCBridge
+UpdateMHPDwnld
+UpdateNVenAll
+UpdateRUData
+UpdateRUDwnld
+UpdateRUDwnldM
+UpdateRUSpecial
+UpdateRegenList
+UpdateSC90xBridges
+UpdateSCBridge
+UpdateSCBridge10x
+UpdateSCBridge262
+UpdateTerrMaster
+UpdtRULetter
+UseFullFieldNames
+# end S-U list.

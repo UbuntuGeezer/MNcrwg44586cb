@@ -1,0 +1,19 @@
+# MakePriority - test git *make priorities.
+#	2/19.23.
+#
+
+.PHONY : Always Build1 Build2 ;
+.ONESHELL : ;
+
+Always : Build1
+	echo "This is Always..."
+
+
+Build1 : Build2
+	echo "This is Build1..."
+
+
+Build2 :
+	echo "This is Build2..."
+
+#end MakePriority

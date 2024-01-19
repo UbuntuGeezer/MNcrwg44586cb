@@ -1,0 +1,6 @@
+# seddncs.txt
+#	6/1/23.	wmk.
+# sed -f seddncs.txt *pathbase/Territory-PDFs/all_dncs_report.pdf
+#  will produce multiline with *s replacing spaces.
+s?[[:blank:]]?\*?g
+# end seddncs.txt

@@ -1,0 +1,66 @@
+-- SCDwnldToDB.psq - Process SCPA download.csv into DB.
+--	4/27/22.	wmk.
+--
+-- * Dependencies.
+-- * -------------
+-- * DoSed.sh replaces MM DD in this file with m2 d2 of the newest
+-- *  download data.
+-- *
+-- * Environment vars - 
+-- *	folderbase - host system folder base path for Territories
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 3/19/22.	wmk.	original code.
+-- * 4/27/22.	wmk.	*pathbase* support.
+-- *
+-- * Notes. This query is in "shell-ready" format, where ($) environment
+-- * vars will be substituted into the query at appropriate places. The
+-- * expected environment vars are documented above in the Dependencies
+-- * list.
+-- *;
+ 
+-- * subquery list.
+-- * --------------
+-- * SCDwnldToDB - Process SCPA download.csv into DB.
+
+-- ** SCDwnldToDB **********
+-- *	4/27/22.	wmk.
+-- *--------------------------
+-- *
+-- * SCDwnldToDB - Process SCPA download.csv into DB.
+-- *
+-- * Entry DB and table dependencies.
+-- *	($)folderbase/Territories/RawData/SCPA/SCPA-Downloads/DataMMDD.csv
+-- *	  lastest download data from SCPA-Public_MM-DD.xlsx
+-- *	($)folderbase = host base path for Territories
+-- *
+-- * Exit DB and table results.
+-- *	SCPA_mm-dd.db AS main, full SCPA download from mm/dd
+-- *		Datammdd - table of full download records whole county
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 3/19/22.	wmk.	original code.
+-- * 4/27/22.	wmk.	*pathbase* support.
+-- *
+-- * Notes. By not explicitly using CREATE TABLE, sqlite will import the
+-- * .csv records assuming that the 1st row is headers/field names. When
+-- * the records are imported using the sqlite browser, the
+-- * "trim fields" option also removes any whitespace from the table
+-- * field names. When the records are imported using the .import SQL
+-- * batch directive, whitespace is not removed. This produces a 
+-- * discrepancy between the older imports (e.g.04 16) and the newer
+-- * imports (e.g. 06 19).
+-- *;
+
+-- * SCPA_DB2 as main;
+.cd '$pathbase/RawData/SCPA/SCPA-Downloads'
+.open 'SCPA_MM-DD.db'
+DROP TABLE IF EXISTS DataMMDD;
+.headers ON
+.mode csv
+.import 'DataMMDD' DataMMDD 
+.quit
+
+-- ** END SCDwnldToDB **********;

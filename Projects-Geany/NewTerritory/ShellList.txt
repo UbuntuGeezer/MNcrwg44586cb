@@ -1,0 +1,6 @@
+checkpostscript.sh
+CheckTerrDefined.sh
+CreateDataSegment.sh
+DoSed.sh
+emptypreamble.sh
+NewTerrHdr.sh

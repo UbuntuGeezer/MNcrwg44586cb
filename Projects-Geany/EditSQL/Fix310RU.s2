@@ -1,0 +1,94 @@
+-- ** END FixFromSC **********;
+
+.quit
+-- ** END FiX310RU **********;
+
+
+-- ** FixWhatever **********
+-- *	4/23/21.	wmk.
+-- *--------------------------
+-- *
+-- * FixWhatever - Fix whatever for territory 122.
+-- *
+-- * Entry DB and table dependencies.
+-- *	Terr86777.db - as db2, SCPA data for NV territory
+-- *		Terr86777 - SCPA property records
+-- *	Terr310_RU.db - as db12, new territory records from RefUSA polygon
+-- *		Terr310_RUBridge - sorted Bridge formatted records extracted 
+-- *			from RefUSA polygon (see Terr310_RUPoly)
+-- *			imported from Map122_RU.csv in folder RefUSA-Downloads
+-- *
+-- * Exit DB and table results.
+-- *	Terr310_RU.db - as db12, new territory records from RefUSA polygon
+-- *		Terr310_RUBridge - Bridge records fixed where..
+-- *
+-- * Notes. Whatever
+-- *;
+
+-- * DBs attached above;
+
+* modify this WITH to match;
+WITH a AS (SELECT "Account #" AS Acct, 
+"situs address (property address)" AS Situs,
+"780   TAMIAMI TRL S"
+ AS StreetAddr,
+"property use code" AS UseType FROM Terr86777
+WHERE Situs LIKE "%780E  FIRENZE%"
+)
+UPDATE Terr310_RUBridge
+SET OwningParcel = 
+CASE 
+WHEN 
+ THEN (SELECT Acct FROM a 
+  WHERE 
+  )
+ELSE OwningParcel
+END,
+SitusAddress = 
+CASE 
+WHEN 
+ THEN (SELECT Situs FROM a 
+  WHERE 
+  )
+ELSE SitusAddress
+END,
+PropUse = 
+CASE 
+WHEN 
+ THEN (SELECT UseType FROM a 
+  WHERE 
+  )
+ELSE SitusAddress
+END,
+RecordType = 
+CASE 
+WHEN 
+ THEN "M"  or C or something
+ELSE RecordType
+END
+WHERE OwningParcel is "-" 
+   AND Whatever;
+
+-- ** END FixWhatever **********;
+
+-- ** subquery **********
+-- *	3/25/21.	wmk.
+-- *--------------------------
+-- *
+-- * subquery_name - simple description.
+-- *
+-- * Entry DB and table dependencies.
+-- *   <list main DB and ATTACHed DBs and tables>
+-- *
+-- * Exit DB and table results.
+-- *
+-- * Notes.
+-- *;
+
+-- ** END query **********;
+
+.quit
+-- ** END Fix310RU **********;
+
+
+

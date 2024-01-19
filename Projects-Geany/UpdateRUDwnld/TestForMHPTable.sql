@@ -1,0 +1,53 @@
+-- TestForMHPTable.sql - Test for existence of Terr107_MHP table in Previous.
+--	10/4/22.	wmk.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 10/4/22	wmk.	change to y y y for territory id.
+-- * Legacy mods.
+-- * 4/26/22.	wmk.	modified for <state> <county> <congno);*pathbase* support.
+-- * Legacy mods.
+-- * 7/6/21.	wmk.	original code.
+-- * 12/21/22.	wmk.	Chrome path issues resolved.
+-- *
+-- * subquery list.
+-- * --------------
+-- *;
+
+-- ** TestForMHPTable **********
+-- *	7/6/21.	wmk.
+-- *----------------------------
+-- *
+-- * TestForMHPTable - Test for existence of Terr107_MHP table in Previous.
+-- *
+-- * Entry DB and table dependencies.
+-- *   <list main DB and ATTACHed DBs and tables>
+-- *
+-- * Exit DB and table results.
+-- *
+-- * Entry. DoSed has modified y y y to terrid.
+#
+-- * Modification History.
+-- * 7/26/21.	wmk.	original code.
+-- * 10/4/22.	wmk.	change to y y y for terrid.
+#
+-- * Notes. This query tests for the existence of the table Terr107_MHP
+-- * in the Terr107/Previous folder. It will throw an error to the calling
+-- * shell if the table is not present. This allows the shell to then
+-- * determine if the Terr107_MHP table should be copied from the prior
+-- * Terr107_RU.db, or be regenerated from the current db Terr107_RUPoly
+-- * table records.
+-- * (%)folderbase is used in place of ($)folderbase, since the calling
+-- * shell will replace it with the environment var ($)folderbase.
+-- *;
+
+--TestForMHPTable.sql
+.cd '$pathbase/RawData/RefUSA/RefUSA-Downloads'
+ATTACH './Terr314/Previous/Terr314_RU.db'
+ AS db31;
+SELECT * FROM Terr314_MHP 
+ WHERE City LIKE "%Venice%"
+ LIMIT 1;
+.quit
+
+-- ** END TestForMHPTable **********;

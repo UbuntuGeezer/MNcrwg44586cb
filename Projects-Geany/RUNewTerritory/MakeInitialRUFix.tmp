@@ -1,0 +1,67 @@
+# MakeInitialRUFix.tmp - MakeInitialRUFix template for RU territory yyy.
+#	5/7/22.	wmk.
+#
+# MakeInitialRUFix takes a first pass at setting OwningParcels and
+# other basic fields in a newly created Terrxxx_RU.db Bridge table.
+# The information is obtained by using the SC Bridge data first,
+# then using SCPA data from NVenAll for any still missing.
+#
+# Modification History.
+# ---------------------
+# 9/22/22.  wmk.    (automated) *codebase env var support.
+# 9/22/22.  wmk.    (automated) CB *codebase env var support.
+# 2/20/23.	wmk.	*pathbase corrected; comments tidied.
+# Legacy mods.
+# 4/25/22.	wmk.	modified to use *pathbase* env var; *..path* vars
+#			 trailing / dropped.
+# 5/7/22.	wmk.	.PHONY, .ONESHELL added; InitialRUFix.psq recipe changed.
+# Legacy mods.
+# 8/30/21.	wmk.	original code; adapted from MakeInitialRUFix.
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu) 
+  folderbase=/media/ubuntu/Windows/Users/Bill
+ else
+  folderbase=$(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+.PHONY : AlwaysCheck;
+.ONESHELL : ;
+
+prepath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terryyy
+ procpath = $(codebase)/Procs-Dev
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+# InitialRUFix.sh primary target.
+#=====================================================================================
+$(prepath)/InitialRUFix.sh : $(prepath)/InitialRUFix.sql
+	cd $(altproj);./DoSed.sh $(prepath) InitialRUFix
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+	
+# .psq file has xxx for territory ID; P1 fields already replaced
+# when InitSpecial.sh copies file to Terr$P1 folder, has env vars
+# like folderbase in code.	
+$(prepath)/InitialRUFix.sql : $(prepath)/InitialRUFix.psq
+	sed "s?xxx?yyy?g" $(prepath)/InitialRUFix.psq > $(prepath)/InitialRUFix.sql
+
+$(prepath)/InitialRUFix.psq : AlwaysCheck;
+
+AlwaysCheck : 
+	if ! test -f $(prepath)/InitialRUFix.psq;then \
+	 echo "** MakeInitialRUFix missing InitialRUFix.psq for InitialRUFix.sql recipe **;fi
+	exit 1	
+#$(error ** missing $(prepath)/InitialRUFix.psq to build InitialRUFix.sql **)
+	
+
+
+#====================================================================================
+#end MakeInitialRUFix

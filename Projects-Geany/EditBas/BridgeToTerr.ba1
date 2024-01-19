@@ -1,0 +1,204 @@
+&apos;// BridgeToTerr.bas
+&apos;//---------------------------------------------------------------
+&apos;// BridgeToTerr - Admin-Bridge sheet to Pub-Territory sheet.
+&apos;//		1/14/21.	wmk.	07:00
+&apos;//---------------------------------------------------------------
+
+public sub BridgeToTerr()
+
+&apos;//	Usage.	macro call or
+&apos;//			call BridgeToTerr()
+&apos;//
+&apos;// Entry.
+&apos;//	OwningParcel  UnitAddress  Unit	 Resident1 Phone1 Phone2 RUPhone
+&apos;//			A			B		C		D		  E		 F		G	
+&apos;//  SubTerr CongTerr DoNotCall RSO Foreign  RecordDate SitusAddress
+&apos;//		H		I		   J     K     L		M			  N		
+&apos;//  PropUse	DelPending
+&apos;//		O  			P
+&apos;//
+&apos;//	Exit.	produces a &quot;Pub-Territory&quot; formatted sheet with the following fields:
+&apos;//        A    	B      C       D      E     F    		G		   H		I
+&apos;//		Address   Unit  Name1   Phone1  Phone2 RU/Phone	 DoNotCall	Foreign	Personal/Notes
+&apos;//[source] B      C	  D		   E	  F	        G          J       L		-
+&apos;//
+&apos;// Calls.	BoldHeadings, ForceRecalc, SetTerrWidths,
+&apos;//			SetSelection, MergeOwnerCells, MergeStreetsCells,
+&apos;//			MergeSheetType, SetHdrSumFormula, CenterUnitHstead,
+&apos;//			FreezeView
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/18/20.	wmk.	original code; adapted from EditToTerr
+&apos;//	9/19/20.	wmk.	Merge.. calls; FreezeView call added
+&apos;//	9/21/20.	wmk.	SetHdrSumFormula call added
+&apos;//	9/30/20.	wmk.	PropUse column support
+&apos;//	10/3/20.	wmk.	check all rows for DoNotCall
+&apos;// 10/23/20.	wmk.	support Unit column replacing Resident1,
+&apos;//						Resident2 column removed; dead code removed;
+&apos;//						ForceRecalc call added
+&apos;// 11/29/20.	wmk.	bug fix DO NOT CALL overwriting Unit field, moved
+&apos;//						to Name1 field at new position from 10/23 mod
+&apos;// 1/14/21.	wmk.	modified to center columns B and E and to 
+&apos;//						freeze view at A6
+&apos;//	Notes.
+&apos;// Method.
+&apos;//		Move header A1-H4 to B1
+&apos;//		Remove column A
+&apos;//		Change A heading to &quot;Address&quot;
+&apos;//		col B heading to &quot;Name1&quot;
+&apos;//		col C heading to &quot;Name2&quot;
+&apos;//		col G heading to &quot;DoNotCall&quot;
+&apos;//		move col I data to col G
+&apos;//		col H heading to &quot;Foreign&quot;
+&apos;//		move col K data to col H
+&apos;//		remove columns I to N
+&apos;//		col I heading to &quot;Personal Notes&quot;
+&apos;//		H1 = &quot;Admin-TSExport formatted sheet&quot; 
+
+&apos;//	constants.
+const COL_PARCEL=0		&apos;// &quot;OwningParcel&quot; column index
+const COL_A=0
+const COL_B=1
+const COL_C=2	
+const COL_D=3
+const COL_E=4
+const COL_F=5
+const COL_G=6			&apos;// column G index
+const COL_H=7			&apos;// column H index
+const COL_I=8			&apos;// column I index
+const COL_J=9			&apos;// column J index
+const COL_K=10			&apos;// column K index
+const COL_L=11			&apos;// column L index (DoNotCall)
+const COL_M=12			&apos;// column M index (RSO)
+const COL_N=13			&apos;// column N index (Foreign)
+const COL_O=14			&apos;// column O index
+const COL_P=15			&apos;// column P index
+const ROW_1=0
+const ROW_2=1
+const ROW_3=2
+const ROW_4=3
+const ROW_HEADING=4		&apos;// headings row index
+const LJUST=1		&apos;// left-justify HoriJustify				&apos;// mod052020
+const CJUST=2		&apos;// center HoriJustify						&apos;// mod052020
+const RJUST=3		&apos;// right-justify HoriJustify				&apos;// mod052320
+const MDYY=30		&apos;// &apos;M/D/YY&apos; format value
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+dim oMrgRange	As Object	&apos;// merge range
+
+dim oCell	As Object		&apos;// cell working on
+dim i		As Integer		&apos;// loop index
+dim sPropID	As String		&apos;// property ID
+dim sSubTerr	As String	&apos;// subterritory
+dim sCongTerr	As String	&apos;// cong terr ID
+dim lRowCount	As Long		&apos;// row count of addresses
+dim dDate		As Double	&apos;// date value
+dim sCityStZip	As String	&apos;// concatenated City, State, Zip
+dim sNotes		As String	&apos;// notes field
+dim nCols		As Integer	&apos;// removal column count
+
+	&apos;// code.
+	ON ERROR GoTo ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	
+	oCell =	oSheet.getCellByPosition(COL_B, ROW_2)
+	lRowCount = oCell.Value
+
+	&apos;// remove columns H, I since header already set
+	oSheet.Columns.removeByIndex(COL_H, 2)
+
+	&apos;// now remove new I (RSO)
+	oSheet.Columns.removeByIndex(COL_I, 1)
+
+	&apos;// now remove J - M
+	oSheet.Columns.removeByIndex(COL_J, 4)
+		
+	
+	&apos;// move A1-H4 to B1 to allow col A removal
+	&apos;//		move data from entire column E to B
+	oMrgRange = oRange
+	oMrgRange.StartColumn = COL_A
+	oMrgRange.EndColumn = COL_H
+	oMrgRange.StartRow = ROW_1
+	oMrgRange.EndRow = ROW_4
+dim oTarget as new com.sun.star.table.CellAddress
+	oTarget.Sheet = oRange.Sheet
+	oTarget.Column = COL_B
+	oTarget.Row = ROW_1
+	oSheet.moveRange(oTarget,oMrgRange)
+	
+	&apos;// remove col A
+	oSheet.Columns.removeByIndex(COL_A, 1)
+	
+	&apos;// change col A heading to &quot;Address&quot;
+	oCell = oSheet.getCellByPosition(COL_A, ROW_HEADING)
+	oCell.String = &quot;Address&quot;
+	oCell.HoriJustify = CJUST
+
+	&apos;//		col B heading to &quot;Unit&quot;
+	oCell = oSheet.getCellByPosition(COL_B, ROW_HEADING)
+	oCell.String = &quot;Unit&quot;
+	oCell.HoriJustify = CJUST
+
+	&apos;//		col C heading to &quot;Name1&quot;
+	oCell = oSheet.getCellByPosition(COL_C, ROW_HEADING)
+	oCell.String = &quot;Name1&quot;
+	oCell.HoriJustify = CJUST
+
+	&apos;// Delete G4 &quot;RefUSA&quot;, set F4 to &quot;RefUSA&quot;
+	oCell = oSheet.getCellByPosition(COL_G, ROW_HEADING-1)
+	oCell.String = &quot;&quot;
+	oCell = oSheet.getCellByPosition(COL_F, ROW_HEADING)
+	oCell.String = &quot;RefUSA&quot;
+	oCell.HoriJustify = CJUST
+
+	&apos;//		col I heading to &quot;Personal Notes&quot;
+	oCell = oSheet.getCellByPosition(COL_I, ROW_HEADING)
+	oCell.String = &quot;Personal Notes&quot;
+	oCell.HoriJustify = CJUST
+
+	&apos;//		H1 = &quot;Pub-Territory formatted sheet&quot; 
+	oCell = oSheet.getCellByPosition(COL_H, ROW_1)
+	oCell.String = &quot;Pub-Territory formatted sheet&quot;
+
+	&apos;// check rows for DoNotCall flag and set Name1 accordingly
+	lThisRow = ROW_HEADING		&apos;// start 1 row behind
+	for i = 0 to lRowCount-1
+		lThisRow = lThisRow + 1
+		oCell = oSheet.getCellByPosition(COL_G, lThisRow)
+&apos;		if StrComp(oCell.String, &quot;1&quot;) = 0 then
+		if oCell.Value = 1 then
+			oCell = oSheet.getCellByPosition(COL_C, lThisRow)
+			oCell.String = &quot;DO NOT CALL&quot;
+		endif
+	next i
+	
+	&apos;// tidy up header information
+	SetHdrSumFormula()		&apos;// restore B2 formula
+	BoldHeadings()
+	SetTerrColWidths()
+	MergeSheetType()	&apos;// remerge since move destroyed merge
+	CenterUnitHstead()	&apos;// center unit and &quot;homestead&quot; columns
+	FreezeView()		&apos;// freeze row/column scrolling at A6
+	ForceRecalc()
+
+NormalExit:
+	exit sub
+
+ErrorHandler:
+	msgbox(&quot;BridgeToTerr - unprocessed error.&quot;)
+	GoTo NormalExit
+
+end sub		&apos;// end BridgeToTerr		1/14/21

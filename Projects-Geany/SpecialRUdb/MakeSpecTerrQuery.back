@@ -1,0 +1,61 @@
+# MakeSpecTerrQuery - makefile to create shell SQLTemp.sql for territory $P1.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	4/24/22.	wmk.
+#
+# MakeSpecTerrQuery takes Spec$P1RU.sql and converts it to shell echo
+# commands in file Spec$P1RU.sq to generate SQLTemp.sql
+#
+# Modification History.
+# ---------------------
+# 4/24/22.	wmk.	code generalized for FL/SARA/86777;*pathbase*, 
+#			 *congterr*, *conglib* env vars introduced.
+# Legacy mods.
+# ??/??/??.	wmk.	original query.
+# 8/21/21.	wmk.	improvements.
+# 8/22/21.	wmk.	add .db created message; fix CreateSpecRU <filename>. 
+
+ifndef folderbase
+ ifeq ($(HOME),/home/ubuntu)
+  folderbase=/media/ubuntu/Windows/Users/Bill
+ else
+  folderbase=$(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+countybase = SCPA/SCPA-Downloads
+ procpath = $(codebase)/Procs-Dev
+targpath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terr$P1
+.PHONY : $(targpath)/Spec$P1RU.sql
+
+# Spec$P1_RU.db primary target
+#==============================================================
+$(targpath)/Spec$P1_RU.db : $(targpath)/SQLTemp.sql $(targpath)/Spec$P1RU.sh  \
+ $(targpath)/Spec$P1RU.sql
+	bash CreateSpecRU.sh
+	#sqlite3 < $(targpath)/SQLTemp.sql
+	echo "Spec$P1_RU.db build complete."
+
+$(targpath)/SQLTemp.sql : $(targpath)/Spec$P1RU.sh $(targpath)/Spec$P1RU.sql
+	cat $(procpath)/hdrAnySQL_1.sh $(targpath)/Spec$P1RU.sh $(procpath)/hdrAnySQL_2.sh \
+	> CreateSpecRU.sh
+	sed -i 's?<filename>?CreateSpecRU?g' CreateSpecRU.sh
+	echo $(countybase)
+	echo "SQLTemp.sql build complete."
+
+$(targpath)/Spec$P1RU.sh : $(targpath)/Spec$P1RU.sql
+	bash $(procpath)/RUTerrSQLtoSH.sh Spec$P1RU Terr$P1
+	# now use cat to build shell around .sh just generated
+
+# this is phony - will always force make SQLTemp.sql
+$(targpath)/Spec$P1RU.sql : ;
+
+#==============================================================

@@ -1,0 +1,61 @@
+# MakeRegenSpecDB.tmp - MakeRegenSpecDB template for territory 804.
+# 5/22/23.	wmk.
+#
+# Modification History.
+# --------------------
+# 5/22/23.	wmk.	template for territory 804; comments tidied.
+# Legacy mods.
+# 5/4/22.	wmk.	(automated) path corrections.
+# 6/7/22.   wmk.    (automated) simplify main RegenSpecDB recipe.
+# 6/19/22.	wmk.	comments tidied; code checked.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+# Legacy mods.
+# 7/19/21.	wmk.	original code.
+# 7/20/21.	wmk.	bug fix where HOME environment var not being
+#					evaluated; missing $s corrected in path refs.
+# 8/22/21.	wmk.	sed added to fix <filename> in RegenSpecDB.sh
+# 10/12/21.	wmk.	MAJOR change; sql > sq > sh instead of sq > sql > sh.
+# 12/28/21.	wmk.	chmod 700 added to .sh permissions.
+
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+ifndef AWK
+ AWK = mawk
+endif
+
+.PHONY : ;
+.ONESHELL : ;
+
+prepath = $(folderbase)/Territories/RawData/RefUSA/RefUSA-Downloads/Terr804
+ procpath = $(codebase)/Territories/Procs-Dev
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+ projpath = $(codebase)/Territories/Projects-Geany
+
+# RegenSpecDB.sh primary target.
+#=======================================================================================
+$(prepath)/RegenSpecDB.sh : $(prepath)/RegenSpecDB.sql
+	cd $(altproj);./DoSed.sh $(prepath) RegenSpecDB
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH
+
+$(prepath)/RegenSpecDB.sql : ;
+	if ! test -f $@;then \
+	 echo " ** missing $(prepath)/RegenSpecDB.sql to build RegenSpecDB.sql **";exit 1;fi
+	
+#=======================================================================================

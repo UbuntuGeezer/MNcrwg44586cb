@@ -1,0 +1,140 @@
+# MakeSyncAllData.tmp - makefile for SyncAllData process.
+#	2/3/23.	wmk.
+#
+# Dependencies. < start-tid > and < end-tid > edited by *sed into MakeSyncAllData.
+#
+# Modification History.
+# ---------------------
+# 2/3/23.	wmk.	original code.
+#
+# Notes. This makefile synchronizes the territory databases to be up-to-date
+# with all the latest territory download information. A semaphore file is
+# used to control the MakeSyncAllData process. Any portion of the process
+# may set the semaphore by defining the file KillSync within the project.
+# After each stage of the process the makefile checks for the KillSync
+# semaphore. If present, its contents are displayed and the MakeSyncAllData
+# build halts. This forces the database adminstrator to bring each part of
+# the data segment up-to-date before proceeding
+#
+# Following is the build sequence for bringing the entire data segment up-to-date:
+#
+#	SCPA master database Terr86777.db
+#	SCPA Special territory database(s) < special-db1 > .. < special-dbn >
+#	RefUSA Special territory database(s) < special-db1 > .. < special-dbn >
+#   if any of the above are out-of-date, SyncAllData is halted.
+#	 all of the below processes are dependent upon all of the above being synced.
+#
+#	the processes below will log out-of-date dbs to logs specific to their
+#	 purview. SyncAllData will continue with the next process after running
+#	 a batch update on those items which have a .csv date that is up-to-date
+#	 with the above databases.
+#	SCPA special territory databases Terrxxx_SC.db (MakeSpecials present)
+#	 an SCPA special territory database is considered out-of-date if its
+#	 Terrrxxx_SC.db file date is older than the file date of any Special
+#	 database it is dependent upon.
+#	SCPA territory databases Terrxxx_SC.db
+#	RefUSA special territory databases Terrxxx_RU.db (MakeSpecials present)
+#	 a RefUSA special territory database is considered out-of-date if its
+#	 Terrrxxx_RU.db file date is older than the file date of any Special
+#	 database it is dependent upon.
+#	RefUSA territory database Terrxxx_RU.db
+#	PolyTerri.db and MultiMail.db databases along with QTerrxxx.db
+#	/TerrData publisher territory and PDF files
+#
+# @ @  z z are the month and day of the current SCPA download.
+# TODAY environment var is set to the record date desired (usually yyyy-@ @-X z).
+#
+# Following are the projects to build each step in the above sequence:
+#
+# SCPA master database Terr86777.db
+#	ImportSCPA
+#	ExtractDiff
+#	DiffToMaster
+#
+# SCPA /Special databases <spec-db>.db
+#
+# RefUSA/Special databases <spec-db>.db
+#
+# SCPA territory databases Terrxxx_SC.db
+#	FlagSCUpdates
+#	UpdateSCBridge
+#
+# RefUSA territory databases Terrxxx_RU.db
+#	current Mapxxx_RU.csv,s downloaded
+#	UpdateRUDwnld
+#
+# RefUSA Special territory databases <spec-db1> .. <spec-dbn>
+#	<spec-db>.csv
+#	UpdateRUDwnld for special dbs
+#	Make.<spec-db>.Terr makefiles
+#
+# QTerrxxx.csv files:
+#	BrdigesToTerr using TIDLst.txt
+#
+# ProcessQTerrs.calc using autoload TID list
+# 
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase= $(folderbase)/Territories/FL/SARA/86777
+endif
+
+
+projpath = $(codebase)/Projects-Geany/SyncAllData
+altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+thisproj = $(codebase)/Projects-Geany/SyncAllData
+
+.PHONY  : Always
+.ONESHELL : ;
+.NOPARALLEL : ;
+
+# primary target phony
+#==================================================================
+Always :
+	if test -f $(projpath)/KillSync;then rm $(projpath)/KillSync;fi
+	$(projpath)/CheckMaster.sh
+	# now check SC special dbs.
+	# now check RU special dbs.
+	if test -f $(projpath)/SCoodList.txt;then rm $(projpath)/SCoodList.txt;fi  
+	$(projpath)/CheckSCTerrs.sh <start-tid> <end-tid>
+	$(projpath)/CheckSpecSCTerrs.sh <start-tid> <end-tid>
+	if test -f $(projpath)KillSync;then exit 1;fi
+	# all SC data synchronized, now synchronize RU Data.
+	if test -f $(projpath)/RUoodList.txt;then rm $(projpath)/RUoodList.txt;fi  
+	$(projpath)/CheckRUTerrs.sh <start-tid> <end-tid>
+	$(projpath)/CheckSpecRUTerrs.sh <start-tid> <end-tid>
+	if test -f $(projpath)KillSync;then exit 1;fi	
+	# all SC and RU data synchronized, now synchronize PolTerri and MultiMail,
+	#  and all QTerryyy.ods files
+	#  by checking if older than ANY SC/RU data (then need to run BridgesToTerr)
+	$(projpath)/CheckQTerrs.sh <start-tid> <end-tid>
+	if test -f $(projpath)KillSync;then exit 1;fi		
+	# finally, check all TerrData/Terrxxx/PubTerrxxx.ods files against own QTerrxxx.csv
+	#  files to find publisher territories needing regeneration
+	$(projpath)/CheckPubTerrs.sh <start-tid> <end-tid>
+	if test -f $(projpath)KillSync;then exit 1;fi
+	# deactivated block...============================================
+	if [ 1 -eq 0 ];then \		
+#	echo "** run SyncAllData.sh to synchronize all Territories data **" \
+		cd $(altproj);./DoSed.sh $(projpath) SyncAllData \
+	$(MAKE) -f $(altproj)/MakeAnySQLtoSH \
+	if ! test -f $(projpath)/SyncAllData.sh;then \
+	 echo "** SyncAllData.sh generation from SyncAllData.sql failed **" >> $(projpath)/KillSync;fi
+	if test -f $(projpath)/KillSync;then \
+	 echo " ** SyncAllData FAILED - see message(s) that follow(s)...";\
+	 cat $(projpath)/KillSync;exit 1;fi;fi
+	# end deactivated block.. ========================================
+	echo " SyncAllData <start-tid> - <end-tid> complete - all up-to-date."
+
+#==================================================================
+# end MakeSyncAllData.tmp

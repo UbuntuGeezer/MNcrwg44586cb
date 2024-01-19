@@ -1,0 +1,99 @@
+#!/bin/bash
+# RestartAllIncs.sh  - Set up for fresh incremental archiving of all.
+# 	5/5/22.	wmk.
+#
+#	Usage. bash RestartAllIncs.sh <list>
+#
+#		<list> = any nonempty string will only list restarts to perform
+#				 otherwise run all shells starting with *Restart*
+#
+# Dependencies.
+#	~/Territories/DB-Dev - base directory for master databases
+#	~/Territories/.log - tar log subfolder for tracking incremental
+#	  dumps
+#
+# Exit Results.
+#	/Territories/MainDBs.nnn.tar files all deleted after warning;
+#	/Territories/log/MainDBs.snar-0 deleted after warning;
+#	/Territories/log/MainDBslevel.txt deleted; this sets up next run of
+#	IncDumpMainDBs to start at level 0;
+#
+# Modification History.
+# ---------------------
+# 5/5/22.	wmk.	RestartInc* list provides list of "restarts" to 
+#			 execute.
+# 4/22/22.	wmk.	modified for general use /FL/SARA/86777; *pathbase*
+#			 support.
+# Legacy mods.
+# 9/17/21.	wmk.	original shell; adapted from RestartIncRawData;
+#					jumpto function and references removed.
+# 12/24/21.	wmk.	notify-send conditional for multihost.
+# 3/1/22.	wmk.	HOME env var changed to USER;RestartIncGeany added.
+#
+# Notes. The entire incremental dump collection for RawData will be
+# removed by this shell. The user will be given appropriate warnings
+# before proceeding.
+if [ -z "$folderbase" ];then
+ if [ "$USER" = "ubuntu" ]; then
+  export folderbase=/media/ubuntu/Windows/Users/Bill
+ else 
+  export folderbase=$HOME
+ fi
+fi
+if [ -z "$pathbase" ];then
+ pathbase=$folderbase/Territories/FL/SARA/86777
+fi
+P1=$1
+local_debug=0	# set to 1 for debugging
+#local_debug=1
+#
+# handle case where called from Make.
+if [ -z "$system_log" ]; then
+  system_log=$folderbase/ubuntu/SystemLog.txt
+  bash ~/sysprocs/LOGMSG "   RestartAllIncs $P1 initiated from Make."
+  echo "   RestartAllIncs $P1 initiated."
+else
+  bash ~/sysprocs/LOGMSG "   RestartAllIncs $P1 initiated from Terminal."
+  echo "   RestartAllIncs $P1 initiated."
+fi
+TEMP_PATH="$folderbase/temp"
+cd $pathbase/Projects-Geany/ArchivingBackups
+ls Restart*.sh > RestartList.txt
+# remove RestartAll and Biz territories for now..
+sed -i '/RestartAll/ d' RestartList.txt
+sed -i '/RestartIncBRURaw/ d' RestartList.txt
+sed -i '/RestartIncBSCRaw/ d' RestartList.txt
+sed -i '/RestartIncBTerrData/ d' RestartList.txt
+if [ ! -z "$P1" ];then
+ echo "The following restarts will be performed..."
+ cat RestartList.txt
+ exit 0
+else
+ echo " **WARNING - proceeding will restart all incremental dump files!**"
+ read -p "OK to proceed (Y/N)? "
+ ynreply=${REPLY,,}
+ if [ "$ynreply" == "y" ];then
+#  exit 0
+  # insert code to process RestartList.txt here...
+  file=$pathbase/Projects-Geany/ArchivingBackups/RestartList.txt
+  export NOPROMPT=1
+  while read -e;do
+   echo "Processing $REPLY ..."
+   $pathbase/Projects-Geany/ArchivingBackups/$REPLY fl sara 86777
+  done < $file
+ else
+  ~/sysprocs/LOGMSG "  User halted RestartAllIncs."
+  echo " Stopping RestartAllIncs - secure all incremental backups.."
+  exit 0
+ fi
+fi
+#end proc body
+if [ $local_debug = 1 ]; then
+  popd
+fi
+if [ "$USER" != "vncwmk3" ];then
+ notify-send "RestartAllIncs" "complete."
+fi
+~/sysprocs/LOGMSG "  RestartAllIncs complete."
+echo "  RestartAllIncs $P1 complete"
+# end RestartAllIncs

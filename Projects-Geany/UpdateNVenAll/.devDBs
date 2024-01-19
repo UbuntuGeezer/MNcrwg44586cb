@@ -1,0 +1,7 @@
+#.devDBs - list of DB files to copy to DB-Dev from DB
+AuxSCPAData.db
+BizTerri.db
+MultiMail.db
+PolyTerri.db
+TerrIDData.db
+VeniceNTerritory.db

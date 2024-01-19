@@ -1,0 +1,45 @@
+echo "-- * DNCSummary.sql - Generate DNCSummary.csv in Tracking folder."  > SQLTemp.sql
+echo "-- *	7/10/22.	wmk."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Entry.	*pathbase/DB-Dev/TerrIDData.db.DoNotCalls table has all"  >> SQLTemp.sql
+echo "-- *	DO NOT CALL entries."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Exit.  *pathbase/Projects-Geany/DoTerrsWithCalc/Tracking/DNCSummary.csv"  >> SQLTemp.sql
+echo "-- * 	has count of DNCs by territory. This can easily be imported into a"  >> SQLTemp.sql
+echo "-- *	spreadsheet for a general format report."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * This query should be run through the AnySQLtoSH project to produce the"  >> SQLTemp.sql
+echo "-- * DNCSummary.sh shell. That shell will produce the output described in the"  >> SQLTemp.sql
+echo "-- * Exit conditions above."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ".open '$pathbase/DB-Dev/TerrIDData.db'"  >> SQLTemp.sql
+echo "DROP TABLE IF EXISTs DncCount;"  >> SQLTemp.sql
+echo "create temp table DncCount"  >> SQLTemp.sql
+echo "(TID  TEXT, Ndncs  integer, OldestDNC TEXT, NewestDNC TEXT);"  >> SQLTemp.sql
+echo "insert into DNCCount"  >> SQLTemp.sql
+echo "SELECT DISTINCT TERRID, '0', '', '' fROM donotcalls"  >> SQLTemp.sql
+echo "order by TERRID;"  >> SQLTemp.sql
+echo "with a as (SELECT TerrID,DelPending, "  >> SQLTemp.sql
+echo "  RecDate NumDate from donotcalls)"  >> SQLTemp.sql
+echo "update DncCount"  >> SQLTemp.sql
+echo "set ndncs ="  >> SQLTemp.sql
+echo "case"  >> SQLTemp.sql
+echo "when TID IN (SELECT TerrID from a)"  >> SQLTemp.sql
+echo " THEN (SELECT COUNT() TERRID from a"  >> SQLTemp.sql
+echo "  where TERRID IS TID"  >> SQLTemp.sql
+echo "  and DelPending IS NOT 1)"  >> SQLTemp.sql
+echo "else ndncs"  >> SQLTemp.sql
+echo "end,"  >> SQLTemp.sql
+echo "OldestDNC = (SELECT NumDate FROM a "  >> SQLTemp.sql
+echo " WHERE NumDate IN (SELECT MIN(NumDate) FROM a"  >> SQLTemp.sql
+echo "   WHERE TerrID IS TID)),"  >> SQLTemp.sql
+echo "NewestDNC =  (SELECT NumDate FROM a "  >> SQLTemp.sql
+echo " WHERE NumDate IN (SELECT MAX(NumDate) FROM a"  >> SQLTemp.sql
+echo "   WHERE TerrID IS TID));"  >> SQLTemp.sql
+echo ".mode csv"  >> SQLTemp.sql
+echo ".headers on"  >> SQLTemp.sql
+echo ".separator ,"  >> SQLTemp.sql
+echo ".output '$pathbase/Projects-Geany/DoTerrsWithCalc/Tracking/DNCSummary.csv'"  >> SQLTemp.sql
+echo "select * from dnccount;"  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo "-- ** END DNCSummary **********;"  >> SQLTemp.sql

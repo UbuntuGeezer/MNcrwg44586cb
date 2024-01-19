@@ -1,0 +1,8 @@
+# TIDList.BayLake.txt - Bay Lake Estates MHP territory ID list.
+#	11/14/21.	wmk.
+317
+318
+319
+320
+321
+# end TIDList.BayLake.txt

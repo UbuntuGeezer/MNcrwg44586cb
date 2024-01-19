@@ -1,0 +1,6 @@
+# sedfixMakeNonMHP1.txt MakeSpecials path fixes. 6/4/22.
+#  this corrects the errant basepath setting, adding RawData../RefUSA-Downloads.
+/basepath =/s?)?)/RawData/RefUSA/RefUSA-Downloads?
+2a # 6/4/22.     wmk.   (automated) fix basepath var.
+# end basepath var fixes.
+

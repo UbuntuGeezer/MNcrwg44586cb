@@ -1,0 +1,13 @@
+-rwxrwxrwx 1 ubuntu ubuntu 1.8K Jun  2 07:21 BellagioTidy.sql
+-rwxrwxrwx 1 ubuntu ubuntu 1.2K May 30 17:45 BerkshirePlaceTidy.sql
+-rwxrwxrwx 1 ubuntu ubuntu  13K May 30 17:45 BirdBayDrTidy.sql
+-rwxrwxrwx 1 ubuntu ubuntu 1.2K May 30 17:45 BrennerParkTidy.sql
+-rwxrwxrwx 1 ubuntu ubuntu 1.8K May 30 17:45 CountryClubMHPTidy.sql
+-rwxrwxrwx 1 ubuntu ubuntu 1.8K May 30 17:45 EaglePointTidy.sql
+-rwxrwxrwx 1 ubuntu ubuntu 1.8K May 30 17:45 HiddenLakesTidy.sql
+-rwxrwxrwx 1 ubuntu ubuntu 1.5K May 30 17:45 LakesideWoodsDrTidy.sql
+-rwxrwxrwx 1 ubuntu ubuntu 2.0K May 30 17:45 SawgrassNTidy.sql
+-rwxrwxrwx 1 ubuntu ubuntu 1.9K May 30 17:45 SawgrassSTidy.sql
+-rwxrwxrwx 1 ubuntu ubuntu 4.5K May 30 17:45 TarponCenterDrTidy.sql
+-rwxrwxrwx 1 ubuntu ubuntu 1.2K May 30 17:45 WaterfordNorthTidy.sql
+-rwxrwxrwx 1 ubuntu ubuntu 2.1K May 30 17:45 WhitePineTreeRdTidy.sql

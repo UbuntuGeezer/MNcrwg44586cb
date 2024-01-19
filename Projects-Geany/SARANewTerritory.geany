@@ -1,0 +1,58 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=SCNewTerritory
+base_path=/home/vncwmk3/Territories/Projects-Geany/SCNewTerritory/
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=5
+FILE_NAME_0=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FTerritories%2FProjects-Geany%2FSARANewTerritory%2FDoSed.sh;0;4
+FILE_NAME_1=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FTerritories%2FProjects-Geany%2FSARANewTerritory%2FMakeSCNewTerritory;0;4
+FILE_NAME_2=1103;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FTerritories%2FProjects-Geany%2FSARANewTerritory%2FMakeSCNewTerritory.tmp;0;4
+FILE_NAME_3=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FTerritories%2FProjects-Geany%2FSARANewTerritory%2FpathSCdefs.i;0;4
+FILE_NAME_4=0;Pascal;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FTerritories%2FProjects-Geany%2FSARANewTerritory%2FpathSCdefs.inc;0;4
+FILE_NAME_5=2056;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FTerritories%2FProjects-Geany%2FSARANewTerritory%2FREADME;0;4
+FILE_NAME_6=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FTerritories%2FProjects-Geany%2FSARANewTerritory%2Fsedative.txt;0;4
+
+[VTE]
+last_dir=/home/vncwmk3/Territories/Procs-Dev
+
+[build-menu]
+NF_00_LB=_Make
+NF_00_CM=make -f MakeSCNewTerritory
+NF_00_WD=/home/vncwmk3/Territories/Projects-Geany/SCNewTerritory
+NF_03_LB=sed
+NF_03_CM=bash DoSed.sh  983
+NF_03_WD=/home/vncwmk3/Territories/Projects-Geany/SCNewTerritory
+EX_01_LB=Make Dry Run
+EX_01_CM=make --dry-run  -f MakeSCNewTerritory
+EX_01_WD=/home/vncwmk3/Territories/Projects-Geany/SCNewTerritory
+NF_01_LB=Make Custom _Target...
+NF_01_CM=
+NF_01_WD=/home/vncwmk3/Territories/RawData/SCPA/SCPA-Downloads/Terr647
+NF_02_LB=Make _Object
+NF_02_CM=make %e.o
+NF_02_WD=/home/vncwmk3/Territories/Projects-Geany/SCNewTerritory

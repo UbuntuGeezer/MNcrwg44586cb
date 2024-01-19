@@ -1,0 +1,36 @@
+#MakeNewBTerr.tmp - make file template for creating new business territory.
+#	9/24/21.	wmk.
+#
+# Entry. user must have defined territory in TerrIDData.db.Territory table.
+#
+# Modification History.
+# ---------------------
+# 9/24/21.	wmk.	original code; adapted from MakeNewTerr.
+#
+# Notes. Project "sed" command should be used to change terrid to yyy in
+#  MakeNewTBerr make file.
+
+ifeq ($(HOME),/home/ubuntu)
+  folderbase=/media/ubuntu/Windows/Users/Bill/
+else
+  folderbase = $(HOME)/
+endif
+
+bashpath = $(folderbase)Territories/Procs-Dev/
+RUpath = $(folderbase)Territories/BRawData/BRefUSA/BRefUSA-Downloads/
+SCpath = $(folderbase)Territories/BRawData/BSCPA/BSCPA-Downloads/
+
+# primary targets $(RUpath)TErryyy $(SCPath)TErryyy
+#=========================================================
+$(RUpath)TErryyy $(SCpath)TErryyy &: 
+	if test -d $(RUpath)TErryyy; then rm -r $(RUpath)TErryyy;fi
+	if test -d $(SCpath)TErryyy; then rm -r $(SCpath)TErryyy;fi
+	bash $(bashpath)MakeBRawData.sh yyy
+	bash $(bashpath)MakeBTerrData.sh yyy
+	bash $(bashpath)GenBTerrHdr.sh yyy
+	echo "** Now run Calc on TerryyyHdr.csv to create TerryyyHdr.ods **"
+
+#==========================================================	
+
+	
+#MakeNewBTerr :

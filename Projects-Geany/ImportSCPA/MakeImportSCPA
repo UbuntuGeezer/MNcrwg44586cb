@@ -1,0 +1,114 @@
+# MakeImportSCPA - makefile to build SCPA_0528.db.
+#	11/21/22.	wmk.
+#
+# Exit. CreateNewSCPA.sql > CreateNewSCPA.sh
+#
+# Modification History.
+# ---------------------
+# 9/22/22.    wmk.	(automated) *codebase env var support.
+# 9/22/22.    wmk.  (automated) CB *codebase env var support.
+# 11/21/22.   wmk.  bug fix; *thisbase *projbase settting corrected. 
+# Legacy mods.
+# 4/27/22.	wmk.	original code.
+# 4/29/22.	wmk.	PopulateAllAccts added to recipe.
+# 5/1/22.	wmk.	add SCPAonly build option.
+# 5/26/22.	wmk.	add execute CreateNewSCPA to both build recipes.
+# 6/30/22.	wmk.	clarify SCPAonly var documentation.
+#
+# Notes. *MakeImportSCPA has two build modes, SCPAonly and full build.
+# If SCPAonly, only the SCPA_mm-dd.db will be rebuilt.
+# If full build, SCPA_mm-dd.db and Terr86777.db will be rebuilt.
+# The control var is SCPAonly; 1 = only rebuild SCPA_mm-dd.db,
+#  otherwise full build and regenerate Terr86777.db
+# sed should set mm and dd in this recipe to the month and day of SCPA full download
+# recipe should ensure that ~/SCPA-Downloads/SCPADiff_mm-dd.db is up-to-date.
+#   if not, generate it by running QSCPADiff.sh against old/new dbs
+#		using sed to set m1 d1 to older SCPA download month/day
+#		 and 05 28 to the newest SCPA full download
+# if Terr86777>.db is out-of-date (by looking at SCPADiff_mm-dd)
+#	run the shell version of DiffsToCongTerr.sql (DiffsToCongTerr.sh)
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef terrdflt
+ $(error ** *terrdflt* environment var not set **)
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(terrdflt)
+else
+ ifneq ($(pathbase),$(terrdflt))
+  $(error ** *pathbase* and *terrdflt* differ - MakeUpdateCongTerr aborted **)
+ endif
+endif
+
+vpath %.db $(pathbase)/RawData/SCPA/SCPA-Downloads/
+vpath %.csv
+vpath %.xlsx
+mainbase = $(pathbase)/DB-Dev/
+#mainpath = $(pathbase)/DB-Dev/
+ procpath = $(codebase)/Procs-Dev
+shellbase = $(pathbase)/Projects-Geany/ShellFiles/
+#shellpath = $(pathbase)/Projects-Geany/ShellFiles/
+projbase = $(codebase)/Projects-Geany/
+thisbase = $(codebase)/Projects-Geany/ImportSCPA/
+ projpath = $(codebase)/Projects-Geany/ImportSCPA
+scpabase = $(pathbase)/RawData/SCPA/SCPA-Downloads/
+#scpapath = $(pathbase)/RawData/SCPA/SCPA-Downloads
+ altproj = $(codebase)/Projects-Geany/AnySQLtoSH
+
+.ONESHELL :
+
+.PHONY : MakeShell1 MakeShell2
+
+# Build process controls.
+# set these vars for build control.
+#$(error ** MakeImportSCPA - Build controls not set **)
+#define SCPAonly=0 if to rebuild BOTH Terr86777.db and SCPA_mm-dd.db
+#define SCPAonly =1 if only want to build SCPA_mm-dd.db
+#SCPAonly = 0
+SCPAonly = 1
+
+# primary target: (mainbase)Terr86777>.db
+#====================================================================
+# Terr86777>
+ifeq ($(SCPAonly),1)
+$(scpabase)SCPA_05-28.db : 
+	echo "shellbase = '$(shellbase)'"
+	# Now extract records from SCPA_05-28.db whose "Account#"
+	# fields are in Terr86777.db.Terr86777 table.
+	$(MAKE) -f $(projpath)/MakeCreateNewSCPA
+else
+$(mainbase)Terr86777>.db  : 
+	echo "shellbase = '$(shellbase)'"
+	# Now extract records from SCPA_05-28.db whose "Account#"
+	# fields are in VeniceNTerritory.db.NVenAccts table.
+	$(MAKE) -f $(projpath)/MakeCreateNewSCPA
+	$(MAKE) -f $(projpath)/MakePopulateCongTerr
+	$(MAKE) -f $(projpath)/MakePopulateAllAccts
+	$(projpath)/CreateNewSCPA.sh
+	$(projpath)/PopulateCongTerr.sh
+	$(projpath)/PopulateAllAccts.sh
+endif
+
+#---
+$(scpabase)Data0528.csv : $(scpabase)SCPA-Public_05-28.xlsx;
+	if ! test -f $(scpabase)Data0528.csv;then \
+	echo "** Use Calc to convert SCPA-Public_05-28.xlsx to .csv..**"; \
+	exit 1;fi
+
+$(scpabase)SCPA-Public_05-28.xlsx : ;
+	if ! test -f $(scpabase)SCPA-Public_05-28.xlsx;then \
+	 echo "** Download SCPA-Public-05-28.xlsx..**";exit 1;fi
+
+#===========================================================

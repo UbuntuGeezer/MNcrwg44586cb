@@ -1,0 +1,75 @@
+#!/bin/bash
+# DoSedTerrIdOps.sh - *sed edit MakeDeleteTerr.tmp, MakeAddTerr.tmp, MakeChangeTerr.tmp.
+# 5/31/23.	wmk.
+#
+# Usage. bash  DoSedTerrIdOps.sh <terrid> <newterrid>
+#
+#	<terrid> = territory ID for add, delete, change
+#	<newterrid> = new territory ID for change
+#
+# Entry. 
+#
+# Dependencies.
+#
+# Exit.	*projpath/MakeAddTerr.tmp > $projpath/MakeAddTerr
+#	*projpath/MakeDeleteTerr.tmp > $projpath/MakeDeleteTerr
+#	*projpath/MakeChangeTerr.tmp > $projpath/MakeChangeTerr
+#	*projpath/AddTerr.psq > $projpath/AddTerr.sql
+#	*projpath/DeleteTerr.psq > $projpath/DeleteTerr.sql
+#	*projpath/ChangeTerr.psq > $projpath/ChangeTerr.sql
+#
+# Modification History.
+# ---------------------
+# 5/30/23.	wmk.	original shell.
+#
+# Notes. 
+#
+# set parameters P1..Pn here..
+#
+P1=$1
+P2=$2
+if [ -z "$P1" ];then
+ echo "DoSedExtact <terrid> [<newterrid>] missing parameter(s) - abandoned."
+ exit 1
+fi
+if [ -z "$P2" ];then
+ P2=000
+fi
+if [ -z "$folderbase" ];then
+ if [ "$USER" == "ubuntu" ]; then
+  export folderbase=/media/ubuntu/Windows/Users/Bill
+ else
+  export folderbase=$HOME
+ fi
+fi
+if [ -z "$pathbase" ];then
+ export pathbase=$folderbase/Territories/FL/SARA/86777
+fi
+if [ -z "$codebase" ];then
+ export pathbase=$folderbase/GitHub/TerritoriesCB
+fi
+if [ -z "$system_log" ]; then
+  system_log=$folderbase/ubuntu/SystemLog.txt
+  ~/sysprocs/LOGMSG "  DoSedTerrIdOps - initiated from Make"
+  echo "  DoSedTerrIdOps - initiated from Make"
+else
+  ~/sysprocs/LOGMSG "  DoSedTerrIdOps - initiated from Terminal"
+  echo "  DoSedTerrIdOps - initiated from Terminal"
+fi 
+TEMP_PATH=$HOME/temp
+#	Environment vars:
+if [ -z "$TODAY" ];then
+ . ~/GitHub/TerritoriesCB/Procs-Dev/SetToday.sh
+#TODAY=2022-04-22
+fi
+#procbodyhere
+sed "s?<xxx>?$P1?g" AddTerr.psq > AddTerr.sql
+sed "s?<xxx>?$P1?g" DeleteTerr.psq > DeleteTerr.sql
+sed "s?<xxx>?$P1?g;s?<yyy>?$P2?g" ChangeTerr.psq > ChangeTerr.sql
+sed "s?yyy?$P1?g" MakeAddTerr.tmp > MakeAddTerr
+sed "s?yyy?$P1?g" MakeDeleteTerr.tmp > MakeDeleteTerr
+sed "s?yyy?$P1?g;s?zzz?$P2?g" MakeChangeTerr.tmp > MakeChangeTerr
+#endprocbody
+echo "  DoSedExtact complete."
+~/sysprocs/LOGMSG "  DoSedExtact complete."
+# end DoSedTerrIdOps.sh

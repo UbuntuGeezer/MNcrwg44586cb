@@ -1,0 +1,140 @@
+&apos;// fsAddrToSCFormat.bas
+&apos;//---------------------------------------------------------------
+&apos;// fsAddrToSCFormat - Convert FullAddress to SC formatted address.
+&apos;//		10/12/20.	wmk.	17:30
+&apos;//---------------------------------------------------------------
+
+public function fsAddrToSCFormat(psFullAddr As String) As String
+
+&apos;//	Usage.	macro call or
+&apos;//			sSCAddr = fsAddrToSCFormat( sFullAddr )
+&apos;//
+&apos;//		sFullAddr = full address from concatenation routines
+&apos;//			&lt;number&gt;&lt;b&gt;&lt;b&gt;&lt;b&gt;&lt;street&gt;&lt;street_suffix&gt;&lt;b&gt;&lt;unit&gt;&lt;b&gt;&lt;post-dir&gt;
+&apos;//
+&apos;// Entry.
+&apos;//
+&apos;//	Exit.	sSCAddr = SCPA formatted address:
+&apos;//			&lt;number&gt;&lt;post-dir&gt;&lt;b*2&gt;&lt;street&gt;&lt;street_suffix&gt;[&lt;b_35&gt;&lt;unit&gt;]
+&apos;//			or &lt;number&gt;&lt;b*3&gt;&lt;street&gt;&lt;street_suffix&gt;[&lt;b_35&gt;&lt;unit&gt;]
+&apos;//			where b is space, b_35 is spacing through col 35
+&apos;//			for now, only the 2nd format is generated
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/17/20.	wmk.	original code
+&apos;// 9/18/20.	wmk.	dead code removed
+&apos;//	10/12/20.	wmk.	bug fix where unit number not always starting
+&apos;// 					in col 36; (ConcatAddrM fixed, documentation
+&apos;//						updated.
+&apos;//
+&apos;//	Notes. This is designed to generate an address format that is
+&apos;//	compatible with SCPA download-generated database property addresses
+&apos;//	to facilitate queries, searches and updates. Apparently, if a number
+&apos;// has a directional suffix, only 2 spaces intervene between that
+&apos;// and the street name. The street address is a fixed-length field
+&apos;// that ends at column 35, with the unit number always beginning in
+&apos;// col 36. The best guess for situs address is to not use the post-dir
+&apos;// at all in the SC address.
+&apos;// It appears that in most cases in SC data, the direction suffix has
+&apos;// been left out of the SitusAddress. For the time being, the post-direction
+&apos;// will just be dropped, as it stands a better chance of matching the
+&apos;// SC data address. An exceptions list can eventually be developed that
+&apos;// can be used to check for exceptions where the directional suffix is
+&apos;// part of the number token in the SC data (e.g.526S HARBOR DR).
+
+&apos;//	constants.
+const COL_NUMBER=2			&apos;// house number
+const COL_PREDIR=3			&apos;// street pre-direction
+const COL_STREET=4			&apos;// street name
+const COL_SUFFIX=5			&apos;// street suffix (e.g. Ave)
+const COL_POSTDIR=6			&apos;// street post direction
+const COL_UNIT=7			&apos;// unit/apt #
+const YELLOW=16776960		&apos;// decimal value of YELLOW color
+const BLANKS_30=&quot;                              &quot;	&apos;// exactly 30 spaces
+const BLANKS_17=&quot;                 &quot;	&apos;// exactly 17 spaces
+const BLANKS_3=&quot;   &quot;				&apos;// exactly 3 spaces
+const BLANKS_2=&quot;  &quot;					&apos;// exactly 2 spaces
+
+&apos;//	local variables.
+dim sRetValue	As String	&apos;// returned value
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+
+&apos;// processing variables.
+dim sAddress As String		&apos;// address field from current row
+dim sPrefix	As String		&apos;// url generated from sAddress
+dim sStreet	As String		&apos;// HYPERTEXT link to store
+dim sSuffix As String		&apos;// 
+dim sUnit	As String
+dim sPreDir	As String		&apos;// pre-direction letter
+
+dim sRight2		As String	&apos;// rightmost 2 of passed address
+dim sDir		As String	&apos;// anticipated leading space of last 2
+dim sSeps		As String	&apos;// string of separators to find &apos;NSEW&apos;
+dim sSepFnd		As String	&apos;// anticipated direction NSEW	
+dim bHaveDir	As Boolean	&apos;// have direction flag
+dim nSpaces		As Integer	&apos;// number of fill spaces to col 36
+
+&apos;// XCell sheet objects
+dim oCellAddr as object		&apos;// address field
+dim oCity 	As object		&apos;// city for sheet
+dim sCity	As String		&apos;// city from sheet
+
+&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	sRetValue = psFullAddr		&apos;// stub; just echo back passed address
+	
+	&apos;// at the right end of the full address check for
+	&apos;// &lt;b&gt;{N,S,E,W}*1; if is there, assume it is direction and delete it.
+	&apos;// modify the Concat routines to place exactly the correct spacing
+	&apos;// to start the unit token in col 36, so that no other
+	&apos;// action is necessary to get the two address formats to match.
+	
+&apos;// begin new code.
+dim sNoUnitAddr		As String	&apos;// full address with unit stripped
+dim sUnitAddr		As String	&apos;// unit stripped from address
+dim nBlanks			As Integer	&apos;// space fill count
+
+	sAddress = psFullAddr
+	sNoUnitAddr = trim(left(sAddress,35))&apos;// unit always starts at 36
+	sUnitAddr = Mid(sAddress,36,len(sAddress))		&apos;// grab unit substring
+	
+	sRight2 = Right(sNoUnitAddr, 2)
+	sSeps=&quot;NSEW&quot;
+	Crack(sRight2, sSeps, sDir, sSepFnd)
+	bHaveDir = (StrComp(sDir, &quot; &quot;) = 0)
+	if bHaveDir then
+		bHaveDir = (InStr(&quot;NSEW&quot;, sSepFnd) &gt; 0)
+	endif
+	
+	&apos;// if have direction, drop it, otherwise leave address alone
+	if bHaveDir then
+		sRetValue = Left(sNoUnitAddr, Len(sNoUnitAddr)-2)
+	else
+		sRetValue = sNoUnitAddr
+	endif
+
+    if len(sRetValue) &lt; 35 then
+		nBlanks = 35 - len(sRetValue)
+		sRetValue = sRetValue + left(BLANKS_30, nBlanks)
+    endif
+    sRetValue = sRetValue + sUnitAddr
+	sRetValue = trim(sRetValue)
+
+NormalExit:
+	fsAddrToSCFormat = sRetValue
+	exit function
+	
+ErrorHandler:	
+	msgbox(&quot;fsAddrToSCFormat - unprocessed error.&quot;)
+	GoTo NormalExit
+
+end function	&apos;// end fsAddrToSCFormat	10/12/20.

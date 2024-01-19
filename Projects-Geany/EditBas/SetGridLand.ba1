@@ -1,0 +1,53 @@
+&apos;// SetGridLand.bas
+&apos;//---------------------------------------------------------------
+&apos;// SetGridLand - Send user to Page formatting dialog.
+&apos;//		1/14/21.	wmk.
+&apos;//---------------------------------------------------------------
+
+public sub SetGridLand()
+
+&apos;//	Usage.	macro call or
+&apos;//			call SetGridLand()
+&apos;//
+&apos;//
+&apos;// Entry.	sheet selected
+&apos;//
+&apos;//	Exit.	selected sheet has page format Landscape and Grid ON
+&apos;//			assuming user updated with dialog interface
+&apos;//
+&apos;// Calls. UNO services
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	1/14/21.		wmk.	original code
+&apos;//
+&apos;//	Notes. Hooked to hotkey ctrl-6 in TerrKeys.cfg
+&apos;//
+
+&apos;//	constants.
+
+&apos;//	local variables.
+rem ----------------------------------------------------------------------
+rem define variables
+dim document   as object
+dim dispatcher as object
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+rem ----------------------------------------------------------------------
+rem get access to the document
+document   = ThisComponent.CurrentController.Frame
+dispatcher = createUnoService(&quot;com.sun.star.frame.DispatchHelper&quot;)
+
+rem ----------------------------------------------------------------------
+dispatcher.executeDispatch(document, &quot;.uno:PageFormatDialog&quot;, &quot;&quot;, 0, Array())
+
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SetGridLand - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end SetGridLand		1/14/21

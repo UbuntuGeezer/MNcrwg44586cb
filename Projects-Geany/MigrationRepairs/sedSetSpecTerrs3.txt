@@ -1,0 +1,2 @@
+#sedSetSpecTerrs3.txt
+/#inserthere/ r /home/vncwmk3/GitHub/Projects-Geany/MigrationRepairs/SedSetSpecTerrs.txt

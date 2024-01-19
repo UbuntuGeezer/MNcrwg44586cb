@@ -1,0 +1,33 @@
+# MakeAddNVenAllRecord.tmp - Makefile for AddNVenAllRecord build.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	9/22/21.	wmk.
+#
+# Modification History.
+# ---------------------
+# 9/22/21.	wmk.	original makefile.
+#
+# MakeAddNVenAllRecord adds a new record to NVenAll from the Data0319
+# table of SCPA_03-19.db download.
+
+ifeq ($(USER),ubuntu)
+ folderbase = /media/ubuntu/Windows/Users/Bill
+else
+ folderbase = $(HOME)
+endif
+
+projbase = $(folderbase)/Territories/Projects-Geany/AddNVenAllRecord
+
+# $(projbase)/AddNVenAllRec.sh
+#============================================================
+$(projbase)/AddNVenAllRec.sh : $(projbase)/AddNVenAllRec.sql
+	echo "#!/bin/bash" >$@
+	echo 'echo ""  AddNVenAllRec 0405050027  03 19 initiated."" ' >> $@
+	echo "~/sysprocs/LOGMSG '  AddNVenAllRec 0405050027  03 19 initiated.'" >> $@
+	echo "sqlite3 < $(projbase)/AddNVenAllRec.sql" >> $@
+	echo 'echo ""  AddNVenAllRec 0405050027  03 19 complete."" ' >> $@
+	echo "~/sysprocs/LOGMSG '  AddNVenAllRec 0405050027  03 19 complete.'" >> $@
+
+$(projbase)/AddNVenAllRec.sql : ;
+
+#============================================================

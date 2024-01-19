@@ -1,0 +1,6 @@
+#!/bin/bash
+# DoMake - do *make with trap preamble.
+trap 'previous_command=$current_command;current_command=$BASH_COMMAND' DEBUG
+make -f $PWD/$1
+cmd=$previous_command ret=$?
+if [ $ret -ne 0 ];then echo "error in $cmd - error code is $ret";fi

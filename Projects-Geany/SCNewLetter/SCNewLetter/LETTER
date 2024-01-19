@@ -1,0 +1,154 @@
+LETTER - RUNewLetter documentation for territory yyy.
+	10/30/21.	wmk.
+
+Modification History.
+---------------------
+9/21/21.	wmk.	original document (adapted from RUNewLetter).
+10/4/21.	wmk.	document updated working through process with new
+					territory 626; UpdateRUDwnld step removed that
+					preceded MakeEmptyRUMap step.
+10/13/21.	wmk.	documentation udpated for more full description of
+					process.
+10/14/21.	wmk.	Lettyyy_TS.pdf documented.
+10/30/21.	wmk.	Method section updated and improved.
+
+
+Project Description.
+--------------------
+The SCNewLetter project creates a database that emulates the database
+created by the SCNewTerritory_db.db within Terryyy SCPA-Download folder.
+It takes a .csv file of letter writing addresses and converts them into
+a Terryyy_SCPoly table that looks exactly like a Terryyy_SCPoly table
+created from a Mapyyy_RU.csv download.
+
+It then creates a Terryyy_SCBridge table that is exactly like the SCBridge
+table created by RUNewTerritory project. This essentially spoofs the system
+into handling a letter writing territory as though it were created from
+an SC download. Once the Terryyy_SC.db is created, it is handled exactly
+the same as any SC territory download.
+
+This project should be run before the RUNewLetter project build.
+
+
+Dependencies.
+-------------
+
+NewLetter.sql - SQL to create new Terryyy_SC.db and populate from Letteryyy_TS.csv
+
+Lettyyy_TS.pdf - Territory Servant PDF of letter-writing territory.
+
+Lettyyy_TS.csv - .csv created by using Calc, cutting/pasting Lettyyy_TS.pdf
+	lines into cells, then exporting to a .csv file. By using <space> as the
+	field separator, the .pdf lines are parsed into fields that closely resemble
+	a Mapyyy_SCPoly record.
+
+Terryyy_SC.db - empty new database with same structure as any Terryyy_SC.db
+
+
+Method.
+-------
+To create a new letter-writing territory peform the following steps:
+
+Before proceeding with the specifics creating the letter writing territory
+follow the basic steps in the NewTerritory project to create a new territory
+with the basic information. Then proceed as follows:
+
+Terminal: Projects-Geany/SCNewLetter folder:
+
+	run ./InitLetter.sh <terrid> to
+ 	 copy the letter-writing territory .pdf Letter_xxx.pdf
+ 	 copy or rename Letter_xxx.pdf to Lettxxx_TS.pdf
+	 copy AddZips.sql and MakeAddZips
+	   to the Terrxxx folder
+
+In the SCPA-Downloads/Terrxxx folder:
+	
+	Open Calc with a new workbook
+	Use Adobe to open the .pdf Lettxxx_TS.pdf with the .pdf records for
+	 the territory
+	copy and paste all lines 1st 2 fields into the new Calc worksheet
+	add headings in the first line of the Calc worksheet
+	 AreaName, HouseNumber, Street1, Street2, Street3, Unit, City, empty, State, Zip
+	save the new worksheet as Lettxxx_TS.ods into the download folder for the
+	 territory
+	 
+	combine any columns A and B that have a split area name into column A
+	 (e.g. 'Bridle' 'Oaks' becomes 'Bridle Oaks' in column A
+	 move columns at right left 1 column so that house number is in column B
+	align remaining column data under appropriate headings; watch out for Units
+	
+	Save the edited sheet to file 'Lettxxx_TS.csv
+	
+
+Enter the SCNewLetter project:
+
+	in the Build commands, set "sed" parameter to territory ID
+	run "sed" from the Buid menu to set up MakeSCNewLetter makefile
+	 and edit the territory ID into NewLetter.sql
+
+	run Make from the Build menu to execute the SQL from NewLetter.sql
+	 creating Terrxxx_SC.db from the Lettxxx_TS.csv data
+	 Note: This will also create /RefUSA-Downloads/Mapxxx_RU.csv empty
+
+Back in the SCPA-Downloads/Terrxxx folder:
+
+	Use sqlite brower to review Terrxxx_SC.db, checking record data for
+	 missing fields like OwningParcel, etc.
+	 Note: At this point, no zip codes have been added to the UnitAddresses
+	  to facilitate address matching with NVenAll master data.
+	---
+	If there are any missing, or incorrect fields (like Units):
+	 Code the fixes for Terrxxx into FixyyySC.sql SQL source. This code
+	  will use the information from VeniceNTerritory.NVenAll to set the
+	  basic information in each record.
+	  WARNING: Also include in the FixyyySC.sql code, the code to set the
+	  OwningParcel field from the NVenAll data. (For other territories,
+	  code in the "Tidy" query does this, but for letter territories this
+	  must be done first.
+	
+	 Terminal: move to the FixAnySC project folder (cdj FixAnySC)
+	 execute the ClearTargets.sh shell with the territory ID
+
+	 Terminal: move back to the SCPA-Downloads/Terrxxx folder
+	 rm the Terrxxx_SC.db database to clear the way for rebuilding with
+	  UpdateRUDwnld project
+	
+	Enter the FixAnySC project:
+
+	set the territory ID into the "sed" Build menu item
+	run "sed" from the Build menu
+	run Make from the Build menu to create the FixyyySC.sh shell
+	 that will be invoked by then UpdateSCBridge project
+
+Terminal: Enter the SCPA-Downloads/Terrxxx folder:
+
+	if FixyyySC.sh shell file exists:
+	run the FixyyySC.sh shell to finish fixing the SC records for use
+	  in making the RU portion and in generating the publisher territory
+	---
+	
+	edit the AddZips.sql to match the territory and set zip codes in the
+	 UnitAddress fields
+	run make -f MakeAddZips to build the AddZips.sh shell
+	run the AddZips.sh shell to add the zip codes into the UnitAddress 
+	 fields in Terrxxx_RU.db.Terrxxx_RUBridge
+
+The letter writing territory will use one or more RefUSA-Downloads/Special
+dbs to extract its own records from the RefUSA databases for the
+RefUSA records to be included in the generated territory. But in order for
+this to work, the SCBridge table in Terrxxx_SC.db must be completed with 
+the above steps.
+
+The RU portion of the territory in folder RefUSA-Downloads/Terrxxx
+still must be fixed as a Special territory.
+
+Projects-Geany/SpecialRUdb project:
+
+	follow the build instructions in README to create the Spec610_RU.db
+	 and populate Terrxxx_RU.db.Terrxxx_RUBridge
+
+The letter writing territory will then be set to work just like any other
+territory. The RefUSA-Downloads/Terrxxx/MakeSpecials makefile will 
+run several shells to make the Specxxx_RU.db, then populate the Terrxxx_RU.db
+by merging in the Specxxx_RU.db.Specxxx_RUBridge entries.
+

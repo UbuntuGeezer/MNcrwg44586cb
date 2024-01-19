@@ -1,0 +1,2 @@
+s/$/" >> SQLTemp.sql/g
+1 s/>>/>/

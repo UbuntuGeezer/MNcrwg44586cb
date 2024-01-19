@@ -1,0 +1,13 @@
+# gawkgenlist.txt	2/23/23.	wmk.
+BEGIN{ ix = 0 }
+{genlist[ix] = substr($1,5,3)
+ ix ++
+ }
+END{
+ n = asort(genlist)
+ for ( i = 1; i <= n; i++ ){
+  print genlist[i]
+  }
+  print "$"
+ }
+

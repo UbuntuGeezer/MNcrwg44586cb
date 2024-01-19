@@ -1,0 +1,29 @@
+# awkfixpathbase.txt
+BEGIN {yup=1}
+{ if(NR==2){print "# 9/22/22.    wmk.   (automated) CB *codebase env var support." }
+  {isprojpath=index($0,"projpath ="); isaltproj=index($0,"altproj =");
+   isbashpath=index($0,"bashpath ="); isprocpath=index($0,"procpath =");
+   isoldpath=index($0,"/FL/SARA/86777"); ispathbase=index($0,"pathbase =");
+   if( isprojpath || isaltproj || isbashpath || isprocpath )
+   {
+    split($3,arr,"(");
+    split($3, arr1,")");
+    print " " $1 " " $2 " " arr[1] "(" "codebase)" arr1[2];
+    yup=0;
+   }
+   else if(isoldpath > 0)
+   {
+    print substr($0,1,isoldpath-1) substr($0,isoldpath+14,99);
+    yup=0;
+   }
+   else if(ispathbase > 0)
+   {
+    print  " pathbase = $(folderbase)/Territories/FL/SARA/86777" ;
+    yup=0;
+   }
+   else if(yup)
+    print;
+   }
+   yup=1
+ } 
+

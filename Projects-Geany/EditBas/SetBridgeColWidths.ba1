@@ -1,0 +1,122 @@
+&apos;// SetBridgeColWidths.bas
+&apos;//----------------------------------------------------------------------
+&apos;// SetBridgeColWidths - Set column widths on Bridge formatted sheet.
+&apos;//		10/23/20.	wmk.	04:45
+&apos;//----------------------------------------------------------------------
+
+public sub SetBridgeColWidths()
+
+&apos;//	Usage.	macro call or
+&apos;//			call SetBridgeColWidths()
+&apos;//
+&apos;// Entry.	User in Admin-Bridge formatted sheet
+&apos;//	OwningParcel  UnitAddress  Unit		  Resident1	 Phone1 Phone2 RefUSA-Phone
+&apos;//	 A (from A)	  B (from K)  C (from I)  D (from C)	E	 F		G	
+&apos;//
+&apos;//  SubTerrItory CongTerrID DoNotCall RSO Foreign  RecordDate	 SitusAddress
+&apos;//		H				I		   J     K     L	M (header C2)	N (from N)
+&apos;//
+&apos;//  Property Use	DelPending
+&apos;//		  O				P
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/11/20.	wmk.	original code; adapted from SetEditColWidths
+&apos;//	9/18/20.	wmk.	widths readjusted and set through col I
+&apos;// 9/30/20.	wmk.	adjust SubTerritory column (H) width to 1.35
+&apos;// 10/23/20.	wmk.	adjust width of new Unit Column (C) to 1.0
+&apos;//
+&apos;//	Notes.
+
+&apos;//	constants.
+const ONE_INCH=2540
+
+&apos;// column and row indexes
+const COL_A=0
+const COL_B=1
+const COL_C=2	
+const COL_D=3
+const COL_E=4
+const COL_F=5
+const COL_G=6			&apos;// column G index
+const COL_H=7			&apos;// column H index
+const COL_I=8			&apos;// column I index
+const COL_J=9			&apos;// column J index
+const COL_K=10			&apos;// column K index
+const COL_L=11			&apos;// column L index 
+const COL_M=12			&apos;// column M index (DoNotCall)
+const COL_N=13			&apos;// column N index (RSO)
+const COL_O=14			&apos;// column O index (Foreign)
+const ROW_1=0
+const ROW_2=1
+const ROW_3=2
+const ROW_4=3
+const ROW_HEADING=4		&apos;// headings row index
+const LJUST=1		&apos;// left-justify HoriJustify				&apos;// mod052020
+const CJUST=2		&apos;// center HoriJustify						&apos;// mod052020
+const RJUST=3		&apos;// right-justify HoriJustify				&apos;// mod052320
+const MDYY=30		&apos;// &apos;M/D/YY&apos; format value
+
+&apos;// column widths
+const A_WIDTH=1.0
+const B_WIDTH=1.75
+const C_WIDTH=1.0
+const D_WIDTH=1.75
+const E_WIDTH=1.0
+const F_WIDTH=1.0
+const G_WIDTH=1.1
+const H_WIDTH=1.35
+const I_WIDTH=1.0
+const J_WIDTH=1.0
+const K_WIDTH=0.45
+const L_WIDTH=0.6
+const M_WIDTH=0.85
+const N_WIDTH=1.75
+const O_WIDTH=0.85
+
+&apos;//	local variables.
+dim oDocument   as object
+dim oDispatcher as object
+dim oDoc	As Object	&apos;// ThisComponent
+dim oSel	As Object	&apos;// current cell selection on entry
+dim oSheet	As Object	&apos;// current sheet
+dim oRange	As Object	&apos;// RangeAddress selected
+dim iSheetIx	As Integer	&apos;// sheet index this sheet
+dim oCols	As Object	&apos;// .Columns array this sheet
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	
+	&apos;// preserve user cell selection
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	oCols = oSheet.Columns
+	oCols(COL_A).setPropertyValue(&quot;Width&quot;, A_WIDTH*ONE_INCH)
+	oCols(COL_B).setPropertyValue(&quot;Width&quot;, B_WIDTH*ONE_INCH)
+	oCols(COL_C).setPropertyValue(&quot;Width&quot;, C_WIDTH*ONE_INCH)
+	oCols(COL_D).setPropertyValue(&quot;Width&quot;, D_WIDTH*ONE_INCH)
+	oCols(COL_E).setPropertyValue(&quot;Width&quot;, E_WIDTH*ONE_INCH)
+	oCols(COL_F).setPropertyValue(&quot;Width&quot;, F_WIDTH*ONE_INCH)
+	oCols(COL_G).setPropertyValue(&quot;Width&quot;, G_WIDTH*ONE_INCH)
+	oCols(COL_H).setPropertyValue(&quot;Width&quot;, H_WIDTH*ONE_INCH)
+	oCols(COL_I).setPropertyValue(&quot;Width&quot;, I_WIDTH*ONE_INCH)
+	oCols(COL_J).setPropertyValue(&quot;Width&quot;, J_WIDTH*ONE_INCH)
+	oCols(COL_K).setPropertyValue(&quot;Width&quot;, K_WIDTH*ONE_INCH)
+	oCols(COL_L).setPropertyValue(&quot;Width&quot;, L_WIDTH*ONE_INCH)
+	oCols(COL_M).setPropertyValue(&quot;Width&quot;, M_WIDTH*ONE_INCH)
+	oCols(COL_N).setPropertyValue(&quot;Width&quot;, N_WIDTH*ONE_INCH)
+	oCols(COL_O).setPropertyValue(&quot;Width&quot;, O_WIDTH*ONE_INCH)
+
+NormalExit:
+	SetSelection(oRange)	&apos;// restore user cell selection
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SetBridgeColWidths - unprocessed error.&quot;)
+	
+end sub		&apos;// end SetBridgeColWidths	10/23/20

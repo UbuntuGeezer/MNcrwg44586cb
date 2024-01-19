@@ -1,0 +1,43 @@
+echo "-- TestForMHPTable.sql - Test for existence of Terr107_MHP table in Previous."  > SQLTemp.sql
+echo "--	12/21/21.	wmk."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Modification History."  >> SQLTemp.sql
+echo "-- * ---------------------"  >> SQLTemp.sql
+echo "-- * 7/6/21.	wmk.	original code."  >> SQLTemp.sql
+echo "-- * 12/21/22.	wmk.	Chrome path issues resolved."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * subquery list."  >> SQLTemp.sql
+echo "-- * --------------"  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- ** TestForMHPTable **********"  >> SQLTemp.sql
+echo "-- *	7/6/21.	wmk."  >> SQLTemp.sql
+echo "-- *----------------------------"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * TestForMHPTable - Test for existence of Terr107_MHP table in Previous."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Entry DB and table dependencies."  >> SQLTemp.sql
+echo "-- *   <list main DB and ATTACHed DBs and tables>"  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Exit DB and table results."  >> SQLTemp.sql
+echo "-- *"  >> SQLTemp.sql
+echo "-- * Notes. This query tests for the existence of the table Terr107_MHP"  >> SQLTemp.sql
+echo "-- * in the Terr107/Previous folder. It will throw an error to the calling"  >> SQLTemp.sql
+echo "-- * shell if the table is not present. This allows the shell to then"  >> SQLTemp.sql
+echo "-- * determine if the Terr107_MHP table should be copied from the prior"  >> SQLTemp.sql
+echo "-- * Terr107_RU.db, or be regenerated from the current db Terr107_RUPoly"  >> SQLTemp.sql
+echo "-- * table records."  >> SQLTemp.sql
+echo "-- * (%)folderbase is used in place of ($)folderbase, since the calling"  >> SQLTemp.sql
+echo "-- * shell will replace it with the environment var ($)folderbase."  >> SQLTemp.sql
+echo "-- *;"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "--TestForMHPTable.sql"  >> SQLTemp.sql
+echo ".cd '$folderbase/Territories/RawData/RefUSA/RefUSA-Downloads'"  >> SQLTemp.sql
+echo "ATTACH './Terr107/Previous/Terr107_RU.db'"  >> SQLTemp.sql
+echo " AS db31;"  >> SQLTemp.sql
+echo "SELECT * FROM Terr107_MHP "  >> SQLTemp.sql
+echo " WHERE City LIKE \"%Venice%\""  >> SQLTemp.sql
+echo " LIMIT 1;"  >> SQLTemp.sql
+echo ".quit"  >> SQLTemp.sql
+echo ""  >> SQLTemp.sql
+echo "-- ** END TestForMHPTable **********;"  >> SQLTemp.sql

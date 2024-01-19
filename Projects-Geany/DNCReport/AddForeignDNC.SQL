@@ -1,0 +1,61 @@
+-- * AddForeignDNC.sql - Add foreign language DNC(s) to TerrIDData.db.DoNotCalls.
+-- * 	7/12/22.	wmk.
+-- *
+-- * Entry. DNCReport/NewForeignDNCs.csv = '|' separated values records
+-- *		 to be added to TerrIDData.DoNotCalls; the "Foreign" field
+-- *		 in each record will be set to the record *ROWID field.
+-- *
+-- * subquery list.
+-- * --------------
+-- * AttachDBs - Attach required databases.
+-- *;
+
+-- ** AttachDBs **********
+-- *	7/12/22.	wmk.
+-- *--------------------------
+-- *
+-- * AttachDBs - Attach required databases.
+-- *
+-- * Entry DB and table dependencies.
+-- *   TerrIDData.db - main, territory ID database
+-- *		DoNotCalls - main Do Not Calls table; this table is used by
+-- *		   the territory generation code for the Territory
+-- *		FLAddress - the "parent" table for foreign language reporting
+-- *		FLInfo - the relevant details of foreign language DNCs
+-- *
+-- *		
+-- * Exit DB and table results.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 7/12/22.	wmk.	original code;
+-- *
+-- * Notes. This is set up to add a record to the DoNotCalls table,
+-- * then integrate that record into the FLAddress and FLInfo tables.
+-- * The FLCong table has the congregation information for those
+-- * congregations whose territories intersect the English congregation
+-- * assigned territory.
+-- *;
+-- pragma foreign_keys=ON;
+-- TerrIDData - db8;
+
+  
+-- ** END AttachDBs **********;
+
+-- ** subquery **********
+-- *	<date>.	wmk.
+-- *--------------------------
+-- *
+-- * subquery_name - simple description.
+-- *
+-- * Entry DB and table dependencies.
+-- *   <list main DB and ATTACHed DBs and tables>
+-- *
+-- * Exit DB and table results.
+-- *
+-- * Notes.
+-- *;
+
+-- ** END subquery_name **********;
+
+-- ** END query **********;

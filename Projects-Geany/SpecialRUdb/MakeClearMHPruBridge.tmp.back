@@ -1,0 +1,58 @@
+# MakeClearMHPruBridge.tmp  - (template) makefile for ClearMHPruBridge.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	4/24/22.	wmk.
+#
+# Modification History.
+# ---------------------
+# 4/24/22.	wmk.	code generalized for FL/SARA/86777;*pathbase*, 
+#			 *congterr*, *conglib* env vars introduced.
+# Legacy mods.
+# 11/13/21.	wmk.	original makefile.
+# 12/28/21.	wmk.	chmod 700 added so .sh will execute.
+#
+# Notes. This makefile will be edited by DoFixSed.sh with the territory id
+# substituted for x xx throughout. DoFixSed and 'make' are invoked on this makefile
+# by the MakeSpecials makefile in the territory download folder.
+
+ifndef folderbase
+ ifeq ($(HOME),/home/ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase=$(folderbase)/Territories
+endif
+
+specpath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Special
+targpath = $(pathbase)/RawData/RefUSA/RefUSA-Downloads/Terrxxx
+ projpath = $(codebase)/Projects-Geany/SpecialRUdb
+ bashpath = $(codebase)/Procs-Dev/
+
+# (targpath)/ClearMHPruBridge.sh primary target
+#==================================================
+$(targpath)/ClearMHPruBridge.sh : $(targpath)/ClearMHPruBridge.sq \
+  $(targpath)/ClearMHPruBridge.sh
+	cat $(bashpath)hdrAnySQL_1.sh $(targpath)/ClearMHPruBridge.sq \
+	 $(bashpath)hdrAnySQL_2.sh > $@
+	sed -i 's?<filename>?ClearMHPruBridge?g' $@
+	chmod +x $@
+
+$(targpath)/ClearMHPruBridge.sq : $(targpath)/ClearMHPruBridge.sql
+	bash $(bashpath)AnySQLtoSQ.sh $(targpath) ClearMHPruBridge
+
+$(targpath)/ClearMHPruBridge.sql  : $(targpath)/ClearMHPruBridge.psq
+	echo "**WARNING - DoSed not run on ClearMHPruBrige.psq **"
+
+$(targpath)/ClearMHPruBridge.psq  : ;
+
+#==================================================
+
+# end MakeClearMHPruBridge

@@ -1,0 +1,33 @@
+--BuildSpclDB.sql - Build RU<special>_mm-dd.db from download data.
+--	7/4/21.	wmk.
+--
+-- * subquery list.
+-- * --------------
+-- * BuildSpclDB - Build RU<special>_mm-dd.db from download data.
+-- *;
+
+-- ** BuildSpclDB **********
+-- *	7/4/21.	wmk.
+-- *------------------------
+-- *
+-- * BuildSpclDB - Build RU<special>_mm-dd.db from download data.
+-- *
+-- * Entry DB and table dependencies.
+-- *   Special/RUvvvv_mm-dd.csv contains records to place in db
+-- *	  in table vvvv.
+-- *
+-- * Exit DB and table results.
+-- *	Special/RUvvvv_mm-dd.db created from RUvvvv_mm-dd.csv
+-- *
+-- * Notes. This query gets executed directly in MakeUpdateMHPDwnld.tmp
+-- *;
+
+.cd '$folderbase/Territories/RawData/RefUSA/RefUSA-Downloads/Special'
+.open 'RUvvvv_mm-dd.db'
+.headers ON
+.separator ,
+.mode csv
+.import RUvvvv_mm-dd.csv vvvv
+.quit
+-- ** END query **********;
+-- ** END subquery_name **********;

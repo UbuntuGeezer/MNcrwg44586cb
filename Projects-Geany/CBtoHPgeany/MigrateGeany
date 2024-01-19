@@ -1,0 +1,86 @@
+#!/bin/bash
+# MigrateGeany.shell - shell template for MigrateGeany.sh
+#	3/30/22.	wmk.
+#
+# Usage.	bash MigrateGeany.sh  <projname> [<targhost>]
+#
+#	<projname> = <projname>.geany source file to migrate
+#	<targhost> = (optional) target host suffix to append to <projname>
+#				  producing <projname><targhost>.geany
+#				  valid values: "HP"  "WHP"
+#				  "HP" is default
+#	If <targhost> is specified, it takes precedence over the environment
+#	var *hosttype*. (See Entry conditions below.)
+#
+# Entry. If the environment var *hosttype* is defined, it will specify
+# the host type (e.g. "HP" or "WHP"). The <targhost> parameter on the
+# bash invocation will supercede the environment var spec.
+#
+# Environment var *folderbase* is the root directory that the
+# target .geany file will substitute for the directory */home/vncwmk3*.
+# The *vncwmk3* directory is the root directory for the ChromeBook
+# system.
+#
+# Notes.	for development purposes, the *HP* host will be considered
+# the primary Geany files host. The ChromeBook host will continue to
+# use the "vanilla" project names, since this is the preferred development
+# host. The entire MigrateGeany project has been extended to facilitate
+# recovery from a ChromeBook system crash onto the older HP laptop system.
+#
+# DoSed.sh in the project stores the project name and host suffix into
+# the MigrateGeany.sh shell for execution. This makefile completes the
+# process of generating and executing the MigrateGeany.sh shell.
+echo $USER
+if [ "$USER" == "ubuntu" ];then
+ folderbase=/media/ubuntu/Windows/Users/Bill
+else
+ folderbase=$HOME
+fi
+if [ -z "$pathbase" ];then
+ echo "** Envrionment var *pathbase* not set - MigrateGeany.sh abandoned."
+ exit 1
+fi
+P1=$1
+P2=$2
+host=${2^^}
+if [ -z "$P1" ];then
+ echo "MigrateGeany.sh  <project> [<host>] - missing parameter(s) - abandoned."
+ exit 0
+fi
+if [ -z "$P2" ];then
+ if [ -z "$hosttype" ];then
+  P2=HP
+ else
+  P2=$hosttype
+ fi
+fi
+echo "hosttype = ""$P2"" "
+echo "MigrateGeany.sh initiated."
+~/sysprocs/LOGMSG "  MigrateGeany.sh initiated."
+projbase=$pathbase/Projects-Geany/CBtoHPgeany
+cd $pathbase/Projects-Geany
+if ! test -f $P1.geany;then
+ echo "Cannot locate $P1.geany - MigrateGeany abandoned."
+ ~/sysprocs/LOGMSG "  Cannot locate $P1.geany - MigrateGeany abandoned."
+else
+case $P2 in
+"HP")
+ sed "{s?/home/vncwmk3?$folderbase?g;s?%2Fhome%2Fvncwmk3?$folderbase?g}" \
+  $P1.geany > $P1$P2.geany
+ sed -i '{/FILE_NAME/ s?/?%2F?g}' $projbase/$P1$P2.geany
+ echo "MigrateGeany.sh complete."
+ ~/sysprocs/LOGMSG "  MigrateGeany.sh  $P1 $P2 complete.";;
+"WHP")
+ echo "initiating WHP conversion"
+ sed -f $projbase/sedativesWHP.txt \
+  $P1.geany > $P1$P2.geany
+# s?%2Fhome%2Fvncwmk3?$folderbase?g}" \
+ echo "MigrateGeany.sh complete."
+ echo "  WHP conversion stubbed";;
+*)
+ echo "MigrateGeany - unrecognized host option $host ... - abandoned."
+ exit 1;;
+esac
+fi
+exit 0
+# end MigrateGeany.shell

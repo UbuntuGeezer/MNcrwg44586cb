@@ -1,0 +1,41 @@
+-- * NoTerrIDs.psq - Query Diff.db for occupied properties with no territory ID.
+-- *	1/14/23.	wmk.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 1/14/23.	wmk.	original query.
+-- * 
+-- * NoTerrIDs scans the current Diffmmdd.db for records where no territory ID
+-- * has been assigned. This will reveal gaps in the SC data where occupied
+-- * addresses have no territory assigned within the system.
+-- *
+-- * NoTerrIDs uses the SCPropUse table within Terr86777.db to isolate occupied
+-- * addresses which have the RType field set to either 'P' or 'M'. Other
+-- * property use codes are either businesses or other land use. The query
+-- * selects records from the Diff0404.db that have property use codes
+-- * that are "occupied" properties, but have no territory ID. The results
+-- * of this query may then be used to manually update territories where
+-- * these addresses are missing.
+-- *
+-- * The results are written to /ExtractDiff/NoTerrIDlist.txt.
+-- *;
+
+-- open Diffmmdd.db as main;
+.open '$pathbase/RawData/SCPA/SCPA-Downloads/SCPADiff_04-04.db'
+
+-- attach Terr86777 as db2;
+ATTACH '$pathbase/DB-Dev/Terr86777.db'
+ AS db2;
+
+.output '$codebase/Projects-Geany/ExtractDiff/NoTerrIDlist.txt'
+with a as (select * from DiffAccts
+ where TerriD is ''),
+b as (select * from db2.SCPropUse
+ where RType IS NOT '')
+select "SitusAddress(PropertyAddress)" Situs from Diff0404
+where "Account#" in (select PropID from a)
+  and PropertyUseCode in (select Code from b)
+ order by TRIM(SUBSTR(Situs,INSTR(Situs,' ')));
+
+.quit
+-- ** END NoTerriDS.sql

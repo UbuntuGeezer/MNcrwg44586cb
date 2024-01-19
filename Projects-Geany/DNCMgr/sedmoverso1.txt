@@ -1,0 +1,10 @@
+# sedmoverso1.txt - *sed directives for DoSedMove.sh.
+#	6/13/23.	wmk.
+# these directives are for MoveRSO.psq.
+# *sed directives when < new-unit > is not ' '.
+ s?<rsoid>?$P1?g
+ s?<new-address>?$P2?g
+ s?<new-unit>?$P3?g
+ s?<newzip>?$P4?g
+ s?<new-terrid>?$P5?g
+ s?<initials>?$P6?g

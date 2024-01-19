@@ -1,0 +1,82 @@
+&apos;// CreateSuperTerr.bas
+&apos;//---------------------------------------------------------------
+&apos;// CreateSuperTerr - Create SuperTerr from territory.
+&apos;//		12/23/21.	wmk.	16:34
+&apos;//---------------------------------------------------------------
+
+public sub CreateSuperTerr( psTerrID As String )
+
+&apos;//	Usage.	macro call or
+&apos;//			call CreateSuperTerr( sTerrID )
+&apos;//
+&apos;//		sTerrID = territory ID
+&apos;//
+&apos;// Entry.	~/Territories/TerrData/Terrxxx/Terrxxx_PubTerr.ods exists
+&apos;//			  as generated territory xxx.
+&apos;//			~/Territories/.../Working-Files/QTerrxxx.ods exists with
+&apos;//			  up-to-date territory records in Bridge table,  in
+&apos;//			  Terrxxx_Bridge sheet
+&apos;//
+&apos;//	Exit.	~/Territories/.../Terrxxx/Terrxxx_SuperTerr.ods created
+&apos;//				and Terrxxx_SuperTerr.xlsx created
+&apos;//
+&apos;// Calls. BridgeToSuper.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	7/12/21.	wmk.	original code.
+&apos;// 12/23/21.	wmk.	modified to use csTerrBase, csTerrDataPath for
+&apos;//				 multihost support.
+&apos;//				
+&apos;//	Notes. CreateSuperTerr takes an existing workbook with sheet
+&apos;//	Terrxxx_Bridge and creates a SuperTerritory
+&apos;//
+
+&apos;//	constants.
+&apos;const csTerrBase = &quot;defined above&quot;
+&apos;const csTerrDataPath = &quot;defined above&quot;
+
+&apos;//	local variables.
+dim sTerrID				As string
+&apos;// uno document vars.
+dim oTestDoc	As Object			&apos;// QTerrxxx.ods
+dim oTestDoc2	As Object			&apos;// Terrxxx_PubTerr.ods
+dim sBaseName	As String
+dim sBasePath	As String
+dim sTargPath	As String
+dim sFullTargPath	As String
+dim sTargetURL	As String
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	sTerrID = psTerrID
+	sBaseName = &quot;QTerr&quot;
+	sBasePath = &quot;/Terr&quot;
+	sTargPath = sBasePath &amp; sTerrID
+
+	&apos;// open QTerrxxx.ods (contains Terrxxx_Bridge table)
+	&apos;// open QTerrxxx.ods to process.
+
+    sFullTargPath = csTerrDataPath &amp; sBasePath &amp; sTerrID &amp; &quot;/Working-Files/&quot;_ 
+		&amp; sBaseName &amp; sTerrID &amp; &quot;.ods&quot;
+		
+dim Args(1)	As new com.sun.star.beans.PropertyValue 
+	sTargetURL = convertToURL(sFullTargPath)
+	Args(1).name = &quot;FilterName&quot;
+	Args(1).Value = &quot;calc8&quot;
+	Args(0).name = &quot;Hidden&quot;
+	Args(0).value = False
+	oTestDoc = StarDesktop.loadComponentFromURL(sTargetURL, &quot;_blank&quot;, 0, Args())
+
+	&apos;// QTerrxxx.ods is active workbook, process Bridge to Super territory.
+	BridgeToSuper()
+	&apos;// at this point, should be in PubTerr with Search sheet added...
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;CreateSuperTerr - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end CreateSuperTerr	12/23/21.	16:34

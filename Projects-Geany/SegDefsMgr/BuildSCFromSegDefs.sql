@@ -1,0 +1,329 @@
+-- * BuildSCFromSegDefs.psq/sql - Build Terrxxx_SC from SegDefs.
+-- *	4/11/23.	wmk.
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 2/25/23.	wmk.	original code; adapted from NewLetter.sql.
+-- * 3/5/23.	wmk.	minor bug fixes.
+-- * 4/11/23.	wmk.	bug fix where no homesteads set, field name corrected.
+-- * Legacy mods.
+-- * 2/20/23.	wmk.	VeniceNTerritory/NVenAll > Terr86777; change to use
+-- *			 *pathbase, *scpath.
+-- * 2/21/23.	wmk.	correct HouseNumber placement in Terrxxx_SCPoly
+-- * Legacy mods.
+-- * 9/20/21.	original  code (for RUBuildSCFromSegDefs).
+-- * 9/21/21.	modified for use with SCBuildSCFromSegDefs.
+-- * 10/4/21.	bug fix in output path for Mapxxx_SC.csv; 632 hardwired
+-- *			in some code replaced with y yy.
+-- * 10/11/21.	documentation added; Unit field added by name into
+-- *			table Lett106_TS replacing unnamed field before City.
+-- * 10/22/21.	bug fix DROP TABLE Lett106_TS was incorrect.
+-- *
+-- * Notes. BuildSCFromSegDefs.psq is transformed into BuildSCFromSegDefs.sql by DoSed.sh
+-- * BuildSCFromSegDefs.sql performs the following operations:
+-- *	open a new database SCPA-Downloads/Terryyy/Terryyy_SC.db
+-- *	create table Terryyy_SCPoly with fields matching SCPA polygon download
+-- *	import raw download into table Terryyy_TSRaw
+-- *	copy TSRaw records into SCPoly table
+-- *	create table Terrxxx_SCBridge and populate from SCPoly records
+-- *	set OwningParcel, Resident1, SitusAddress, PropUse, and RecordType
+-- *	 from Terr86777 SCPA records
+-- *	set RecordType fields to correct record type for PropUse
+-- * The Terrxxx_SC.db now has the basic SC download data.
+-- * AddZips needs to run to add in the zip codes to the UnitAddress,s
+-- * the "TIDY" utility needs to run to tidy up the records just added.
+
+.open '/home/vncwmk3/Territories/FL/SARA/86777/RawData/SCPA/SCPA-Downloads/Terr308/Terr308_SC.db'
+ATTACH '/home/vncwmk3/Territories/FL/SARA/86777/DB-Dev/Terr86777.db'
+ AS db2;
+
+DROP TABLE IF EXISTS Raw86777;
+CREATE TABLE Raw86777(
+ "Account#" TEXT, Owner1 TEXT, Owner2 TEXT, Owner3 TEXT,
+MailingAddress1 TEXT, MailingAddress2 TEXT, MailingCity TEXT, 
+MailingState TEXT, MailingZipCode TEXT, MailingCountry TEXT, 
+"SitusAddress(PropertyAddress)" TEXT, SitusCity TEXT, SitusState TEXT, 
+SitusZipCode TEXT, PropertyUseCode TEXT, Neighborhood TEXT, 
+Subdivision TEXT, TaxingDistrict TEXT, Municipality TEXT, 
+WaterfrontCode TEXT, "HomesteadExemption(YESorNO)" TEXT, 
+HomesteadExemptionGrantYear TEXT, Zoning TEXT, ParcelDesc1 TEXT, 
+ParcelDesc2 TEXT, ParcelDesc3 TEXT, ParcelDesc4 TEXT, 
+"Pool(YESorNO)" TEXT, TotalLivingUnits TEXT, "LandAreaS.F." TEXT, 
+GrossBldgArea TEXT, LivingArea TEXT, Bedrooms TEXT, Baths TEXT, 
+HalfBaths TEXT, YearBuilt TEXT, LastSaleAmount TEXT, LastSaleDate TEXT, 
+LastSaleQualCode TEXT, PriorSaleAmount TEXT, PriorSaleDate TEXT, 
+PriorSaleQualCode TEXT, JustValue TEXT, AssessedValue TEXT, 
+TaxableValue TEXT, LinktoPropertyDetailPage TEXT, ValueDataSource TEXT, 
+ParcelCharacteristicsData TEXT, Status TEXT, DownloadDate TEXT, 
+PRIMARY KEY ("Account#") );
+
+WITH a AS (SELECT * FROM db2.Terr86777
+-- segdefs clauses below...
+--inserthere
+WHERE ("Account #" LIKE '038409%'
+AND (CAST("Account #" AS INTEGER) >= 0384090002
+ AND CAST("Account #" AS INTEGER) <= 0384090006)
+OR  (CAST("Account #" AS INTEGER) >= 0384090009
+ AND CAST("Account #" AS INTEGER) <= 0384090012)
+OR CAST("Account #" AS INTEGER) = 0384090014
+OR  (CAST("Account #" AS INTEGER) >= 0384090080
+ AND CAST("Account #" AS INTEGER) <= 0384090081) )
+OR ("Account #" LIKE '038416%'
+AND (CAST("Account #" AS INTEGER) >= 0384160067
+ AND CAST("Account #" AS INTEGER) <= 0384160068)
+OR  (CAST("Account #" AS INTEGER) >= 0384160070
+ AND CAST("Account #" AS INTEGER) <= 0384160071)
+OR  (CAST("Account #" AS INTEGER) >= 0384160073
+ AND CAST("Account #" AS INTEGER) <= 0384160076) )
+OR "situs address (property address)" LIKE '%aquila st%'
+OR "situs address (property address)" LIKE '%sierra st%'
+OR "situs address (property address)" LIKE '%verona st%'
+OR "situs address (property address)" LIKE '1208%florence st%'
+--endwhere
+)
+INSERT INTO Raw86777
+SELECT * FROM a;
+
+DROP TABLE IF EXISTS Terr308_TSRaw;
+CREATE TABLE Terr308_TSRaw
+(AreaName TEXT, HouseNumber TEXT, Street1 TEXT, Street2 TEXT,
+ Street3 TEXT, Unit TEXT, City TEXT, Empty TEXT, State TEXT, Zip TEXT );
+
+-- this block inserted data by using territory servant...;
+
+--.headers ON
+--.mode csv
+--.separator ,
+--.import '/home/vncwmk3/Territories/FL/SARA/86777/RawData/SCPA/SCPA-Downloads/Terr308/Lett308_TS.csv' Terr308_TSRaw
+ -- above block inserted data by using territory servant...;
+
+WITH a AS (SELECT * FROM Raw86777)
+INSERT INTO Terr308_TSRaw(AreaName,HouseNumber,Street1,
+   Unit,City,State,Zip)
+SELECT 'Terr308', 
+TRIM(SUBSTR("situsaddress(propertyaddress)",
+     1,
+     INSTR("situsaddress(propertyaddress)",' ')
+     )),
+TRIM(SUBSTR("situsaddress(propertyaddress)",
+	  INSTR("situsaddress(propertyaddress)",' '),
+     36-INSTR("situsaddress(propertyaddress)",' ')
+     )),
+TRIM(SUBSTR("situsaddress(propertyaddress)",
+    36)
+    ),
+     "situscity", 'FL', "situszipcode"
+FROM a
+;
+--======== now populate SCBridge from all Raw86777 records;
+ -- now populate TerrSCBridge from Terr_SCPoly;
+DROP TABLE IF EXISTS Terr308_SCBridge;
+CREATE TABLE Terr308_SCBridge
+( "OwningParcel" TEXT NOT NULL,
+ "UnitAddress" TEXT NOT NULL,
+ "Unit" TEXT, "Resident1" TEXT, 
+ "Phone1" TEXT,  "Phone2" TEXT,
+ "RefUSA-Phone" TEXT, "SubTerritory" TEXT,
+ "CongTerrID" TEXT, "DoNotCall" INTEGER DEFAULT 0,
+ "RSO" INTEGER DEFAULT 0, "Foreign" INTEGER DEFAULT 0,
+ "RecordDate" REAL DEFAULT 0,
+ "SitusAddress" TEXT, "PropUse" TEXT,
+  "DelPending" INTEGER DEFAULT 0,
+ "RecordType" TEXT);
+
+-- now populate the SCBridge table;
+WITH a AS (SELECT * FROM Raw86777)
+INSERT INTO Terr308_SCBridge
+( OwningParcel, UnitAddress,
+ Unit, CongTerrID, RecordDate)
+SELECT "Account#",
+ TRIM(SUBSTR("situsaddress(propertyaddress)",1,35)),
+ TRIM(SUBSTR("situsaddress(propertyaddress)",36)) PUnit,
+ '308',DownloadDate
+FROM a;
+
+--===============================; continue after above tested..
+-- set remaining fields;
+WITH a AS (SELECT "Account#" AS Acct,
+ CASE 
+ WHEN LENGTH("Owner3") > 0
+  THEN "Owner1" || ', ' || "Owner2" || ', ' || "Owner3"
+ WHEN LENGTH("Owner2") > 0
+  THEN "Owner1" || ', ' || "Owner2"
+ ELSE "Owner1"
+ END As WhoIsThere,
+ "situsaddress(propertyaddress)" AS Situs,
+ TRIM(SUBSTR("situsaddress(propertyaddress)",1,35)) AS StreetAddr,
+  TRIM(SUBSTR("situsaddress(propertyaddress)",36)) AS SCUnit,
+ "propertyusecode" AS SCPropUse,
+ CASE 
+ WHEN "HomesteadExemption(YESorNO)" IS 'YES'
+  THEN '*'
+ ELSE ''
+ END AS Hstead,
+ DownloadDate LoadDate
+ FROM Raw86777
+ WHERE Acct IN (SELECT OwningParcel
+  FROM Terr308_SCBridge) )
+UPDATE Terr308_SCBridge
+SET Resident1 =
+CASE 
+WHEN OwningParcel IN (SELECT Acct FROM a)
+ THEN (SELECT WhoIsThere FROM a
+  WHERE Acct IS OwningParcel )
+ELSE Resident1
+END, 
+ SitusAddress = 
+CASE 
+WHEN OwningParcel IN (SELECT Acct FROM a)
+ THEN (SELECT Situs FROM a
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) 
+    AND SCUnit IS Unit  )
+ELSE SitusAddress
+END,
+ Phone2 = 
+CASE 
+WHEN OwningParcel IN (SELECT Acct FROM a)
+ THEN (SELECT Hstead FROM a
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) 
+    AND SCUnit IS Unit  )
+ELSE Phone2
+END, 
+ PropUse =
+CASE 
+WHEN OwningParcel IN (SELECT Acct FROM a)
+ THEN (SELECT SCPropUse FROM a
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) 
+    AND SCUnit IS Unit  )
+ELSE PropUse
+END,
+ RecordDate =
+CASE 
+WHEN OwningParcel IN (SELECT Acct FROM a)
+ THEN (SELECT LoadDate FROM a
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) 
+    AND SCUnit IS Unit  )
+ELSE RecordDate
+END; 
+
+-- now set RecordType fields;
+WITH a AS (SELECT Code,RType FROM db2.SCPropUse)
+UPDATE Terr308_SCBridge
+SET RecordType =
+CASE WHEN PropUse IN (SELECT Code FROM a)
+ THEN (SELECT RType FROM a
+  WHERE Code IS PropUse)
+ELSE RecordType
+END;
+
+.quit
+--======================================================================
+-- now select all the records just created and make a pseudo Map106_SC.csv;
+-- this .csv will be used in the unlikely event that SCNewTerritory gets run
+-- so there is a .csv file to pick up..;
+.headers ON
+.mode csv
+.separator ,
+.output '/home/vncwmk3/Territories/FL/SARA/86777/RawData/SCPA/SCPA-Downloads/Terr106/Map106_SC.csv'
+select * from Terr106_SCPoly;
+
+-- now set OwningParcel, Resident1, SitusAddress, PropUse, and RecordType from
+-- TerritoryNVenice. Terr86777 and SCPropUse tables;
+ATTACH '/home/vncwmk3/Territories/FL/SARA/86777/DB-Dev/Terr86777.db'
+ AS db2;
+
+WITH a AS (SELECT "Account #" AS Acct,
+ CASE 
+ WHEN LENGTH("Owner 3") > 0
+  THEN "Owner 1" || ', ' || "Owner 2" || ', ' || "Owner 3"
+ WHEN LENGTH("Owner 2") > 0
+  THEN "Owner 1" || ', ' || "Owner 2"
+ ELSE "Owner 1"
+ END As WhoIsThere,
+ "situs address (property address)" AS Situs,
+ TRIM(SUBSTR("situs address (property address)",1,35)) AS StreetAddr,
+ "property use code" AS SCPropUse,
+ CASE 
+ WHEN "Homestead Exemption" IS 'YES'
+  THEN '*'
+ ELSE ''
+ END AS Hstead
+ FROM Terr86777
+ WHERE StreetAddr IN (SELECT UPPER(TRIM(UnitAddress))
+  FROM Terr106_SCBridge) )
+UPDATE Terr106_SCBridge
+SET OwningParcel =
+CASE 
+WHEN UPPER(TRIM(UnitAddress)) IN (SELECT StreetAddr FROM a)
+ THEN (SELECT Acct FROM a
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) )
+ELSE OwningParcel
+END,
+ Resident1 =
+CASE 
+WHEN UPPER(TRIM(UnitAddress)) IN (SELECT StreetAddr FROM a)
+ THEN (SELECT WhoIsThere FROM a
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) )
+ELSE Resident1
+END, 
+ SitusAddress = 
+CASE 
+WHEN UPPER(TRIM(UnitAddress)) IN (SELECT StreetAddr FROM a)
+ THEN (SELECT Situs FROM a
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) )
+ELSE SitusAddress
+END,
+ Phone2 = 
+CASE 
+WHEN UPPER(TRIM(UnitAddress)) IN (SELECT StreetAddr FROM a)
+ THEN (SELECT Hstead FROM a
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) )
+ELSE Phone2
+END, 
+ PropUse =
+CASE 
+WHEN UPPER(TRIM(UnitAddress)) IN (SELECT StreetAddr FROM a)
+ THEN (SELECT SCPropUse FROM a
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) )
+ELSE PropUse
+END
+WHERE OwningParcel IS '-';
+
+-- set record types;
+UPDATE Terr106_SCBridge
+SET RecordType = 
+CASE 
+WHEN PropUse IN (SELECT Code FROM db2.SCPropUse)
+ THEN (SELECT RType FROM db2.SCPropUse
+  WHERE Code IS PropUse)
+ELSE RecordType
+END
+;
+-- *;
+-- Attach TerrIDData.db and extract Terr106Hdr.csv, saving into folder
+--  TerrData/Terr106/Working-Files;
+ATTACH '/home/vncwmk3/Territories/FL/SARA/86777'
+	||		'/DB-Dev/TerrIDData.db'
+	AS db4;
+-- pragma db4.table_info(Territories);
+.headers ON
+.mode csv
+.separator ,
+.output '/home/vncwmk3/Territories/FL/SARA/86777/TerrData/Terr308/Working-Files/Terr308Hdr.csv'
+SELECT * FROM db4.Territory
+WHERE TerrID is '308';	
+.quit
+-- ** END BuildSCFromSegDefs.psq/sql;
+ -- import Lett308_TS.csv into Terr106_SC.db.Terr308_TSRaw;
+DROP TABLE IF EXISTS Terr308_TSRaw;
+CREATE TABLE Terryyy_TSRaw
+(AreaName TEXT, HouseNumber TEXT, Street1 TEXT, Street2 TEXT,
+ Street3 TEXT, Unit TEXT, City TEXT, Empty TEXT, State TEXT, Zip TEXT );
+ -- this block inserted data by using territory servant...;
+
+.headers ON
+.mode csv
+.separator ,
+.import '/home/vncwmk3/Territories/FL/SARA/86777/RawData/SCPA/SCPA-Downloads/Terr106/Lett308_TS.csv' Terr308_TSRaw
+ -- above block inserted data by using territory servant...;
+

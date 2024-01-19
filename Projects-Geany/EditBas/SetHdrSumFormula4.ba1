@@ -1,0 +1,66 @@
+&apos;// SetHdrSumFormula4.bas
+&apos;//---------------------------------------------------------------
+&apos;// SetHdrSumFormula4 - Set header sum formula in Territory sheet.
+&apos;//		3/321.	wmk.	19:37
+&apos;//---------------------------------------------------------------
+
+public sub SetHdrSumFormula4()
+
+&apos;//	Usage.	macro call or
+&apos;//			call SetHdrSumFormul3()
+&apos;//
+&apos;// Entry.	user has territory sheet selected
+&apos;//
+&apos;//	Exit.	cell B2 set to &quot;=&apos;Record count: &apos; &amp; COUNTA($B$6:$B$1299)&quot;
+&apos;//			formula at A2 cleared
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	3/3/21.		wmk.	original code; adapted from SetHdrSumFormula3
+&apos;//
+&apos;//	Notes. The formula is in the B column since that is where the unitaddress
+&apos;// is placed for the Edit sheet. It is used by GenFLinkM in generating
+&apos;// fastpeoplesearch links.
+
+&apos;//	constants.
+const COL_A=0
+const COL_B=1
+const ROW_2=1
+const CJUST=2
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+dim oMrgRange	As Object	&apos;// merge range
+
+dim oCell	As Object		&apos;// cell working on
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+
+	oCell = oSheet.getCellByPosition(COL_A, ROW_2)
+	oCell.setFormula (&quot;&quot;)	
+	oCell =	oSheet.getCellByPosition(COL_B, ROW_2)
+	oCell.setFormula(&quot;=&quot;&quot;RecordCount: &quot;&quot; &amp; COUNTA($B$6:$B$1299)&quot;)
+	oCell.HoriJustify = CJUST
+	
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;SetHdrSumFormula4 - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end SetHdrSumFormula4	3/3/21/	23:08

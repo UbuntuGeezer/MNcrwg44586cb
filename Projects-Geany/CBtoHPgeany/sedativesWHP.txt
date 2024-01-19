@@ -1,0 +1,4 @@
+s?/home/vncwmk3?/c/Users/Bill?g
+s?/?\\\\?g
+/FILE_NAME/ s?%2Fhome%2Fvncwmk3?%5Cc%5CUsers%5CBill?g
+/FILE_NAME/ s?%2F?%5C?g

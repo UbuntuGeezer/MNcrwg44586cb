@@ -1,0 +1,38 @@
+#MakeNewBTerr.tmp - make file template for creating new business territory.
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	9/24/21.	wmk.
+#
+# Entry. user must have defined territory in TerrIDData.db.Territory table.
+#
+# Modification History.
+# ---------------------
+# 9/24/21.	wmk.	original code; adapted from MakeNewTerr.
+#
+# Notes. Project "sed" command should be used to change terrid to 521 in
+#  MakeNewTBerr make file.
+
+ifeq ($(HOME),/home/ubuntu)
+  folderbase=/media/ubuntu/Windows/Users/Bill/
+else
+  folderbase = $(HOME)/
+endif
+
+ bashpath = $(codebase)Territories/Procs-Dev/
+RUpath = $(folderbase)Territories/BRawData/BRefUSA/BRefUSA-Downloads/
+SCpath = $(folderbase)Territories/BRawData/BSCPA/BSCPA-Downloads/
+
+# primary targets $(RUpath)TErr521 $(SCPath)TErr521
+#=========================================================
+$(RUpath)TErr521 $(SCpath)TErr521 &: 
+	if test -d $(RUpath)TErr521; then rm -r $(RUpath)TErr521;fi
+	if test -d $(SCpath)TErr521; then rm -r $(SCpath)TErr521;fi
+	$(bashpath)MakeBRawData.sh 521
+	$(bashpath)MakeBTerrData.sh 521
+	$(bashpath)GenBTerrHdr.sh 521
+	echo "** Now run Calc on Terr521Hdr.csv to create Terr521Hdr.ods **"
+
+#==========================================================	
+
+	
+#MakeNewBTerr :

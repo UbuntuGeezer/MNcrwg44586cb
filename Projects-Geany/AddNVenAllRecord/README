@@ -1,0 +1,21 @@
+README - AddNVenAllRecord project documentation.
+	9/22/21.	wmk.
+
+Modification History.
+---------------------
+9/22/21.	wmk.	original document.
+
+	
+Project Description.
+--------------------
+The AddNVenAllRecord project adds a new record (likely missing/omitted
+from all previous SC downloads) to the VeniceNTerritory.db table NVenAll.
+The user must supply the property ID of the record to add, and the SC
+download month and day from which to add the record.
+
+The NVenAll table has as the primary key the property id (Account #), so
+the new record will only be added if there is no conflict with existing
+records. The entire record from SCPA_mm-dd.db will be added.
+
+In addition, the new property ID will be added to the NVenAccts table so
+that it is seen by queries using that table.

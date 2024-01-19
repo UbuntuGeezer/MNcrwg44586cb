@@ -1,0 +1,50 @@
+-- * AddZips.psq/sql - Add zip codes to SC unitadress,s set yyy in letter territory .
+-- *	12/25/22.	wmk.
+-- *
+-- * Modification History.
+-- * 12/25/22.	wmk.	name change to AddZips.psq; depends upon DoSed to modify
+-- *			 to AddZips.sql with territory ID; *pathbase used as db base path.
+-- * Legacy mods.
+-- * 10/23/21.	wmk.	original code; generalized from territory 614 to yy y.
+-- * 10/29/21.	wmk.	bug fix residual 616 in open statement.
+-- * legacy mods.
+-- * 10/8/21.	wmk.	original code.
+-- * 10/10/21.	wmk.	bug fix attaching Terr86777 instead of Terr86777;
+-- *					code expanded to add zipcodes to all Special db SCBridge
+-- *					records; trim UnitAddress field before adding Zip Code.
+-- * 10/11/21.	wmk.	fix missed trim UnitAddress Terr616_SCBridge.
+-- * 10/12/21.	wmk.	original code; adpapted from territory 603.
+-- * 10/15/21.	wmk.	AddZips to Spec616_RU.db also.
+-- * 10/16/21.	wmk.	edited for territory xxx.
+-- * 10/17/21.	wmk.	bug fix to account for possible zip code 'nnnnn-'.
+-- * 10/17/21.	wmk.	adapted for SC 607 from RU;code added to set CongTerrID also.
+-- * 10/18/21.	wmk.	edited for territory 616.
+-- *
+-- * AddZips.sql will go through a build transformation to .sq to .sh
+-- * The SQL will add zip codes, separated by 3 spaces, to unit addresses in
+-- *;
+.open '$pathbase/RawData/SCPA/SCPA-Downloads/Terryyy/Terryyy_SC.db'
+ATTACH '$pathbase/DB-Dev/Terr86777.db'
+ AS db2;
+-- pragma db2.table_info(Terr86777);
+-- * set CongTerrID in all records;
+UPDATE Terryyy_SCBridge
+SET CongTerrID = 'yyy';
+-- * add zip codes to all SCBridge UnitAddresses where missing;
+WITH a AS (SELECT OwningParcel AS PropID FROM Terryyy_SCBridge),
+ b AS (SELECT "Account #" AS Acct, "situs zip code" AS Zip FROM db2.Terr86777 
+   WHERE Acct IN (SELECT PropID FROM a) )
+UPDATE Terryyy_SCBridge
+SET UnitAddress = 
+CASE
+WHEN OwningParcel IN (SELECT Acct FROM b) 
+ THEN trim(UnitAddress) || '   ' || (SELECT Zip FROM b
+   WHERE Acct IS OwningParcel)
+ELSE UnitAddress
+END
+WHERE UnitAddress NOT LIKE '%34285%'
+  AND UnitAddress NOT LIKE '%34292%'
+  AND UnitAddress NOT LIKE '%34275%';
+-- *;
+.quit
+-- ** end AddZips **********;

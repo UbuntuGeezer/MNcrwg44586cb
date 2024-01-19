@@ -1,0 +1,103 @@
+&apos;// ConcatFirstLastM.bas
+&apos;//---------------------------------------------------------------
+&apos;// ConcatFirstLastM - Concatenate first/last name into single field.
+&apos;//		9/3/20.	wmk.	08:15
+&apos;//---------------------------------------------------------------
+
+public sub ConcatFirstLastM()
+
+&apos;//	Usage.	macro call or
+&apos;//			call ConcatFirstLastM()
+&apos;//
+&apos;// Entry.	user has selected row(s) in which to concatenate name fields
+&apos;//			each row should have an empty column to its right in which
+&apos;//			to place the concatenated name information
+&apos;//
+&apos;//	Exit.	concatenated name is in form:
+&apos;//			&lt;First Name&gt;&lt;b&gt;&lt;Last Name&gt;
+&apos;//			where &lt;b&gt; is a single space
+&apos;//			also trim all source fields to eliminate any fields
+&apos;//			which were imported as 10-character, right-justified,
+&apos;//			space-filled fields
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	9/3/20.	wmk.	original code; adapted from GenHLinkM
+&apos;//
+&apos;//	Notes. Column indexes for the first/last name fields are for import
+&apos;// spreadsheet taken from ReferenceUSA .xls format spreadsheet
+
+&apos;//	constants.
+const COL_FIRST=1			&apos;// first name field
+const COL_LAST=0			&apos;// last name field
+const COL_UNIT=8			&apos;// unit/apt #
+const COL_FULLNAME=2		&apos;// full concatenated name
+const YELLOW=16776960		&apos;// decimal value of YELLOW color
+
+&apos;//	local variables.
+Dim oDoc As Object
+Dim oSheet As Object
+Dim NewColumn As Object
+dim oSel as Object
+dim iSheetIx as integer
+dim oRange as Object
+dim lThisRow as long		&apos;// current row selected on sheet
+
+&apos;// processing variables.
+dim nRowsProcessed As Integer	&apos;// count of rows processed
+dim nRowCount		As Integer	&apos;// # rows to process
+dim sFirst  	As String		&apos;// first name from current row
+dim sLast		As String		&apos;// last name from current row
+dim sFullName	As String		&apos;// HYPERTEXT link to store
+dim i			As Integer		&apos;// loop counter
+
+&apos;// XCell sheet objects
+dim oCell as object			&apos;// generic field
+
+&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oDoc = ThisComponent
+	oSel = oDoc.getCurrentSelection()
+	oRange = oSel.RangeAddress
+	iSheetIx = oRange.Sheet
+	oSheet = oDoc.Sheets(iSheetIx)
+	nRowsProcessed = 0		&apos;// clear processed count
+
+	&apos;// set row processing from oRange information
+	lThisRow = oRange.StartRow - 1		&apos;// start at -1 since increment first
+	nRowCount = oRange.EndRow - lThisRow	&apos;// set row count to process
+	for i = 1 to nRowCount
+		lThisRow = lThisRow + 1		&apos;// advance current row
+		oCell = oSheet.getCellByPosition(COL_FIRST, lThisRow)
+		oCell.String = trim(oCell.String)		&apos;// set first name text
+		sFirst = oCell.String
+		oCell= oSheet.getCellByPosition(COL_LAST, lThisRow)
+		oCell.String = trim(oCell.String)
+		sLast = oCell.String	&apos;// set  last name set
+		sFullName = trim(sFirst + &quot; &quot; + sLast)
+		
+		oCell = oSheet.getCellByPosition(COL_FULLNAME, lThisRow)
+		oCell.String = sFullName
+		oCell.HoriJustify = LJUST
+		
+		if len(sFullName) = 0 then
+			oCell.String = &quot;&quot;
+			oCell.CellBackColor = YELLOW
+			msgbox(&quot;At row &quot; + lThisRow + &quot;... empty name - skipped&quot;)
+		endif	&apos;// end empty address fields conditional
+		
+Nextfor:
+		nRowsProcessed = nRowsProcessed + 1
+	next i		&apos;// advance to next row
+	
+NormalExit:
+	msgbox(&quot;ConcatFirstLastM complete. &quot; + nRowsProcessed + &quot; rows processed.&quot;)
+	exit sub
+	
+ErrorHandler:	
+	msgbox(&quot;ConcatFirstLastM - unprocessed error.&quot;)
+	GoTo NormalExit
+
+end sub		&apos;// end ConcatFirstLastM	9/3/20.

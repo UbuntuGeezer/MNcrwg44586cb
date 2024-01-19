@@ -1,0 +1,69 @@
+# MakeDiffsToNVenAll.tmp - makefile for DiffsToNVenAll.sh
+# 9/22/22.    wmk.   (automated) *codebase env var support.
+# 9/22/22.    wmk.   (automated) CB *codebase env var support.
+#	4/26/22.	wmk.
+#
+# Entry. preamble.DiffsToNVenAll.sh contains code to check for the TODAY
+#		 environment variable not set.
+#
+# Exit. DiffsToNVenAll.psq > DiffsToNVenAll.sh
+#
+# Modification History.
+# ---------------------
+# 3/21/22.	wmk.	original code.
+# 4/26/22.	wmk.	*pathbase* support added; *..path* vars traiing
+#			 '/'s removed.
+#
+# Notes. DiffsToNVenAl.sh will be considered out-of-date if
+# DiffsToNVenAll.psq is newer. CreateNewSCPA.sql and .sq will be rebuilt
+# in the process.
+# 05 and 26 were chosen for the month/day for compatibility with the
+# CreateNewSCPA.sh proc (see DoSed.sh).
+
+ifndef folderbase
+ ifeq ($(USER),ubuntu)
+  folderbase = /media/ubuntu/Windows/Users/Bill
+ else
+  folderbase = $(HOME)
+ endif
+endif
+
+ifndef codebase
+ codebase = $(folderbase)/GitHub/TerritoriesCB
+endif
+
+ifndef pathbase
+ pathbase = $(folderbase)/Territories
+endif
+
+ procpath = $(codebase)/Territories/Procs-Dev
+scpafolder = $(folderbase)/Territories/RawData/SCPA/SCPA-Downloads
+
+#DiffsToNVenAll.sh primary target
+#====================================================================
+DiffsToNVenAll.sh :  preamble.DiffsToNVenAll.sh  DiffsToNVenAll.sq  DiffsToNVenAll.sql
+ DiffsToNVenAll.psq
+	cat $(procpath)/hdrAnySQL_1.sh preamble.DiffsToNVenAll.sh CreateNewSCPA.sq  \
+	 $(procpath)/hdrAnySQL_2.sh > $@
+	sed  -i 's?<filename>?DiffsToNVenAll?g' $@
+	chmod +x $@
+	 echo "** Now run $@ from Terminal to integrate Diffs0526 into NVenAll **"; \ 
+
+DiffsToNVenAll.sq : DiffsToNVenAll.sql
+	echo 's?\"?\\\"?g' > sedatives.txt
+	echo "{s/^/echo \"/g;s/$$/\" >> SQLTemp.sql/g;1 s/>>/>/;}" >> sedatives.txt
+	sed -f sedatives.txt CreateNewSCPA.sql > $@
+
+DiffsToNVenAll.sql : DiffsToNVenAll.psq;
+	echo "** run DoSed to make CreateNewSCPA.sql **"
+
+DiffsToNVenAll.psq : ;
+
+preamble.CreateNewSCPA.sh : ;
+	if ! test -f preamble.CreateNewSCPA.sh;then '
+	  echo "**  preamble.CreateNewSCPA.sh not found for CreateNewSCPA.sh recipe! **";exit 1;fi
+
+$(scpafolder)/Data0526.csv : ;
+	echo "** WARNING - Data0526.csv file missing for CreateNewSCPA.sh **"
+
+# end MakeDiffsToNVenAll

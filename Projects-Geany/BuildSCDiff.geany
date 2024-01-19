@@ -1,0 +1,111 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=BuildSCDiff
+base_path=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/BuildSCDiff/
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=21
+FILE_NAME_0=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FBuildDiffAccts.sql;0;4
+FILE_NAME_1=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FCreateDiff.sql;0;4
+FILE_NAME_2=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FDiff1SC.sql;0;4
+FILE_NAME_3=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FDiffCSVtoDB.sql;0;4
+FILE_NAME_4=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FDiffsToNVenAll.sh;0;4
+FILE_NAME_5=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FDiffsToNVenAll.sq;0;4
+FILE_NAME_6=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FDiffTest.sql;0;4
+FILE_NAME_7=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2Fdirtest.txt;0;4
+FILE_NAME_8=2933;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FDoSed.sh;0;4
+FILE_NAME_9=935;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FDoSed1.sh;0;4
+FILE_NAME_10=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2Femulator.txt;0;4
+FILE_NAME_11=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FExtractDowDiff.sql;0;4
+FILE_NAME_12=359;ASM;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FExtractDownDiff.s;0;4
+FILE_NAME_13=943;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FExtractDownDiff.sh;0;4
+FILE_NAME_14=6364;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FExtractDownDiff.sql;0;4
+FILE_NAME_15=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FExtractDownDiff0.sql;0;4
+FILE_NAME_16=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FExtractDownDiff2.sql;0;4
+FILE_NAME_17=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FExtractDownDiff3.sql;0;4
+FILE_NAME_18=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FExtractDownDiff4.sql;0;4
+FILE_NAME_19=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FExtractDownDiff0319.sql;0;4
+FILE_NAME_20=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FMakeBuildSCDiff;0;4
+FILE_NAME_21=5594;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FMakeBuildSCDiff.tmp;0;4
+FILE_NAME_22=3785;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FMakeExtractDiff;0;4
+FILE_NAME_23=3076;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FMakeExtractDiff.tmp;0;4
+FILE_NAME_24=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FMakeNewSCPAdb;0;4
+FILE_NAME_25=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FMakeNewSCPAdb.tmp;0;4
+FILE_NAME_26=1469;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FMakeSetDiffAcctsTerrIDs.tmp;0;4
+FILE_NAME_27=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FMissingTerrIDs.csv;0;4
+FILE_NAME_28=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FNVenAllCols.csv;0;4
+FILE_NAME_29=0;ASM;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2Fpreamble.s;0;4
+FILE_NAME_30=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2Fpreamble.sh;0;4
+FILE_NAME_31=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2Fpreamble.sql;0;4
+FILE_NAME_32=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FREADME;0;4
+FILE_NAME_33=0;HTML;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FREADME.html;0;4
+FILE_NAME_34=6846;Markdown;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FREADME.md;0;4
+FILE_NAME_35=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FSCDwnldToDB.psq;0;4
+FILE_NAME_36=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FSCDwnldToDB.sh;0;4
+FILE_NAME_37=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FSCDwnldToDB.sq;0;4
+FILE_NAME_38=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FSCDwnldToDB.sql;0;4
+FILE_NAME_39=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2Fsedative.txt;0;4
+FILE_NAME_40=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2Fsedatives.txt;0;4
+FILE_NAME_41=515;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FSetDiffAcctsTerrIDs.psq;0;4
+FILE_NAME_42=0;ASM;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2Fsomefile.s;0;4
+FILE_NAME_43=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2Fsomefile.sh;0;4
+FILE_NAME_44=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2Fsomefile.sql;0;4
+FILE_NAME_45=0;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FSQLTemp.sql;0;4
+FILE_NAME_46=0;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2Ftest.sh;0;4
+FILE_NAME_47=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2Ftest.txt;0;4
+FILE_NAME_48=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2Ftestfile.txt;0;4
+FILE_NAME_49=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2Ftestsed.txt;0;4
+FILE_NAME_50=65;SQL;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FReportPropsNotInTerrs.sql;0;4
+FILE_NAME_51=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FBuildDiffAcctsTbl.psq;0;4
+FILE_NAME_52=759;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FMakeBuildDiffAcctsTbl.tmp;0;4
+FILE_NAME_53=5363;Sh;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FUpdateCongTerr%2FDoSed.sh;0;4
+FILE_NAME_54=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FSCNewVsCongTerr.psq;0;4
+FILE_NAME_55=0;None;0;EUTF-8;1;1;0;%2Fhome%2Fvncwmk3%2FGitHub%2FTerritoriesCB%2FProjects-Geany%2FBuildSCDiff%2FMakeSCNewVsCongTerr.tmp;0;4
+
+[VTE]
+last_dir=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/BuildSCDiff
+
+[build-menu]
+NF_03_LB=sed
+NF_03_CM=./DoSed.sh   04 04  05 28
+NF_03_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/BuildSCDiff
+EX_01_LB=Make dry-run
+EX_01_CM=make --dry-run -f MakeBuildSCDiff
+EX_01_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/BuildSCDiff
+NF_00_LB=_Make
+NF_00_CM=make  -f MakeBuildSCDiff
+NF_00_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/BuildSCDiff
+NoneFT_02_LB=sed  ExtractDiff Build
+NoneFT_02_CM=./DoSed1.sh   04 04  05 28
+NoneFT_02_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/BuildSCDiff
+filetypes=None;
+NF_01_LB=Make Custom _Target...
+NF_01_CM=make  -f MakeExtractDiff
+NF_01_WD=/home/vncwmk3/GitHub/TerritoriesCB/Projects-Geany/BuildSCDiff
+NF_02_LB=Make _Object
+NF_02_CM=make %e.o
+NF_02_WD=

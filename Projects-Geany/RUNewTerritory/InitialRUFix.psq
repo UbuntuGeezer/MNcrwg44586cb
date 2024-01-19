@@ -1,0 +1,154 @@
+-- * InitialRUFix.psq - Initial SQL to set property IDs in new RefUSA db.
+-- *	2/20/23.	wmk.
+-- * Modification History.
+-- * ---------------------
+-- * 5/7/22.	wmk.	(automated) *pathbase* integration.
+-- * 2/20/23.	wmk.	Terr86777/Terr86777 > Terr86777; comments tidied.
+-- * Legacy mods.
+-- * 8/30/21.	original code.
+-- * 9/10/21.	bug fix trim(substr missing ).
+-- *
+.open '$pathbase/RawData/RefUSA/RefUSA-Downloads/Terrxxx/Terrxxx_RU.db'
+ATTACH '$pathbase/DB-Dev/Terr86777.db'
+ as db2;
+-- pragma db2.table_info(Terr86777);
+ATTACH '$pathbase'
+ ||		'/RawData/SCPA/SCPA-Downloads/Terrxxx/Terrxxx_SC.db'
+  AS db11;
+--  PRAGMA db11.table_info(Terrxxx_SCBridge);
+ATTACH '$pathbase'
+ ||		'/RawData/RefUSA/RefUSA-Downloads/Terrxxx/Terrxxx_RU.db'
+  AS db12;
+--  PRAGMA db12.table_info(Terrxxx_RUBridge);
+
+-- ** FixFromSC **********
+-- *	8/30/21.	wmk.
+-- *----------------------
+-- *
+-- * FixFromSC - Fix RU records from SC records for territory 122.
+-- *
+-- * Entry DB and table dependencies.
+-- *	Terr86777.db - as db2, SCPA data for NV territory
+-- *		Terr86777 - SCPA property records
+-- *	Terrxxx_RU.db - as db12, new territory records from RefUSA polygon
+-- *		Terrxxx_RUBridge - sorted Bridge formatted records extracted 
+-- *			from RefUSA polygon (see Terr213_RUPoly)
+-- *			imported from Map122_RU.csv in folder RefUSA-Downloads
+-- *
+-- * Exit DB and table results.
+-- *	Terrxxx_RU.db - as db12, new territory records from RefUSA polygon
+-- *		Terrxxx_RUBridge - Bridge records fixed where..
+-- *
+-- * Modification History.
+-- * ---------------------
+-- * 8/30/21.	original code.
+-- * 9/10/21.	bug fix trim(substr missing ).
+-- *
+-- * Notes. Fix records not fixed with 950 Pinebrook above.
+-- *;
+
+-- * DBs attached above;
+-- * Terrxxx_SC.db as db11;
+-- * Terrxxx_RU.db as db12;
+WITH a AS (SELECT OwningParcel AS Acct, 
+UnitAddress As StreetAddr, Phone2 AS Hstead,
+SitusAddress AS Situs,
+DoNotCall AS DNC, RSO AS SCSO, "Foreign" AS FL,
+PropUse AS UseType, RecordType AS RecType
+FROM Terrxxx_SCBridge)
+UPDATE Terrxxx_RUBridge
+SET OwningParcel = 
+CASE 
+WHEN UPPER(TRIM(UnitAddress))
+ IN (SELECT StreetAddr FROM a)
+ THEN (SELECT Acct FROM a 
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress))
+  )
+ELSE OwningParcel
+END,
+SitusAddress = 
+CASE 
+WHEN UPPER(TRIM(UnitAddress))
+ IN (SELECT StreetAddr FROM a)
+ THEN (SELECT Situs FROM a 
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress))
+  )
+ELSE SitusAddress
+END,
+Phone2 =
+CASE 
+WHEN UPPER(TRIM(UnitAddress))
+ IN (SELECT StreetAddr FROM a)
+ THEN (SELECT Hstead FROM a 
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress))
+  )
+ELSE Phone2
+END,
+PropUse = 
+CASE 
+WHEN UPPER(TRIM(UnitAddress))
+ IN (SELECT StreetAddr FROM a)
+ THEN (SELECT UseType FROM a 
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress))
+  )
+ELSE PropUse
+END,
+DoNotCall = 
+CASE 
+WHEN UPPER(TRIM(UnitAddress))
+ IN (SELECT StreetAddr FROM a)
+ THEN (SELECT DNC FROM a 
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress))
+  )
+ELSE DoNotCall
+END,
+RSO = 
+CASE 
+WHEN UPPER(TRIM(UnitAddress))
+ IN (SELECT StreetAddr FROM a)
+ THEN (SELECT SCSO FROM a 
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress))
+  )
+ELSE RSO
+END,
+"Foreign" =
+CASE 
+WHEN UPPER(TRIM(UnitAddress))
+ IN (SELECT StreetAddr FROM a)
+ THEN (SELECT FL FROM a 
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress))
+  )
+ELSE "Foreign"
+END,
+RecordType = 
+CASE 
+WHEN UPPER(TRIM(UnitAddress))
+ IN (SELECT StreetAddr FROM a)
+ THEN (SELECT RecType FROM a 
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress))
+  )
+ELSE RecordType
+END
+WHERE OwningParcel is "-"; 
+
+-- ** END FixFromSC **********;
+-- ** FixFromTerr86777 *********;
+WITH a AS (SELECT "ACCOUNT #" AS Acct, 
+   TRIM(SUBSTR("situs address (property address)",1,35)) AS StreetAddr,
+   SUBSTR("situs address (property address)",36) AS SCUnit
+   FROM Terr86777 
+   WHERE StreetAddr IN (SELECT UPPER(TRIM(UnitAddress))
+    FROM Terrxxx_RUBridge) )
+UPDATE Terrxxx_RUBridge
+SET OWNINGPARCEL = 
+CASE 
+WHEN UPPER(TRIM(UnitAddress)) IN (SELECT StreetAddr FROM a
+  WHERE SCUnit IS Unit)
+ THEN (SELECT Acct FROM a
+  WHERE StreetAddr IS UPPER(TRIM(UnitAddress)) 
+   AND SCUnit IS Unit)
+ELSE OWNINGPARCEL
+END
+WHERE OwningParcel IS '-';
+.quit
+-- ** END InitialRUFix;

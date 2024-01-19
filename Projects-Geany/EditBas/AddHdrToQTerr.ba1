@@ -1,0 +1,110 @@
+&apos;// AddHdrToQTerr.bas
+&apos;//---------------------------------------------------------------
+&apos;// AddHdrToQTerr - Add TerrxxxHdr sheet to QTerrxxx.ods workbook.
+&apos;//		12/23/21.	wmk.	16:21
+&apos;//---------------------------------------------------------------
+
+public sub AddHdrToQTerr( psTerrID As String )
+
+&apos;//	Usage.	call AddHdrToQTerr( sTerrID )
+&apos;//
+&apos;//		sTerrID = territory ID for which to open QTerrxxx.csv
+&apos;//
+&apos;// Entry.	Territories/.../TerrData/Terrxxx/Working-Files/QTerrxxx.ods
+&apos;//				contains territory records for territory xxx, in sheet
+&apos;//				QTerrxxx.
+&apos;//			Territories/.../TerrData/Terrxxx/Working-Files/TerrxxxHdr.ods
+&apos;//				contains territory header information from TerrIDData.db
+&apos;//
+&apos;//	Exit.	QTerrxxx.ods has sheet TerrxxxHdr added as last sheet, from
+&apos;//			workbook TerrxxxHdr.ods
+&apos;//
+&apos;// Calls.
+&apos;//
+&apos;//	Modification history.
+&apos;//	---------------------
+&apos;//	7/11/21.	wmk.	original code; adapted from abandoned code
+&apos;//				 in OpenQTerr.bas.
+&apos;// 12/23/21.	wmk.	modified to use module-wide constant
+&apos;//				 csTerrDataPath.		
+&apos;//
+&apos;//	Notes. This is the second step in processing a QTerrxxx.csv file
+&apos;// into a PubTerr workbook. The first step openend the .csv file and
+&apos;// saved it as QTerrxxx.ods, closing it. This step re-opens the
+&apos;// QTerxxx.ods workbook, opens a second workbook TerrxxxHdr.ods, and
+&apos;// adds its TerxxxHdr sheet to the end of the QTerrxx.ods workbook,
+&apos;// closing both when finished.
+&apos;//
+
+&apos;//	constants.
+&apos;const csTerrBase = &quot;defined above&quot;
+&apos;const csTerrDataPath = &quot;defiend above&quot;
+
+&apos;//	local variables.
+dim oDoc			As Object	&apos;// generic document object
+dim sBaseName		As string	&apos;// target base filename
+dim sBasePath		As String	&apos;// target base folder
+dim sTargPath		As String	&apos;// target access path
+dim sTargFile		As string	&apos;// target filename to open
+dim sTerrID			As String	&apos;// local territory ID
+dim sFullTargPath	As String	&apos;// full target path
+dim sTargetURL		As String	&apos;// target URL
+dim oTestDoc		As Object	&apos;// document object
+dim oTestDoc2		As Object	&apos;// 2nd document object
+
+	&apos;// code.
+	ON ERROR GOTO ErrorHandler
+	oTestDoc = ThisComponent
+	sTerrID = psTerrID
+	sBaseName = &quot;QTerr&quot;
+	sBasePath = &quot;/Terr&quot;
+	sTargPath = sBasePath &amp; sTerrID
+
+	&apos;// open QTerrxxx.ods
+    sFullTargPath = csTerrDataPath &amp; sBasePath &amp; sTerrID &amp; &quot;/Working-Files/&quot;_ 
+		&amp; sBaseName &amp; sTerrID &amp; &quot;.ods&quot;
+		
+dim Args(1)	As new com.sun.star.beans.PropertyValue 
+	sTargetURL = convertToURL(sFullTargPath)
+	Args(1).name = &quot;FilterName&quot;
+	Args(1).Value = &quot;calc8&quot;
+	Args(0).name = &quot;Hidden&quot;
+	Args(0).value = False
+	oTestDoc = StarDesktop.loadComponentFromURL(sTargetURL, &quot;_blank&quot;, 0, Args())
+
+	&apos;// open TerrxxxHdr.ods
+    sFullTargPath = csTerrDataPath &amp; sBasePath &amp; sTerrID &amp; &quot;/Working-Files/&quot;_ 
+		&amp; sBasePath &amp; sTerrID &amp; &quot;Hdr.ods&quot;
+
+dim Args2(1) 	As new com.sun.star.beans.PropertyValue 
+	sTargetURL = convertToURL(sFullTargPath)
+	Args2(1).name = &quot;FilterName&quot;
+	Args2(1).Value = &quot;calc8&quot;
+	Args2(0).name = &quot;Hidden&quot;
+	Args2(0).value = False
+    oTestDoc2 = StarDesktop.loadComponentFromURL(sTargetURL, &quot;_blank&quot;, 0, Args2())
+
+	&apos;// Now export the header to the QTerrxxx.ods workbook.
+	ExportTerrHdr()
+	
+if 1 = 0 then
+xray oTestDoc	
+endif
+
+	oTestDoc.Store
+
+CloseFiles:
+	&apos;// close the workbooks and cleanup.
+	oTestDoc2.close(1)
+	oTestDoc.close(1)
+	
+	&apos;// Now ready to process territory....
+
+NormalExit:
+	exit sub
+	
+ErrorHandler:
+	msgbox(&quot;AddHdrToQTerr - unprocessed error&quot;)
+	GoTo NormalExit
+	
+end sub		&apos;// end AddHdrToQTerr	12/23/21.	16:21
